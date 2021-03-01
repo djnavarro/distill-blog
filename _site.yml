@@ -3,6 +3,7 @@ title: "djnavarro::blog()"
 description: |
   An R blog by Danielle Navarro
 output_dir: "docs"
+theme: blog_theme.css
 navbar:
   right:
     - text: "Home"
