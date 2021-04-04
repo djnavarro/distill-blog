@@ -1,13 +1,15 @@
 ---
-title: "Welcome to Danielle Navarro"
+title: "Welcome to the jungle"
 description: |
-  Welcome to our new blog, Danielle Navarro. We hope you enjoy 
-  reading what we have to say!
+  Some thoughts on starting over, when I have tried my hand at blogging
+  so very many times before
 author:
-  - name: Nora Jones 
-    url: https://example.com/norajones
-    affiliation: Spacely Sprockets
-    affiliation_url: https://example.com/spacelysprokets
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
 date: 04-05-2021
 output:
   distill::distill_article:

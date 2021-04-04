@@ -1,19 +1,19 @@
 [
   {
     "path": "posts/welcome/",
-    "title": "Welcome to Danielle Navarro",
-    "description": "Welcome to our new blog, Danielle Navarro. We hope you enjoy \nreading what we have to say!",
+    "title": "Welcome to the jungle",
+    "description": "Some thoughts on starting over, when I have tried my hand at blogging\nso very many times before",
     "author": [
       {
-        "name": "Nora Jones",
-        "url": "https://example.com/norajones"
+        "name": "Danielle Navarro",
+        "url": "https://djnavarro.net"
       }
     ],
     "date": "2021-04-05",
     "categories": [],
     "contents": "\n\n\n\n",
     "preview": {},
-    "last_modified": "2021-04-05T07:56:29+10:00",
-    "input_file": {}
+    "last_modified": "2021-04-05T08:27:03+10:00",
+    "input_file": "welcome.utf8.md"
   }
 ]
