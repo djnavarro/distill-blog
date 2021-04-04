@@ -1,5 +1,5 @@
 ---
-title: "About this blog"
+title: "What's all this about?"
 description: |
   Some additional details about the blog
 ---
