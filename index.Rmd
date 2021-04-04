@@ -1,5 +1,0 @@
----
-title: "An R blog by Danielle Navarro"
-site: distill::distill_website
-listing: posts
----
