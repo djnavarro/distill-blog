@@ -1,0 +1,5 @@
+---
+title: "Danielle Navarro"
+site: distill::distill_website
+listing: posts
+---
