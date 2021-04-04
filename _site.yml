@@ -1,12 +1,12 @@
 name: "."
-title: "Danielle Navarro"
+title: "Blog Posts"
 description: |
-  Danielle Navarro
+  Posts by Danielle Navarro
 output_dir: "_site"
 navbar:
   right:
-    - text: "Home"
-      href: index.html
+    - text: "Homepage"
+      href: https://djnavarro.net
     - text: "About"
       href: about.html
 output: distill::distill_article
