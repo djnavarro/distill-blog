@@ -3,3 +3,22 @@ title: "Posts by Danielle Navarro"
 site: distill::distill_website
 listing: posts
 ---
+
+```{r meta, echo=FALSE}
+library(metathis)
+meta() %>%
+  meta_general(
+    description = "An R blog, mostly",
+  ) %>% 
+  meta_name("github-repo" = "djnavarro/distill-blog") %>% 
+  meta_social(
+    title = "Posts by Danielle Navarro",
+    url = "https://blog.djnavarro.net",
+    image = "https://djnavarro-blog.netlify.app/twitter-image.jpg",
+    image_alt = "",
+    og_type = "website",
+    og_author = "Danielle Navarro",
+    twitter_card_type = "summary_large_image",
+    twitter_creator = "@djnavarro"
+  )
+```
