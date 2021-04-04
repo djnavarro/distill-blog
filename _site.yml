@@ -3,6 +3,7 @@ title: "posts"
 description: |
   Posts by Danielle Navarro
 output_dir: "_site"
+theme: theme.css
 navbar:
   right:
     - text: "about"
