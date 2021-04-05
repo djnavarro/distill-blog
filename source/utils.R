@@ -25,3 +25,13 @@ set_meta_tags <- function(title,
     )
 
 }
+
+#' @export
+set_redirect <- function(from, to = paste0("posts/", from)) {
+  redirect <- paste0("/", from, " /", to)
+  content <- brio::read_lines(here::here("_site", "_redirects"))
+  if(!any(content == redirect)) {
+    content <- c(content, redirect)
+    brio::write_lines(content, here::here("_site", "_redirects"))
+  }
+}
