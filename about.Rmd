@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r meta, echo=FALSE}
-source(here::here("set_meta_tags.R"))
+source(here::here("utils.R"))
 set_meta_tags(
   title = "Posts by Danielle Navarro",
   description = "Additional detail about the blog"
