@@ -24,14 +24,17 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r meta, echo=FALSE}
+```{r meta, echo=FALSE, message=FALSE, results='hide'}
 # import utility functions as a module
 box::use(../../source/utils[
-  set_meta_tags, set_redirect
+  set_meta, 
+  set_redirect, 
+  set_source, 
+  set_lockfile
 ])
 
 # specify meta tags for twitter card (can differ from post summary)
-set_meta_tags(
+set_meta(
   title =  "A new post", 
   description = "Description of the post"
 )

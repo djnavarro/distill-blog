@@ -26,20 +26,26 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r meta, echo=FALSE}
+```{r meta, echo=FALSE, message=FALSE, results='hide'}
 # import utility functions as a module
 box::use(../../source/utils[
-  set_meta_tags, set_redirect, set_source
+  set_meta, 
+  set_redirect, 
+  set_source, 
+  set_lockfile
 ])
 
 # specify meta tags for twitter card (can differ from post summary)
-set_meta_tags(
+set_meta(
   title =  "Welcome to the jungle", 
   description = "Some thoughts on starting over, when I have tried my hand at blogging many times before"
 )
 
 # create a redirect for this post
 set_redirect(params$slug)
+
+# create a lockfile for this post
+set_lockfile(params$slug)
 ```
 
 <!--------------- post begins here ----------------->

@@ -1,6 +1,6 @@
 
 #' @export
-set_meta_tags <- function(title,
+set_meta <- function(title,
                           description,
                           url = "https://blog.djnavarro.net",
                           image = "https://djnavarro-blog.netlify.app/twitter-image.jpg",
@@ -44,5 +44,14 @@ set_source <- function(slug) {
     slug, "/", slug, ".Rmd")
   source_md <- paste0("R markdown source on [GitHub](", github_url, ")")
   return(source_md)
+
+}
+
+
+#' @export
+set_lockfile <- function(slug) {
+
+  project <- here::here("_posts", slug)
+  renv::snapshot(project)
 
 }
