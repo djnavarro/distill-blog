@@ -1,13 +1,13 @@
 name: "."
-title: "posts"
+title: "Posts"
 description: |
   Posts by Danielle Navarro
 output_dir: "_site"
 theme: theme.css
 navbar:
   right:
-    - text: "about"
+    - text: "About"
       href: about.html
-    - text: "djnavarro.net"
+    - text: "Homepage"
       href: https://djnavarro.net
 output: distill::distill_article
