@@ -35,3 +35,14 @@ set_redirect <- function(from, to = paste0("posts/", from)) {
     brio::write_lines(content, here::here("_site", "_redirects"))
   }
 }
+
+#' @export
+set_source <- function(slug) {
+
+  github_url <- paste0(
+    "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
+    slug, "/", slug, ".Rmd")
+  source_md <- paste0("R markdown source on [GitHub](", github_url, ")")
+  return(source_md)
+
+}
