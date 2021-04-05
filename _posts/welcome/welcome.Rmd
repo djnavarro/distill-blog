@@ -1,7 +1,9 @@
 ---
-params: 
-  set_title: "Welcome to the jungle"
-  set_description: "Some thoughts on starting over, when I have tried my hand at blogging so very many times before"
+title: "Welcome to the jungle"
+description: | 
+  I have reluctantly decided to create a new blog. Some thoughts on 
+  what I hope to achieve, having tried my hand at blogging so very many times 
+  before
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -15,12 +17,8 @@ output:
     self_contained: false
 ---
 
-<!--------------- my custom setup ----------------->
 
----
-title: !expr "`r params$set_title`"
-description: !expr "`r params$set_description`"
----
+<!--------------- my typical setup ----------------->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -28,15 +26,14 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r meta, echo=FALSE}
 source(here::here("set_meta_tags.R"))
-set_meta_tags(
-  title =  params$set_title, 
-  description = params$set_description
+set_meta_tags( # <-- allows twitter card to differ slightly from post summary
+  title =  "Welcome to the jungle", 
+  description = "Some thoughts on starting over, when I have tried my hand at blogging so very many times before"
 )
 ```
 
-
 <!--------------- post begins here ----------------->
 
-
+Hello
 
 

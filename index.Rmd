@@ -8,6 +8,6 @@ listing: posts
 source(here::here("set_meta_tags.R"))
 set_meta_tags(
   title = "Posts by Danielle Navarro",
-  description = "A blog by Danielle Navarro, focusing mostly on R and data science"
+  description = "A blog focusing mostly on R and data science"
 )
 ```
