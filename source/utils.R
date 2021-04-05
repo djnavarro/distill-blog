@@ -52,6 +52,12 @@ set_source <- function(slug) {
 set_lockfile <- function(slug) {
 
   project <- here::here("_posts", slug)
-  renv::snapshot(project)
+  tmp <- utils::capture.output(renv::snapshot(project))
+
+  github_url <- paste0(
+    "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
+    slug, "/renv.lock")
+  source_md <- paste0("renv lockfile on [GitHub](", github_url, ")")
+  return(source_md)
 
 }
