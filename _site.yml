@@ -1,7 +1,6 @@
 name: "."
-title: "Posts"
-description: |
-  Posts by Danielle Navarro
+title: "Notes from a data witch"
+description: ""
 output_dir: "_site"
 theme: theme.css
 navbar:

@@ -2,9 +2,6 @@
 title: "What's all this about?"
 description: |
   Additional detail about the blog
-output:
-  distill::distill_article:
-    self_contained: false
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r meta, echo=FALSE}
 box::use(source/utils[set_meta])
 set_meta(
-  title = "Posts by Danielle Navarro",
+  title = "Notes from a data witch",
   description = "Additional detail about the blog"
 )
 ```

@@ -1,16 +1,13 @@
 ---
-title: "Posts by Danielle Navarro"
+title: "Notes from a data witch"
 site: distill::distill_website
 listing: posts
-output:
-  distill::distill_article:
-    self_contained: false
 ---
 
 ```{r meta, echo=FALSE}
 box::use(source/utils[set_meta])
 set_meta(
-  title = "Posts by Danielle Navarro",
+  title = "Notes from a data witch",
   description = "A blog focusing mostly on R and data science"
 )
 ```
