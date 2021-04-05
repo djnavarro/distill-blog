@@ -3,7 +3,7 @@
 set_meta <- function(title,
                           description,
                           url = "https://blog.djnavarro.net",
-                          image = "https://blog.djnavarro.net/twitter-image.jpg",
+                          image = "https://blog.djnavarro.net/image/twitter-image.jpg",
                           image_alt = "Photo of Danielle with R hex stickers superimposed over her hair",
                           og_author = "Danielle Navarro",
                           twitter_creator = "@djnavarro"

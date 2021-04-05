@@ -18,3 +18,12 @@ set_meta(
 
 
 [Danielle Navarro](https://djnavarro.net) is a computational cognitive scientist and Associate Professor at the University of New South Wales. Her research focuses on human concept learning and reasoning, and on statistical methods in the behavioural sciences. Other topics she has researched include data visualisation, decision making, language and cultural evolution, cognitive development, and forensic psychology. Danielle is a cofounder of [R-Ladies Sydney](https://rladiessydney.org), and holds editorial roles at [Science](https://www.sciencemag.org/) and [Psychological Review](https://www.apa.org/pubs/journals/rev/). On occasions she has been known to masquerade as a [statistician](https://learningstatisticswithr.com), [data scientist](https://slides.djnavarro.net), [software developer](https://github.com/djnavarro) and [generative artist](https://art.djnavarro.net). She is prone to describing herself in the third person in biographies, but is willing to admit that it’s super weird.
+
+Profile image, courtesy of Mara Averick:
+
+<br>
+
+```{r, echo=FALSE}
+knitr::include_graphics(here::here("image", "data-witch.png"))
+```
+
