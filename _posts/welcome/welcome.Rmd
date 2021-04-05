@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r meta, echo=FALSE}
-source(here::here("utils.R"))
+box::use(../../source/utils[...])
 set_meta_tags( # <-- allows twitter card to differ slightly from post summary
   title =  "Welcome to the jungle", 
   description = "Some thoughts on starting over, when I have tried my hand at blogging so very many times before"
