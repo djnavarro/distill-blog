@@ -1,8 +1,7 @@
 ---
-title: "Welcome to the jungle"
-description: |
-  Some thoughts on starting over, when I have tried my hand at blogging
-  so very many times before
+params: 
+  set_title: "Welcome to the jungle"
+  set_description: "Some thoughts on starting over, when I have tried my hand at blogging so very many times before"
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -16,13 +15,28 @@ output:
     self_contained: false
 ---
 
+<!--------------- my custom setup ----------------->
+
+---
+title: !expr "`r params$set_title`"
+description: !expr "`r params$set_description`"
+---
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
-# Learn more about creating blogs with Distill at:
-# https://rstudio.github.io/distill/blog.html
-
 ```
+
+```{r meta, echo=FALSE}
+source(here::here("set_meta_tags.R"))
+set_meta_tags(
+  title =  params$set_title, 
+  description = params$set_description
+)
+```
+
+
+<!--------------- post begins here ----------------->
+
 
 
 
