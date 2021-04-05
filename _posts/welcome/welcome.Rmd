@@ -33,7 +33,7 @@ box::use(../../source/utils[
 # specify meta tags for twitter card (can differ from post summary)
 set_meta_tags(
   title =  "Welcome to the jungle", 
-  description = "Some thoughts on starting over, when I have tried my hand at blogging so very many times before"
+  description = "Some thoughts on starting over, when I have tried my hand at blogging many times before"
 )
 
 # create a redirect for this post
