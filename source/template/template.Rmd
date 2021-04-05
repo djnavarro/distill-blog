@@ -30,7 +30,9 @@ box::use(../../source/utils[
   set_meta, 
   set_redirect, 
   set_source, 
-  set_lockfile
+  set_session,
+  set_lockfile,
+  set_timestamp
 ])
 
 # specify meta tags for twitter card (can differ from post summary)
@@ -52,22 +54,11 @@ This is a template post
 
 <!--------------- appendices go here ----------------->
 
-## Source code {.appendix}
-
-```{r, echo=FALSE, results='asis'}
-cat(set_source(params$slug))
-```
-
 ## Last updated {.appendix}
 
-```{r}
-timestamp(prefix = "", suffix = "", )
-```
+`r set_timestamp("Australia/Sydney")`
 
+## Details {.appendix}
 
-## Session information {.appendix}
-
-```{r}
-sessionInfo()
-```
+[source code](`r set_source(params$slug)`), [session info](`r set_session(params$slug)`), [lockfile](`r set_lockfile(params$slug)`)
 

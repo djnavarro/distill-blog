@@ -44,6 +44,12 @@ set_source <- function(slug) {
   return(github_url)
 }
 
+#' @export
+set_timestamp <- function(tzone = "Australia/Sydney") {
+  time <- lubridate::now(tzone = tzone)
+  stamp <- as.character(time, tz = tzone, usetz = TRUE)
+  return(stamp)
+}
 
 #' @export
 set_session <- function(slug) {

@@ -33,7 +33,8 @@ box::use(../../source/utils[
   set_redirect, 
   set_source, 
   set_session,
-  set_lockfile
+  set_lockfile,
+  set_timestamp
 ])
 
 # specify meta tags for twitter card (can differ from post summary)
@@ -62,8 +63,11 @@ Not sure how this will go, but fingers crossed! `r emo::ji("crossed_fingers")`
 
 <!--------------- appendices go here ----------------->
 
+## Last updated {.appendix}
+
+`r set_timestamp("Australia/Sydney")`
+
 ## Details {.appendix}
 
-This post was written in R markdown using the distill package, and last compiled at `r lubridate::now()`. The source code is available [here](`r set_source(params$slug)`), and R session information is [here](`r set_session(params$slug)`). More detailed information is included in the [renv lockfile](`r set_lockfile(params$slug)`) associated with this post.
-
+[source code](`r set_source(params$slug)`), [session info](`r set_session(params$slug)`), [lockfile](`r set_lockfile(params$slug)`)
 
