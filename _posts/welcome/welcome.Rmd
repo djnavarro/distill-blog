@@ -53,7 +53,7 @@ set_meta(
 
 I've decided the time has come to restart my blog. I've tried blogging many times before with mixed success, and this time around I'd like to avoid the mistakes of the past. I've set up this blog with a few principles in mind:
 
-- **Simplicity**. One mistake I've often made is to create blogs using the fanciest tools I could find. For example, I've previously used Hugo based packages like blogdown and hugodown, and much as I love those tools (and use them on other sites) I want this blog to be as low-maintenance as possible. To that end I'm using distill, and I'm keeping the default settings in most respects.
+- **Simplicity**. One mistake I've often made is to create blogs using the fanciest tools I could find. For example, I've previously used Hugo based packages like blogdown and hugodown, and much as I love those tools (and use them on other sites) I want this blog to be as low-maintenance as possible. To that end I'm using [distill for R markdown](https://rstudio.github.io/distill/), and I'm keeping the default settings in most respects.
 
 - **Encapsulation**. There was a time when I really liked the idea of having my blog integrated nicely with my homepage ([djnavarro.net](https://djnavarro.net)). I've become less keen on this because the aesthetic and technical demands of a blog aren't always aligned with the needs of my homepage. This time I've set it up so that the [blog.djnavarro.net](https://blog.djnavarro.net) subdomain corresponds to a different repository from my homepage. I'm hoping this will make blogging simpler from a technical standpoint.
 
