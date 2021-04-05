@@ -5,7 +5,7 @@ listing: posts
 ---
 
 ```{r meta, echo=FALSE}
-box::use(source/utils[...])
+box::use(source/utils[set_meta_tags])
 set_meta_tags(
   title = "Posts by Danielle Navarro",
   description = "A blog focusing mostly on R and data science"
