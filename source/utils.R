@@ -38,13 +38,25 @@ set_redirect <- function(from, to = paste0("posts/", from)) {
 
 #' @export
 set_source <- function(slug) {
-
   github_url <- paste0(
     "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
     slug, "/", slug, ".Rmd")
-  source_md <- paste0("R markdown source on [GitHub](", github_url, ")")
-  return(source_md)
+  return(github_url)
+}
 
+
+#' @export
+set_session <- function(slug) {
+
+  project <- here::here("_posts", slug)
+  brio::write_lines(
+    text = utils::capture.output(utils::sessionInfo()),
+    path = file.path(project, "sessioninfo.txt")
+  )
+  github_url <- paste0(
+    "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
+    slug, "/sessioninfo.txt")
+  return(github_url)
 }
 
 
@@ -53,11 +65,8 @@ set_lockfile <- function(slug) {
 
   project <- here::here("_posts", slug)
   tmp <- utils::capture.output(renv::snapshot(project))
-
   github_url <- paste0(
     "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
     slug, "/renv.lock")
-  source_md <- paste0("renv lockfile on [GitHub](", github_url, ")")
-  return(source_md)
-
+  return(github_url)
 }

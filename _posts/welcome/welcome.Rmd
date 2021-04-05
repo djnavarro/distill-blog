@@ -32,6 +32,7 @@ box::use(../../source/utils[
   set_meta, 
   set_redirect, 
   set_source, 
+  set_session,
   set_lockfile
 ])
 
@@ -61,25 +62,8 @@ Not sure how this will go, but fingers crossed! `r emo::ji("crossed_fingers")`
 
 <!--------------- appendices go here ----------------->
 
-## Source code {.appendix}
+## Details {.appendix}
 
-```{r, echo=FALSE, results='asis'}
-cat(set_source(params$slug))
-```
+This post was written in R markdown using the distill package, and last compiled at `r lubridate::now()`. The source code is available [here](`r set_source(params$slug)`), and R session information is [here](`r set_session(params$slug)`). More detailed information is included in the [renv lockfile](`r set_lockfile(params$slug)`) associated with this post.
 
-## Last updated {.appendix}
-
-```{r timestamp}
-utils::timestamp(prefix = "", suffix = "", )
-```
-
-## R environment {.appendix}
-
-```{r lockfile, echo=FALSE, results='asis'}
-cat(set_lockfile(params$slug))
-```
-
-```{r sessioninfo, echo=FALSE}
-utils::sessionInfo()
-```
 
