@@ -26,7 +26,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r meta, echo=FALSE, message=FALSE, results='hide'}
+```{r box, echo=FALSE}
 # import utility functions as a module
 box::use(../../source/utils[
   set_meta, 
@@ -36,16 +36,15 @@ box::use(../../source/utils[
   set_lockfile,
   set_timestamp
 ])
+```
 
-# specify meta tags for twitter card (can differ from post summary)
+```{r meta, echo=FALSE}
 set_meta(
   title =  "Welcome to the jungle", 
   description = "Some thoughts on starting over, when I have tried my hand at blogging many times before"
 )
-
-# create a redirect for this post
-set_redirect(params$slug)
 ```
+
 
 <!--------------- post begins here ----------------->
 
@@ -72,4 +71,12 @@ Not sure how this will go, but fingers crossed! `r emo::ji("crossed_fingers")`
 ## Details {.appendix}
 
 [source code](`r set_source(params$slug)`), [session info](`r set_session(params$slug)`), [lockfile](`r set_lockfile(params$slug)`)
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+set_redirect(params$slug)
+```
+
 
