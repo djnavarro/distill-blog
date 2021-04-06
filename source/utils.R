@@ -29,10 +29,15 @@ set_meta <- function(title,
 #' @export
 set_redirect <- function(from, to = paste0("posts/", from)) {
   redirect <- paste0("/", from, " /", to)
-  content <- brio::read_lines(here::here("_site", "_redirects"))
+  content <- brio::read_lines(here::here("_redirects"))
   if(!any(content == redirect)) {
     content <- c(content, redirect)
-    brio::write_lines(content, here::here("_site", "_redirects"))
+    brio::write_lines(content, here::here("_redirects"))
+    fs::file_copy(
+      path = here::here("_redirects"),
+      new_path = here::here("_site", "_redirects"),
+      overwrite = TRUE
+    )
   }
 }
 
