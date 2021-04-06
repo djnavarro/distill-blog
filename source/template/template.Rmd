@@ -30,6 +30,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 
 ```{r box, echo=FALSE}
+# ensure box knows where this post is located
+box::set_script_path(
+  path = here::here("_posts", params$slug, paste0(params$slug, ".Rmd"))
+)
+
 # import utility functions as a module
 box::use(../../source/utils[
   set_meta, 
@@ -40,6 +45,7 @@ box::use(../../source/utils[
   set_timestamp
 ])
 ```
+
 
 ```{r meta, echo=FALSE}
 # specify meta tags for twitter card (can differ from post summary)
