@@ -3,10 +3,15 @@ title: "Notes from a data witch"
 description: ""
 output_dir: "_site"
 theme: theme.css
+base_url: https://blog.djnavarro.net
+rss:
+  full_content: true
 navbar:
   right:
     - text: "About"
       href: about.html
     - text: "Homepage"
       href: https://djnavarro.net
+    - icon: fa fa-rss
+      href: index.xml
 output: distill::distill_article
