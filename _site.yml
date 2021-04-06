@@ -19,4 +19,7 @@ navbar:
       href: https://github.com/djnavarro/distill-blog
     - icon: fa fa-twitter
       href: https://twitter.com/djnavarro
-output: distill::distill_article
+output:
+  distill::distill_article:
+    includes:
+      in_header: header.html
