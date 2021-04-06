@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:distill="https://distill.pub/journal/" version="2.0">
+  <channel>
+    <title>Notes from a data witch</title>
+    <link>https://blog.djnavarro.net</link>
+    <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
+    <description/>
+    <generator>Distill</generator>
+    <lastBuildDate>Mon, 05 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Welcome to the jungle</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/welcome</link>
+      <description>I have reluctantly decided to create a new blog. Some thoughts on 
+what I hope to achieve, having tried my hand at blogging so very many times 
+before</description>
+      <guid>https://blog.djnavarro.net/posts/welcome</guid>
+      <pubDate>Mon, 05 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
