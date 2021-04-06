@@ -7,11 +7,12 @@ base_url: https://blog.djnavarro.net
 rss:
   full_content: true
 navbar:
+  logo:
+    image: image/logo-profile.png
+    href: https://djnavarro.net
   right:
     - icon: fa fa-info
       href: about.html
-    - icon: fa fa-home
-      href: https://djnavarro.net
     - icon: fa fa-rss
       href: index.xml
     - icon: fa fa-github
