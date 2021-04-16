@@ -33,11 +33,14 @@ cat(&amp;quot;...done!\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The cli package is developed by &lt;a href="https://twitter.com/GaborCsardi"&gt;Gábor Csárdi&lt;/a&gt;, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;library(cli)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Commands&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;Neutral text&amp;quot;)
-cli_alert_info(&amp;quot;Information&amp;quot;)
-cli_alert_warning(&amp;quot;Warning&amp;quot;)
-cli_alert_danger(&amp;quot;Danger&amp;quot;)
-cli_alert_success(&amp;quot;Success!!!!&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_h1(&amp;quot;Pretty little liars&amp;quot;)
+cli_alert(&amp;quot;Got a secret, can you keep it?&amp;quot;)
+cli_alert(&amp;quot;Swear this one you&amp;#39;ll save&amp;quot;)
+cli_alert(&amp;quot;Better lock it, in your pocket&amp;quot;)
+cli_alert(&amp;quot;Taking this one to the grave&amp;quot;)
+cli_alert(&amp;quot;If I show you then I know you, won&amp;#39;t tell what I said&amp;quot;)
+cli_alert(&amp;quot;Cause two can keep a secret if one of them is dead&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/pretty-little-liars.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;h2 id="spinners"&gt;Spinners&lt;/h2&gt;
 &lt;pre class="r"&gt;&lt;code&gt;spinner &amp;lt;- make_spinner(
   which = &amp;quot;dots2&amp;quot;, 
@@ -52,7 +55,8 @@ wait_for_godot &amp;lt;- function(spinner) {
   spinner$finish()
 }
 
-wait_for_godot(spinner)&lt;/code&gt;&lt;/pre&gt;
+wait_for_godot(spinner)
+cli_alert_success(&amp;quot;Waiting for Godot ... done!&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/spinner-godot.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;NULL
 &lt;/code&gt;&lt;/pre&gt;
