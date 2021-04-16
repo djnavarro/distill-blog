@@ -6,7 +6,34 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 05 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 15 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Pretty little CLIs</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/pretty-little-clis</link>
+      <description>
+
+
+&lt;p&gt;If you’ve been working in R for any length of time, you’ve probably realised that you sometimes need to write code that prints information to the R console, and if you’re like me you’ve learned that the simplest way to do this is to use the &lt;code&gt;cat()&lt;/code&gt; function. Perhaps you find yourself writing code like this:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cat(&amp;quot;Waiting for Godot&amp;quot;)
+wait_for_godot()
+cat(&amp;quot;...done!\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In a realistic example, the &lt;code&gt;wait_for_godot()&lt;/code&gt; function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the Godot process starts and when it finishes. For simplicity, suppose &lt;code&gt;wait_for_godot()&lt;/code&gt; is a function that takes one second to evaluate, such as this one:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;wait_for_godot &amp;lt;- function() {
+  Sys.sleep(1)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Waiting for Godot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and then after a one second delay, this message is updated to show both messages:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Waiting for Godot...done!&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This approach works perfectly well for simple communication, but sometimes you want something that looks a little nicer. For example, if you’ve worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the &lt;a href="https://cli.r-lib.org"&gt;cli&lt;/a&gt; package as your talented assistant, and in this post I’ll talk about some of them.&lt;/p&gt;
+&lt;h2 id="meet-the-cli-package"&gt;Meet the cli package&lt;/h2&gt;
+&lt;p&gt;The cli package is developed by &lt;a href="https://twitter.com/GaborCsardi"&gt;Gábor Csárdi&lt;/a&gt;, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own.&lt;/p&gt;
+&lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</description>
+      <distill:md5>d5a41260e8c54f0561bef2a24bea5b1f</distill:md5>
+      <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>
+      <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Welcome to the jungle</title>
       <dc:creator>Danielle Navarro</dc:creator>
