@@ -116,7 +116,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["pretty-little-clis_files/anchor-4.2.2/anchor.min.js","pretty-little-clis_files/bowser-1.9.3/bowser.min.js","pretty-little-clis_files/distill-2.2.21/template.v2.js","pretty-little-clis_files/jquery-1.11.3/jquery.min.js","pretty-little-clis_files/popper-2.6.0/popper.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-bundle.umd.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-light-border.css","pretty-little-clis_files/tippy-6.2.7/tippy.css","pretty-little-clis_files/tippy-6.2.7/tippy.umd.min.js","pretty-little-clis_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["pretty-little-clis_files/anchor-4.2.2/anchor.min.js","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.css","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.js","pretty-little-clis_files/asciinema_player-2.6.1/jquery-3.2.1.min.js","pretty-little-clis_files/asciinema_player-binding-1.0.0/asciinema_player.js","pretty-little-clis_files/bowser-1.9.3/bowser.min.js","pretty-little-clis_files/distill-2.2.21/template.v2.js","pretty-little-clis_files/figure-html5/unnamed-chunk-2.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-3.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-4.svg","pretty-little-clis_files/htmlwidgets-1.5.3/htmlwidgets.js","pretty-little-clis_files/jquery-1.11.3/jquery.min.js","pretty-little-clis_files/jquery-3.2.1/asciinema-player.css","pretty-little-clis_files/jquery-3.2.1/asciinema-player.js","pretty-little-clis_files/jquery-3.2.1/jquery-3.2.1.min.js","pretty-little-clis_files/popper-2.6.0/popper.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-bundle.umd.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-light-border.css","pretty-little-clis_files/tippy-6.2.7/tippy.css","pretty-little-clis_files/tippy-6.2.7/tippy.umd.min.js","pretty-little-clis_files/webcomponents-2.0.0/webcomponents.js","spinner-godot.svg"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1500,16 +1500,72 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 <p>If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>Waiting for Godot</code></pre>
+<pre class="r-output"><code>Waiting for Godot
+</code></pre>
 </div>
 <p>and then after a one second delay, this message is updated to show both messages:</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>Waiting for Godot...done!</code></pre>
+<pre class="r-output"><code>Waiting for Godot...done!
+</code></pre>
 </div>
 <p>This approach works perfectly well for simple communication, but sometimes you want something that looks a little nicer. For example, if you’ve worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the <a href="https://cli.r-lib.org">cli</a> package as your talented assistant, and in this post I’ll talk about some of them.</p>
 <h2 id="meet-the-cli-package">Meet the cli package</h2>
-<p>The cli package is developed by <a href="https://twitter.com/GaborCsardi">Gábor Csárdi</a>, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>The cli package is developed by <a href="https://twitter.com/GaborCsardi">Gábor Csárdi</a>, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/r-lib/cli#readme'>cli</a></span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Commands</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Neutral text"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_info</a></span><span class='op'>(</span><span class='st'>"Information"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_warning</a></span><span class='op'>(</span><span class='st'>"Warning"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_danger</a></span><span class='op'>(</span><span class='st'>"Danger"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Success!!!!"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r-output"><code>→ Neutral text
+<span style='color: #00BBBB;'>ℹ</span><span> Information
+</span><span style='color: #BBBB00;'>!</span><span> Warning
+</span><span style='color: #BB0000;'>x</span><span> Danger
+</span><span style='color: #00BB00;'>✓</span><span> Success!!!!
+</span></code></pre>
+</div>
+<h2 id="spinners">Spinners</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>spinner</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
+  which <span class='op'>=</span> <span class='st'>"dots2"</span>, 
+  template <span class='op'>=</span> <span class='st'>"{spin} Waiting for Godot"</span>
+<span class='op'>)</span>
+
+<span class='va'>wait_for_godot</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>spinner</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='kw'>for</span><span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='va'>spinner</span><span class='op'>$</span><span class='fu'>spin</span><span class='op'>(</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/Sys.sleep.html'>Sys.sleep</a></span><span class='op'>(</span><span class='fl'>.05</span><span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='va'>spinner</span><span class='op'>$</span><span class='fu'>finish</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+<span class='fu'>wait_for_godot</span><span class='op'>(</span><span class='va'>spinner</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="spinner-godot.svg" /><!-- --></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

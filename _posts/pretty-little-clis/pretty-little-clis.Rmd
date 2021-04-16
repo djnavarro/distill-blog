@@ -14,6 +14,17 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, results = "hold")
+
+# enable ANSI to HTML using the fansi package: ensures that the
+# ANSI terminal colours are translated into HTML correctly
+options(crayon.enabled = TRUE)
+knitr::knit_hooks$set(output = function(x, options){
+  paste0(
+    "<pre class=\"r-output\"><code>",
+    fansi::sgr_to_html(x = x, warn = FALSE, term.cap = "256"),
+    "</code></pre>"
+  )
+})
 ```
 
 If you've been working in R for any length of time, you've probably realised that you sometimes need to write code that prints information to the R console, and if you're like me you've learned that the simplest way to do this is to use the `cat()` function. Perhaps you find yourself writing code like this:
@@ -52,4 +63,62 @@ This approach works perfectly well for simple communication, but sometimes you w
 
 ## Meet the cli package
 
-The cli package is developed by [Gábor Csárdi](https://twitter.com/GaborCsardi), and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own.
+The cli package is developed by [Gábor Csárdi](https://twitter.com/GaborCsardi), and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package
+
+```{r package-load, message=FALSE, warning=FALSE}
+library(cli)
+```
+
+Commands 
+
+```{r alert-messages, eval=FALSE}
+cli_alert("Neutral text")
+cli_alert_info("Information")
+cli_alert_warning("Warning")
+cli_alert_danger("Danger")
+cli_alert_success("Success!!!!")
+```
+
+
+```{r start-app, echo=FALSE}
+# create a cli app that directs output to stdout() rather than
+# stderr() to ensure that R markdown will show the output
+app <- start_app(output = "stdout", .auto_close = TRUE)
+```
+
+```{r, ref.label="alert-messages", eval=TRUE, echo=FALSE}
+```
+
+
+## Spinners
+
+```{r define-spinner, eval=FALSE}
+spinner <- make_spinner(
+  which = "dots2", 
+  template = "{spin} Waiting for Godot"
+)
+
+wait_for_godot <- function(spinner) {
+  for(i in 1:100) {
+    spinner$spin()
+    Sys.sleep(.05)
+  }
+  spinner$finish()
+}
+
+wait_for_godot(spinner)
+```
+
+```{r display-spinner, echo=FALSE}
+# spinner-godot SVG file is generated using asciicast
+knitr::include_graphics(
+  path = here::here("_posts", "pretty-little-clis", "spinner-godot.svg")
+)
+```
+
+
+```{r stop-cli-app, echo=FALSE}
+stop_app(app) # stop the cli app
+```
+
+

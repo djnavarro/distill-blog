@@ -23,12 +23,39 @@ cat(&amp;quot;...done!\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
   Sys.sleep(1)
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for Godot&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;Waiting for Godot
+&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;and then after a one second delay, this message is updated to show both messages:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Waiting for Godot...done!&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;Waiting for Godot...done!
+&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This approach works perfectly well for simple communication, but sometimes you want something that looks a little nicer. For example, if you’ve worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the &lt;a href="https://cli.r-lib.org"&gt;cli&lt;/a&gt; package as your talented assistant, and in this post I’ll talk about some of them.&lt;/p&gt;
 &lt;h2 id="meet-the-cli-package"&gt;Meet the cli package&lt;/h2&gt;
-&lt;p&gt;The cli package is developed by &lt;a href="https://twitter.com/GaborCsardi"&gt;Gábor Csárdi&lt;/a&gt;, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own.&lt;/p&gt;
+&lt;p&gt;The cli package is developed by &lt;a href="https://twitter.com/GaborCsardi"&gt;Gábor Csárdi&lt;/a&gt;, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;library(cli)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Commands&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;Neutral text&amp;quot;)
+cli_alert_info(&amp;quot;Information&amp;quot;)
+cli_alert_warning(&amp;quot;Warning&amp;quot;)
+cli_alert_danger(&amp;quot;Danger&amp;quot;)
+cli_alert_success(&amp;quot;Success!!!!&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2 id="spinners"&gt;Spinners&lt;/h2&gt;
+&lt;pre class="r"&gt;&lt;code&gt;spinner &amp;lt;- make_spinner(
+  which = &amp;quot;dots2&amp;quot;, 
+  template = &amp;quot;{spin} Waiting for Godot&amp;quot;
+)
+
+wait_for_godot &amp;lt;- function(spinner) {
+  for(i in 1:100) {
+    spinner$spin()
+    Sys.sleep(.05)
+  }
+  spinner$finish()
+}
+
+wait_for_godot(spinner)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/spinner-godot.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;NULL
+&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</description>
       <distill:md5>d5a41260e8c54f0561bef2a24bea5b1f</distill:md5>
       <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>
