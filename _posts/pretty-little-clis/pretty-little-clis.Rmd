@@ -31,20 +31,20 @@ knitr::knit_hooks$set(output = function(x, options){
 If you've been working in R for any length of time, you've probably realised that you sometimes need to write code that prints information to the R console, and if you're like me you've learned that the simplest way to do this is to use the `cat()` function. Perhaps you find yourself writing code like this:
 
 ```{r define-godot-1, echo=FALSE}
-wait_for_godot <- function() {
+wait_for_message <- function() {
   return(invisible(NULL))
 }
 ```
 
 ```{r example-with-cat, eval=FALSE}
-cat("Waiting for Godot")
-wait_for_godot()
-cat("...done!\n")
+cat("Dead girls walking.")
+wait_for_message()
+cat(" --A.\n")
 ```
-In a realistic example, the `wait_for_godot()` function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that's just you!) know when the Godot process starts and when it finishes. For simplicity, suppose `wait_for_godot()` is a function that takes one second to evaluate, such as this one:
+In a realistic example, the `wait_for_message()` function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that's just you!) know when the waiting process starts and when it finishes. For simplicity, suppose `wait_for_message()` is a function that takes one second to evaluate, such as this one:
 
 ```{r define-godot-2, eval=FALSE}
-wait_for_godot <- function() {
+wait_for_message <- function() {
   Sys.sleep(1)
 }
 ```
@@ -52,20 +52,19 @@ wait_for_godot <- function() {
 If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:
 
 ```{r message-only, echo=FALSE}
-cat("Waiting for Godot")
+cat("Dead girls walking.")
 ```
 
-and then after a one second delay, this message is updated to show both messages:
+and then after a one second delay, this message is updated to reveal the complete message:
 
 ```{r, ref.label="example-with-cat", echo=FALSE, eval=TRUE}
 ```
 
-This approach works perfectly well for simple communication, but sometimes you want something that looks a little nicer. For example, if you've worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package as your talented assistant, and in this post I'll talk about some of them.
-
+This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. I mean, if you're planning on impersonating a dead teenager and terrorising her friends using R, you're going to want to put a little effort into the details, right?
 
 ## Meet the cli package
 
-The cli package is developed by [Gábor Csárdi](https://twitter.com/GaborCsardi), and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package
+If you've worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package as your mysterious assistant, and in this post I'll talk about some of them. The cli package is developed by [Gábor Csárdi](https://twitter.com/GaborCsardi), and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package
 
 ```{r package-load, message=FALSE, warning=FALSE}
 library(cli)
@@ -74,7 +73,7 @@ library(cli)
 Commands 
 
 ```{r alert-messages, eval=FALSE}
-cli_h1("Pretty little liars")
+cli_h1("Secret, by The Pierces")
 cli_alert("Got a secret, can you keep it?")
 cli_alert("Swear this one you'll save")
 cli_alert("Better lock it, in your pocket")
@@ -90,13 +89,15 @@ cli_alert("Cause two can keep a secret if one of them is dead")
 app <- start_app(output = "stdout", .auto_close = TRUE)
 ```
 
-```{r, ref.label="alert-messages", eval=FALSE, echo=FALSE}
+```{r, ref.label="alert-messages", eval=TRUE, echo=FALSE}
 ```
+
+A lot of the cli functionality makes use of dynamic features of the R consoloe, so from now on I'll show output in the form of these SVG screencasts created using the asciicast package. For example, we might write code that inserts a time consuming process between each line, so the output would look more like this:
 
 
 ```{r display-liars, echo=FALSE}
 knitr::include_graphics(
-  path = here::here("_posts", "pretty-little-clis", "pretty-little-liars.svg")
+  path = here::here("_posts", "pretty-little-clis", "secret.svg")
 )
 ```
 
@@ -107,10 +108,10 @@ knitr::include_graphics(
 ```{r define-spinner, eval=FALSE}
 spinner <- make_spinner(
   which = "dots2", 
-  template = "{spin} Waiting for Godot"
+  template = "{spin} It's not over until I say it is."
 )
 
-wait_for_godot <- function(spinner) {
+wait_for_reveal <- function(spinner) {
   for(i in 1:100) {
     spinner$spin()
     Sys.sleep(.05)
@@ -118,20 +119,18 @@ wait_for_godot <- function(spinner) {
   spinner$finish()
 }
 
-wait_for_godot(spinner)
-cli_alert_success("Waiting for Godot ... done!")
+wait_for_reveal(spinner)
+cli_alert_success(
+  "It's not over until I say it is. Sleep tight while you still can, bitches. -A"
+)
 ```
 
 ```{r display-spinner, echo=FALSE}
 # spinner-godot SVG file is generated using asciicast
 knitr::include_graphics(
-  path = here::here("_posts", "pretty-little-clis", "spinner-godot.svg")
+  path = here::here("_posts", "pretty-little-clis", "spinner-sleeptight.svg")
 )
 ```
 
-
-```{r stop-cli-app, echo=FALSE}
-stop_app(app) # stop the cli app
-```
 
 
