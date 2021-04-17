@@ -120,7 +120,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["bracelet.svg","pretty-little-clis_files/anchor-4.2.2/anchor.min.js","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.css","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.js","pretty-little-clis_files/asciinema_player-2.6.1/jquery-3.2.1.min.js","pretty-little-clis_files/asciinema_player-binding-1.0.0/asciinema_player.js","pretty-little-clis_files/bowser-1.9.3/bowser.min.js","pretty-little-clis_files/distill-2.2.21/template.v2.js","pretty-little-clis_files/figure-html5/unnamed-chunk-2.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-3.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-4.svg","pretty-little-clis_files/htmlwidgets-1.5.3/htmlwidgets.js","pretty-little-clis_files/jquery-1.11.3/jquery.min.js","pretty-little-clis_files/jquery-3.2.1/asciinema-player.css","pretty-little-clis_files/jquery-3.2.1/asciinema-player.js","pretty-little-clis_files/jquery-3.2.1/jquery-3.2.1.min.js","pretty-little-clis_files/popper-2.6.0/popper.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-bundle.umd.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-light-border.css","pretty-little-clis_files/tippy-6.2.7/tippy.css","pretty-little-clis_files/tippy-6.2.7/tippy.umd.min.js","pretty-little-clis_files/webcomponents-2.0.0/webcomponents.js","pretty-little-clis.bib","secret.svg","spinner-sleeptight.svg"]}
+  {"type":"character","attributes":{},"value":["output/cat-example.svg","output/message-structure-3.svg","output/spinner-1.svg","output/spinner-2.svg","output/status-bar-1.svg","output/status-bar-2.svg","pretty-little-clis_files/anchor-4.2.2/anchor.min.js","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.css","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.js","pretty-little-clis_files/asciinema_player-2.6.1/jquery-3.2.1.min.js","pretty-little-clis_files/asciinema_player-binding-1.0.0/asciinema_player.js","pretty-little-clis_files/bowser-1.9.3/bowser.min.js","pretty-little-clis_files/distill-2.2.21/template.v2.js","pretty-little-clis_files/figure-html5/unnamed-chunk-2.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-3.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-4.svg","pretty-little-clis_files/htmlwidgets-1.5.3/htmlwidgets.js","pretty-little-clis_files/jquery-1.11.3/jquery.min.js","pretty-little-clis_files/jquery-3.2.1/asciinema-player.css","pretty-little-clis_files/jquery-3.2.1/asciinema-player.js","pretty-little-clis_files/jquery-3.2.1/jquery-3.2.1.min.js","pretty-little-clis_files/popper-2.6.0/popper.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-bundle.umd.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-light-border.css","pretty-little-clis_files/tippy-6.2.7/tippy.css","pretty-little-clis_files/tippy-6.2.7/tippy.umd.min.js","pretty-little-clis_files/webcomponents-2.0.0/webcomponents.js","pretty-little-clis.bib","source/cat-example.R","source/create-asciicasts.R","source/message-structure-3.R","source/spinner-1.R","source/spinner-2.R","source/status-bar-1.R","source/status-bar-2.R"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1483,37 +1483,33 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <div class="d-article">
 <p>If you’ve been working in R for any length of time, you’ve probably realised that you sometimes need to write code that prints information to the R console, and if you’re like me you’ve learned that the simplest way to do this is to use the <code>cat()</code> function. Perhaps you find yourself writing code like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Dead girls walking."</span><span class='op'>)</span>
-<span class='fu'>wait_for_message</span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>" --A.\n"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wait</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>seconds</span> <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>{</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.sleep.html'>Sys.sleep</a></span><span class='op'>(</span><span class='va'>seconds</span><span class='op'>)</span><span class='op'>}</span>
+<span class='va'>simple_message</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"Dead girls walking."</span><span class='op'>)</span>
+  <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>" --A.\n"</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>simple_message</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <aside>
-The ominous text messages used in this post are all taken from the TV show <a href="https://prettylittleliars.fandom.com/"><em>Pretty Little Liars</em></a>
+The ominous text messages used in this post are taken from the TV show <a href="https://prettylittleliars.fandom.com/"><em>Pretty Little Liars</em></a>
 </aside>
-<p>In a realistic example, the <code>wait_for_message()</code> function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the waiting process starts and when it finishes. For simplicity, suppose <code>wait_for_message()</code> is a function that takes one second to evaluate, such as this one:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wait_for_message</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/Sys.sleep.html'>Sys.sleep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>)</span>
-<span class='op'>}</span>
-</code></pre>
-</div>
-</div>
-<p>When you source a script containing this code, the first part of the message will appear on the console immediately:</p>
+<p>In a realistic example, the <code>wait()</code> function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the waiting process starts and when it finishes. In any case, when you source a script containing this code, the first part of the message will appear on the console immediately:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r-output"><code>Dead girls walking.
 </code></pre>
 </div>
-<p>Then after a one second delay, the console updates to reveal that the author of the threatening message is the mysterious “A.” character:</p>
+<p>Then after a two second delay, the console updates to reveal that the author of the threatening message is the mysterious “A.” character:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r-output"><code>Dead girls walking. --A.
 </code></pre>
+</div>
+<p>It’s not too difficult to imagine what this looks like in the console, but courtesy of the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(Csárdi et al. <a href="#ref-asciiicast" role="doc-biblioref">2019</a>)</span>, there’s no need to leave anything to the imagination:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="output/cat-example.svg" /><!-- --></p>
 </div>
 <p>This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you’re planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?</p>
 <h2 id="meet-the-cli-package">Meet the cli package</h2>
@@ -1525,127 +1521,171 @@ The ominous text messages used in this post are all taken from the TV show <a hr
 </code></pre>
 </div>
 </div>
-<p>The design of cli separates style from structure: your messaging code specifies the <em>structure</em> associated with the message, not the superficial <em>style</em>. The <code>cli_h1()</code> command generates a “top-level” heading, the <code>cli_h2()</code> command generates a second level heading, <code>cli_alert()</code> creates a generic “alert” message, and so on. So the code you write might look something like this:</p>
+<p>The design of cli separates style from structure: your messaging code specifies the <em>structure</em> associated with the message, not the superficial <em>style</em>. The <code>cli_h1()</code> command generates a “top-level” heading, the <code>cli_h2()</code> command generates a second level heading, <code>cli_text()</code>inserts basic, and so on. So the code you write might look something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Secret, by The Pierces"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Got a secret, can you keep it?"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Swear this one you'll save"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Better lock it in your pocket"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Taking this one to the grave"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"If I show you then I know you won't tell what I said"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Cause two can keep a secret if one of them is dead"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>title_theme</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Secret, by The Pierces"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Got a secret, can you keep it?"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Swear this one you'll save"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Better lock it in your pocket"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Taking this one to the grave"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"If I show you then I know you won't tell what I said"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Cause two can keep a secret if one of them is dead"</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>title_theme</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <p>When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I’ve never felt a need to do so because the default theme is rather nice:</p>
 <div class="layout-chunk" data-layout="l-body">
-
-</div>
-<div class="layout-chunk" data-layout="l-body">
 <pre class="r-output"><code>
 <span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Secret, by The Pierces</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────</span><span>
-→ Got a secret, can you keep it?
-→ Swear this one you'll save
-→ Better lock it in your pocket
-→ Taking this one to the grave
-→ If I show you then I know you won't tell what I said
-→ Cause two can keep a secret if one of them is dead
+Got a secret, can you keep it?
+Swear this one you'll save
+Better lock it in your pocket
+Taking this one to the grave
+If I show you then I know you won't tell what I said
+Cause two can keep a secret if one of them is dead
 </span></code></pre>
 </div>
-<p>A lot of the cli functionality uses dynamic features of the R console that don’t have analogs in the HTML output produced by R Markdown, so in some cases I’ll show the output in the form of an SVG screencast created using the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(Csárdi et al. <a href="#ref-asciiicast" role="doc-biblioref">2019</a>)</span>. For example, most of the time there’s some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:</p>
+<p>Sometimes you may prefer send the user short alert messages. You can create generic alerts with <code>cli_alert()</code> or you could be more specific by using <code>cli_alert_info()</code>, <code>cli_alert_warning()</code>, <code>cli_alert_danger()</code>, <code>cli_alert_success()</code>. Most of the text messages sent by A. in <em>Pretty Little Liars</em> were quite threatening, so in this case it might be more appropriate to mark it as one:</p>
 <div class="layout-chunk" data-layout="l-body">
-<p><img src="secret.svg" /><!-- --></p>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>threatening_text</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli.html'>cli</a></span><span class='op'>(</span><span class='op'>{</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_warning</a></span><span class='op'>(</span><span class='st'>"The truth won't set you free, bitches."</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_warning</a></span><span class='op'>(</span><span class='st'>"I'm going to bury you with it."</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_warning</a></span><span class='op'>(</span><span class='st'>"Kisses"</span><span class='op'>)</span>
+    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_warning</a></span><span class='op'>(</span><span class='st'>"-A"</span><span class='op'>)</span>
+  <span class='op'>}</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>threatening_text</span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
 </div>
-<p>In this instance, the output happens to be identical to our first one: all it does is print the lyrics to the music in the title credits from <em>Pretty Little Liars</em>, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few…</p>
+<pre class="r-output"><code><span style='color: #BBBB00;'>!</span><span> The truth won't set you free, bitches.
+</span><span style='color: #BBBB00;'>!</span><span> I'm going to bury you with it.
+</span><span style='color: #BBBB00;'>!</span><span> Kisses
+</span><span style='color: #BBBB00;'>!</span><span> -A
+</span></code></pre>
+</div>
+<p>Note that I wrapped it in a call to <code>cli()</code>: this has the effect of telling R to group all these as a single message, and in doing so makes sure that they aren’t ever displayed separately. Often that’s what you want, but not necessarily. For example, most of the time there’s some code in between each message that takes some time to execute. If we wanted the title theme to reveal itself gradually, scrolling up the screen as it does</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>title_theme_scroll</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Secret, by The Pierces"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Got a secret, can you keep it?"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Swear this one you'll save"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Better lock it in your pocket"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Taking this one to the grave"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"If I show you then I know you won't tell what I said"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Cause two can keep a secret if one of them is dead"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>title_theme_scroll</span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="output/message-structure-3.svg" /><!-- --></p>
+</div>
 <aside>
 The theme song is <em>Secrets</em>, the first track from the 2007 album <a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge">Thirteen Tales of Love and Revenge</a> by <em>The Pierces</em>
 </aside>
 <h2 id="status-bars">Status Bars</h2>
+<p>In this instance, the output happens to be identical to our first example: all it does is print the lyrics to the music in the title credits from <em>Pretty Little Liars</em>, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>dramatic_pause</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>seconds</span> <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>{</span><span class='fu'><a href='https://rdrr.io/r/base/Sys.sleep.html'>Sys.sleep</a></span><span class='op'>(</span><span class='va'>seconds</span><span class='op'>)</span><span class='op'>}</span>
-<span class='va'>status_bar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status.html'>cli_status</a></span><span class='op'>(</span>msg <span class='op'>=</span> <span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>dramatic_pause</span><span class='op'>(</span><span class='op'>)</span>;
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='va'>status_bar</span>, msg <span class='op'>=</span> <span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>dramatic_pause</span><span class='op'>(</span><span class='op'>)</span>;
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='va'>status_bar</span>, msg <span class='op'>=</span> <span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>dramatic_pause</span><span class='op'>(</span><span class='op'>)</span>;
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='va'>status_bar</span>, msg <span class='op'>=</span> <span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>dramatic_pause</span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_clear.html'>cli_status_clear</a></span><span class='op'>(</span>id <span class='op'>=</span> <span class='va'>status_bar</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>message_scroll</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>message_scroll</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<p><img src="bracelet.svg" /><!-- --></p>
+<p><img src="output/status-bar-1.svg" /><!-- --></p>
 </div>
-<h2 id="alerts-headings-and-lists">Alerts, Headings and Lists</h2>
-<p>In addition to the generic alert <code>cli_alert()</code> you can choose alerts that convey specific meaning:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_info</a></span><span class='op'>(</span><span class='st'>"Information"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_warning</a></span><span class='op'>(</span><span class='st'>"Warning"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_danger</a></span><span class='op'>(</span><span class='st'>"Danger"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Success"</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre class="r-output"><code><span style='color: #00BBBB;'>ℹ</span><span> Information
-</span><span style='color: #BBBB00;'>!</span><span> Warning
-</span><span style='color: #BB0000;'>x</span><span> Danger
-</span><span style='color: #00BB00;'>✓</span><span> Success
-</span></code></pre>
-</div>
-<p>Headings</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Heading 1"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"Heading 2"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h3</a></span><span class='op'>(</span><span class='st'>"Heading 3"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>message_inline</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>id</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status.html'>cli_status</a></span><span class='op'>(</span><span class='st'>""</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_clear.html'>cli_status_clear</a></span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>message_inline</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre class="r-output"><code>
-<span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Heading 1</span><span> </span><span style='color: #00BBBB;'>─────────────────────────────────────────────────────────</span><span>
-
-── </span><span style='font-weight: bold;'>Heading 2</span><span> ──
-
-── Heading 3 
-</span></code></pre>
 </div>
-<p>Lists</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_li.html'>cli_li</a></span><span class='op'>(</span><span class='st'>"one"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_li.html'>cli_li</a></span><span class='op'>(</span><span class='st'>"two"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_li.html'>cli_li</a></span><span class='op'>(</span><span class='st'>"three"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_end.html'>cli_end</a></span><span class='op'>(</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre class="r-output"><code>● one
-● two
-● three
-</code></pre>
+<p><img src="output/status-bar-2.svg" /><!-- --></p>
 </div>
 <h2 id="spinners">Spinners</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>spinner</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
-  which <span class='op'>=</span> <span class='st'>"dots2"</span>, 
-  template <span class='op'>=</span> <span class='st'>"{spin} It's not over until I say it is."</span>
-<span class='op'>)</span>
-
-<span class='va'>wait_for_reveal</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>spinner</span><span class='op'>)</span> <span class='op'>{</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>theatrics</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>which</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>spinny</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
+    which <span class='op'>=</span> <span class='va'>which</span>,
+    template <span class='op'>=</span> <span class='st'>"{spin} It's not over until I say it is."</span>
+  <span class='op'>)</span>
   <span class='kw'>for</span><span class='op'>(</span><span class='va'>i</span> <span class='kw'>in</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>spinner</span><span class='op'>$</span><span class='fu'>spin</span><span class='op'>(</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/Sys.sleep.html'>Sys.sleep</a></span><span class='op'>(</span><span class='fl'>.05</span><span class='op'>)</span>
+    <span class='va'>spinny</span><span class='op'>$</span><span class='fu'>spin</span><span class='op'>(</span><span class='op'>)</span>
+    <span class='fu'>wait</span><span class='op'>(</span><span class='fl'>.05</span><span class='op'>)</span>
   <span class='op'>}</span>
-  <span class='va'>spinner</span><span class='op'>$</span><span class='fu'>finish</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='va'>spinny</span><span class='op'>$</span><span class='fu'>finish</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Sleep tight while you still can, bitches. -A"</span><span class='op'>)</span>
 <span class='op'>}</span>
 
-<span class='fu'>wait_for_reveal</span><span class='op'>(</span><span class='va'>spinner</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Sleep tight while you still can, bitches. -A"</span><span class='op'>)</span>
+<span class='fu'>theatrics</span><span class='op'>(</span><span class='st'>"dots2"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<p><img src="spinner-sleeptight.svg" /><!-- --></p>
+<p><img src="output/spinner-1.svg" /><!-- --></p>
+</div>
+<p>There are quite a few possible spinners</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/list_spinners.html'>list_spinners</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre class="r-output"><code> [1] "dots"                "dots2"               "dots3"              
+ [4] "dots4"               "dots5"               "dots6"              
+ [7] "dots7"               "dots8"               "dots9"              
+[10] "dots10"              "dots11"              "dots12"             
+[13] "line"                "line2"               "pipe"               
+[16] "simpleDots"          "simpleDotsScrolling" "star"               
+[19] "star2"               "flip"                "hamburger"          
+[22] "growVertical"        "growHorizontal"      "balloon"            
+[25] "balloon2"            "noise"               "bounce"             
+[28] "boxBounce"           "boxBounce2"          "triangle"           
+[31] "arc"                 "circle"              "squareCorners"      
+[34] "circleQuarters"      "circleHalves"        "squish"             
+[37] "toggle"              "toggle2"             "toggle3"            
+[40] "toggle4"             "toggle5"             "toggle6"            
+[43] "toggle7"             "toggle8"             "toggle9"            
+[46] "toggle10"            "toggle11"            "toggle12"           
+[49] "toggle13"            "arrow"               "arrow2"             
+[52] "arrow3"              "bouncingBar"         "bouncingBall"       
+[55] "smiley"              "monkey"              "hearts"             
+[58] "clock"               "earth"               "moon"               
+[61] "runner"              "pong"                "shark"              
+[64] "dqpb"               
+</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>theatrics</span><span class='op'>(</span><span class='st'>"hearts"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="output/spinner-2.svg" /><!-- --></p>
 </div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references" role="doc-bibliography">

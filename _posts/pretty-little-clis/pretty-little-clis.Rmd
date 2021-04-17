@@ -14,7 +14,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, results = "hold")
+knitr::opts_chunk$set(echo = TRUE)
 
 # enable ANSI to HTML using the fansi package: ensures that the
 # ANSI terminal colours are translated into HTML correctly
@@ -26,45 +26,54 @@ knitr::knit_hooks$set(output = function(x, options){
     "</code></pre>"
   )
 })
+
+# uncomment this line to generate the asciicast svgs
+# source(here::here("_posts", "pretty-little-clis", "source", "create-asciicasts.R"))
+
+# convenience function to insert an asciicast svg
+insert_asciicast <- function(name) {
+  dir <- here::here("_posts", "pretty-little-clis", "output")
+  svg <- paste0(name, ".svg")
+  knitr::include_graphics(file.path(dir, svg))
+}
+
+# create a cli app that directs output to stdout() rather than
+# stderr() to ensure that R markdown will show the output
+app <- cli::start_app(output = "stdout", .auto_close = TRUE)
 ```
 
 
 If you've been working in R for any length of time, you've probably realised that you sometimes need to write code that prints information to the R console, and if you're like me you've learned that the simplest way to do this is to use the `cat()` function. Perhaps you find yourself writing code like this:
 
-```{r define-godot-1, echo=FALSE}
-wait_for_message <- function() {
-  return(invisible(NULL))
+```{r cat-example, eval=FALSE}
+wait <- function(seconds = 2) {Sys.sleep(seconds)}
+simple_message <- function() {
+  cat("Dead girls walking.")
+  wait()
+  cat(" --A.\n")
 }
+simple_message()
 ```
-
-```{r example-with-cat, eval=FALSE}
-cat("Dead girls walking.")
-wait_for_message()
-cat(" --A.\n")
-```
-
 
 <aside>
-The ominous text messages used in this post are all taken from the TV show [*Pretty Little Liars*](https://prettylittleliars.fandom.com/)
+The ominous text messages used in this post are taken from the TV show [*Pretty Little Liars*](https://prettylittleliars.fandom.com/)
 </aside>
 
-In a realistic example, the `wait_for_message()` function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that's just you!) know when the waiting process starts and when it finishes. For simplicity, suppose `wait_for_message()` is a function that takes one second to evaluate, such as this one:
+In a realistic example, the `wait()` function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that's just you!) know when the waiting process starts and when it finishes. In any case, when you source a script containing this code, the first part of the message will appear on the console immediately:
 
-```{r define-godot-2, eval=FALSE}
-wait_for_message <- function() {
-  Sys.sleep(1)
-}
-```
-
-When you source a script containing this code, the first part of the message will appear on the console immediately:
-
-```{r message-only, echo=FALSE}
+```{r cat-example-partial, echo=FALSE}
 cat("Dead girls walking.")
 ```
 
-Then after a one second delay, the console updates to reveal that the author of the threatening message is the mysterious "A." character:
+Then after a two second delay, the console updates to reveal that the author of the threatening message is the mysterious "A." character:
 
-```{r, ref.label="example-with-cat", echo=FALSE, eval=TRUE}
+```{r, ref.label="cat-example", echo=FALSE, eval=TRUE}
+```
+
+It's not too difficult to imagine what this looks like in the console, but courtesy of the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast], there's no need to leave anything to the imagination:
+
+```{r display-cat-example, echo=FALSE}
+insert_asciicast("cat-example")
 ```
 
 This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you're planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?
@@ -79,114 +88,129 @@ To craft a beautiful command line interface (CLI) of our very own, the first thi
 library(cli)
 ```
 
-The design of cli separates style from structure: your messaging code specifies the *structure* associated with the message, not the superficial *style*. The `cli_h1()` command generates a "top-level" heading, the `cli_h2()` command generates a second level heading, `cli_alert()` creates a generic "alert" message, and so on. So the code you write might look something like this:
+The design of cli separates style from structure: your messaging code specifies the *structure* associated with the message, not the superficial *style*. The `cli_h1()` command generates a "top-level" heading, the `cli_h2()` command generates a second level heading, `cli_text()`inserts basic, and so on. So the code you write might look something like this:
 
-```{r alert-messages, eval=FALSE}
-cli_h1("Secret, by The Pierces")
-cli_alert("Got a secret, can you keep it?")
-cli_alert("Swear this one you'll save")
-cli_alert("Better lock it in your pocket")
-cli_alert("Taking this one to the grave")
-cli_alert("If I show you then I know you won't tell what I said")
-cli_alert("Cause two can keep a secret if one of them is dead")
+```{r message-structure-1, eval=FALSE}
+title_theme <- function() {
+  cli_h1("Secret, by The Pierces")
+  cli_text("Got a secret, can you keep it?")
+  cli_text("Swear this one you'll save")
+  cli_text("Better lock it in your pocket")
+  cli_text("Taking this one to the grave")
+  cli_text("If I show you then I know you won't tell what I said")
+  cli_text("Cause two can keep a secret if one of them is dead")
+}
+title_theme()
 ```
 
 When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I've never felt a need to do so because the default theme is rather nice:
 
-```{r start-app, echo=FALSE}
-# create a cli app that directs output to stdout() rather than
-# stderr() to ensure that R markdown will show the output
-app <- start_app(output = "stdout", .auto_close = TRUE)
+```{r, ref.label="message-structure-1", eval=TRUE, echo=FALSE}
 ```
 
-```{r, ref.label="alert-messages", eval=TRUE, echo=FALSE}
+Sometimes you may prefer send the user short alert messages. You can create generic alerts with `cli_alert()` or you could be more specific by using `cli_alert_info()`, `cli_alert_warning()`, `cli_alert_danger()`, `cli_alert_success()`. Most of the text messages sent by A. in *Pretty Little Liars* were quite threatening, so in this case it might be more appropriate to mark it as one:
+
+```{r message-structure-2}
+threatening_text <- function() {
+  cli({
+    cli_alert_warning("The truth won't set you free, bitches.")
+    cli_alert_warning("I'm going to bury you with it.")
+    cli_alert_warning("Kisses")
+    cli_alert_warning("-A")
+  })
+}
+threatening_text()
 ```
 
-A lot of the cli functionality uses dynamic features of the R console that don't have analogs in the HTML output produced by R Markdown, so in some cases I'll show the output in the form of an SVG screencast created using the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast]. For example, most of the time there's some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:
+Note that I wrapped it in a call to `cli()`: this has the effect of telling R to group all these as a single message, and in doing so makes sure that they aren't ever displayed separately. Often that's what you want, but not necessarily. For example, most of the time there's some code in between each message that takes some time to execute. If we wanted the title theme to reveal itself gradually, scrolling up the screen as it does
 
-```{r display-liars, echo=FALSE}
-knitr::include_graphics(
-  path = here::here("_posts", "pretty-little-clis", "secret.svg")
-)
+```{r message-structure-3, eval=FALSE}
+title_theme_scroll <- function() {
+  cli_h1("Secret, by The Pierces"); wait()
+  cli_text("Got a secret, can you keep it?"); wait()
+  cli_text("Swear this one you'll save"); wait()
+  cli_text("Better lock it in your pocket"); wait()
+  cli_text("Taking this one to the grave"); wait()
+  cli_text("If I show you then I know you won't tell what I said"); wait()
+  cli_text("Cause two can keep a secret if one of them is dead"); wait()
+}
+title_theme_scroll()
 ```
-
-In this instance, the output happens to be identical to our first one: all it does is print the lyrics to the music in the title credits from *Pretty Little Liars*, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few...
+```{r display-message-structure-3, echo=FALSE}
+insert_asciicast("message-structure-3")
+```
 
 <aside>
 The theme song is *Secrets*, the first track from the 2007 album [Thirteen Tales of Love and Revenge](https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge) by *The Pierces*
 </aside>
 
+
+
+
 ## Status Bars
 
-```{r status-bar-example, eval=FALSE}
-dramatic_pause <- function(seconds = 2) {Sys.sleep(seconds)}
-status_bar <- cli_status(msg = "You found my bracelet."); dramatic_pause();
-cli_status_update(id = status_bar, msg = "Now come find me."); dramatic_pause();
-cli_status_update(id = status_bar, msg = "Good luck bitches."); dramatic_pause();
-cli_status_update(id = status_bar, msg = "-A"); dramatic_pause()
-cli_status_clear(id = status_bar)
+In this instance, the output happens to be identical to our first example: all it does is print the lyrics to the music in the title credits from *Pretty Little Liars*, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few...
+
+```{r status-bar-1, eval=FALSE}
+message_scroll <- function() {
+  cli_text("You found my bracelet."); wait()
+  cli_text("Now come find me."); wait()
+  cli_text("Good luck bitches."); wait()
+  cli_text("-A"); wait()
+}
+message_scroll()
 ```
-```{r display-status-bar-example, echo=FALSE}
-knitr::include_graphics(
-  path = here::here("_posts", "pretty-little-clis", "bracelet.svg")
-)
-```
-
-
-## Alerts, Headings and Lists
-
-In addition to the generic alert `cli_alert()` you can choose alerts that convey specific meaning:
-
-```{r alerts}
-cli_alert_info("Information")
-cli_alert_warning("Warning")
-cli_alert_danger("Danger")
-cli_alert_success("Success")
+```{r display-status-bar-1, echo=FALSE}
+insert_asciicast("status-bar-1")
 ```
 
-Headings
-
-```{r headings}
-cli_h1("Heading 1")
-cli_h2("Heading 2")
-cli_h3("Heading 3")
+```{r status-bar-2, eval=FALSE}
+message_inline <- function() {
+  id <- cli_status("")
+  cli_status_update(id, "You found my bracelet."); wait()
+  cli_status_update(id, "Now come find me."); wait()
+  cli_status_update(id, "Good luck bitches."); wait()
+  cli_status_update(id, "-A"); wait()
+  cli_status_clear(id)
+}
+message_inline()
+```
+```{r display-status-bar-2, echo=FALSE}
+insert_asciicast("status-bar-2")
 ```
 
-Lists
-
-```{r lists}
-cli_ul()
-cli_li("one")
-cli_li("two")
-cli_li("three")
-cli_end()
-```
 ## Spinners
 
-```{r define-spinner, eval=FALSE}
-spinner <- make_spinner(
-  which = "dots2", 
-  template = "{spin} It's not over until I say it is."
-)
-
-wait_for_reveal <- function(spinner) {
+```{r spinner-1, eval=FALSE}
+theatrics <- function(which) {
+  spinny <- make_spinner(
+    which = which,
+    template = "{spin} It's not over until I say it is."
+  )
   for(i in 1:100) {
-    spinner$spin()
-    Sys.sleep(.05)
+    spinny$spin()
+    wait(.05)
   }
-  spinner$finish()
+  spinny$finish()
+  cli_alert_success("Sleep tight while you still can, bitches. -A")
 }
 
-wait_for_reveal(spinner)
-cli_alert_success("Sleep tight while you still can, bitches. -A")
+theatrics("dots2")
+```
+```{r display-spinner1, echo=FALSE}
+insert_asciicast("spinner-1")
 ```
 
-```{r display-spinner, echo=FALSE}
-# spinner-godot SVG file is generated using asciicast
-knitr::include_graphics(
-  path = here::here("_posts", "pretty-little-clis", "spinner-sleeptight.svg")
-)
+There are quite a few possible spinners
+
+```{r list-spinners}
+list_spinners()
 ```
 
-
+```{r spinner-2, eval=FALSE}
+theatrics("hearts")
+```
+```{r display-spinner2, echo=FALSE}
+insert_asciicast("spinner-2")
+```
 
