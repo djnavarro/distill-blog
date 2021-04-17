@@ -60,6 +60,46 @@ cli_alert(&amp;quot;Cause two can keep a secret if one of them is dead&amp;quot;
 &lt;aside&gt;
 The theme song is &lt;em&gt;Secrets&lt;/em&gt;, the first track from the 2007 album &lt;a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge"&gt;Thirteen Tales of Love and Revenge&lt;/a&gt; by &lt;em&gt;The Pierces&lt;/em&gt;
 &lt;/aside&gt;
+&lt;h2 id="status-bars"&gt;Status Bars&lt;/h2&gt;
+&lt;pre class="r"&gt;&lt;code&gt;dramatic_pause &amp;lt;- function(seconds = 2) {Sys.sleep(seconds)}
+status_bar &amp;lt;- cli_status(msg = &amp;quot;You found my bracelet.&amp;quot;); dramatic_pause();
+cli_status_update(id = status_bar, msg = &amp;quot;Now come find me.&amp;quot;); dramatic_pause();
+cli_status_update(id = status_bar, msg = &amp;quot;Good luck bitches.&amp;quot;); dramatic_pause();
+cli_status_update(id = status_bar, msg = &amp;quot;-A&amp;quot;); dramatic_pause()
+cli_status_clear(id = status_bar)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/bracelet.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;h2 id="alerts-headings-and-lists"&gt;Alerts, Headings and Lists&lt;/h2&gt;
+&lt;p&gt;In addition to the generic alert &lt;code&gt;cli_alert()&lt;/code&gt; you can choose alerts that convey specific meaning:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_alert_info(&amp;quot;Information&amp;quot;)
+cli_alert_warning(&amp;quot;Warning&amp;quot;)
+cli_alert_danger(&amp;quot;Danger&amp;quot;)
+cli_alert_success(&amp;quot;Success&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;&lt;span style='color: #00BBBB;'&gt;ℹ&lt;/span&gt;&lt;span&gt; Information
+&lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;!&lt;/span&gt;&lt;span&gt; Warning
+&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; Danger
+&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✓&lt;/span&gt;&lt;span&gt; Success
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Headings&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_h1(&amp;quot;Heading 1&amp;quot;)
+cli_h2(&amp;quot;Heading 2&amp;quot;)
+cli_h3(&amp;quot;Heading 3&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;
+&lt;span style='color: #00BBBB;'&gt;──&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Heading 1&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;─────────────────────────────────────────────────────────&lt;/span&gt;&lt;span&gt;
+
+── &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Heading 2&lt;/span&gt;&lt;span&gt; ──
+
+── Heading 3 
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lists&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_ul()
+cli_li(&amp;quot;one&amp;quot;)
+cli_li(&amp;quot;two&amp;quot;)
+cli_li(&amp;quot;three&amp;quot;)
+cli_end()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;  ◯ one
+  ◯ two
+  ◯ three
+&lt;/code&gt;&lt;/pre&gt;
 &lt;h2 id="spinners"&gt;Spinners&lt;/h2&gt;
 &lt;pre class="r"&gt;&lt;code&gt;spinner &amp;lt;- make_spinner(
   which = &amp;quot;dots2&amp;quot;, 

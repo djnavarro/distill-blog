@@ -8,7 +8,7 @@ rec <- record(
   end_wait = 4,
   idle_time_limit = 10,
   timeout = 1000,
-  script = here::here("_posts", "pretty-little-clis", "secret-source.R"),
+  script = here::here("_posts", "pretty-little-clis", "bracelet-source.R"),
   echo = FALSE
 )
 
@@ -16,8 +16,8 @@ rec <- record(
 write_svg(
   cast = rec,
   cursor = FALSE,
-  path = here::here("_posts", "pretty-little-clis", "secret.svg"),
-  rows = 10,
+  path = here::here("_posts", "pretty-little-clis", "bracelet.svg"),
+  rows = 4,
   cols = 80,
   window = TRUE,
   start_at = 0,

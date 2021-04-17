@@ -116,6 +116,51 @@ In this instance, the output happens to be identical to our first one: all it do
 The theme song is *Secrets*, the first track from the 2007 album [Thirteen Tales of Love and Revenge](https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge) by *The Pierces*
 </aside>
 
+## Status Bars
+
+```{r status-bar-example, eval=FALSE}
+dramatic_pause <- function(seconds = 2) {Sys.sleep(seconds)}
+status_bar <- cli_status(msg = "You found my bracelet."); dramatic_pause();
+cli_status_update(id = status_bar, msg = "Now come find me."); dramatic_pause();
+cli_status_update(id = status_bar, msg = "Good luck bitches."); dramatic_pause();
+cli_status_update(id = status_bar, msg = "-A"); dramatic_pause()
+cli_status_clear(id = status_bar)
+```
+```{r display-status-bar-example, echo=FALSE}
+knitr::include_graphics(
+  path = here::here("_posts", "pretty-little-clis", "bracelet.svg")
+)
+```
+
+
+## Alerts, Headings and Lists
+
+In addition to the generic alert `cli_alert()` you can choose alerts that convey specific meaning:
+
+```{r alerts}
+cli_alert_info("Information")
+cli_alert_warning("Warning")
+cli_alert_danger("Danger")
+cli_alert_success("Success")
+```
+
+Headings
+
+```{r headings}
+cli_h1("Heading 1")
+cli_h2("Heading 2")
+cli_h3("Heading 3")
+```
+
+Lists
+
+```{r lists}
+cli_ul()
+cli_li("one")
+cli_li("two")
+cli_li("three")
+cli_end()
+```
 ## Spinners
 
 ```{r define-spinner, eval=FALSE}
