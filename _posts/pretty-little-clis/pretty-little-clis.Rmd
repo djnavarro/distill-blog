@@ -6,6 +6,7 @@ author:
   - name: Danielle Navarro
     url: https://djnavarro.net
 date: 04-16-2021
+bibliography: pretty-little-clis.bib
 output:
   distill::distill_article:
     self_contained: false
@@ -70,7 +71,7 @@ This approach works perfectly well for simple text communication, but sometimes 
 
 ## Meet the cli package
 
-If you've worked in the [tidyverse](https://www.tidyverse.org/) for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package as your talented assistant, and in this post I'll talk about some of them. 
+If you've worked in the [tidyverse](https://www.tidyverse.org/) [@tidyverse] for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package [@cli] as your talented assistant, and in this post I'll talk about some of them. 
 
 To craft a beautiful command line interface (CLI) of our very own, the first thing we'll need to do is load the package:
 
@@ -101,7 +102,7 @@ app <- start_app(output = "stdout", .auto_close = TRUE)
 ```{r, ref.label="alert-messages", eval=TRUE, echo=FALSE}
 ```
 
-A lot of the cli functionality uses dynamic features of the R console that don't have analogs in the HTML output produced by R Markdown, so in some cases I'll show the output in the form of an SVG screencast created using the [asciicast](https://github.com/r-lib/asciicast) package. For example, most of the time there's some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:
+A lot of the cli functionality uses dynamic features of the R console that don't have analogs in the HTML output produced by R Markdown, so in some cases I'll show the output in the form of an SVG screencast created using the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast]. For example, most of the time there's some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:
 
 ```{r display-liars, echo=FALSE}
 knitr::include_graphics(
