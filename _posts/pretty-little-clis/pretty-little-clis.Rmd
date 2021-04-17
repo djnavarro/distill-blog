@@ -61,7 +61,7 @@ When you source a script containing this code, the first part of the message wil
 cat("Dead girls walking.")
 ```
 
-Then after a one second delay, console updates to reveal that the author of the threatening message is the mysterious "A." character:
+Then after a one second delay, the console updates to reveal that the author of the threatening message is the mysterious "A." character:
 
 ```{r, ref.label="example-with-cat", echo=FALSE, eval=TRUE}
 ```
