@@ -3,15 +3,15 @@
 
 suppressPackageStartupMessages(library(cli))
 wait <- function(seconds = 2) {Sys.sleep(seconds)}
-cat("\n")
-
 
 # code chunk --------------------------------------------------------------
 
-message_scroll <- function() {
-  cli_text("You found my bracelet."); wait()
-  cli_text("Now come find me."); wait()
-  cli_text("Good luck bitches."); wait()
-  cli_text("-A"); wait()
+threatening_text <- function() {
+  cli({
+    cli_alert_warning("The truth won't set you free, bitches.")
+    cli_alert_warning("I'm going to bury you with it.")
+    cli_alert_warning("Kisses")
+    cli_alert_warning("-A")
+  })
 }
-message_scroll()
+threatening_text()

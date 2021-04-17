@@ -26,11 +26,9 @@ simple_message()&lt;/code&gt;&lt;/pre&gt;
 The ominous text messages used in this post are taken from the TV show &lt;a href="https://prettylittleliars.fandom.com/"&gt;&lt;em&gt;Pretty Little Liars&lt;/em&gt;&lt;/a&gt;
 &lt;/aside&gt;
 &lt;p&gt;In a realistic example, the &lt;code&gt;wait()&lt;/code&gt; function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the waiting process starts and when it finishes. In any case, when you source a script containing this code, the first part of the message will appear on the console immediately:&lt;/p&gt;
-&lt;pre class="r-output"&gt;&lt;code&gt;Dead girls walking.
-&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;Dead girls walking.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Then after a two second delay, the console updates to reveal that the author of the threatening message is the mysterious “A.” character:&lt;/p&gt;
-&lt;pre class="r-output"&gt;&lt;code&gt;Dead girls walking. --A.
-&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;Dead girls walking. --A.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;It’s not too difficult to imagine what this looks like in the console, but courtesy of the &lt;a href="https://github.com/r-lib/asciicast"&gt;asciicast&lt;/a&gt; package &lt;span class="citation"&gt;(Csárdi et al. 2019)&lt;/span&gt;, there’s no need to leave anything to the imagination:&lt;/p&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/cat-example.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you’re planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?&lt;/p&gt;
@@ -50,15 +48,7 @@ The ominous text messages used in this post are taken from the TV show &lt;a hre
 }
 title_theme()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I’ve never felt a need to do so because the default theme is rather nice:&lt;/p&gt;
-&lt;pre class="r-output"&gt;&lt;code&gt;
-&lt;span style='color: #00BBBB;'&gt;──&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Secret, by The Pierces&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;────────────────────────────────────────────&lt;/span&gt;&lt;span&gt;
-Got a secret, can you keep it?
-Swear this one you'll save
-Better lock it in your pocket
-Taking this one to the grave
-If I show you then I know you won't tell what I said
-Cause two can keep a secret if one of them is dead
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/message-structure-1.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;Sometimes you may prefer send the user short alert messages. You can create generic alerts with &lt;code&gt;cli_alert()&lt;/code&gt; or you could be more specific by using &lt;code&gt;cli_alert_info()&lt;/code&gt;, &lt;code&gt;cli_alert_warning()&lt;/code&gt;, &lt;code&gt;cli_alert_danger()&lt;/code&gt;, &lt;code&gt;cli_alert_success()&lt;/code&gt;. Most of the text messages sent by A. in &lt;em&gt;Pretty Little Liars&lt;/em&gt; were quite threatening, so in this case it might be more appropriate to mark it as one:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;threatening_text &amp;lt;- function() {
   cli({
@@ -69,11 +59,7 @@ Cause two can keep a secret if one of them is dead
   })
 }
 threatening_text()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class="r-output"&gt;&lt;code&gt;&lt;span style='color: #BBBB00;'&gt;!&lt;/span&gt;&lt;span&gt; The truth won't set you free, bitches.
-&lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;!&lt;/span&gt;&lt;span&gt; I'm going to bury you with it.
-&lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;!&lt;/span&gt;&lt;span&gt; Kisses
-&lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;!&lt;/span&gt;&lt;span&gt; -A
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/message-structure-2.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;Note that I wrapped it in a call to &lt;code&gt;cli()&lt;/code&gt;: this has the effect of telling R to group all these as a single message, and in doing so makes sure that they aren’t ever displayed separately. Often that’s what you want, but not necessarily. For example, most of the time there’s some code in between each message that takes some time to execute. If we wanted the title theme to reveal itself gradually, scrolling up the screen as it does&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;title_theme_scroll &amp;lt;- function() {
   cli_h1(&amp;quot;Secret, by The Pierces&amp;quot;); wait()
@@ -89,7 +75,7 @@ title_theme_scroll()&lt;/code&gt;&lt;/pre&gt;
 &lt;aside&gt;
 The theme song is &lt;em&gt;Secrets&lt;/em&gt;, the first track from the 2007 album &lt;a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge"&gt;Thirteen Tales of Love and Revenge&lt;/a&gt; by &lt;em&gt;The Pierces&lt;/em&gt;
 &lt;/aside&gt;
-&lt;h2 id="status-bars"&gt;Status Bars&lt;/h2&gt;
+&lt;h2 id="using-the-status-bar"&gt;Using the status bar&lt;/h2&gt;
 &lt;p&gt;In this instance, the output happens to be identical to our first example: all it does is print the lyrics to the music in the title credits from &lt;em&gt;Pretty Little Liars&lt;/em&gt;, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few…&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;message_scroll &amp;lt;- function() {
   cli_text(&amp;quot;You found my bracelet.&amp;quot;); wait()
@@ -109,7 +95,7 @@ message_scroll()&lt;/code&gt;&lt;/pre&gt;
 }
 message_inline()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/status-bar-2.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
-&lt;h2 id="spinners"&gt;Spinners&lt;/h2&gt;
+&lt;h2 id="creating-spinners"&gt;Creating spinners&lt;/h2&gt;
 &lt;pre class="r"&gt;&lt;code&gt;theatrics &amp;lt;- function(which) {
   spinny &amp;lt;- make_spinner(
     which = which,
@@ -127,31 +113,65 @@ theatrics(&amp;quot;dots2&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/spinner-1.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;p&gt;There are quite a few possible spinners&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;list_spinners()&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class="r-output"&gt;&lt;code&gt; [1] "dots"                "dots2"               "dots3"              
- [4] "dots4"               "dots5"               "dots6"              
- [7] "dots7"               "dots8"               "dots9"              
-[10] "dots10"              "dots11"              "dots12"             
-[13] "line"                "line2"               "pipe"               
-[16] "simpleDots"          "simpleDotsScrolling" "star"               
-[19] "star2"               "flip"                "hamburger"          
-[22] "growVertical"        "growHorizontal"      "balloon"            
-[25] "balloon2"            "noise"               "bounce"             
-[28] "boxBounce"           "boxBounce2"          "triangle"           
-[31] "arc"                 "circle"              "squareCorners"      
-[34] "circleQuarters"      "circleHalves"        "squish"             
-[37] "toggle"              "toggle2"             "toggle3"            
-[40] "toggle4"             "toggle5"             "toggle6"            
-[43] "toggle7"             "toggle8"             "toggle9"            
-[46] "toggle10"            "toggle11"            "toggle12"           
-[49] "toggle13"            "arrow"               "arrow2"             
-[52] "arrow3"              "bouncingBar"         "bouncingBall"       
-[55] "smiley"              "monkey"              "hearts"             
-[58] "clock"               "earth"               "moon"               
-[61] "runner"              "pong"                "shark"              
-[64] "dqpb"               
-&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt; [1] &amp;quot;dots&amp;quot;                &amp;quot;dots2&amp;quot;               &amp;quot;dots3&amp;quot;              
+ [4] &amp;quot;dots4&amp;quot;               &amp;quot;dots5&amp;quot;               &amp;quot;dots6&amp;quot;              
+ [7] &amp;quot;dots7&amp;quot;               &amp;quot;dots8&amp;quot;               &amp;quot;dots9&amp;quot;              
+[10] &amp;quot;dots10&amp;quot;              &amp;quot;dots11&amp;quot;              &amp;quot;dots12&amp;quot;             
+[13] &amp;quot;line&amp;quot;                &amp;quot;line2&amp;quot;               &amp;quot;pipe&amp;quot;               
+[16] &amp;quot;simpleDots&amp;quot;          &amp;quot;simpleDotsScrolling&amp;quot; &amp;quot;star&amp;quot;               
+[19] &amp;quot;star2&amp;quot;               &amp;quot;flip&amp;quot;                &amp;quot;hamburger&amp;quot;          
+[22] &amp;quot;growVertical&amp;quot;        &amp;quot;growHorizontal&amp;quot;      &amp;quot;balloon&amp;quot;            
+[25] &amp;quot;balloon2&amp;quot;            &amp;quot;noise&amp;quot;               &amp;quot;bounce&amp;quot;             
+[28] &amp;quot;boxBounce&amp;quot;           &amp;quot;boxBounce2&amp;quot;          &amp;quot;triangle&amp;quot;           
+[31] &amp;quot;arc&amp;quot;                 &amp;quot;circle&amp;quot;              &amp;quot;squareCorners&amp;quot;      
+[34] &amp;quot;circleQuarters&amp;quot;      &amp;quot;circleHalves&amp;quot;        &amp;quot;squish&amp;quot;             
+[37] &amp;quot;toggle&amp;quot;              &amp;quot;toggle2&amp;quot;             &amp;quot;toggle3&amp;quot;            
+[40] &amp;quot;toggle4&amp;quot;             &amp;quot;toggle5&amp;quot;             &amp;quot;toggle6&amp;quot;            
+[43] &amp;quot;toggle7&amp;quot;             &amp;quot;toggle8&amp;quot;             &amp;quot;toggle9&amp;quot;            
+[46] &amp;quot;toggle10&amp;quot;            &amp;quot;toggle11&amp;quot;            &amp;quot;toggle12&amp;quot;           
+[49] &amp;quot;toggle13&amp;quot;            &amp;quot;arrow&amp;quot;               &amp;quot;arrow2&amp;quot;             
+[52] &amp;quot;arrow3&amp;quot;              &amp;quot;bouncingBar&amp;quot;         &amp;quot;bouncingBall&amp;quot;       
+[55] &amp;quot;smiley&amp;quot;              &amp;quot;monkey&amp;quot;              &amp;quot;hearts&amp;quot;             
+[58] &amp;quot;clock&amp;quot;               &amp;quot;earth&amp;quot;               &amp;quot;moon&amp;quot;               
+[61] &amp;quot;runner&amp;quot;              &amp;quot;pong&amp;quot;                &amp;quot;shark&amp;quot;              
+[64] &amp;quot;dqpb&amp;quot;               &lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r"&gt;&lt;code&gt;theatrics(&amp;quot;hearts&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/spinner-2.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;h2 id="showing-cli-messages-in-r-markdown"&gt;Showing cli messages in R markdown&lt;/h2&gt;
+&lt;p&gt;This doesn’t work&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It throws an obscure error message that includes something like this&lt;a href="#fn1" class="footnote-ref" id="fnref1"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PCDATA invalid Char value...&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;sanitise_ansi&amp;lt;- function(x, options) {
+  paste0(
+    &amp;quot;&amp;lt;pre class=\&amp;quot;r-output\&amp;quot;&amp;gt;&amp;lt;code&amp;gt;&amp;quot;,
+    fansi::sgr_to_html(x = x, warn = FALSE, term.cap = &amp;quot;256&amp;quot;),
+    &amp;quot;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;&amp;quot;
+  )
+}
+knitr::knit_hooks$set(output = sanitise_ansi)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But this does&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;→ I'm still here bitches, and I know everything. -A
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Well sort of…&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_blockquote(
+  quote = &amp;quot;Friends share secrets, that&amp;#39;s what keeps us close&amp;quot;,
+  citation = &amp;quot;Alison&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;
+    &lt;span style='font-style: italic;'&gt;“Friends share secrets, that's what keeps us close”&lt;/span&gt;&lt;span&gt;
+    &lt;/span&gt;&lt;span style='font-weight: bold;font-style: italic;'&gt;— Alison&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I should have had this set too&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;options(crayon.enabled = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_blockquote(
+  quote = &amp;quot;Popular in life and death&amp;quot;,
+  citation = &amp;quot;Spencer&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;    &lt;span style='font-style: italic;'&gt;“Popular in life and death”&lt;/span&gt;&lt;span&gt;
+    &lt;/span&gt;&lt;span style='font-weight: bold;font-style: italic;'&gt;— Spencer&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;div id="refs" class="references"&gt;
 &lt;div id="ref-cli"&gt;
@@ -163,6 +183,12 @@ theatrics(&amp;quot;dots2&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id="ref-tidyverse"&gt;
 &lt;p&gt;Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. “Welcome to the tidyverse.” &lt;em&gt;Journal of Open Source Software&lt;/em&gt; 4 (43): 1686. &lt;a href="https://doi.org/10.21105/joss.01686"&gt;https://doi.org/10.21105/joss.01686&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="footnotes"&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id="fn1"&gt;&lt;p&gt;If you’re running a distill site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.&lt;a href="#fnref1" class="footnote-back"&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
 &lt;/div&gt;</description>
       <distill:md5>d5a41260e8c54f0561bef2a24bea5b1f</distill:md5>
       <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>

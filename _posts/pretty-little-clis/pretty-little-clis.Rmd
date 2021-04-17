@@ -16,17 +16,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-# enable ANSI to HTML using the fansi package: ensures that the
-# ANSI terminal colours are translated into HTML correctly
-options(crayon.enabled = TRUE)
-knitr::knit_hooks$set(output = function(x, options){
-  paste0(
-    "<pre class=\"r-output\"><code>",
-    fansi::sgr_to_html(x = x, warn = FALSE, term.cap = "256"),
-    "</code></pre>"
-  )
-})
-
 # uncomment this line to generate the asciicast svgs
 # source(here::here("_posts", "pretty-little-clis", "source", "create-asciicasts.R"))
 
@@ -105,12 +94,13 @@ title_theme()
 
 When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I've never felt a need to do so because the default theme is rather nice:
 
-```{r, ref.label="message-structure-1", eval=TRUE, echo=FALSE}
+```{r display-message-structure-1, echo=FALSE}
+insert_asciicast("message-structure-1")
 ```
 
 Sometimes you may prefer send the user short alert messages. You can create generic alerts with `cli_alert()` or you could be more specific by using `cli_alert_info()`, `cli_alert_warning()`, `cli_alert_danger()`, `cli_alert_success()`. Most of the text messages sent by A. in *Pretty Little Liars* were quite threatening, so in this case it might be more appropriate to mark it as one:
 
-```{r message-structure-2}
+```{r message-structure-2, eval=FALSE}
 threatening_text <- function() {
   cli({
     cli_alert_warning("The truth won't set you free, bitches.")
@@ -120,6 +110,9 @@ threatening_text <- function() {
   })
 }
 threatening_text()
+```
+```{r display-message-structure-2, echo=FALSE}
+insert_asciicast("message-structure-2")
 ```
 
 Note that I wrapped it in a call to `cli()`: this has the effect of telling R to group all these as a single message, and in doing so makes sure that they aren't ever displayed separately. Often that's what you want, but not necessarily. For example, most of the time there's some code in between each message that takes some time to execute. If we wanted the title theme to reveal itself gradually, scrolling up the screen as it does
@@ -145,9 +138,7 @@ The theme song is *Secrets*, the first track from the 2007 album [Thirteen Tales
 </aside>
 
 
-
-
-## Status Bars
+## Using the status bar
 
 In this instance, the output happens to be identical to our first example: all it does is print the lyrics to the music in the title credits from *Pretty Little Liars*, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few...
 
@@ -179,7 +170,7 @@ message_inline()
 insert_asciicast("status-bar-2")
 ```
 
-## Spinners
+## Creating spinners
 
 ```{r spinner-1, eval=FALSE}
 theatrics <- function(which) {
@@ -212,5 +203,58 @@ theatrics("hearts")
 ```
 ```{r display-spinner2, echo=FALSE}
 insert_asciicast("spinner-2")
+```
+
+## Showing cli messages in R markdown
+
+This doesn't work
+
+```{r cli-without-setup, eval=FALSE} 
+cli_alert("I'm still here bitches, and I know everything. -A")
+```
+
+It throws an obscure error message that includes something like this^[If you're running a distill site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.]
+```
+PCDATA invalid Char value...
+```
+
+```{r setup-rmd-cli}
+sanitise_ansi<- function(x, options) {
+  paste0(
+    "<pre class=\"r-output\"><code>",
+    fansi::sgr_to_html(x = x, warn = FALSE, term.cap = "256"),
+    "</code></pre>"
+  )
+}
+knitr::knit_hooks$set(output = sanitise_ansi)
+```
+
+But this does
+
+```{r cli-with-setup}
+cli_alert("I'm still here bitches, and I know everything. -A")
+```
+
+Well sort of...
+
+```{r quote-without-crayon} 
+cli_blockquote(
+  quote = "Friends share secrets, that's what keeps us close",
+  citation = "Alison"
+)
+```
+
+I should have had this set too
+
+```{r enable-crayon}
+options(crayon.enabled = TRUE)
+```
+
+
+```{r quote-with-crayon}
+cli_blockquote(
+  quote = "Popular in life and death",
+  citation = "Spencer"
+)
 ```
 

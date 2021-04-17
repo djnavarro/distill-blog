@@ -120,7 +120,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["output/cat-example.svg","output/message-structure-3.svg","output/spinner-1.svg","output/spinner-2.svg","output/status-bar-1.svg","output/status-bar-2.svg","pretty-little-clis_files/anchor-4.2.2/anchor.min.js","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.css","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.js","pretty-little-clis_files/asciinema_player-2.6.1/jquery-3.2.1.min.js","pretty-little-clis_files/asciinema_player-binding-1.0.0/asciinema_player.js","pretty-little-clis_files/bowser-1.9.3/bowser.min.js","pretty-little-clis_files/distill-2.2.21/template.v2.js","pretty-little-clis_files/figure-html5/unnamed-chunk-2.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-3.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-4.svg","pretty-little-clis_files/htmlwidgets-1.5.3/htmlwidgets.js","pretty-little-clis_files/jquery-1.11.3/jquery.min.js","pretty-little-clis_files/jquery-3.2.1/asciinema-player.css","pretty-little-clis_files/jquery-3.2.1/asciinema-player.js","pretty-little-clis_files/jquery-3.2.1/jquery-3.2.1.min.js","pretty-little-clis_files/popper-2.6.0/popper.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-bundle.umd.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-light-border.css","pretty-little-clis_files/tippy-6.2.7/tippy.css","pretty-little-clis_files/tippy-6.2.7/tippy.umd.min.js","pretty-little-clis_files/webcomponents-2.0.0/webcomponents.js","pretty-little-clis.bib","source/cat-example.R","source/create-asciicasts.R","source/message-structure-3.R","source/spinner-1.R","source/spinner-2.R","source/status-bar-1.R","source/status-bar-2.R"]}
+  {"type":"character","attributes":{},"value":["output/cat-example.svg","output/message-structure-1.svg","output/message-structure-2.svg","output/message-structure-3.svg","output/spinner-1.svg","output/spinner-2.svg","output/status-bar-1.svg","output/status-bar-2.svg","pretty-little-clis_files/anchor-4.2.2/anchor.min.js","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.css","pretty-little-clis_files/asciinema_player-2.6.1/asciinema-player.js","pretty-little-clis_files/asciinema_player-2.6.1/jquery-3.2.1.min.js","pretty-little-clis_files/asciinema_player-binding-1.0.0/asciinema_player.js","pretty-little-clis_files/bowser-1.9.3/bowser.min.js","pretty-little-clis_files/distill-2.2.21/template.v2.js","pretty-little-clis_files/figure-html5/unnamed-chunk-2.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-3.svg","pretty-little-clis_files/figure-html5/unnamed-chunk-4.svg","pretty-little-clis_files/htmlwidgets-1.5.3/htmlwidgets.js","pretty-little-clis_files/jquery-1.11.3/jquery.min.js","pretty-little-clis_files/jquery-3.2.1/asciinema-player.css","pretty-little-clis_files/jquery-3.2.1/asciinema-player.js","pretty-little-clis_files/jquery-3.2.1/jquery-3.2.1.min.js","pretty-little-clis_files/popper-2.6.0/popper.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-bundle.umd.min.js","pretty-little-clis_files/tippy-6.2.7/tippy-light-border.css","pretty-little-clis_files/tippy-6.2.7/tippy.css","pretty-little-clis_files/tippy-6.2.7/tippy.umd.min.js","pretty-little-clis_files/webcomponents-2.0.0/webcomponents.js","pretty-little-clis.bib","source/cat-example.R","source/create-asciicasts.R","source/message-structure-1.R","source/message-structure-2.R","source/message-structure-3.R","source/spinner-1.R","source/spinner-2.R","source/status-bar-1.R","source/status-bar-2.R"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1499,13 +1499,11 @@ The ominous text messages used in this post are taken from the TV show <a href="
 </aside>
 <p>In a realistic example, the <code>wait()</code> function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the waiting process starts and when it finishes. In any case, when you source a script containing this code, the first part of the message will appear on the console immediately:</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre class="r-output"><code>Dead girls walking.
-</code></pre>
+<pre><code>Dead girls walking.</code></pre>
 </div>
 <p>Then after a two second delay, the console updates to reveal that the author of the threatening message is the mysterious “A.” character:</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre class="r-output"><code>Dead girls walking. --A.
-</code></pre>
+<pre><code>Dead girls walking. --A.</code></pre>
 </div>
 <p>It’s not too difficult to imagine what this looks like in the console, but courtesy of the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(Csárdi et al. <a href="#ref-asciiicast" role="doc-biblioref">2019</a>)</span>, there’s no need to leave anything to the imagination:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1539,15 +1537,7 @@ The ominous text messages used in this post are taken from the TV show <a href="
 </div>
 <p>When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I’ve never felt a need to do so because the default theme is rather nice:</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre class="r-output"><code>
-<span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Secret, by The Pierces</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────</span><span>
-Got a secret, can you keep it?
-Swear this one you'll save
-Better lock it in your pocket
-Taking this one to the grave
-If I show you then I know you won't tell what I said
-Cause two can keep a secret if one of them is dead
-</span></code></pre>
+<p><img src="output/message-structure-1.svg" /><!-- --></p>
 </div>
 <p>Sometimes you may prefer send the user short alert messages. You can create generic alerts with <code>cli_alert()</code> or you could be more specific by using <code>cli_alert_info()</code>, <code>cli_alert_warning()</code>, <code>cli_alert_danger()</code>, <code>cli_alert_success()</code>. Most of the text messages sent by A. in <em>Pretty Little Liars</em> were quite threatening, so in this case it might be more appropriate to mark it as one:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1563,11 +1553,9 @@ Cause two can keep a secret if one of them is dead
 <span class='fu'>threatening_text</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre class="r-output"><code><span style='color: #BBBB00;'>!</span><span> The truth won't set you free, bitches.
-</span><span style='color: #BBBB00;'>!</span><span> I'm going to bury you with it.
-</span><span style='color: #BBBB00;'>!</span><span> Kisses
-</span><span style='color: #BBBB00;'>!</span><span> -A
-</span></code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="output/message-structure-2.svg" /><!-- --></p>
 </div>
 <p>Note that I wrapped it in a call to <code>cli()</code>: this has the effect of telling R to group all these as a single message, and in doing so makes sure that they aren’t ever displayed separately. Often that’s what you want, but not necessarily. For example, most of the time there’s some code in between each message that takes some time to execute. If we wanted the title theme to reveal itself gradually, scrolling up the screen as it does</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1591,7 +1579,7 @@ Cause two can keep a secret if one of them is dead
 <aside>
 The theme song is <em>Secrets</em>, the first track from the 2007 album <a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge">Thirteen Tales of Love and Revenge</a> by <em>The Pierces</em>
 </aside>
-<h2 id="status-bars">Status Bars</h2>
+<h2 id="using-the-status-bar">Using the status bar</h2>
 <p>In this instance, the output happens to be identical to our first example: all it does is print the lyrics to the music in the title credits from <em>Pretty Little Liars</em>, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1625,7 +1613,7 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/status-bar-2.svg" /><!-- --></p>
 </div>
-<h2 id="spinners">Spinners</h2>
+<h2 id="creating-spinners">Creating spinners</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>theatrics</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>which</span><span class='op'>)</span> <span class='op'>{</span>
@@ -1654,29 +1642,28 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/list_spinners.html'>list_spinners</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre class="r-output"><code> [1] "dots"                "dots2"               "dots3"              
- [4] "dots4"               "dots5"               "dots6"              
- [7] "dots7"               "dots8"               "dots9"              
-[10] "dots10"              "dots11"              "dots12"             
-[13] "line"                "line2"               "pipe"               
-[16] "simpleDots"          "simpleDotsScrolling" "star"               
-[19] "star2"               "flip"                "hamburger"          
-[22] "growVertical"        "growHorizontal"      "balloon"            
-[25] "balloon2"            "noise"               "bounce"             
-[28] "boxBounce"           "boxBounce2"          "triangle"           
-[31] "arc"                 "circle"              "squareCorners"      
-[34] "circleQuarters"      "circleHalves"        "squish"             
-[37] "toggle"              "toggle2"             "toggle3"            
-[40] "toggle4"             "toggle5"             "toggle6"            
-[43] "toggle7"             "toggle8"             "toggle9"            
-[46] "toggle10"            "toggle11"            "toggle12"           
-[49] "toggle13"            "arrow"               "arrow2"             
-[52] "arrow3"              "bouncingBar"         "bouncingBall"       
-[55] "smiley"              "monkey"              "hearts"             
-[58] "clock"               "earth"               "moon"               
-[61] "runner"              "pong"                "shark"              
-[64] "dqpb"               
-</code></pre>
+<pre><code> [1] &quot;dots&quot;                &quot;dots2&quot;               &quot;dots3&quot;              
+ [4] &quot;dots4&quot;               &quot;dots5&quot;               &quot;dots6&quot;              
+ [7] &quot;dots7&quot;               &quot;dots8&quot;               &quot;dots9&quot;              
+[10] &quot;dots10&quot;              &quot;dots11&quot;              &quot;dots12&quot;             
+[13] &quot;line&quot;                &quot;line2&quot;               &quot;pipe&quot;               
+[16] &quot;simpleDots&quot;          &quot;simpleDotsScrolling&quot; &quot;star&quot;               
+[19] &quot;star2&quot;               &quot;flip&quot;                &quot;hamburger&quot;          
+[22] &quot;growVertical&quot;        &quot;growHorizontal&quot;      &quot;balloon&quot;            
+[25] &quot;balloon2&quot;            &quot;noise&quot;               &quot;bounce&quot;             
+[28] &quot;boxBounce&quot;           &quot;boxBounce2&quot;          &quot;triangle&quot;           
+[31] &quot;arc&quot;                 &quot;circle&quot;              &quot;squareCorners&quot;      
+[34] &quot;circleQuarters&quot;      &quot;circleHalves&quot;        &quot;squish&quot;             
+[37] &quot;toggle&quot;              &quot;toggle2&quot;             &quot;toggle3&quot;            
+[40] &quot;toggle4&quot;             &quot;toggle5&quot;             &quot;toggle6&quot;            
+[43] &quot;toggle7&quot;             &quot;toggle8&quot;             &quot;toggle9&quot;            
+[46] &quot;toggle10&quot;            &quot;toggle11&quot;            &quot;toggle12&quot;           
+[49] &quot;toggle13&quot;            &quot;arrow&quot;               &quot;arrow2&quot;             
+[52] &quot;arrow3&quot;              &quot;bouncingBar&quot;         &quot;bouncingBall&quot;       
+[55] &quot;smiley&quot;              &quot;monkey&quot;              &quot;hearts&quot;             
+[58] &quot;clock&quot;               &quot;earth&quot;               &quot;moon&quot;               
+[61] &quot;runner&quot;              &quot;pong&quot;                &quot;shark&quot;              
+[64] &quot;dqpb&quot;               </code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1687,7 +1674,72 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/spinner-2.svg" /><!-- --></p>
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h2 id="showing-cli-messages-in-r-markdown">Showing cli messages in R markdown</h2>
+<p>This doesn’t work</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>It throws an obscure error message that includes something like this<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<pre><code>PCDATA invalid Char value...</code></pre>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sanitise_ansi</span><span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>options</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span>
+    <span class='st'>"&lt;pre class=\"r-output\"&gt;&lt;code&gt;"</span>,
+    <span class='fu'>fansi</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/fansi/man/sgr_to_html.html'>sgr_to_html</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, warn <span class='op'>=</span> <span class='cn'>FALSE</span>, term.cap <span class='op'>=</span> <span class='st'>"256"</span><span class='op'>)</span>,
+    <span class='st'>"&lt;/code&gt;&lt;/pre&gt;"</span>
+  <span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>knitr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/knitr/man/knit_hooks.html'>knit_hooks</a></span><span class='op'>$</span><span class='fu'>set</span><span class='op'>(</span>output <span class='op'>=</span> <span class='va'>sanitise_ansi</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>But this does</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre class="r-output"><code>→ I'm still here bitches, and I know everything. -A
+</code></pre>
+</div>
+<p>Well sort of…</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_blockquote.html'>cli_blockquote</a></span><span class='op'>(</span>
+  quote <span class='op'>=</span> <span class='st'>"Friends share secrets, that's what keeps us close"</span>,
+  citation <span class='op'>=</span> <span class='st'>"Alison"</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre class="r-output"><code>
+    “Friends share secrets, that's what keeps us close”
+    — Alison
+</code></pre>
+</div>
+<p>I should have had this set too</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>crayon.enabled <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_blockquote.html'>cli_blockquote</a></span><span class='op'>(</span>
+  quote <span class='op'>=</span> <span class='st'>"Popular in life and death"</span>,
+  citation <span class='op'>=</span> <span class='st'>"Spencer"</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre class="r-output"><code>    <span style='font-style: italic;'>“Popular in life and death”</span><span>
+    </span><span style='font-weight: bold;font-style: italic;'>— Spencer</span><span>
+</span></code></pre>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references" role="doc-bibliography">
 <div id="ref-cli">
 <p>Csárdi, Gábor. 2021. <em>Cli: Helpers for Developing Command Line Interfaces</em>. <a href="https://CRAN.R-project.org/package=cli">https://CRAN.R-project.org/package=cli</a>.</p>
@@ -1699,6 +1751,12 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <p>Wickham, Hadley, Mara Averick, Jennifer Bryan, Winston Chang, Lucy D’Agostino McGowan, Romain François, Garrett Grolemund, et al. 2019. “Welcome to the tidyverse.” <em>Journal of Open Source Software</em> 4 (43): 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>.</p>
 </div>
 </div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>If you’re running a distill site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
