@@ -14,4 +14,4 @@ wait_for_reveal <- function(spinner) {
 
 cat("\n")
 wait_for_reveal(spinner)
-cli::cli_alert_success("It's not over until I say it is. Sleep tight while you still can, bitches. -A")
+cli::cli_alert_success("Sleep tight while you still can, bitches. -A")

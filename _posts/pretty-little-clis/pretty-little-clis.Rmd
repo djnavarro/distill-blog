@@ -41,6 +41,12 @@ cat("Dead girls walking.")
 wait_for_message()
 cat(" --A.\n")
 ```
+
+
+<aside>
+The ominous text messages used in this post are all taken from the TV show [*Pretty Little Liars*](https://prettylittleliars.fandom.com/)
+</aside>
+
 In a realistic example, the `wait_for_message()` function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that's just you!) know when the waiting process starts and when it finishes. For simplicity, suppose `wait_for_message()` is a function that takes one second to evaluate, such as this one:
 
 ```{r define-godot-2, eval=FALSE}
@@ -49,39 +55,42 @@ wait_for_message <- function() {
 }
 ```
 
-If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:
+When you source a script containing this code, the first part of the message will appear on the console immediately:
 
 ```{r message-only, echo=FALSE}
 cat("Dead girls walking.")
 ```
 
-and then after a one second delay, this message is updated to reveal the complete message:
+Then after a one second delay, console updates to reveal that the author of the threatening message is the mysterious "A." character:
 
 ```{r, ref.label="example-with-cat", echo=FALSE, eval=TRUE}
 ```
 
-This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. I mean, if you're planning on impersonating a dead teenager and terrorising her friends using R, you're going to want to put a little effort into the details, right?
+This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you're planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?
 
 ## Meet the cli package
 
-If you've worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package as your mysterious assistant, and in this post I'll talk about some of them. The cli package is developed by [Gábor Csárdi](https://twitter.com/GaborCsardi), and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package
+If you've worked in the [tidyverse](https://www.tidyverse.org/) for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package as your talented assistant, and in this post I'll talk about some of them. 
+
+To craft a beautiful command line interface (CLI) of our very own, the first thing we'll need to do is load the package:
 
 ```{r package-load, message=FALSE, warning=FALSE}
 library(cli)
 ```
 
-Commands 
+The design of cli separates style from structure: your messaging code specifies the *structure* associated with the message, not the superficial *style*. The `cli_h1()` command generates a "top-level" heading, the `cli_h2()` command generates a second level heading, `cli_alert()` creates a generic "alert" message, and so on. So the code you write might look something like this:
 
 ```{r alert-messages, eval=FALSE}
 cli_h1("Secret, by The Pierces")
 cli_alert("Got a secret, can you keep it?")
 cli_alert("Swear this one you'll save")
-cli_alert("Better lock it, in your pocket")
+cli_alert("Better lock it in your pocket")
 cli_alert("Taking this one to the grave")
-cli_alert("If I show you then I know you, won't tell what I said")
+cli_alert("If I show you then I know you won't tell what I said")
 cli_alert("Cause two can keep a secret if one of them is dead")
 ```
 
+When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I've never felt a need to do so because the default theme is rather nice:
 
 ```{r start-app, echo=FALSE}
 # create a cli app that directs output to stdout() rather than
@@ -92,8 +101,7 @@ app <- start_app(output = "stdout", .auto_close = TRUE)
 ```{r, ref.label="alert-messages", eval=TRUE, echo=FALSE}
 ```
 
-A lot of the cli functionality makes use of dynamic features of the R consoloe, so from now on I'll show output in the form of these SVG screencasts created using the asciicast package. For example, we might write code that inserts a time consuming process between each line, so the output would look more like this:
-
+A lot of the cli functionality uses dynamic features of the R console that don't have analogs in the HTML output produced by R Markdown, so in some cases I'll show the output in the form of an SVG screencast created using the [asciicast](https://github.com/r-lib/asciicast) package. For example, most of the time there's some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:
 
 ```{r display-liars, echo=FALSE}
 knitr::include_graphics(
@@ -101,7 +109,11 @@ knitr::include_graphics(
 )
 ```
 
+In this instance, the output happens to be identical to our first one: all it does is print the lyrics to the music in the title credits from *Pretty Little Liars*, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few...
 
+<aside>
+The theme song is *Secrets*, the first track from the 2007 album [Thirteen Tales of Love and Revenge](https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge) by *The Pierces*
+</aside>
 
 ## Spinners
 
@@ -120,9 +132,7 @@ wait_for_reveal <- function(spinner) {
 }
 
 wait_for_reveal(spinner)
-cli_alert_success(
-  "It's not over until I say it is. Sleep tight while you still can, bitches. -A"
-)
+cli_alert_success("Sleep tight while you still can, bitches. -A")
 ```
 
 ```{r display-spinner, echo=FALSE}

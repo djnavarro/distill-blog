@@ -18,39 +18,48 @@
 &lt;pre class="r"&gt;&lt;code&gt;cat(&amp;quot;Dead girls walking.&amp;quot;)
 wait_for_message()
 cat(&amp;quot; --A.\n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;aside&gt;
+The ominous text messages used in this post are all taken from the TV show &lt;a href="https://prettylittleliars.fandom.com/"&gt;&lt;em&gt;Pretty Little Liars&lt;/em&gt;&lt;/a&gt;
+&lt;/aside&gt;
 &lt;p&gt;In a realistic example, the &lt;code&gt;wait_for_message()&lt;/code&gt; function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the waiting process starts and when it finishes. For simplicity, suppose &lt;code&gt;wait_for_message()&lt;/code&gt; is a function that takes one second to evaluate, such as this one:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;wait_for_message &amp;lt;- function() {
   Sys.sleep(1)
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:&lt;/p&gt;
+&lt;p&gt;When you source a script containing this code, the first part of the message will appear on the console immediately:&lt;/p&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;Dead girls walking.
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;and then after a one second delay, this message is updated to reveal the complete message:&lt;/p&gt;
+&lt;p&gt;Then after a one second delay, console updates to reveal that the author of the threatening message is the mysterious “A.” character:&lt;/p&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;Dead girls walking. --A.
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. I mean, if you’re planning on impersonating a dead teenager and terrorising her friends using R, you’re going to want to put a little effort into the details, right?&lt;/p&gt;
+&lt;p&gt;This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you’re planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?&lt;/p&gt;
 &lt;h2 id="meet-the-cli-package"&gt;Meet the cli package&lt;/h2&gt;
-&lt;p&gt;If you’ve worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the &lt;a href="https://cli.r-lib.org"&gt;cli&lt;/a&gt; package as your mysterious assistant, and in this post I’ll talk about some of them. The cli package is developed by &lt;a href="https://twitter.com/GaborCsardi"&gt;Gábor Csárdi&lt;/a&gt;, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package&lt;/p&gt;
+&lt;p&gt;If you’ve worked in the &lt;a href="https://www.tidyverse.org/"&gt;tidyverse&lt;/a&gt; for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the &lt;a href="https://cli.r-lib.org"&gt;cli&lt;/a&gt; package as your talented assistant, and in this post I’ll talk about some of them.&lt;/p&gt;
+&lt;p&gt;To craft a beautiful command line interface (CLI) of our very own, the first thing we’ll need to do is load the package:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;library(cli)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Commands&lt;/p&gt;
+&lt;p&gt;The design of cli separates style from structure: your messaging code specifies the &lt;em&gt;structure&lt;/em&gt; associated with the message, not the superficial &lt;em&gt;style&lt;/em&gt;. The &lt;code&gt;cli_h1()&lt;/code&gt; command generates a “top-level” heading, the &lt;code&gt;cli_h2()&lt;/code&gt; command generates a second level heading, &lt;code&gt;cli_alert()&lt;/code&gt; creates a generic “alert” message, and so on. So the code you write might look something like this:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;cli_h1(&amp;quot;Secret, by The Pierces&amp;quot;)
 cli_alert(&amp;quot;Got a secret, can you keep it?&amp;quot;)
 cli_alert(&amp;quot;Swear this one you&amp;#39;ll save&amp;quot;)
-cli_alert(&amp;quot;Better lock it, in your pocket&amp;quot;)
+cli_alert(&amp;quot;Better lock it in your pocket&amp;quot;)
 cli_alert(&amp;quot;Taking this one to the grave&amp;quot;)
-cli_alert(&amp;quot;If I show you then I know you, won&amp;#39;t tell what I said&amp;quot;)
+cli_alert(&amp;quot;If I show you then I know you won&amp;#39;t tell what I said&amp;quot;)
 cli_alert(&amp;quot;Cause two can keep a secret if one of them is dead&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I’ve never felt a need to do so because the default theme is rather nice:&lt;/p&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;
 &lt;span style='color: #00BBBB;'&gt;──&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Secret, by The Pierces&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;────────────────────────────────────────────&lt;/span&gt;&lt;span&gt;
 → Got a secret, can you keep it?
 → Swear this one you'll save
-→ Better lock it, in your pocket
+→ Better lock it in your pocket
 → Taking this one to the grave
-→ If I show you then I know you, won't tell what I said
+→ If I show you then I know you won't tell what I said
 → Cause two can keep a secret if one of them is dead
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;A lot of the cli functionality makes use of dynamic features of the R consoloe, so from now on I’ll show output in the form of these SVG screencasts created using the asciicast package. For example, we might write code that inserts a time consuming process between each line, so the output would look more like this:&lt;/p&gt;
+&lt;p&gt;A lot of the cli functionality uses dynamic features of the R console that don’t have analogs in the HTML output produced by R Markdown, so in some cases I’ll show the output in the form of an SVG screencast created using the &lt;a href="https://github.com/r-lib/asciicast"&gt;asciicast&lt;/a&gt; package. For example, most of the time there’s some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:&lt;/p&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/secret.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;p&gt;In this instance, the output happens to be identical to our first one: all it does is print the lyrics to the music in the title credits from &lt;em&gt;Pretty Little Liars&lt;/em&gt;, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few…&lt;/p&gt;
+&lt;aside&gt;
+The theme song is &lt;em&gt;Secrets&lt;/em&gt;, the first track from the 2007 album &lt;a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge"&gt;Thirteen Tales of Love and Revenge&lt;/a&gt; by &lt;em&gt;The Pierces&lt;/em&gt;
+&lt;/aside&gt;
 &lt;h2 id="spinners"&gt;Spinners&lt;/h2&gt;
 &lt;pre class="r"&gt;&lt;code&gt;spinner &amp;lt;- make_spinner(
   which = &amp;quot;dots2&amp;quot;, 
@@ -66,9 +75,7 @@ wait_for_reveal &amp;lt;- function(spinner) {
 }
 
 wait_for_reveal(spinner)
-cli_alert_success(
-  &amp;quot;It&amp;#39;s not over until I say it is. Sleep tight while you still can, bitches. -A&amp;quot;
-)&lt;/code&gt;&lt;/pre&gt;
+cli_alert_success(&amp;quot;Sleep tight while you still can, bitches. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/spinner-sleeptight.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</description>
       <distill:md5>d5a41260e8c54f0561bef2a24bea5b1f</distill:md5>

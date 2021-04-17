@@ -1489,6 +1489,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </code></pre>
 </div>
 </div>
+<aside>
+The ominous text messages used in this post are all taken from the TV show <a href="https://prettylittleliars.fandom.com/"><em>Pretty Little Liars</em></a>
+</aside>
 <p>In a realistic example, the <code>wait_for_message()</code> function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that’s just you!) know when the waiting process starts and when it finishes. For simplicity, suppose <code>wait_for_message()</code> is a function that takes one second to evaluate, such as this one:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1498,38 +1501,40 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </code></pre>
 </div>
 </div>
-<p>If you execute the code above by sourcing a script, the first thing you see at the console is the initial message:</p>
+<p>When you source a script containing this code, the first part of the message will appear on the console immediately:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r-output"><code>Dead girls walking.
 </code></pre>
 </div>
-<p>and then after a one second delay, this message is updated to reveal the complete message:</p>
+<p>Then after a one second delay, console updates to reveal that the author of the threatening message is the mysterious “A.” character:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r-output"><code>Dead girls walking. --A.
 </code></pre>
 </div>
-<p>This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. I mean, if you’re planning on impersonating a dead teenager and terrorising her friends using R, you’re going to want to put a little effort into the details, right?</p>
+<p>This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you’re planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?</p>
 <h2 id="meet-the-cli-package">Meet the cli package</h2>
-<p>If you’ve worked with tidyverse for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the <a href="https://cli.r-lib.org">cli</a> package as your mysterious assistant, and in this post I’ll talk about some of them. The cli package is developed by <a href="https://twitter.com/GaborCsardi">Gábor Csárdi</a>, and its goal is to help you effortlessly create a beautiful command line interface (CLI) of your very own. Load package</p>
+<p>If you’ve worked in the <a href="https://www.tidyverse.org/">tidyverse</a> for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you’ve wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the <a href="https://cli.r-lib.org">cli</a> package as your talented assistant, and in this post I’ll talk about some of them.</p>
+<p>To craft a beautiful command line interface (CLI) of our very own, the first thing we’ll need to do is load the package:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/r-lib/cli#readme'>cli</a></span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>Commands</p>
+<p>The design of cli separates style from structure: your messaging code specifies the <em>structure</em> associated with the message, not the superficial <em>style</em>. The <code>cli_h1()</code> command generates a “top-level” heading, the <code>cli_h2()</code> command generates a second level heading, <code>cli_alert()</code> creates a generic “alert” message, and so on. So the code you write might look something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Secret, by The Pierces"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Got a secret, can you keep it?"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Swear this one you'll save"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Better lock it, in your pocket"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Better lock it in your pocket"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Taking this one to the grave"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"If I show you then I know you, won't tell what I said"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"If I show you then I know you won't tell what I said"</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"Cause two can keep a secret if one of them is dead"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
+<p>When this code is executed, the cli package applies the appropriate styling to create the actual output. You can customise this style using the theming system in cli, but I’ve never felt a need to do so because the default theme is rather nice:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -1538,16 +1543,20 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Secret, by The Pierces</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────</span><span>
 → Got a secret, can you keep it?
 → Swear this one you'll save
-→ Better lock it, in your pocket
+→ Better lock it in your pocket
 → Taking this one to the grave
-→ If I show you then I know you, won't tell what I said
+→ If I show you then I know you won't tell what I said
 → Cause two can keep a secret if one of them is dead
 </span></code></pre>
 </div>
-<p>A lot of the cli functionality makes use of dynamic features of the R consoloe, so from now on I’ll show output in the form of these SVG screencasts created using the asciicast package. For example, we might write code that inserts a time consuming process between each line, so the output would look more like this:</p>
+<p>A lot of the cli functionality uses dynamic features of the R console that don’t have analogs in the HTML output produced by R Markdown, so in some cases I’ll show the output in the form of an SVG screencast created using the <a href="https://github.com/r-lib/asciicast">asciicast</a> package. For example, most of the time there’s some code in between each message that takes some time to execute. What that means is that the output of your code tends to look more like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="secret.svg" /><!-- --></p>
 </div>
+<p>In this instance, the output happens to be identical to our first one: all it does is print the lyrics to the music in the title credits from <em>Pretty Little Liars</em>, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few…</p>
+<aside>
+The theme song is <em>Secrets</em>, the first track from the 2007 album <a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge">Thirteen Tales of Love and Revenge</a> by <em>The Pierces</em>
+</aside>
 <h2 id="spinners">Spinners</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1565,9 +1574,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <span class='op'>}</span>
 
 <span class='fu'>wait_for_reveal</span><span class='op'>(</span><span class='va'>spinner</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span>
-  <span class='st'>"It's not over until I say it is. Sleep tight while you still can, bitches. -A"</span>
-<span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Sleep tight while you still can, bitches. -A"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
