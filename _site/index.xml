@@ -138,40 +138,54 @@ theatrics(&amp;quot;dots2&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r"&gt;&lt;code&gt;theatrics(&amp;quot;hearts&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/spinner-2.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;h2 id="showing-cli-messages-in-r-markdown"&gt;Showing cli messages in R markdown&lt;/h2&gt;
-&lt;p&gt;This doesn’t work&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;It throws an obscure error message that includes something like this&lt;a href="#fn1" class="footnote-ref" id="fnref1"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;PCDATA invalid Char value...&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class="r"&gt;&lt;code&gt;sanitise_ansi&amp;lt;- function(x, options) {
+&lt;p&gt;An important thing to remember about cli is that the text it produces is a &lt;em&gt;message&lt;/em&gt;, so its visibility in R Markdown depends on the chunk option for messages. For this document I set my knitr defaults so that messages and warnings would be shown, but that isn’t necessarily the case for every R Markdown template (e.g., distill articles). For this document I included this line in the very first chunk (which I hid from the output by setting &lt;code&gt;include=FALSE&lt;/code&gt; for that chunk)&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;knitr::opts_chunk$set(message = TRUE, warning = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Because I set my document up like that this works&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_text(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;I&amp;#39;m still here bitches, and I know everything. -A&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;but I could turn it off again simply by setting the &lt;code&gt;message=FALSE&lt;/code&gt; chunk option or by using the &lt;code&gt;suppressMessages()&lt;/code&gt; function. Based on this you might think that including cli output in an R Markdown document is pretty straightforward, but there are other issues. Suppose we wanted to use &lt;code&gt;cli_alert()&lt;/code&gt; to send the same message. This fails inside an R Markdown document and produces an error&lt;a href="#fn1" class="footnote-ref" id="fnref1"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt; that complains about &lt;code&gt;PCDATA invalid Char value&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;# enable crayon support for ANSI colours and formatting
+options(crayon.enabled = TRUE)
+
+# convert a string x with ANSI formatting to HTML and wrap 
+# inside pre and code tags
+ansi_to_html &amp;lt;- function(x, options) {
   paste0(
     &amp;quot;&amp;lt;pre class=\&amp;quot;r-output\&amp;quot;&amp;gt;&amp;lt;code&amp;gt;&amp;quot;,
     fansi::sgr_to_html(x = x, warn = FALSE, term.cap = &amp;quot;256&amp;quot;),
     &amp;quot;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;&amp;quot;
   )
 }
-knitr::knit_hooks$set(output = sanitise_ansi)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;But this does&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre class="r-output"&gt;&lt;code&gt;→ I'm still here bitches, and I know everything. -A
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Well sort of…&lt;/p&gt;
+
+# tell knitr to apply the ansi_to_html() function to messages
+knitr::knit_hooks$set(message = ansi_to_html)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r"&gt;&lt;code&gt;cli_blockquote(
   quote = &amp;quot;Friends share secrets, that&amp;#39;s what keeps us close&amp;quot;,
   citation = &amp;quot;Alison&amp;quot;
 )&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;
-    &lt;span style='font-style: italic;'&gt;“Friends share secrets, that's what keeps us close”&lt;/span&gt;&lt;span&gt;
-    &lt;/span&gt;&lt;span style='font-weight: bold;font-style: italic;'&gt;— Alison&lt;/span&gt;&lt;span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;    &lt;span style='font-style: italic;'&gt;“Friends share secrets, that's what keeps us close”&lt;/span&gt;&lt;span&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I should have had this set too&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;options(crayon.enabled = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;    &lt;span style='font-weight: bold;font-style: italic;'&gt;— Alison&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;→ I'm still here bitches, and I know everything. -A
+&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r"&gt;&lt;code&gt;cli_blockquote(
   quote = &amp;quot;Popular in life and death&amp;quot;,
   citation = &amp;quot;Spencer&amp;quot;
 )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;    &lt;span style='font-style: italic;'&gt;“Popular in life and death”&lt;/span&gt;&lt;span&gt;
-    &lt;/span&gt;&lt;span style='font-weight: bold;font-style: italic;'&gt;— Spencer&lt;/span&gt;&lt;span&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;    &lt;span style='font-weight: bold;font-style: italic;'&gt;— Spencer&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;div id="refs" class="references"&gt;
 &lt;div id="ref-cli"&gt;
@@ -187,7 +201,7 @@ knitr::knit_hooks$set(output = sanitise_ansi)&lt;/code&gt;&lt;/pre&gt;
 &lt;div class="footnotes"&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id="fn1"&gt;&lt;p&gt;If you’re running a distill site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.&lt;a href="#fnref1" class="footnote-back"&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id="fn1"&gt;&lt;p&gt;If you’re running a site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.&lt;a href="#fnref1" class="footnote-back"&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;</description>
       <distill:md5>d5a41260e8c54f0561bef2a24bea5b1f</distill:md5>

@@ -2634,38 +2634,42 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <p><img src="output/spinner-2.svg" /><!-- --></p>
 </div>
 <h2 id="showing-cli-messages-in-r-markdown">Showing cli messages in R markdown</h2>
-<p>This doesn’t work</p>
+<p>An important thing to remember about cli is that the text it produces is a <em>message</em>, so its visibility in R Markdown depends on the chunk option for messages. For this document I set my knitr defaults so that messages and warnings would be shown, but that isn’t necessarily the case for every R Markdown template (e.g., distill articles). For this document I included this line in the very first chunk (which I hid from the output by setting <code>include=FALSE</code> for that chunk)</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/knitr/man/opts_chunk.html'>opts_chunk</a></span><span class='op'>$</span><span class='fu'>set</span><span class='op'>(</span>message <span class='op'>=</span> <span class='cn'>TRUE</span>, warning <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>It throws an obscure error message that includes something like this<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
-<pre><code>PCDATA invalid Char value...</code></pre>
+<p>Because I set my document up like that this works</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sanitise_ansi</span><span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>options</span><span class='op'>)</span> <span class='op'>{</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>I&#39;m still here bitches, and I know everything. -A</code></pre>
+</div>
+<p>but I could turn it off again simply by setting the <code>message=FALSE</code> chunk option or by using the <code>suppressMessages()</code> function. Based on this you might think that including cli output in an R Markdown document is pretty straightforward, but there are other issues. Suppose we wanted to use <code>cli_alert()</code> to send the same message. This fails inside an R Markdown document and produces an error<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> that complains about <code>PCDATA invalid Char value</code>.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># enable crayon support for ANSI colours and formatting</span>
+<span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>crayon.enabled <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='co'># convert a string x with ANSI formatting to HTML and wrap </span>
+<span class='co'># inside pre and code tags</span>
+<span class='va'>ansi_to_html</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>options</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span>
     <span class='st'>"&lt;pre class=\"r-output\"&gt;&lt;code&gt;"</span>,
     <span class='fu'>fansi</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/fansi/man/sgr_to_html.html'>sgr_to_html</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, warn <span class='op'>=</span> <span class='cn'>FALSE</span>, term.cap <span class='op'>=</span> <span class='st'>"256"</span><span class='op'>)</span>,
     <span class='st'>"&lt;/code&gt;&lt;/pre&gt;"</span>
   <span class='op'>)</span>
 <span class='op'>}</span>
-<span class='fu'>knitr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/knitr/man/knit_hooks.html'>knit_hooks</a></span><span class='op'>$</span><span class='fu'>set</span><span class='op'>(</span>output <span class='op'>=</span> <span class='va'>sanitise_ansi</span><span class='op'>)</span>
+
+<span class='co'># tell knitr to apply the ansi_to_html() function to messages</span>
+<span class='fu'>knitr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/knitr/man/knit_hooks.html'>knit_hooks</a></span><span class='op'>$</span><span class='fu'>set</span><span class='op'>(</span>message <span class='op'>=</span> <span class='va'>ansi_to_html</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>But this does</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre class="r-output"><code>→ I'm still here bitches, and I know everything. -A
-</code></pre>
-</div>
-<p>Well sort of…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_blockquote.html'>cli_blockquote</a></span><span class='op'>(</span>
@@ -2675,16 +2679,19 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 </code></pre>
 </div>
 <pre class="r-output"><code>
-    “Friends share secrets, that's what keeps us close”
-    — Alison
 </code></pre>
-</div>
-<p>I should have had this set too</p>
-<div class="layout-chunk" data-layout="l-body">
+<pre class="r-output"><code>    <span style='font-style: italic;'>“Friends share secrets, that's what keeps us close”</span><span>
+</span></code></pre>
+<pre class="r-output"><code>    <span style='font-weight: bold;font-style: italic;'>— Alison</span><span>
+</span></code></pre>
+<pre class="r-output"><code>
+</code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>crayon.enabled <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
 </code></pre>
 </div>
+<pre class="r-output"><code>→ I'm still here bitches, and I know everything. -A
+</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2694,9 +2701,14 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <span class='op'>)</span>
 </code></pre>
 </div>
+<pre class="r-output"><code>
+</code></pre>
 <pre class="r-output"><code>    <span style='font-style: italic;'>“Popular in life and death”</span><span>
-    </span><span style='font-weight: bold;font-style: italic;'>— Spencer</span><span>
 </span></code></pre>
+<pre class="r-output"><code>    <span style='font-weight: bold;font-style: italic;'>— Spencer</span><span>
+</span></code></pre>
+<pre class="r-output"><code>
+</code></pre>
 </div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references" role="doc-bibliography">
@@ -2713,7 +2725,7 @@ The theme song is <em>Secrets</em>, the first track from the 2007 album <a href=
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>If you’re running a distill site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1" role="doc-endnote"><p>If you’re running a site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

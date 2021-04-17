@@ -14,7 +14,7 @@ output:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
 
 # uncomment this line to generate the asciicast svgs
 # source(here::here("_posts", "pretty-little-clis", "source", "create-asciicasts.R"))
@@ -25,10 +25,6 @@ insert_asciicast <- function(name) {
   svg <- paste0(name, ".svg")
   knitr::include_graphics(file.path(dir, svg))
 }
-
-# create a cli app that directs output to stdout() rather than
-# stderr() to ensure that R markdown will show the output
-app <- cli::start_app(output = "stdout", .auto_close = TRUE)
 ```
 
 
@@ -73,7 +69,7 @@ If you've worked in the [tidyverse](https://www.tidyverse.org/) [@tidyverse] for
 
 To craft a beautiful command line interface (CLI) of our very own, the first thing we'll need to do is load the package:
 
-```{r package-load, message=FALSE, warning=FALSE}
+```{r package-load}
 library(cli)
 ```
 
@@ -207,48 +203,47 @@ insert_asciicast("spinner-2")
 
 ## Showing cli messages in R markdown
 
-This doesn't work
+An important thing to remember about cli is that the text it produces is a *message*, so its visibility in R Markdown depends on the chunk option for messages. For this document I set my knitr defaults so that messages and warnings would be shown, but that isn't necessarily the case for every R Markdown template (e.g., distill articles). For this document I included this line in the very first chunk (which I hid from the output by setting `include=FALSE` for that chunk)
 
-```{r cli-without-setup, eval=FALSE} 
-cli_alert("I'm still here bitches, and I know everything. -A")
+```{r knitr-defaults, eval=FALSE}
+knitr::opts_chunk$set(message = TRUE, warning = TRUE)
 ```
 
-It throws an obscure error message that includes something like this^[If you're running a distill site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.]
+Because I set my document up like that this works
+
+```{r cli-without-suppression} 
+cli_text("I'm still here bitches, and I know everything. -A")
 ```
-PCDATA invalid Char value...
-```
+
+but I could turn it off again simply by setting the `message=FALSE` chunk option or by using the `suppressMessages()` function. Based on this you might think that including cli output in an R Markdown document is pretty straightforward, but there are other issues. Suppose we wanted to use `cli_alert()` to send the same message. This fails inside an R Markdown document and produces an error^[If you're running a site with an RSS feed it may also write malformed characters into the index.xml file. Even after fixing the errors in my .Rmd file I had to delete the index.xml file and then rebuild.] that complains about `PCDATA invalid Char value`.
 
 ```{r setup-rmd-cli}
-sanitise_ansi<- function(x, options) {
+# enable crayon support for ANSI colours and formatting
+options(crayon.enabled = TRUE)
+
+# convert a string x with ANSI formatting to HTML and wrap 
+# inside pre and code tags
+ansi_to_html <- function(x, options) {
   paste0(
     "<pre class=\"r-output\"><code>",
     fansi::sgr_to_html(x = x, warn = FALSE, term.cap = "256"),
     "</code></pre>"
   )
 }
-knitr::knit_hooks$set(output = sanitise_ansi)
+
+# tell knitr to apply the ansi_to_html() function to messages
+knitr::knit_hooks$set(message = ansi_to_html)
 ```
 
-But this does
 
 ```{r cli-with-setup}
-cli_alert("I'm still here bitches, and I know everything. -A")
-```
-
-Well sort of...
-
-```{r quote-without-crayon} 
 cli_blockquote(
   quote = "Friends share secrets, that's what keeps us close",
   citation = "Alison"
 )
+cli_alert("I'm still here bitches, and I know everything. -A")
 ```
 
-I should have had this set too
-
-```{r enable-crayon}
-options(crayon.enabled = TRUE)
-```
 
 
 ```{r quote-with-crayon}
