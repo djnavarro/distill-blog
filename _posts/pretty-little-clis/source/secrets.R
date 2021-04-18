@@ -7,7 +7,6 @@ wait <- function(seconds = 2) {Sys.sleep(seconds)}
 # code chunk --------------------------------------------------------------
 
 title_theme_scroll <- function() {
-  cli_h1("Secret, by The Pierces"); wait()
   cli_text("Got a secret, can you keep it?"); wait()
   cli_text("Swear this one you'll save"); wait()
   cli_text("Better lock it in your pocket"); wait()
