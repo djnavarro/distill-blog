@@ -1542,7 +1542,7 @@ Lyrics to the title theme of the US TV show, <a href="https://prettylittleliars.
 <p><img src="output/cat-example.svg" /><!-- --></p>
 </div>
 <aside>
-The ominous text messages used in this post are taken from <em>Pretty Little Liars</em>.
+The ominous text messages used in this post are taken from <em>Pretty Little Liars</em>. This one is from episode two in season one. It’s important that one documents ones sources, right?
 </aside>
 <p>Using <code>cat()</code> to craft messages works perfectly well for simple text communication, but sometimes you want something that looks a little fancier. After all, if the big picture plan here is to impersonate a dead teenager and terrorise her friends - and for some reason you’ve chosen R to do so - you might as well put a little effort into the details, right?</p>
 <h2 id="meet-the-cli-package">Meet the cli package</h2>
@@ -1610,6 +1610,9 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/status-bar-2.svg" /><!-- --></p>
 </div>
+<aside>
+This message was sent to Aria in episode 10 of season one. I’m sure it is deeply important to everyone that I mention this.
+</aside>
 <h2 id="creating-spinners">Creating spinners</h2>
 <p>The ability to control the status bar opens up a world of new possibilities. Progress bars are one such possibility, but the <a href="https://github.com/r-lib/progress">progress</a> package <span class="citation" data-cites="progress">(Csárdi and FitzJohn <a href="#ref-progress" role="doc-biblioref">2019</a>)</span> already does this nicely, and in any case I suspect that A might be more intrigued by the possibility of spinners, since they just spin and spin and give the victim no clue about when the process is going to end. Much more appealing when the developer doesn’t know (or doesn’t want to reveal) when the wait will end. The cli package has a nice <code>makes_spinner</code> function that serves this purpose. Here’s an example:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1657,6 +1660,9 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/spinner-1.svg" /><!-- --></p>
 </div>
+<aside>
+This message was sent to all four of the liars in the final episode of season one. I don’t think A used a spinner though, which feels like a missed opportunity to me
+</aside>
 <p>Setting <code>which = "dots2"</code> is only one possibility. There are quite a lot of different spinner types that come bundled with the cli package, and I’d imagine A would want to look around to see which one suits her needs. Personally, I’m a fan of hearts:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1750,6 +1756,9 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <pre class="r-output"><code>→ I'm still here bitches, and I know everything. -A
 </code></pre>
 </div>
+<aside>
+This message was sent in the pilot episode. Yes, the quotes I’ve used are all from season one: I’ve just started a rewatch of the show, so the early episodes are quite fresh in my memory!
+</aside>
 <h2 id="writing-longer-messages">Writing longer messages</h2>
 <p>Up to this point the threatening messages that A has been sending have been short, only one line long. In several cases the messages have been cleverly constructed so that the <em>same</em> line (the status bar) is used to display multiple pieces of text, but ultimately it’s still one line messaging. A needs to take a little care when she wants to branch out. Conceptually, a message should correspond to “one semantically meaningful bundle of information” that might be split over several lines. However, as far as R is concerned, each call to <code>cli_text()</code> creates a distinct message. To see how this might cause A some grief, here’s the letter that she sent to Aria’s mother announcing the infidelity of Aria’s father:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1824,6 +1833,9 @@ Sincerely,
 A
 </code></pre>
 </div>
+<aside>
+The letter was sent to Ella in episode four season one. Even on a rewatch I’m finding it impossible to imagine <a href="https://en.wikipedia.org/wiki/Holly_Marie_Combs">Holly Marie Combs</a> as anyone other than Piper from <a href="https://en.wikipedia.org/wiki/Charmed"><em>Charmed</em></a> and I keep expecting “Ella” to stop time and, idk, shave off her husbands eyebrows or something?
+</aside>
 <p>Much nicer. As every would-be tormenter knows, it’s important to pay attention to the details.</p>
 <h2 id="creating-structured-messages">Creating structured messages</h2>
 <p>Writing long messages when sending a threatening letter is a simple enough thing, but at some point A will likely find herself wanting to add some structure to these missives. Lists are nice. Stalkers like keeping lists, I hear. With that in mind, a nice property of cli is that it allows you to separate style from structure using an HTML-like syntax. Top level headings are specified using <code>cli_h1()</code>, and second level headings are produced by <code>cli_h2()</code>. Unordered lists are produced using <code>cli_ul()</code> and ordered lists by <code>cli_ol()</code>. This make it easy to write structured messages to the R console:</p>

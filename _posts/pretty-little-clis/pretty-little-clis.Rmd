@@ -77,7 +77,7 @@ insert_asciicast("cat-example")
 ```
 
 <aside>
-The ominous text messages used in this post are taken from *Pretty Little Liars*. 
+The ominous text messages used in this post are taken from *Pretty Little Liars*. This one is from episode two in season one. It's important that one documents ones sources, right?
 </aside>
 
 Using `cat()` to craft messages works perfectly well for simple text communication, but sometimes you want something that looks a little fancier. After all, if the big picture plan here is to impersonate a dead teenager and terrorise her friends - and for some reason you've chosen R to do so - you might as well put a little effort into the details, right?
@@ -148,6 +148,7 @@ message_inline()
 insert_asciicast("status-bar-2")
 ```
 
+<aside>This message was sent to Aria in episode 10 of season one. I'm sure it is deeply important to everyone that I mention this.</aside>
 
 ## Creating spinners
 
@@ -161,7 +162,6 @@ spinny <- make_spinner(
 ```
 
 The `which` argument is used to choose how the spinner would look, and the `template` argument is used to define how the "spinny bit" is placed relative to the rest of the text. The spinny object includes functions to update the state of the spinner (in this case `spinny$spin()` would be that function), and a function to clear the spinner from the status bar. So here's how A might define a function that uses a spinner to keep the victim in suspense...
-
 
 ```{r spinner-1, eval=FALSE}
 theatrics <- function(which) {
@@ -194,6 +194,9 @@ theatrics("dots2")
 ```{r display-spinner1, echo=FALSE}
 insert_asciicast("spinner-1")
 ```
+
+<aside>This message was sent to all four of the liars in the final episode of season one. I don't think A used a spinner though, which feels like a missed opportunity to me</aside>
+
 
 Setting `which = "dots2"` is only one possibility. There are quite a lot of different spinner types that come bundled with the cli package, and I'd imagine A would want to look around to see which one suits her needs. Personally, I'm a fan of hearts:
 
@@ -264,6 +267,7 @@ At long last she is done. Her campaign of bullying and cruelty can continue:
 cli_alert("I'm still here bitches, and I know everything. -A")
 ```
 
+<aside>This message was sent in the pilot episode. Yes, the quotes I've used are all from season one: I've just started a rewatch of the show, so the early episodes are quite fresh in my memory!</aside>
 
 ## Writing longer messages
 
@@ -306,6 +310,9 @@ send_cruel_letter_singly <- function() {
 
 send_cruel_letter_singly()
 ```
+
+<aside>The letter was sent to Ella in episode four season one. Even on a rewatch I'm finding it impossible to imagine [Holly Marie Combs](https://en.wikipedia.org/wiki/Holly_Marie_Combs) as anyone other than Piper from [*Charmed*](https://en.wikipedia.org/wiki/Charmed) and I keep expecting "Ella" to stop time and, idk, shave off her husbands eyebrows or something?</aside>
+
 
 Much nicer. As every would-be tormenter knows, it's important to pay attention to the details. 
 

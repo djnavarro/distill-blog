@@ -33,7 +33,7 @@ send_cat_threat &amp;lt;- function() {
 &lt;p&gt;It’s not too difficult to imagine what As message might look like at the R console, but where’s the fun in that? Thanks to the &lt;a href="https://github.com/r-lib/asciicast"&gt;asciicast&lt;/a&gt; package &lt;span class="citation"&gt;(Csárdi et al. 2019)&lt;/span&gt;, there’s no need to leave anything to the imagination, and we can see the malevolent message in screencast form:&lt;/p&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/cat-example.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;aside&gt;
-The ominous text messages used in this post are taken from &lt;em&gt;Pretty Little Liars&lt;/em&gt;.
+The ominous text messages used in this post are taken from &lt;em&gt;Pretty Little Liars&lt;/em&gt;. This one is from episode two in season one. It’s important that one documents ones sources, right?
 &lt;/aside&gt;
 &lt;p&gt;Using &lt;code&gt;cat()&lt;/code&gt; to craft messages works perfectly well for simple text communication, but sometimes you want something that looks a little fancier. After all, if the big picture plan here is to impersonate a dead teenager and terrorise her friends - and for some reason you’ve chosen R to do so - you might as well put a little effort into the details, right?&lt;/p&gt;
 &lt;h2 id="meet-the-cli-package"&gt;Meet the cli package&lt;/h2&gt;
@@ -70,6 +70,9 @@ message_scroll()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The first line in this function uses &lt;code&gt;cli_status()&lt;/code&gt; to create a blank message on the status bar, and returns an identifier that refers to the status bar. The next four lines all use &lt;code&gt;cli_status_update()&lt;/code&gt; to overwrite the current state of the status bar, and then pause dramatically for two seconds. In a final act of malice, the last line in the function clears the status bar using &lt;code&gt;cli_status_clear()&lt;/code&gt;, leaving nothing except a blank space behind. So what the victim sees is something more like this:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;message_inline()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/status-bar-2.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;aside&gt;
+This message was sent to Aria in episode 10 of season one. I’m sure it is deeply important to everyone that I mention this.
+&lt;/aside&gt;
 &lt;h2 id="creating-spinners"&gt;Creating spinners&lt;/h2&gt;
 &lt;p&gt;The ability to control the status bar opens up a world of new possibilities. Progress bars are one such possibility, but the &lt;a href="https://github.com/r-lib/progress"&gt;progress&lt;/a&gt; package &lt;span class="citation"&gt;(Csárdi and FitzJohn 2019)&lt;/span&gt; already does this nicely, and in any case I suspect that A might be more intrigued by the possibility of spinners, since they just spin and spin and give the victim no clue about when the process is going to end. Much more appealing when the developer doesn’t know (or doesn’t want to reveal) when the wait will end. The cli package has a nice &lt;code&gt;makes_spinner&lt;/code&gt; function that serves this purpose. Here’s an example:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;spinny &amp;lt;- make_spinner(
@@ -100,6 +103,9 @@ message_scroll()&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Here’s what happens:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;theatrics(&amp;quot;dots2&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/spinner-1.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
+&lt;aside&gt;
+This message was sent to all four of the liars in the final episode of season one. I don’t think A used a spinner though, which feels like a missed opportunity to me
+&lt;/aside&gt;
 &lt;p&gt;Setting &lt;code&gt;which = "dots2"&lt;/code&gt; is only one possibility. There are quite a lot of different spinner types that come bundled with the cli package, and I’d imagine A would want to look around to see which one suits her needs. Personally, I’m a fan of hearts:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;theatrics(&amp;quot;hearts&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/spinner-2.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
@@ -156,6 +162,9 @@ message_scroll()&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r"&gt;&lt;code&gt;cli_alert(&amp;quot;I&amp;#39;m still here bitches, and I know everything. -A&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class="r-output"&gt;&lt;code&gt;→ I'm still here bitches, and I know everything. -A
 &lt;/code&gt;&lt;/pre&gt;
+&lt;aside&gt;
+This message was sent in the pilot episode. Yes, the quotes I’ve used are all from season one: I’ve just started a rewatch of the show, so the early episodes are quite fresh in my memory!
+&lt;/aside&gt;
 &lt;h2 id="writing-longer-messages"&gt;Writing longer messages&lt;/h2&gt;
 &lt;p&gt;Up to this point the threatening messages that A has been sending have been short, only one line long. In several cases the messages have been cleverly constructed so that the &lt;em&gt;same&lt;/em&gt; line (the status bar) is used to display multiple pieces of text, but ultimately it’s still one line messaging. A needs to take a little care when she wants to branch out. Conceptually, a message should correspond to “one semantically meaningful bundle of information” that might be split over several lines. However, as far as R is concerned, each call to &lt;code&gt;cli_text()&lt;/code&gt; creates a distinct message. To see how this might cause A some grief, here’s the letter that she sent to Aria’s mother announcing the infidelity of Aria’s father:&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;send_cruel_letter_piecewise &amp;lt;- function() {
@@ -220,6 +229,9 @@ ask your daughter. She knows all about it.
 Sincerely,
 A
 &lt;/code&gt;&lt;/pre&gt;
+&lt;aside&gt;
+The letter was sent to Ella in episode four season one. Even on a rewatch I’m finding it impossible to imagine &lt;a href="https://en.wikipedia.org/wiki/Holly_Marie_Combs"&gt;Holly Marie Combs&lt;/a&gt; as anyone other than Piper from &lt;a href="https://en.wikipedia.org/wiki/Charmed"&gt;&lt;em&gt;Charmed&lt;/em&gt;&lt;/a&gt; and I keep expecting “Ella” to stop time and, idk, shave off her husbands eyebrows or something?
+&lt;/aside&gt;
 &lt;p&gt;Much nicer. As every would-be tormenter knows, it’s important to pay attention to the details.&lt;/p&gt;
 &lt;h2 id="creating-structured-messages"&gt;Creating structured messages&lt;/h2&gt;
 &lt;p&gt;Writing long messages when sending a threatening letter is a simple enough thing, but at some point A will likely find herself wanting to add some structure to these missives. Lists are nice. Stalkers like keeping lists, I hear. With that in mind, a nice property of cli is that it allows you to separate style from structure using an HTML-like syntax. Top level headings are specified using &lt;code&gt;cli_h1()&lt;/code&gt;, and second level headings are produced by &lt;code&gt;cli_h2()&lt;/code&gt;. Unordered lists are produced using &lt;code&gt;cli_ul()&lt;/code&gt; and ordered lists by &lt;code&gt;cli_ol()&lt;/code&gt;. This make it easy to write structured messages to the R console:&lt;/p&gt;
