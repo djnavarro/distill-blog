@@ -1,9 +1,0 @@
-
-# mimic relevant part of .Rmd state ---------------------------------------
-
-suppressPackageStartupMessages(library(cli))
-wait <- function(seconds = 2) {Sys.sleep(seconds)}
-
-# code chunk --------------------------------------------------------------
-
-cli_alert_warning("Dead girls walking. --A.")
