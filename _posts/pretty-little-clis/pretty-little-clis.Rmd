@@ -214,31 +214,27 @@ list_spinners()
 
 Throughout this post I've relied on asciicast to display screencasts of the R console as animated SVG files, rather than what I might normally do and rely on regular R markdown code chunks to do the work. There's a reason for this: the R console is a terminal, and its behaviour doesn't always translate nicely to HTML. Part of the magic of the [rmarkdown](https://rmarkdown.rstudio.com/) package [@rmarkdown] is that *most* of the time it is able to capture terminal output and translate it seamlessly into HTML, and we mere mortal users never notice how clever this is. However, when dealing with cli output, we run into cases where this breaks down and the [law of leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/) comes into play: text generated at the R console does not follow the same rules as text inserted into an HTML document, and R Markdown sometimes needs a little help when transforming one to the other.
 
-An important thing to remember about cli is that the text it produces is a *message*,^[Somewhat counterintuitively, although cli emits messages that can be suppressed by `suppressMessages()`, they don't behave *precisely* the same as the messages produced by `message()`. The default handler for base R messages sends the output to the `stderr()` connection and so they are often shown as the dreaded "red text" that users learn to fear. To avoid this, the default behaviour in cli sends messages to the `stdout()` connection, thereby avoiding this issue. However, cli does allow you to control this behaviour: see the `start_app()` and `stop_app()` functions for more information.] so its visibility in R Markdown depends on the chunk option for messages. For this document I set my knitr defaults so that messages and warnings would be shown, but that isn't necessarily the case for every R Markdown template. For this document I included this line in the very first chunk:^[That chunk is not visible in the output because I set `include=FALSE` in the options for that chunk]
+An important thing to remember about cli is that the text it produces is a *message*, so its visibility in R Markdown depends on the chunk option for messages. As long as the message option is set to `TRUE`, R Markdown will include them as part of the output.^[Somewhat counterintuitively, although cli emits messages that can be suppressed by `suppressMessages()`, they don't behave *precisely* the same as the messages produced by `message()`. The default handler for base R messages sends the output to the `stderr()` connection and so they are often shown as the dreaded "red text" that users learn to fear. To avoid this, the default behaviour in cli sends messages to the `stdout()` connection, thereby avoiding this issue. However, cli does allow you to control this behaviour: see the `start_app()` and `stop_app()` functions for more information.] In the simplest case, R Markdown works nicely, so as long as all A wants to do is send an unformatted threat within an R Markdown document, then this works:
 
-```{r knitr-defaults, eval=FALSE}
-knitr::opts_chunk$set(message = TRUE, warning = TRUE)
-```
-
-This ensures that R markdown will not suppress the cli output, and as a consequence this works:
-
-```{r cli-without-suppression} 
+```{r cli-text}
 cli_text("I'm still here bitches, and I know everything. -A")
 ```
 
-However, things are not this simple. Suppose I had used `cli_alert()` in the previous chunk rather than `cli_text()`. Unlike the basic `cli_text()` function, `cli_alert()` uses fancy symbols and colours in the output, and it is at this point that the cracks become exposed. If I had attempted to use `cli_alert()` in the previous chunk, the document would have failed to knit and what I would have gotten is an error message complaining about 
+However, the moment A tries to use any fancy formatting, things will go haywire for her. For example, suppose she wanted to send the message above as a simple "alert" message using `cli_alert()`, which uses fancy symbols and colours in the output. It is at this point that the cracks in the R Markdown pipeline start to leak. In this case, the leak would result in the document failing to knit and an error message complaining about 
 
 ```
 PCDATA invalid Char value
 ``` 
 
-Intuitively you might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.^[As an aside, if you're running a site with an RSS feed it may also write malformed characters into the index.xml file as well as any generated .html file. When I encountered this problem I found that even when I "fixed" my .Rmd file the document wouldn't re-knit, because of the problems with the xml file. Eventually I realised that I could solve the problem by deleting the index.xml file for the RSS feed and *then* knitting again. Sigh] The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), but those escape codes aren't recognised in HTML and -- apparently -- they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the [crayon](https://github.com/r-lib/crayon) package [@crayon], and per the [issue #24](https://github.com/r-lib/crayon/issues/24) thread that I encounter on a semi-regular basis, it can be tricky to manage. Solving it requires multiple steps. First, we need to make sure that the R Markdown document turns on crayon support:
+Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.^[As an aside, if you're running a site with an RSS feed it may also write malformed characters into the index.xml file as well as any generated .html file. When I encountered this problem I found that even when I "fixed" my .Rmd file the document wouldn't re-knit, because of the problems with the xml file. Eventually I realised that I could solve the problem by deleting the index.xml file for the RSS feed and *then* knitting again. Sigh] The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), but those escape codes aren't recognised in HTML and -- apparently -- they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the [crayon](https://github.com/r-lib/crayon) package [@crayon], and per the [issue #24](https://github.com/r-lib/crayon/issues/24) thread that I encounter on a semi-regular basis, it can be tricky to manage.
+
+Solving this issue requires A to jump through a few hoops. Annoying, but no-one ever said that running an unhinged stalking campaign via text messages was easy, right? Her first task is to make sure that the R Markdown document turns on crayon support:
 
 ```{r crayon-in-rmd}
 options(crayon.enabled = TRUE)
 ```
 
-This isn't the whole solution, however, because all it does is (as I understand it) tell R Markdown to stop ignoring all the ANSI stuff. To get it to handle the ANSI code correctly we need to specify the knit hooks that explicitly tell R Markdown what to do. We can do this with the help of the [fansi](https://github.com/brodieG/fansi) package [@fansi], which contains an obscurely-named function `sgr_to_html()` which translates a subset of the ANSI control sequences to HTML, and ignores all the others. Using this, we can write an `ansi_aware_handler()` function that will take an input string `x` and return HTML output appropriate for the R Markdown context:
+This isn't the whole solution, however, because while that tells R Markdown to stop *ignoring* all the ANSI stuff, it doesn't necessarily allow it to render ANSI sequences properly. To fix this she needs to specify the knit hooks that explicitly tell R Markdown what to do. She can do this with the help of the [fansi](https://github.com/brodieG/fansi) package [@fansi], which contains an obscurely-named function `sgr_to_html()` that translates a subset of the ANSI control sequences to HTML, and strips out all the others. Using this, she can write an `ansi_aware_handler()` function that will take an input string `x` and return HTML output appropriate for the R Markdown context:
 
 
 ```{r ansi-aware-handler}
@@ -251,7 +247,7 @@ ansi_aware_handler <- function(x, options) {
 }
 ```
 
-Next, we tell the [knitr](https://yihui.org/knitr/) package [@knitr] to use this function whenever it needs to handle regular output, and just for good measure we'll do the same for messages, errors, and warnings:
+From there, it's relatively easy. All she needs to do is tell [knitr](https://yihui.org/knitr/) [@knitr] to use this function whenever it needs to handle output. Just for good measure she might do the same for messages, errors, and warnings:
 
 ```{r}
 knitr::knit_hooks$set(
@@ -262,16 +258,16 @@ knitr::knit_hooks$set(
 )
 ```
 
-Now that we have done all this obnoxious setup, my R Markdown document renders `cli_alert()` and friends correctly:
+At long last she is done. Her campaign of bullying and cruelty can continue:
 
 ```{r cli-alerts}
 cli_alert("I'm still here bitches, and I know everything. -A")
 ```
 
 
-## Writing tidy messages
+## Writing longer messages
 
-Up to this point I've been rather sloppy about how I've constructed my messages. Conceptually, a message should correspond to "one semantically meaningful bundle of information" that might be split over several lines. However, what I've actually been doing with some of the ominous messages is making multiple calls to `cli_text()` that, when pieced together, form a coherent message. To see this, here's a longer message. This is the letter that A sent to Aria's mothe, Ella, informing her of her husband's affair in order to hurt Aria:
+Up to this point the threatening messages that A has been sending have been short, only one line long. In several cases the messages have been cleverly constructed so that the *same* line (the status bar) is used to display multiple pieces of text, but ultimately it's still one line messaging. A needs to take a little care when she wants to branch out. Conceptually, a message should correspond to "one semantically meaningful bundle of information" that might be split over several lines. However, as far as R is concerned, each call to `cli_text()` creates a distinct message. To see how this might cause A some grief, here's the letter that she sent to Aria's mother announcing the infidelity of Aria's father:
 
 ```{r tidy-msg-1}
 send_cruel_letter_piecewise <- function() {
@@ -290,7 +286,7 @@ send_cruel_letter_piecewise <- function() {
 send_cruel_letter_piecewise()
 ```
 
-This ought to be one message across 10 lines not 10 separate one-line messages, but it's the latter that I've actually implemeneted here. I can fix this by using the `cli()` function, which takes an expression as input and collects all the output into a single message:
+This is not an ideal implementation. What A wants to send is one message spanning 10 lines not 10 separate one-line messages, but it's the latter that she has actually implemented here. This is where the `cli()` function is handy: to takes an expression as input and collects all the constituent parts into a single message. This version of the function now sends a single message:
 
 ```{r tidy-msg-3}
 send_cruel_letter_singly <- function() {
@@ -311,7 +307,10 @@ send_cruel_letter_singly <- function() {
 send_cruel_letter_singly()
 ```
 
-Much nicer. As every would-be tormenter knows, its important to pay attention to the details. 
+Much nicer. As every would-be tormenter knows, it's important to pay attention to the details. 
+
+## Creating structured messages
+
 
 
 ## Epilogue
