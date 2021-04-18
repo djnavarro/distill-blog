@@ -14,6 +14,8 @@
       <description>
 
 
+&lt;!--------------- my typical setup -----------------&gt;
+&lt;!--------------- post begins here -----------------&gt;
 &lt;p&gt;&lt;img src="/home/danielle/GitHub/sites/distill-blog/_posts/pretty-little-clis/output/secrets.svg" /&gt;&lt;!-- --&gt;&lt;/p&gt;
 &lt;aside&gt;
 Lyrics to the title theme of the US TV show, &lt;a href="https://prettylittleliars.fandom.com/"&gt;&lt;em&gt;Pretty Little Liars&lt;/em&gt;&lt;/a&gt;. The song is called &lt;em&gt;Secrets&lt;/em&gt;, taken from the fabulous &lt;a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge"&gt;Thirteen Tales of Love and Revenge&lt;/a&gt; album by &lt;em&gt;The Pierces&lt;/em&gt;
@@ -282,6 +284,12 @@ The letter was sent to Ella in episode four season one. Even on a rewatch I’m 
     &lt;span style='font-style: italic;'&gt;“Friends share secrets, that's what keeps us close”&lt;/span&gt;&lt;span&gt;
     &lt;/span&gt;&lt;span style='font-weight: bold;font-style: italic;'&gt;— Alison&lt;/span&gt;&lt;span&gt;
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;!--------------- appendices go here -----------------&gt;
+&lt;h2 id="last-updated" class="appendix"&gt;Last updated&lt;/h2&gt;
+&lt;p&gt;2021-04-18 21:27:39 AEST&lt;/p&gt;
+&lt;h2 id="details" class="appendix"&gt;Details&lt;/h2&gt;
+&lt;p&gt;&lt;a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/pretty-little-clis.Rmd"&gt;source code&lt;/a&gt;, &lt;a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/sessioninfo.txt"&gt;session info&lt;/a&gt;, &lt;a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/renv.lock"&gt;lockfile&lt;/a&gt;&lt;/p&gt;
+&lt;!--------------- miscellanea -----------------&gt;
 &lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;div id="refs" class="references"&gt;
 &lt;div id="ref-cli"&gt;
