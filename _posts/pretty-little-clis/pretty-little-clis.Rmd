@@ -28,51 +28,59 @@ insert_asciicast <- function(name) {
 ```
 
 
-If you've been working in R for any length of time, you've probably realised that you sometimes need to write code that prints information to the R console, and if you're like me you've learned that the simplest way to do this is to use the `cat()` function. Perhaps you find yourself writing code like this:
-
-```{r cat-example, eval=FALSE}
-wait <- function(seconds = 2) {Sys.sleep(seconds)}
-send_cat_threat <- function() {
-  cat("Dead girls walking.\n"); wait()
-  cat(" --A.\n")
-}
-send_cat_threat()
+```{r display-secrets, echo=FALSE}
+insert_asciicast("secrets")
 ```
 
 <aside>
-The ominous text messages used in this post are taken from the TV show [*Pretty Little Liars*](https://prettylittleliars.fandom.com/)
+Lyrics to the title theme of the US TV show, [*Pretty Little Liars*](https://prettylittleliars.fandom.com/). The song is called *Secrets*, taken from the fabulous [Thirteen Tales of Love and Revenge](https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge) album by *The Pierces*
 </aside>
 
-In a realistic example, the `wait()` function would likely be something that takes some time to complete, and the lines above and below are a polite way to let your user (even if that's just you!) know when the waiting process starts and when it finishes. In any case, when you source a script containing this code, the first part of the message will appear on the console immediately:
+Anytime you write R code whose output needs to be understood by a human being, it is an act of kindness to spend a little time making sure that the output shown to the human being properly communicates with that human. As a consequence of this, you often find yourself needing to write information to the R console, just to cater to those precious human sensibilities. Perhaps the simplest way to do this is to use the `cat()` function. It's a simple tool and it gets the job done in most cases. If the mysterious "A" from *Pretty Little Liars* had used R to craft her threatening text messages, she could have written code like this:
+
+```{r cat-example, eval=FALSE}
+wait <- function(seconds = 2) {
+  Sys.sleep(seconds)
+}
+
+send_cat_threat <- function() {
+  cat("Dead girls walking.\n"); wait()
+  cat("--A.\n")
+}
+```
+
+Equipped with a function that specifies her threat, complete with a dramatic pause for effect, she's ready to go. When her unwitting victim does something to trigger the `send_cat_threat()` function, a two part message is displayed on the console. The first part shows up immediately
 
 ```{r cat-example-partial, echo=FALSE}
 cat("Dead girls walking.")
 ```
 
-Then after a two second delay, the console updates to reveal that the author of the threatening message is the mysterious "A." character:
+and after a two second delay, her call sign is revealed
 
 ```{r, ref.label="cat-example", echo=FALSE, eval=TRUE}
 ```
 
-It's not too difficult to imagine what this looks like in the console, but courtesy of the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast], there's no need to leave anything to the imagination:
+It's not too difficult to imagine what As message might look like at the R console, but where's the fun in that? Thanks to the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast], there's no need to leave anything to the imagination, and we can see the malevolent message in screencast form:
 
 ```{r display-cat-example, echo=FALSE}
 insert_asciicast("cat-example")
 ```
 
-This approach works perfectly well for simple text communication, but sometimes you want something that looks a little nicer. After all, if you're planning to impersonate a dead teenager and terrorise her friends using R, you might as well put a little effort into the details, right?
+<aside>
+The ominous text messages used in this post are taken from *Pretty Little Liars*. 
+</aside>
+
+Using `cat()` to craft messages works perfectly well for simple text communication, but sometimes you want something that looks a little fancier. After all, if the big picture plan here is to impersonate a dead teenager and terrorise her friends - and for some reason you've chosen R to do so - you might as well put a little effort into the details, right?
 
 ## Meet the cli package
 
-If you've worked in the [tidyverse](https://www.tidyverse.org/) [@tidyverse] for any length of time you will have noticed that messages produced by tidyverse packages seem to have a more polished look to them. Perhaps, like me, you've wondered how the magic works and if you too can create pretty messages at the console. As it happens, many wonderful things become possible if you happen to have the [cli](https://cli.r-lib.org) package [@cli] as your talented assistant, and in this post I'll talk about some of them. 
-
-To craft a beautiful command line interface (CLI) of our very own, the first thing we'll need to do is load the package:
+One thing I love about the R community is that if you search long enough you'll find that someone else has already written a wonderful package that solves the problem you're facing. If your problem is "how to craft nicely formatted messages" then you'll be delighted to learn that many wonderful things become possible if you have the [cli](https://cli.r-lib.org) package [@cli] as your talented assistant. To craft a beautiful command line interface (CLI) of our very own, the first thing we'll need to do is load the package:
 
 ```{r package-load}
 library(cli)
 ```
 
-We can create the same threatening text message using the `cli_text()` function:
+Once this is done, it is a very trivial task for A to write the same threatening text message using `cli_text()`...
 
 ```{r cli-example-1, eval=FALSE}
 send_cli_threat <- function() {
@@ -85,47 +93,11 @@ send_cli_threat()
 insert_asciicast("cli-example-1")
 ```
 
-Sometimes you may prefer send the user short alert messages. You can create generic alerts with `cli_alert()` or you could be more specific by using `cli_alert_info()`, `cli_alert_warning()`, `cli_alert_danger()`, `cli_alert_success()`. Most of the text messages sent by A. in *Pretty Little Liars* were quite threatening, so in this case it might be more appropriate to mark it as one:
-
-```{r cli-example-2, eval=FALSE}
-send_cli_warning <- function() {
-  cli_alert_warning("Dead girls walking."); wait()
-  cli_alert_warning("--A.")
-}
-send_cli_warning()
-```
-```{r display-cli-example-2, echo=FALSE}
-insert_asciicast("cli-example-2")
-```
-
-## Separating style from structure
-
-The design of cli separates style from structure: your messaging code specifies the *structure* associated with the message, not the superficial *style*. The `cli_h1()` command generates a "top-level" heading, the `cli_h2()` command generates a second level heading, `cli_text()`inserts basic, and so on. If we wanted the title theme to *Pretty Little Liars* to reveal itself gradually, we could combine a heading with text
-
-```{r message-structure-3, eval=FALSE}
-title_theme_scroll <- function() {
-  cli_h1("Secret, by The Pierces"); wait()
-  cli_text("Got a secret, can you keep it?"); wait()
-  cli_text("Swear this one you'll save"); wait()
-  cli_text("Better lock it in your pocket"); wait()
-  cli_text("Taking this one to the grave"); wait()
-  cli_text("If I show you then I know you won't tell what I said"); wait()
-  cli_text("Cause two can keep a secret if one of them is dead"); wait()
-}
-title_theme_scroll()
-```
-```{r display-message-structure-3, echo=FALSE}
-insert_asciicast("message-structure-3")
-```
-
-<aside>
-The theme song is *Secrets*, the first track from the 2007 album [Thirteen Tales of Love and Revenge](https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge) by *The Pierces*
-</aside>
-
+...which is nice and all, but it doesn't make much of a case for using cli. Stalking and threatening is busy work, and I'd imagine that A would want a more compelling justification before deciding to switch her evil workflow. However, much liky A herself, the R console has many dark secrets, and fancier tricks than this are possible once you know how to expose them using cli.
 
 ## Using the status bar
 
-In this instance, the output happens to be identical to our first example: all it does is print the lyrics to the music in the title credits from *Pretty Little Liars*, with a brief pause between each line. However the R console has many dark secrets, and fancier tricks than this are possible once you know a few...
+One piece of magic that I have wondered about for a long time is how fancy progress bars work: often when you're doing something that takes a long time, you'll see a progress bar rendered in text on the screen, which suddenly vanishes once the process is complete. While teaching myself cli, I found the answer. The most recent line of text generated at the terminal is called the *status bar*: the state of the status bar can be manipulated, and the cli package provides a neat toolkit for doing so. So let's say I were trying to convince A to switch to the cli tools. Right now, she's writing a function that will send a four-part message, using `cli_text()` because I've at least convinced her to *try* the new tools:
 
 ```{r status-bar-1, eval=FALSE}
 message_scroll <- function() {
@@ -136,11 +108,17 @@ message_scroll <- function() {
 }
 message_scroll()
 ```
+
+When her victim triggers this message the lines will appear on screen, one after the other with an appropriate dramatic pause separating them. The victim might see something that looks like this:
+
 ```{r display-status-bar-1, echo=FALSE}
 insert_asciicast("status-bar-1")
 ```
 
-```{r status-bar-2, eval=FALSE}
+The problem -- when viewed from an evil point of view -- is that this message stays on screen after delivery.^[Yes, it does disappear in this screencast, but that's just the screencast. If it were the R console it would stay on screen the whole time.] The victim has time to think about it, take a screenshot to show her friends, that kind of thing. Wouldn't the gaslighting be so much more effective if she were to send the message piece by piece, each part disappearing as the next one appears, only to have the whole thing vanish without a trace and leaving the victim wondering if she imagined the whole thing? This is where the status bar comes in handy. Here's how it would work:
+
+
+```{r status-bar-2-function, eval=FALSE}
 message_inline <- function() {
   id <- cli_status("")
   cli_status_update(id, "You found my bracelet."); wait()
@@ -149,39 +127,65 @@ message_inline <- function() {
   cli_status_update(id, "-A"); wait()
   cli_status_clear(id)
 }
+```
+
+The first line in this function uses `cli_status()` to create a blank message on the status bar, and returns an identifier that refers to the status bar. The next four lines all use `cli_status_update()` to overwrite the current state of the status bar, and then pause dramatically for two seconds. In a final act of malice, the last line in the function clears the status bar using `cli_status_clear()`, leaving nothing except a blank space behind. So what the victim sees is something more like this:
+
+```{r status-bar-2, eval=FALSE}
 message_inline()
 ```
 ```{r display-status-bar-2, echo=FALSE}
 insert_asciicast("status-bar-2")
 ```
 
+
 ## Creating spinners
+
+The ability to control the status bar opens up a world of new possibilities. Progress bars are one such possibility, but the [progress](https://github.com/r-lib/progress) package [@progress] already does this nicely, and in any case I suspect that A might be more intrigued by the possibility of spinners, since they just spin and spin and give the victim no clue about when the process is going to end. Much more appealing when the developer doesn't know (or doesn't want to reveal) when the wait will end. The cli package has a nice `makes_spinner` function that serves this purpose. Here's an example:
+
+```{r spinner-0, eval=FALSE} 
+spinny <- make_spinner(
+  which = "dots2",
+  template = "{spin} It's not over until I say it is."
+)
+```
+
+The `which` argument is used to choose how the spinner would look, and the `template` argument is used to define how the "spinny bit" is placed relative to the rest of the text. The spinny object includes functions to update the state of the spinner (in this case `spinny$spin()` would be that function), and a function to clear the spinner from the status bar. So here's how A might define a function that uses a spinner to keep the victim in suspense...
+
 
 ```{r spinner-1, eval=FALSE}
 theatrics <- function(which) {
+  
+  # define the spinner
   spinny <- make_spinner(
     which = which,
     template = "{spin} It's not over until I say it is."
   )
+  
+  # update the spinner 100 times
   for(i in 1:100) {
     spinny$spin()
     wait(.05)
   }
+  
+  # clear the spinner from the status bar
   spinny$finish()
+  
+  # send the final part of the message
   cli_alert_success("Sleep tight while you still can, bitches. -A")
 }
+```
 
+Here's what happens:
+
+```{r spinner-1-call, eval=FALSE}
 theatrics("dots2")
 ```
 ```{r display-spinner1, echo=FALSE}
 insert_asciicast("spinner-1")
 ```
 
-There are quite a few possible spinners
-
-```{r list-spinners}
-list_spinners()
-```
+Setting `which = "dots2"` is only one possibility. There are quite a lot of different spinner types that come bundled with the cli package, and I'd imagine A would want to look around to see which one suits her needs. Personally, I'm a fan of hearts:
 
 ```{r spinner-2, eval=FALSE}
 theatrics("hearts")
@@ -190,9 +194,15 @@ theatrics("hearts")
 insert_asciicast("spinner-2")
 ```
 
+To see the full list use the `list_spinners()` function:
+
+```{r list-spinners}
+list_spinners()
+```
+
 ## Showing cli messages in R markdown
 
-Throughout this post I've relied on asciicast to display screencasts of the R console as animated SVG files, rather than what I might normally do and rely on regular R markdown code chunks to do the work. There's a reason for this: the R console is a terminal, and its behaviour doesn't always translate nicely to HTML. Part of the magic of the [rmarkdown](https://rmarkdown.rstudio.com/) package [@rmarkdown] is that *most* of the time it is able to capture terminal output and translate it seamlessly into HTML, and we mere mortal users never notice how clever this is. However, when dealing with cli output, we run into cases where this breaks down and the [law of leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/) comes into play.
+Throughout this post I've relied on asciicast to display screencasts of the R console as animated SVG files, rather than what I might normally do and rely on regular R markdown code chunks to do the work. There's a reason for this: the R console is a terminal, and its behaviour doesn't always translate nicely to HTML. Part of the magic of the [rmarkdown](https://rmarkdown.rstudio.com/) package [@rmarkdown] is that *most* of the time it is able to capture terminal output and translate it seamlessly into HTML, and we mere mortal users never notice how clever this is. However, when dealing with cli output, we run into cases where this breaks down and the [law of leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/) comes into play: text generated at the R console does not follow the same rules as text inserted into an HTML document, and R Markdown sometimes needs a little help when transforming one to the other.
 
 An important thing to remember about cli is that the text it produces is a *message*,^[Somewhat counterintuitively, although cli emits messages that can be suppressed by `suppressMessages()`, they don't behave *precisely* the same as the messages produced by `message()`. The default handler for base R messages sends the output to the `stderr()` connection and so they are often shown as the dreaded "red text" that users learn to fear. To avoid this, the default behaviour in cli sends messages to the `stdout()` connection, thereby avoiding this issue. However, cli does allow you to control this behaviour: see the `start_app()` and `stop_app()` functions for more information.] so its visibility in R Markdown depends on the chunk option for messages. For this document I set my knitr defaults so that messages and warnings would be shown, but that isn't necessarily the case for every R Markdown template. For this document I included this line in the very first chunk:^[That chunk is not visible in the output because I set `include=FALSE` in the options for that chunk]
 
@@ -245,27 +255,68 @@ knitr::knit_hooks$set(
 Now that we have done all this obnoxious setup, my R Markdown document renders `cli_alert()` and friends correctly:
 
 ```{r cli-alerts}
-cli({
-  cli_alert("I'm still here bitches, and I know everything. -A")
-  cli_alert_info("I'm still here bitches, and I know everything. -A")
-  cli_alert_warning("I'm still here bitches, and I know everything. -A")
-  cli_alert_danger("I'm still here bitches, and I know everything. -A")
-  cli_alert_success("I'm still here bitches, and I know everything. -A")
-})
+cli_alert("I'm still here bitches, and I know everything. -A")
 ```
 
-The formatting for blockquotes is preserved:
 
-```{r quote-with-crayon, results='hold'}
-cli({
+## Writing tidy messages
+
+Up to this point I've been rather sloppy about how I've constructed my messages. Conceptually, a message should correspond to "one semantically meaningful bundle of information" that might be split over several lines. However, what I've actually been doing with some of the ominous messages is making multiple calls to `cli_text()` that, when pieced together, form a coherent message. To see this, here's a longer message. This is the letter that A sent to Aria's mothe, Ella, informing her of her husband's affair in order to hurt Aria:
+
+```{r tidy-msg-1}
+send_cruel_letter_piecewise <- function() {
+  cli_text('Your husband, Byron, is involved with another woman')
+  cli_text('and when I say involved I mean in a "romantic" way.')
+  cli_text('This is not something recent. It started before your')
+  cli_text('family went away to Iceland and from the look of')
+  cli_text('things, it may be starting up again now that you\'re')
+  cli_text('back. I know this is hard to hear, but it is the')
+  cli_text('truth. If you don\'t believe this about your husband,')
+  cli_text('ask your daughter. She knows all about it.')
+  cli_text('Sincerely,')
+  cli_text('A')
+}
+
+send_cruel_letter_piecewise()
+```
+
+This ought to be one message across 10 lines not 10 separate one-line messages, but it's the latter that I've actually implemeneted here. I can fix this by using the `cli()` function, which takes an expression as input and collects all the output into a single message:
+
+```{r tidy-msg-3}
+send_cruel_letter_singly <- function() {
+  cli({
+    cli_text('Your husband, Byron, is involved with another woman')
+    cli_text('and when I say involved I mean in a "romantic" way.')
+    cli_text('This is not something recent. It started before your')
+    cli_text('family went away to Iceland and from the look of')
+    cli_text('things, it may be starting up again now that you\'re')
+    cli_text('back. I know this is hard to hear, but it is the')
+    cli_text('truth. If you don\'t believe this about your husband,')
+    cli_text('ask your daughter. She knows all about it.')
+    cli_text('Sincerely,')
+    cli_text('A')
+  })
+}
+
+send_cruel_letter_singly()
+```
+
+Much nicer. As every would-be tormenter knows, its important to pay attention to the details. 
+
+
+## Epilogue
+
+```{r epilogue}
+cli(
   cli_blockquote(
     quote = "Friends share secrets, that's what keeps us close",
     citation = "Alison"
   )
-  cli_blockquote(
-    quote = "Popular in life and death",
-    citation = "Spencer"
-  )
-})
+)
 ```
+
+
+
+
+
 
