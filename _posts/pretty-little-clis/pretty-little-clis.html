@@ -1543,7 +1543,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <aside>
 Lyrics to the title theme of the US TV show, <a href="https://prettylittleliars.fandom.com/"><em>Pretty Little Liars</em></a>. The song is called <em>Secrets</em>, taken from the fabulous <a href="https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge">Thirteen Tales of Love and Revenge</a> album by <em>The Pierces</em>
 </aside>
-<p>Anytime you write R code whose output needs to be understood by a human being, it is an act of kindness to spend a little time making sure that the output shown to the human being properly communicates with that human. As a consequence of this, you often find yourself needing to write information to the R console, just to cater to those precious human sensibilities. Perhaps the simplest way to do this is to use the <code>cat()</code> function. It’s a simple tool and it gets the job done in most cases. If the mysterious “A” from <em>Pretty Little Liars</em> had used R to craft her threatening text messages, she could have written code like this:</p>
+<p>Anytime you write R code whose output needs to be understood by a human being, it is an act of kindness to spend a little time making sure that the output shown to the human being properly communicates with that human. As a consequence of this, you often find yourself needing to write information to the R console, just to cater to those precious human sensibilities. Perhaps the simplest way to do this is to use the <code>cat()</code> function. It’s a simple tool and it gets the job done in most cases.</p>
+<p>For example, consider the use case for the antagonist character “A” from <em>Pretty Little Liars</em>, whose stalking and threats were delivered mostly via text message. Had she used R to craft her threatening text messages, she could have written code like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>wait</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>seconds</span> <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>{</span>
@@ -1563,9 +1564,10 @@ Lyrics to the title theme of the US TV show, <a href="https://prettylittleliars.
 </div>
 <p>and after a two second delay, her call sign is revealed</p>
 <div class="layout-chunk" data-layout="l-body">
-
+<pre><code>Dead girls walking.
+--A.</code></pre>
 </div>
-<p>It’s not too difficult to imagine what As message might look like at the R console, but where’s the fun in that? Thanks to the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(Csárdi et al. <a href="#ref-asciiicast" role="doc-biblioref">2019</a>)</span>, there’s no need to leave anything to the imagination, and we can see the malevolent message in screencast form:</p>
+<p>It’s not too difficult to imagine what this message might look like at the R console, but where’s the fun in that? Thanks to the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(Csárdi et al. <a href="#ref-asciiicast" role="doc-biblioref">2019</a>)</span>, there’s no need to leave anything to the imagination, and we can see the malevolent message in screencast form:</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/cat-example.svg" /><!-- --></p>
 </div>
@@ -1574,7 +1576,7 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 </aside>
 <p>Using <code>cat()</code> to craft messages works perfectly well for simple text communication, but sometimes you want something that looks a little fancier. After all, if the big picture plan here is to impersonate a dead teenager and terrorise her friends - and for some reason you’ve chosen R to do so - you might as well put a little effort into the details, right?</p>
 <h2 id="meet-the-cli-package">Meet the cli package</h2>
-<p>One thing I love about the R community is that if you search long enough you’ll find that someone else has already written a wonderful package that solves the problem you’re facing. If your problem is “how to craft nicely formatted messages” then you’ll be delighted to learn that many wonderful things become possible if you have the <a href="https://cli.r-lib.org">cli</a> package <span class="citation" data-cites="cli">(Csárdi <a href="#ref-cli" role="doc-biblioref">2021</a><a href="#ref-cli" role="doc-biblioref">a</a>)</span> as your talented assistant. To craft a beautiful command line interface (CLI) of our very own, the first thing we’ll need to do is load the package:</p>
+<p>One thing I love about the R community is that if you search long enough you’ll find that someone else has already written a package that solves the problem you’re facing. If your problem is “how to craft nicely formatted messages” then you’ll be delighted to learn that many wonderful things become possible if you have the <a href="https://cli.r-lib.org">cli</a> package <span class="citation" data-cites="cli">(Csárdi <a href="#ref-cli" role="doc-biblioref">2021</a><a href="#ref-cli" role="doc-biblioref">a</a>)</span> as your talented assistant. To craft a beautiful command line interface (CLI) of her very own, the first thing A will need to do is load the package:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/r-lib/cli#readme'>cli</a></span><span class='op'>)</span>
@@ -1595,9 +1597,10 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/cli-example-1.svg" /><!-- --></p>
 </div>
-<p>…which is nice and all, but it doesn’t make much of a case for using cli. Stalking and threatening is busy work, and I’d imagine that A would want a more compelling justification before deciding to switch her evil workflow. However, much liky A herself, the R console has many dark secrets, and fancier tricks than this are possible once you know how to expose them using cli.</p>
+<p>…which is nice and all, but it doesn’t make much of a case for using cli. Stalking and threatening is busy work, and I’d imagine that A would want a more compelling justification before deciding to switch her evil workflow. However - much like A herself - the R console has many dark secrets, and fancier tricks than this are possible once you know how to expose them using cli.</p>
 <h2 id="using-the-status-bar">Using the status bar</h2>
-<p>One piece of magic that I have wondered about for a long time is how fancy progress bars work: often when you’re doing something that takes a long time, you’ll see a progress bar rendered in text on the screen, which suddenly vanishes once the process is complete. While teaching myself cli, I found the answer. The most recent line of text generated at the terminal is called the <em>status bar</em>: the state of the status bar can be manipulated, and the cli package provides a neat toolkit for doing so. So let’s say I were trying to convince A to switch to the cli tools. Right now, she’s writing a function that will send a four-part message, using <code>cli_text()</code> because I’ve at least convinced her to <em>try</em> the new tools:</p>
+<p>One piece of magic that I have wondered about for a long time is how fancy progress bars work: often when you’re doing something that takes a long time, you’ll see an ASCII progress bar rendered in text on the screen, which suddenly vanishes once the process is complete. How exactly does this work? Normally you can’t “unprint” a message from the console, so how is it possible for the progress bar to update without leaving an ugly trail of earlier messages behind it?</p>
+<p>While teaching myself cli, I found the answer. The most recent line of text generated at the terminal is speciall. It’s called the <em>status bar</em>: the state of the status bar can be manipulated, and the cli package provides a neat toolkit for doing so. So let’s say I were trying to convince A to switch to the cli tools. Right now, she’s writing a function that will send a four-part message, using <code>cli_text()</code> because I’ve at least convinced her to <em>try</em> the new tools:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>message_scroll</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
@@ -1742,8 +1745,8 @@ This message was sent to all four of the liars in the final episode of season on
 </div>
 <p>However, the moment A tries to use any fancy formatting, things will go haywire for her. For example, suppose she wanted to send the message above as a simple “alert” message using <code>cli_alert()</code>, which uses fancy symbols and colours in the output. It is at this point that the cracks in the R Markdown pipeline start to leak. In this case, the leak would result in the document failing to knit and an error message complaining about</p>
 <pre><code>PCDATA invalid Char value</code></pre>
-<p>Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>, but those escape codes aren’t recognised in HTML and – apparently – they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the <a href="https://github.com/r-lib/crayon">crayon</a> package <span class="citation" data-cites="crayon">(Csárdi <a href="#ref-crayon" role="doc-biblioref">2021</a><a href="#ref-crayon" role="doc-biblioref">b</a>)</span>, and per the <a href="https://github.com/r-lib/crayon/issues/24">issue #24</a> thread that I encounter on a semi-regular basis, it can be tricky to manage.</p>
-<p>Solving this issue requires A to jump through a few hoops. Annoying, but no-one ever said that running an unhinged stalking campaign via text messages was easy, right? Her first task is to make sure that the R Markdown document turns on crayon support:</p>
+<p>Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>, but those escape codes aren’t recognised in HTML and – apparently – they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the <a href="https://github.com/r-lib/crayon">crayon</a> package <span class="citation" data-cites="crayon">(Csárdi <a href="#ref-crayon" role="doc-biblioref">2021</a><a href="#ref-crayon" role="doc-biblioref">b</a>)</span>, and per the <a href="https://github.com/r-lib/crayon/issues/24">issue #24</a> thread that I encounter on a semi-regular basis, it can be tricky to manage the process of translating these to HTML via R Markdown.</p>
+<p>Solving this issue requires A to jump through a few hoops. It’s annoying I know, but no-one ever said that running an unhinged stalking campaign via text messages was easy, right? Her first task is to make sure that the R Markdown document turns on crayon support:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>crayon.enabled <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
@@ -1775,7 +1778,7 @@ This message was sent to all four of the liars in the final episode of season on
 </code></pre>
 </div>
 </div>
-<p>At long last she is done. Her campaign of bullying and cruelty can continue:</p>
+<p>At long last she is done.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Her campaign of bullying and cruelty can continue:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
@@ -1926,14 +1929,14 @@ The letter was sent to Ella in episode four season one. Even on a rewatch I’m 
 </div>
 <!--------------- appendices go here ----------------->
 <h2 id="last-updated" class="appendix">Last updated</h2>
-<p>2021-04-18 21:27:32 AEST</p>
+<p>2021-04-18 21:49:23 AEST</p>
 <h2 id="details" class="appendix">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/pretty-little-clis.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references" role="doc-bibliography">
 <div id="ref-cli">
 <p>Csárdi, Gábor. 2021a. <em>Cli: Helpers for Developing Command Line Interfaces</em>. <a href="https://CRAN.R-project.org/package=cli">https://CRAN.R-project.org/package=cli</a>.</p>
@@ -1963,6 +1966,7 @@ The letter was sent to Ella in episode four season one. Even on a rewatch I’m 
 <li id="fn1" role="doc-endnote"><p>Yes, it does disappear in this screencast, but that’s just the screencast. If it were the R console it would stay on screen the whole time.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2" role="doc-endnote"><p>Somewhat counterintuitively, although cli emits messages that can be suppressed by <code>suppressMessages()</code>, they don’t behave <em>precisely</em> the same as the messages produced by <code>message()</code>. The default handler for base R messages sends the output to the <code>stderr()</code> connection and so they are often shown as the dreaded “red text” that users learn to fear. To avoid this, the default behaviour in cli sends messages to the <code>stdout()</code> connection, thereby avoiding this issue. However, cli does allow you to control this behaviour: see the <code>start_app()</code> and <code>stop_app()</code> functions for more information.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3" role="doc-endnote"><p>As an aside, if you’re running a site with an RSS feed it may also write malformed characters into the index.xml file as well as any generated .html file. When I encountered this problem I found that even when I “fixed” my .Rmd file the document wouldn’t re-knit, because of the problems with the xml file. Eventually I realised that I could solve the problem by deleting the index.xml file for the RSS feed and <em>then</em> knitting again. Sigh<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>Note that there is also the <code>fansi::set_knit_hooks()</code> function which will set the hooks in a more user-friendly way. I don’t think there’s any reason not to use it: the only reason I didn’t is that I found it convenient to write things from scratch here so that I understood what was happening.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

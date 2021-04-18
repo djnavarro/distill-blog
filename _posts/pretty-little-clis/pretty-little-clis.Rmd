@@ -79,9 +79,11 @@ insert_asciicast("secrets")
 Lyrics to the title theme of the US TV show, [*Pretty Little Liars*](https://prettylittleliars.fandom.com/). The song is called *Secrets*, taken from the fabulous [Thirteen Tales of Love and Revenge](https://en.wikipedia.org/wiki/Thirteen_Tales_of_Love_and_Revenge) album by *The Pierces*
 </aside>
 
-Anytime you write R code whose output needs to be understood by a human being, it is an act of kindness to spend a little time making sure that the output shown to the human being properly communicates with that human. As a consequence of this, you often find yourself needing to write information to the R console, just to cater to those precious human sensibilities. Perhaps the simplest way to do this is to use the `cat()` function. It's a simple tool and it gets the job done in most cases. If the mysterious "A" from *Pretty Little Liars* had used R to craft her threatening text messages, she could have written code like this:
+Anytime you write R code whose output needs to be understood by a human being, it is an act of kindness to spend a little time making sure that the output shown to the human being properly communicates with that human. As a consequence of this, you often find yourself needing to write information to the R console, just to cater to those precious human sensibilities. Perhaps the simplest way to do this is to use the `cat()` function. It's a simple tool and it gets the job done in most cases. 
 
-```{r cat-example, eval=FALSE}
+For example, consider the use case for the antagonist character "A" from *Pretty Little Liars*, whose stalking and threats were delivered mostly via text message. Had she used R to craft her threatening text messages, she could have written code like this:
+
+```{r cat-example}
 wait <- function(seconds = 2) {
   Sys.sleep(seconds)
 }
@@ -100,10 +102,11 @@ cat("Dead girls walking.")
 
 and after a two second delay, her call sign is revealed
 
-```{r, ref.label="cat-example", echo=FALSE, eval=TRUE}
+```{r, echo=FALSE}
+send_cat_threat()
 ```
 
-It's not too difficult to imagine what As message might look like at the R console, but where's the fun in that? Thanks to the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast], there's no need to leave anything to the imagination, and we can see the malevolent message in screencast form:
+It's not too difficult to imagine what this message might look like at the R console, but where's the fun in that? Thanks to the [asciicast](https://github.com/r-lib/asciicast) package [@asciiicast], there's no need to leave anything to the imagination, and we can see the malevolent message in screencast form:
 
 ```{r display-cat-example, echo=FALSE}
 insert_asciicast("cat-example")
@@ -117,7 +120,7 @@ Using `cat()` to craft messages works perfectly well for simple text communicati
 
 ## Meet the cli package
 
-One thing I love about the R community is that if you search long enough you'll find that someone else has already written a wonderful package that solves the problem you're facing. If your problem is "how to craft nicely formatted messages" then you'll be delighted to learn that many wonderful things become possible if you have the [cli](https://cli.r-lib.org) package [@cli] as your talented assistant. To craft a beautiful command line interface (CLI) of our very own, the first thing we'll need to do is load the package:
+One thing I love about the R community is that if you search long enough you'll find that someone else has already written a package that solves the problem you're facing. If your problem is "how to craft nicely formatted messages" then you'll be delighted to learn that many wonderful things become possible if you have the [cli](https://cli.r-lib.org) package [@cli] as your talented assistant. To craft a beautiful command line interface (CLI) of her very own, the first thing A will need to do is load the package:
 
 ```{r package-load}
 library(cli)
@@ -136,11 +139,13 @@ send_cli_threat()
 insert_asciicast("cli-example-1")
 ```
 
-...which is nice and all, but it doesn't make much of a case for using cli. Stalking and threatening is busy work, and I'd imagine that A would want a more compelling justification before deciding to switch her evil workflow. However, much liky A herself, the R console has many dark secrets, and fancier tricks than this are possible once you know how to expose them using cli.
+...which is nice and all, but it doesn't make much of a case for using cli. Stalking and threatening is busy work, and I'd imagine that A would want a more compelling justification before deciding to switch her evil workflow. However - much like A herself - the R console has many dark secrets, and fancier tricks than this are possible once you know how to expose them using cli.
 
 ## Using the status bar
 
-One piece of magic that I have wondered about for a long time is how fancy progress bars work: often when you're doing something that takes a long time, you'll see a progress bar rendered in text on the screen, which suddenly vanishes once the process is complete. While teaching myself cli, I found the answer. The most recent line of text generated at the terminal is called the *status bar*: the state of the status bar can be manipulated, and the cli package provides a neat toolkit for doing so. So let's say I were trying to convince A to switch to the cli tools. Right now, she's writing a function that will send a four-part message, using `cli_text()` because I've at least convinced her to *try* the new tools:
+One piece of magic that I have wondered about for a long time is how fancy progress bars work: often when you're doing something that takes a long time, you'll see an ASCII progress bar rendered in text on the screen, which suddenly vanishes once the process is complete. How exactly does this work? Normally you can't "unprint" a message from the console, so how is it possible for the progress bar to update without leaving an ugly trail of earlier messages behind it?
+
+While teaching myself cli, I found the answer. The most recent line of text generated at the terminal is speciall. It's called the *status bar*: the state of the status bar can be manipulated, and the cli package provides a neat toolkit for doing so. So let's say I were trying to convince A to switch to the cli tools. Right now, she's writing a function that will send a four-part message, using `cli_text()` because I've at least convinced her to *try* the new tools:
 
 ```{r status-bar-1, eval=FALSE}
 message_scroll <- function() {
@@ -262,9 +267,9 @@ However, the moment A tries to use any fancy formatting, things will go haywire 
 PCDATA invalid Char value
 ``` 
 
-Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.^[As an aside, if you're running a site with an RSS feed it may also write malformed characters into the index.xml file as well as any generated .html file. When I encountered this problem I found that even when I "fixed" my .Rmd file the document wouldn't re-knit, because of the problems with the xml file. Eventually I realised that I could solve the problem by deleting the index.xml file for the RSS feed and *then* knitting again. Sigh] The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), but those escape codes aren't recognised in HTML and -- apparently -- they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the [crayon](https://github.com/r-lib/crayon) package [@crayon], and per the [issue #24](https://github.com/r-lib/crayon/issues/24) thread that I encounter on a semi-regular basis, it can be tricky to manage.
+Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.^[As an aside, if you're running a site with an RSS feed it may also write malformed characters into the index.xml file as well as any generated .html file. When I encountered this problem I found that even when I "fixed" my .Rmd file the document wouldn't re-knit, because of the problems with the xml file. Eventually I realised that I could solve the problem by deleting the index.xml file for the RSS feed and *then* knitting again. Sigh] The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), but those escape codes aren't recognised in HTML and -- apparently -- they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the [crayon](https://github.com/r-lib/crayon) package [@crayon], and per the [issue #24](https://github.com/r-lib/crayon/issues/24) thread that I encounter on a semi-regular basis, it can be tricky to manage the process of translating these to HTML via R Markdown.
 
-Solving this issue requires A to jump through a few hoops. Annoying, but no-one ever said that running an unhinged stalking campaign via text messages was easy, right? Her first task is to make sure that the R Markdown document turns on crayon support:
+Solving this issue requires A to jump through a few hoops. It's annoying I know, but no-one ever said that running an unhinged stalking campaign via text messages was easy, right? Her first task is to make sure that the R Markdown document turns on crayon support:
 
 ```{r crayon-in-rmd}
 options(crayon.enabled = TRUE)
@@ -294,7 +299,7 @@ knitr::knit_hooks$set(
 )
 ```
 
-At long last she is done. Her campaign of bullying and cruelty can continue:
+At long last she is done.^[Note that there is also the `fansi::set_knit_hooks()` function which will set the hooks in a more user-friendly way. I don't think there's any reason not to use it: the only reason I didn't is that I found it convenient to write things from scratch here so that I understood what was happening.] Her campaign of bullying and cruelty can continue:
 
 ```{r cli-alerts}
 cli_alert("I'm still here bitches, and I know everything. -A")
