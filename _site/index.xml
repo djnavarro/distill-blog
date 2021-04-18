@@ -222,7 +222,44 @@ A
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Much nicer. As every would-be tormenter knows, it’s important to pay attention to the details.&lt;/p&gt;
 &lt;h2 id="creating-structured-messages"&gt;Creating structured messages&lt;/h2&gt;
+&lt;p&gt;Writing long messages when sending a threatening letter is a simple enough thing, but at some point A will likely find herself wanting to add some structure to these missives. Lists are nice. Stalkers like keeping lists, I hear. With that in mind, a nice property of cli is that it allows you to separate style from structure using an HTML-like syntax. Top level headings are specified using &lt;code&gt;cli_h1()&lt;/code&gt;, and second level headings are produced by &lt;code&gt;cli_h2()&lt;/code&gt;. Unordered lists are produced using &lt;code&gt;cli_ul()&lt;/code&gt; and ordered lists by &lt;code&gt;cli_ol()&lt;/code&gt;. This make it easy to write structured messages to the R console:&lt;/p&gt;
+&lt;pre class="r"&gt;&lt;code&gt;cli({
+  cli_h1(&amp;quot;Characters&amp;quot;)
+  cli_h2(&amp;quot;The Liars&amp;quot;)
+  cli_ul(c(
+    &amp;quot;Alison DiLaurentis&amp;quot;,
+    &amp;quot;Spencer Hastings&amp;quot;,
+    &amp;quot;Aria Montgomery&amp;quot;,
+    &amp;quot;Hanna Marin&amp;quot;,
+    &amp;quot;Emily Fields&amp;quot;
+  ))
+  cli_h2(&amp;quot;The A-Team&amp;quot;)
+  cli_ul(c(
+    &amp;quot;Mona Vanderwaal&amp;quot;,
+    &amp;quot;Lucas Gottesman&amp;quot;,
+    &amp;quot;Melissa Hastings&amp;quot;
+  ))
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="r-output"&gt;&lt;code&gt;
+&lt;span style='color: #00BBBB;'&gt;──&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Characters&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;────────────────────────────────────────────────────────&lt;/span&gt;&lt;span&gt;
+
+── &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;The Liars&lt;/span&gt;&lt;span&gt; ──
+
+● Alison DiLaurentis
+● Spencer Hastings
+● Aria Montgomery
+● Hanna Marin
+● Emily Fields
+
+── &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;The A-Team&lt;/span&gt;&lt;span&gt; ──
+
+● Mona Vanderwaal
+● Lucas Gottesman
+● Melissa Hastings
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Better yet, the cli package has a whole swathe of other utilities that follow this same HTML-like naming scheme, making it possible to send elaborate and disturbing messages in so many different ways.&lt;/p&gt;
 &lt;h2 id="epilogue"&gt;Epilogue&lt;/h2&gt;
+&lt;p&gt;There is a lot more to the cli package that I haven’t talked about in this post. I’ve not talked about how to modify the themes, how to create custom cli “apps” that use different themes or send output to different connections. I’ve not talked about how to use conditional logic within a cli call, displaying different messages depending on whether a process succeeds or fails. Those will have to remain secret for now, because this post is quite long enough already and quite frankly I’m still learning myself. Besides, these powers would no doubt would be put to terrible purposes in an R-themed &lt;em&gt;Pretty Little Liars&lt;/em&gt; spinoff show, and I’m not entirely sure that all secrets need sharing…&lt;/p&gt;
 &lt;pre class="r"&gt;&lt;code&gt;cli(
   cli_blockquote(
     quote = &amp;quot;Friends share secrets, that&amp;#39;s what keeps us close&amp;quot;,

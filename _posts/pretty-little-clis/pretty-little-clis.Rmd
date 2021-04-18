@@ -311,9 +311,33 @@ Much nicer. As every would-be tormenter knows, it's important to pay attention t
 
 ## Creating structured messages
 
+Writing long messages when sending a threatening letter is a simple enough thing, but at some point A will likely find herself wanting to add some structure to these missives. Lists are nice. Stalkers like keeping lists, I hear. With that in mind, a nice property of cli is that it allows you to separate style from structure using an HTML-like syntax. Top level headings are specified using `cli_h1()`, and second level headings are produced by `cli_h2()`. Unordered lists are produced using `cli_ul()` and ordered lists by `cli_ol()`. This make it easy to write structured messages to the R console:
 
+```{r structure}
+cli({
+  cli_h1("Characters")
+  cli_h2("The Liars")
+  cli_ul(c(
+    "Alison DiLaurentis",
+    "Spencer Hastings",
+    "Aria Montgomery",
+    "Hanna Marin",
+    "Emily Fields"
+  ))
+  cli_h2("The A-Team")
+  cli_ul(c(
+    "Mona Vanderwaal",
+    "Lucas Gottesman",
+    "Melissa Hastings"
+  ))
+})
+```
+
+Better yet, the cli package has a whole swathe of other utilities that follow this same HTML-like naming scheme, making it possible to send elaborate and disturbing messages in so many different ways. 
 
 ## Epilogue
+
+There is a lot more to the cli package that I haven't talked about in this post. I've not talked about how to modify the themes, how to create custom cli "apps" that use different themes or send output to different connections. I've not talked about how to use conditional logic within a cli call, displaying different messages depending on whether a process succeeds or fails. Those will have to remain secret for now, because this post is quite long enough already and quite frankly I'm still learning myself. Besides, these powers would no doubt would be put to terrible purposes in an R-themed *Pretty Little Liars* spinoff show, and I'm not entirely sure that all secrets need sharing...
 
 ```{r epilogue}
 cli(

@@ -1826,7 +1826,49 @@ A
 </div>
 <p>Much nicer. As every would-be tormenter knows, it’s important to pay attention to the details.</p>
 <h2 id="creating-structured-messages">Creating structured messages</h2>
+<p>Writing long messages when sending a threatening letter is a simple enough thing, but at some point A will likely find herself wanting to add some structure to these missives. Lists are nice. Stalkers like keeping lists, I hear. With that in mind, a nice property of cli is that it allows you to separate style from structure using an HTML-like syntax. Top level headings are specified using <code>cli_h1()</code>, and second level headings are produced by <code>cli_h2()</code>. Unordered lists are produced using <code>cli_ul()</code> and ordered lists by <code>cli_ol()</code>. This make it easy to write structured messages to the R console:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli.html'>cli</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Characters"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"The Liars"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+    <span class='st'>"Alison DiLaurentis"</span>,
+    <span class='st'>"Spencer Hastings"</span>,
+    <span class='st'>"Aria Montgomery"</span>,
+    <span class='st'>"Hanna Marin"</span>,
+    <span class='st'>"Emily Fields"</span>
+  <span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"The A-Team"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+    <span class='st'>"Mona Vanderwaal"</span>,
+    <span class='st'>"Lucas Gottesman"</span>,
+    <span class='st'>"Melissa Hastings"</span>
+  <span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre class="r-output"><code>
+<span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Characters</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span>
+
+── </span><span style='font-weight: bold;'>The Liars</span><span> ──
+
+● Alison DiLaurentis
+● Spencer Hastings
+● Aria Montgomery
+● Hanna Marin
+● Emily Fields
+
+── </span><span style='font-weight: bold;'>The A-Team</span><span> ──
+
+● Mona Vanderwaal
+● Lucas Gottesman
+● Melissa Hastings
+</span></code></pre>
+</div>
+<p>Better yet, the cli package has a whole swathe of other utilities that follow this same HTML-like naming scheme, making it possible to send elaborate and disturbing messages in so many different ways.</p>
 <h2 id="epilogue">Epilogue</h2>
+<p>There is a lot more to the cli package that I haven’t talked about in this post. I’ve not talked about how to modify the themes, how to create custom cli “apps” that use different themes or send output to different connections. I’ve not talked about how to use conditional logic within a cli call, displaying different messages depending on whether a process succeeds or fails. Those will have to remain secret for now, because this post is quite long enough already and quite frankly I’m still learning myself. Besides, these powers would no doubt would be put to terrible purposes in an R-themed <em>Pretty Little Liars</em> spinoff show, and I’m not entirely sure that all secrets need sharing…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli.html'>cli</a></span><span class='op'>(</span>
