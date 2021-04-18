@@ -6,7 +6,7 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Thu, 15 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Apr 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Pretty little CLIs</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -268,7 +268,7 @@ A
 &lt;/div&gt;</description>
       <distill:md5>d5a41260e8c54f0561bef2a24bea5b1f</distill:md5>
       <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>
-      <pubDate>Thu, 15 Apr 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 17 Apr 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>Welcome to the jungle</title>

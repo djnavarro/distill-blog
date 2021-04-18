@@ -2,13 +2,23 @@
 title: "Pretty little CLIs"
 description: |
   How to make a gorgeous command line interface in R using the cli package.
+params:
+  slug: pretty-little-clis
 author:
-  - name: Danielle Navarro
+  - first_name: "Danielle"
+    last_name: "Navarro"
     url: https://djnavarro.net
-date: 04-16-2021
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+date: 04-18-2021
 bibliography: pretty-little-clis.bib
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/pretty-little-clis
+repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
+    toc: true
     self_contained: false
 ---
 
