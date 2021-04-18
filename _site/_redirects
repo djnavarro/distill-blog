@@ -1,3 +1,4 @@
 # Redirects from what the browser requests to what netlify serves.
 # This is automatically updated using set_redirect(), do not edit by hand
 /welcome /posts/welcome
+/pretty-little-clis /posts/pretty-little-clis

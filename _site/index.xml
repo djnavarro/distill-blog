@@ -6,7 +6,17 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 05 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 18 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Pretty little CLIs</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/pretty-little-clis</link>
+      <description>How to make a gorgeous command line interface in R using the cli package.
+Somewhere along the way I accidentally learned about ANSI control codes,
+which strikes me as unfortunate</description>
+      <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>
+      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Welcome to the jungle</title>
       <dc:creator>Danielle Navarro</dc:creator>
