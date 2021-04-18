@@ -31,9 +31,9 @@ make_asciicast <- function(name, rows) {
   )
 }
 
-make_asciicast("cat-example", rows = 3)
-make_asciicast("message-structure-1", rows = 9)
-make_asciicast("message-structure-2", rows = 6)
+make_asciicast("cat-example", rows = 4)
+make_asciicast("cli-example-1", rows = 4)
+make_asciicast("cli-example-2", rows = 4)
 make_asciicast("message-structure-3", rows = 9)
 make_asciicast("status-bar-1", rows = 6)
 make_asciicast("status-bar-2", rows = 3)

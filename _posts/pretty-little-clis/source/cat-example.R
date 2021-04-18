@@ -7,9 +7,8 @@ cat("\n")
 # code chunk --------------------------------------------------------------
 
 wait <- function(seconds = 2) {Sys.sleep(seconds)}
-simple_message <- function() {
-  cat("Dead girls walking.")
-  wait()
+send_cat_threat <- function() {
+  cat("Dead girls walking.\n"); wait()
   cat(" --A.\n")
 }
-simple_message()
+send_cat_threat()
