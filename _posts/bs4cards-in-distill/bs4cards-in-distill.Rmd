@@ -1,0 +1,122 @@
+---
+title: "Bootstrap cards in distill"
+description: |
+  A short description of the post.
+author:
+  - name: Danielle Navarro
+    url: https://djnavarro.net
+date: 04-19-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    includes:
+      in_header: header_bs4.html
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+When creating R markdown websites, I often find myself wanting to organise content into a nice-looking grid of links. For example, in a [recent project](https://slides.djnavarro.net/) I wanted to be able to create something like this:
+
+```{r, echo=FALSE}
+library(bs4cards)
+slides <- list(
+  
+  card(
+    title = "Starting R markdown",
+    image = "https://slides.djnavarro.net/index_img/starting-rmarkdown.png",
+    link = "https://slides.djnavarro.net/starting-rmarkdown",
+    text = "An introduction to R markdown. The target audience is a novice R user with no previous experience with markdown."
+  ),
+  
+  card(
+    title = "Starting ggplot2",
+    image = "https://slides.djnavarro.net/index_img/starting-ggplot2.png",
+    link = "https://slides.djnavarro.net/starting-ggplot2",
+    text = "An introduction to ggplot2. The target audience is a novice user with no previous experience with R or ggplot2."
+  ),
+  
+  card(
+    title = "Starting programming",
+    image = "https://slides.djnavarro.net/index_img/starting-programming.png",
+    link = "https://slides.djnavarro.net/starting-programming",
+    text = "This is primarily a tutorial on making generative art in R, but in doing so introduces core programming constructs and data structures."
+  )
+)
+
+card_grid(slides)
+```
+
+It bothered me that this wasn't as straightforward as I was expecting, so for one of my side projects I've been putting together a small package called [bs4cards](https://bs4cards.djnavarro.net) to make this a little easier inside an R markdown document or website. There's an [introductory vignette](https://bs4cards.djnavarro.net/articles/introduction.html) posted on the bs4cards package website showing how the package works, and there's no need to duplicate that content here. However, because this website uses the [distill](https://rstudio.github.io/distill/) package and the package website is built using [pkgdown](https://pkgdown.r-lib.org/), it seems like a good idea to have at least one post on both sites that uses bs4cards. 
+
+
+## Enabling bootstrap 4
+
+The reason for doing this is that the first step in using the package is to make sure that your R markdown document uses version 4 of bootstrap: the `bs4cards` package takes its name from the [cards](https://getbootstrap.com/docs/4.5/components/card/) system introduced in bootstrap version 4, and will not work properly if used in R markdown documents that rely on bootstrap version 3, or don't use bootstrap at all. To ensure that you are using bootstrap 4, you need to edit the YAML header for your document to specify which version of bootstrap you want to use. The instructions are slightly different depending on what kind of document you're creating:
+
+### Vanilla R markdown
+
+For a plain R markdown document or website (i.e., one where the output format is `html_document`) here is the relevant section of YAML you might use:
+
+```
+output:
+  html_document:
+    theme:
+      version: 4
+```
+
+This overrides the R markdown defaults to ensure that the output is built using [bootstrap 4.5](https://getbootstrap.com/docs/4.5/getting-started/introduction/). 
+
+### Pkgdown
+
+To enable bootstrap 4 in a pkgdown site, the process is similar but not identical. Edit the `_pkgdown.yml` file to include the following
+
+```
+template:
+  bootstrap: 4
+```
+
+Note that this relies on a currently-in-development feature, so you may need to update to the development version of pkgdown to make this work.
+
+
+### Distill
+
+Distill R markdown does not natively use bootstrap, but you can enable it by including the relevant information through the header. This is a two step process. First, create a file called [header_bs4.html](https://blog.djnavarro.net/posts/bs4cards-in-distill/header_bs4.html) or something. The content of the file should be as follows:
+
+```
+<!-- bootstrap 4, for non-distill content -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+```
+
+
+Then you need to add the following lines to your YAML header:
+
+```
+output:
+  distill::distill_article:
+    includes:
+      in_header: header_bs4.html
+```
+
+If, like me, you only want to enable bootstrap 4 for a specific post, this goes in the YAML header for that post only, and the `header_bs4.html` file goes in the same folder as the `.Rmd` file for your post. Alternatively, if you want to enable bootstrap 4 for the entire site, this markup goes in the `_site.yml` file, and the `header_bs4.html` file goes in the same folder as `_site.yml`. 
+
+Once that's done you should be ready to go
+
+## Testing with kittens
+
+Just to make certain, let's check that it does what we want by generating a random card using kitten images and lorem ipsum placeholder text:
+
+```{r, echo=TRUE}
+bs4cards::sample_card()
+```
+
+<br>
+
+Looks good!
+
