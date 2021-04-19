@@ -11,7 +11,8 @@
       <title>Bootstrap cards in distill</title>
       <dc:creator>Danielle Navarro</dc:creator>
       <link>https://blog.djnavarro.net/posts/bs4cards-in-distill</link>
-      <description>A short description of the post.</description>
+      <description>How to enable bootstrap 4 on a distill website, even though you probably 
+don't need to. I like it though because I get to add pretty bootstrap cards</description>
       <guid>https://blog.djnavarro.net/posts/bs4cards-in-distill</guid>
       <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
     </item>

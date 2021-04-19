@@ -1,23 +1,63 @@
 ---
 title: "Bootstrap cards in distill"
 description: |
-  A short description of the post.
+  How to enable bootstrap 4 on a distill website, even though you probably 
+  don't need to. I like it though because I get to add pretty bootstrap cards
+params:
+  slug: bs4cards-in-distill
 author:
-  - name: Danielle Navarro
+  - first_name: "Danielle"
+    last_name: "Navarro"
     url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
 date: 04-19-2021
+bibliography: bs4cards-in-distill.bib
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/bs4cards-in-distill
+repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
     includes:
       in_header: header_bs4.html
 ---
 
 
+<!--------------- my typical setup ----------------->
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
+```{r box, echo=FALSE}
+# ensure box knows where this post is located
+box::set_script_path(
+  path = here::here("_posts", params$slug, paste0(params$slug, ".Rmd"))
+)
+
+# import utility functions as a module
+box::use(../../source/utils[
+  set_meta, 
+  set_redirect, 
+  set_source, 
+  set_session,
+  set_lockfile,
+  set_timestamp
+])
+```
+
+```{r meta, echo=FALSE}
+set_meta(
+  title =  "Bootstrap cards in distill", 
+  description = "How to enable bootstrap 4 cards on a distill website"
+)
+```
+
+
+<!--------------- post begins here ----------------->
 
 
 When creating R markdown websites, I often find myself wanting to organise content into a nice-looking grid of links. For example, in a [recent project](https://slides.djnavarro.net/) I wanted to be able to create something like this:
@@ -51,7 +91,7 @@ slides <- list(
 card_grid(slides)
 ```
 
-It bothered me that this wasn't as straightforward as I was expecting, so for one of my side projects I've been putting together a small package called [bs4cards](https://bs4cards.djnavarro.net) to make this a little easier inside an R markdown document or website. There's an [introductory vignette](https://bs4cards.djnavarro.net/articles/introduction.html) posted on the bs4cards package website showing how the package works, and there's no need to duplicate that content here. However, because this website uses the [distill](https://rstudio.github.io/distill/) package and the package website is built using [pkgdown](https://pkgdown.r-lib.org/), it seems like a good idea to have at least one post on both sites that uses bs4cards. 
+It bothered me that this wasn't as straightforward as I was expecting, so for one of my side projects I've been putting together a small package called [bs4cards](https://bs4cards.djnavarro.net) to make this a little easier inside an R markdown document or website. There's an [introductory vignette](https://bs4cards.djnavarro.net/articles/introduction.html) posted on the bs4cards package website showing how the package works, and there's no need to duplicate that content here. However, because this website uses the [distill](https://rstudio.github.io/distill/) package [@distill] and the package website is built using [pkgdown](https://pkgdown.r-lib.org/) [@pkgdown], it seems like a good idea to have at least one post on both sites that uses bs4cards. 
 
 
 ## Enabling bootstrap 4
@@ -69,7 +109,7 @@ output:
       version: 4
 ```
 
-This overrides the R markdown defaults to ensure that the output is built using [bootstrap 4.5](https://getbootstrap.com/docs/4.5/getting-started/introduction/). 
+This overrides the R markdown defaults [@rmarkdown] to ensure that the output is built using [bootstrap 4.5](https://getbootstrap.com/docs/4.5/getting-started/introduction/). 
 
 ### Pkgdown
 
@@ -106,7 +146,7 @@ output:
 
 If, like me, you only want to enable bootstrap 4 for a specific post, this goes in the YAML header for that post only, and the `header_bs4.html` file goes in the same folder as the `.Rmd` file for your post. Alternatively, if you want to enable bootstrap 4 for the entire site, this markup goes in the `_site.yml` file, and the `header_bs4.html` file goes in the same folder as `_site.yml`. 
 
-Once that's done you should be ready to go
+Once that's done you should be ready to go!^[Well, sort of. This approach enables *all* bootstrap formatting through the whole document, and this does have an impact on how a few other things (e.g., links) are displayed. This footnote is my note-to-self reminding me to fix this issue!]
 
 ## Testing with kittens
 
@@ -118,5 +158,25 @@ bs4cards::sample_card()
 
 <br>
 
-Looks good!
+Looks about right to me?
+
+
+
+<!--------------- appendices go here ----------------->
+
+## Last updated {.appendix}
+
+`r set_timestamp("Australia/Sydney")`
+
+## Details {.appendix}
+
+[source code](`r set_source(params$slug)`), [session info](`r set_session(params$slug)`), [lockfile](`r set_lockfile(params$slug)`)
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+set_redirect(params$slug)
+```
+
 
