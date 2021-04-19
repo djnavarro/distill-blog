@@ -6,7 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 18 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 19 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Bootstrap cards in distill</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/bs4cards-in-distill</link>
+      <description>A short description of the post.</description>
+      <guid>https://blog.djnavarro.net/posts/bs4cards-in-distill</guid>
+      <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Pretty little CLIs</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -15,94 +23,6 @@
 Somewhere along the way I accidentally learned about ANSI control codes,
 which strikes me as unfortunate</description>
       <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>
-      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Bootstrap cards in distill</title>
-      <dc:creator>Danielle Navarro</dc:creator>
-      <link>https://blog.djnavarro.net/posts/bs4cards-in-distill</link>
-      <description>
-
-
-&lt;p&gt;When creating R markdown websites, I often find myself wanting to organise content into a nice-looking grid of links. For example, in a &lt;a href="https://slides.djnavarro.net/"&gt;recent project&lt;/a&gt; I wanted to be able to create something like this:&lt;/p&gt;
-&lt;div class="row m-0 mb-3 mt-3 p-0"&gt;
-&lt;div class="card col-12 col-md-4 m-0 p-2 d-flex"&gt;
-&lt;a href="https://slides.djnavarro.net/starting-rmarkdown"&gt;
-&lt;img class="card-img-top p-0" src="https://slides.djnavarro.net/index_img/starting-rmarkdown.png"/&gt;
-&lt;/a&gt;
-&lt;div class="card-body"&gt;
-&lt;a href="https://slides.djnavarro.net/starting-rmarkdown"&gt;
-&lt;h5 class="card-title"&gt;Starting R markdown&lt;/h5&gt;
-&lt;/a&gt;
-&lt;p class="card-text"&gt;An introduction to R markdown. The target audience is a novice R user with no previous experience with markdown.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="card col-12 col-md-4 m-0 p-2 d-flex"&gt;
-&lt;a href="https://slides.djnavarro.net/starting-ggplot2"&gt;
-&lt;img class="card-img-top p-0" src="https://slides.djnavarro.net/index_img/starting-ggplot2.png"/&gt;
-&lt;/a&gt;
-&lt;div class="card-body"&gt;
-&lt;a href="https://slides.djnavarro.net/starting-ggplot2"&gt;
-&lt;h5 class="card-title"&gt;Starting ggplot2&lt;/h5&gt;
-&lt;/a&gt;
-&lt;p class="card-text"&gt;An introduction to ggplot2. The target audience is a novice user with no previous experience with R or ggplot2.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="card col-12 col-md-4 m-0 p-2 d-flex"&gt;
-&lt;a href="https://slides.djnavarro.net/starting-programming"&gt;
-&lt;img class="card-img-top p-0" src="https://slides.djnavarro.net/index_img/starting-programming.png"/&gt;
-&lt;/a&gt;
-&lt;div class="card-body"&gt;
-&lt;a href="https://slides.djnavarro.net/starting-programming"&gt;
-&lt;h5 class="card-title"&gt;Starting programming&lt;/h5&gt;
-&lt;/a&gt;
-&lt;p class="card-text"&gt;This is primarily a tutorial on making generative art in R, but in doing so introduces core programming constructs and data structures.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;It bothered me that this wasn’t as straightforward as I was expecting, so for one of my side projects I’ve been putting together a small package called &lt;a href="https://bs4cards.djnavarro.net"&gt;bs4cards&lt;/a&gt; to make this a little easier inside an R markdown document or website. There’s an &lt;a href="https://bs4cards.djnavarro.net/articles/introduction.html"&gt;introductory vignette&lt;/a&gt; posted on the bs4cards package website showing how the package works, and there’s no need to duplicate that content here. However, because this website uses the &lt;a href="https://rstudio.github.io/distill/"&gt;distill&lt;/a&gt; package and the package website is built using &lt;a href="https://pkgdown.r-lib.org/"&gt;pkgdown&lt;/a&gt;, it seems like a good idea to have at least one post on both sites that uses bs4cards.&lt;/p&gt;
-&lt;h2 id="enabling-bootstrap-4"&gt;Enabling bootstrap 4&lt;/h2&gt;
-&lt;p&gt;The reason for doing this is that the first step in using the package is to make sure that your R markdown document uses version 4 of bootstrap: the &lt;code&gt;bs4cards&lt;/code&gt; package takes its name from the &lt;a href="https://getbootstrap.com/docs/4.5/components/card/"&gt;cards&lt;/a&gt; system introduced in bootstrap version 4, and will not work properly if used in R markdown documents that rely on bootstrap version 3, or don’t use bootstrap at all. To ensure that you are using bootstrap 4, you need to edit the YAML header for your document to specify which version of bootstrap you want to use. The instructions are slightly different depending on what kind of document you’re creating:&lt;/p&gt;
-&lt;h3 id="vanilla-r-markdown"&gt;Vanilla R markdown&lt;/h3&gt;
-&lt;p&gt;For a plain R markdown document or website (i.e., one where the output format is &lt;code&gt;html_document&lt;/code&gt;) here is the relevant section of YAML you might use:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;output:
-  html_document:
-    theme:
-      version: 4&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This overrides the R markdown defaults to ensure that the output is built using &lt;a href="https://getbootstrap.com/docs/4.5/getting-started/introduction/"&gt;bootstrap 4.5&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id="pkgdown"&gt;Pkgdown&lt;/h3&gt;
-&lt;p&gt;To enable bootstrap 4 in a pkgdown site, the process is similar but not identical. Edit the &lt;code&gt;_pkgdown.yml&lt;/code&gt; file to include the following&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;template:
-  bootstrap: 4&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Note that this relies on a currently-in-development feature, so you may need to update to the development version of pkgdown to make this work.&lt;/p&gt;
-&lt;h3 id="distill"&gt;Distill&lt;/h3&gt;
-&lt;p&gt;Distill R markdown does not natively use bootstrap, but you can enable it by including the relevant information through the header. This is a two step process. First, create a file called &lt;a href="https://blog.djnavarro.net/posts/bs4cards-in-distill/header_bs4.html"&gt;header_bs4.html&lt;/a&gt; or something. The content of the file should be as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;lt;!-- bootstrap 4, for non-distill content --&amp;gt;
-&amp;lt;link rel=&amp;quot;stylesheet&amp;quot; href=&amp;quot;https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css&amp;quot; integrity=&amp;quot;sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;
-&amp;lt;script src=&amp;quot;https://code.jquery.com/jquery-3.5.1.slim.min.js&amp;quot; integrity=&amp;quot;sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
-&amp;lt;script src=&amp;quot;https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js&amp;quot; integrity=&amp;quot;sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns&amp;quot; crossorigin=&amp;quot;anonymous&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then you need to add the following lines to your YAML header:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;output:
-  distill::distill_article:
-    includes:
-      in_header: header_bs4.html&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If, like me, you only want to enable bootstrap 4 for a specific post, this goes in the YAML header for that post only, and the &lt;code&gt;header_bs4.html&lt;/code&gt; file goes in the same folder as the &lt;code&gt;.Rmd&lt;/code&gt; file for your post. Alternatively, if you want to enable bootstrap 4 for the entire site, this markup goes in the &lt;code&gt;_site.yml&lt;/code&gt; file, and the &lt;code&gt;header_bs4.html&lt;/code&gt; file goes in the same folder as &lt;code&gt;_site.yml&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Once that’s done you should be ready to go&lt;/p&gt;
-&lt;h2 id="testing-with-kittens"&gt;Testing with kittens&lt;/h2&gt;
-&lt;p&gt;Just to make certain, let’s check that it does what we want by generating a random card using kitten images and lorem ipsum placeholder text:&lt;/p&gt;
-&lt;pre class="r"&gt;&lt;code&gt;bs4cards::sample_card()&lt;/code&gt;&lt;/pre&gt;
-&lt;div class="card col-12 col-md-4 m-0 p-2 d-flex"&gt;
-&lt;img class="card-img-top p-0" src="https://placekitten.com/277/239"/&gt;
-&lt;div class="card-body"&gt;
-&lt;h5 class="card-title"&gt;A kitten card&lt;/h5&gt;
-&lt;p class="card-text"&gt;Facillimum id quidem est, inquam. Paria sunt igitur. Sed venio ad inconstantiae crimen, ne saepius dicas me aberrare; Neque solum ea communia, verum etiam paria esse dixerunt.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;&lt;br&gt;&lt;/p&gt;
-&lt;p&gt;Looks good!&lt;/p&gt;
-&lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</description>
-      <distill:md5>1be7a4fa542191896d285e644c86d920</distill:md5>
-      <guid>https://blog.djnavarro.net/posts/bs4cards-in-distill</guid>
       <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
     </item>
     <item>
