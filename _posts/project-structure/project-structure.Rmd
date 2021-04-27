@@ -34,7 +34,7 @@ It is *heavily* influenced by the [Naming Things](https://speakerdeck.com/jennyb
 
 ## Naming things
 
-How should we name files? It's not a topic that we usually teach at universities, but it matters. Consider the words of Juliet Capulet from the Shakespeare tragedy, "Romeo and Juliet". Realising that she has fallen in love with Romeo, a member of the Montague family with which the Capulets have had a violent and feud, she ponders the significance of the name "Montague" as it relates to her unfortunate situation:
+How should we name files? It's not a topic that we usually teach at universities, but it matters. Consider the words of Juliet Capulet from the Shakespeare tragedy, "Romeo and Juliet". Realising that she has fallen in love with Romeo, a member of the Montague family with which the Capulets have had a long-running violent feud, she ponders the significance of the name "Montague" as it relates to her unfortunate situation:
 
 > ’Tis but thy name that is my enemy;
 Thou art thyself, though not a Montague.
