@@ -30,9 +30,28 @@ This post is associated with my slides and videos on the same topic:
 - YouTube: https://youtube.djnavarro.net/project-structure
 - Bilibili: https://bilibili.djnavarro.net/project-structure
 
+It is *heavily* influenced by the [Naming Things](https://speakerdeck.com/jennybc/how-to-name-files) slides that Jenny Bryan wrote in 2015. 
+
 ## Naming things
 
-### What's in a name?
+How should we name files? It's not a topic that we usually teach at universities, but it matters. Consider the words of Juliet Capulet from the Shakespeare tragedy, "Romeo and Juliet". Realising that she has fallen in love with Romeo, a member of the Montague family with which the Capulets have had a violent and feud, she ponders the significance of the name "Montague" as it relates to her unfortunate situation:
+
+> ’Tis but thy name that is my enemy;
+Thou art thyself, though not a Montague.
+What’s Montague? It is nor hand, nor foot,
+Nor arm, nor face, nor any other part
+Belonging to a man. O, be some other name!
+What’s in a name? That which we call a rose
+By any other name would smell as sweet;
+So Romeo would, were he not Romeo call’d,
+Retain that dear perfection which he owes
+Without that title. Romeo, doff thy name;
+And for thy name, which is no part of thee,
+Take all myself. 
+
+There is a lot that Juliet gets right here. What precisely *is* a file name? It is not a part of the file itself, it's metadata that describes the file in some sense. Renaming a file does not change its content, its meaning, or its value. Were Romeo to change his family name from "Montague" to "Manatee" it would not make him a manatee. He would remain -- at least in Juliet's eyes -- a deeply desirable man. 
+
+Nevertheless, as the events of the play unfold, what becomes clear is that names do matter. Neither Romeo nor Juliet can hide from the real world effects that their names have upon their lies, and the star-crossed lovers meet a tragic end as a consequence. So it is with file names. When you name files you are making choices, and those choices will have later consequences for the users of your files. 
 
 ### Names machines like
 
