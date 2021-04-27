@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/project-structure/",
+    "title": "Project structure",
+    "description": "Some low-tech advice on naming files and organising projects, heavily \ninfluenced by Jenny Bryan",
+    "author": [
+      {
+        "name": "Danielle Navarro",
+        "url": "https://djnavarro.net"
+      }
+    ],
+    "date": "2021-04-27",
+    "categories": [],
+    "contents": "\n\nContents\nNaming thingsWhat’s in a name?\nNames machines like\nNames humans like\nSorting and searching\n\nProject structureUnderstanding file paths\nProject templates\nREADME files\nWhere do projects live?\n\n\nNaming things\nWhat’s in a name?\nNames machines like\nNames humans like\nSorting and searching\nProject structure\nUnderstanding file paths\nProject templates\nREADME files\nWhere do projects live?\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-04-27T13:56:45+10:00",
+    "input_file": "project-structure.utf8.md"
+  },
+  {
     "path": "posts/bs4cards-in-distill/",
     "title": "Bootstrap cards in distill",
     "description": "How to enable bootstrap 4 on a distill website, even though you probably \ndon't need to. I like it though because I get to add pretty bootstrap cards",
