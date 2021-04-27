@@ -14,6 +14,12 @@
       <description>
 
 
+&lt;p&gt;This post is associated with my slides and videos on the same topic:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Slides: &lt;a href="https://slides.djnavarro.net/project-structure" class="uri"&gt;https://slides.djnavarro.net/project-structure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;YouTube: &lt;a href="https://youtube.djnavarro.net/project-structure" class="uri"&gt;https://youtube.djnavarro.net/project-structure&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Bilibili: &lt;a href="https://bilibili.djnavarro.net/project-structure" class="uri"&gt;https://bilibili.djnavarro.net/project-structure&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2 id="naming-things"&gt;Naming things&lt;/h2&gt;
 &lt;h3 id="whats-in-a-name"&gt;What’s in a name?&lt;/h3&gt;
 &lt;h3 id="names-machines-like"&gt;Names machines like&lt;/h3&gt;

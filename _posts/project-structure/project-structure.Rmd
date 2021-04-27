@@ -24,6 +24,11 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+This post is associated with my slides and videos on the same topic:
+
+- Slides: https://slides.djnavarro.net/project-structure
+- YouTube: https://youtube.djnavarro.net/project-structure
+- Bilibili: https://bilibili.djnavarro.net/project-structure
 
 ## Naming things
 
