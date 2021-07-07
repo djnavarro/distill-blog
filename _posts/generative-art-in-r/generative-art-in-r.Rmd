@@ -2,14 +2,57 @@
 title: "Generative art in R"
 description: |
   Comments on an exhibit I contributed to as part of useR!2021
+params:
+  slug: generative-art-in-r
 author:
-  - name: Danielle Navarro
+  - first_name: "Danielle"
+    last_name: "Navarro"
     url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
 date: 2021-07-08
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/generative-art-in-r
+repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
     self_contained: false
 ---
+
+<!--------------- my typical setup ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r box, echo=FALSE}
+# ensure box knows where this post is located
+box::set_script_path(
+  path = here::here("_posts", params$slug, paste0(params$slug, ".Rmd"))
+)
+
+# import utility functions as a module
+box::use(../../source/utils[
+  set_meta, 
+  set_redirect, 
+  set_source, 
+  set_session,
+  set_lockfile,
+  set_timestamp
+])
+```
+
+```{r meta, echo=FALSE}
+set_meta(
+  title =  "Generative art in R", 
+  description = "Comments on my contribution to the 2021 useR! art exhibition"
+)
+```
+
+
+<!--------------- post begins here ----------------->
+
 
 ```{r include=FALSE}
 aside <- function(text) {
@@ -131,7 +174,7 @@ It has also been surprisingly popular on my [Society6](https://society6.com/djna
 
 *Leviathan* emerged from my first attempt to create simulated watercolours in R using this [guide](https://tylerxhobbs.com/essays/2017/a-generative-approach-to-simulating-watercolor-paints) written by Tyler Hobbs. I was in a dark mood at the time and the ominous mood to the piece seems quite fitting to me.
 
-```{r results='asis', echo=FALSE, preview=TRUE}
+```{r results='asis', echo=FALSE}
 aside("Leviathan")
 image("exhibit/leviathan.png")
 ```
@@ -151,6 +194,25 @@ aside("Fire and Ice")
 image("exhibit/fire_and_ice.jpg")
 ```
 
+
+
+
+<!--------------- appendices go here ----------------->
+
+## Last updated {.appendix}
+
+`r set_timestamp("Australia/Sydney")`
+
+## Details {.appendix}
+
+[source code](`r set_source(params$slug)`), [session info](`r set_session(params$slug)`), [lockfile](`r set_lockfile(params$slug)`)
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+set_redirect(params$slug)
+```
 
 
 
