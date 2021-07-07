@@ -1,0 +1,63 @@
+---
+title: "Making generative art in R"
+description: |
+  Comments on an exhibit I contributed to as part of useR!2021
+author:
+  - name: Danielle Navarro
+    url: https://djnavarro.net
+date: 2021-07-08
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+**When did you start using R for art? Do you remember your first piece?**
+
+I started making art in R some time in late 2019. I'd discovered some of the art that [Thomas Lin Pedersen](https://www.data-imaginist.com/art) had been making -- at the time he was posting pieces from his *Genesis* series --  and at the same time I found the [ambient](https://github.com/thomasp85/ambient) package that he was using to create the pieces. Thomas famously does not post source code for his art, and being stubborn and curious I wanted to work out how he was doing it, so I started playing with ambient to see if I could reverse engineer his system. My very first piece was the *Constellations* piece below. It's certainly not the prettiest thing I've created, and there are a lot of things I'd like to change about it now, but it's nice to have your early work lying around to see how you've changed since then:
+
+```{r results='asis', echo=FALSE}
+htmltools::img(src = "other/constellations.png", width = "100%")
+```
+
+In any case, if you follow the link above and look at Thomas' *Genesis* pieces you can tell that it's not even remotely close to the mark, but I did eventually get the hang of it and managed to produce a few pieces like *Rainbow Prisms* which are quite a bit closer to the kind of work he was producing:
+
+```{r results='asis', echo=FALSE}
+htmltools::img(src = "other/rainbow_prisms.png", width = "100%")
+```
+
+This is still not quite the same as Thomas' in style, and it's far less detailed than the his *Genesis* pieces are, but by the time I'd worked out how to produce these, I decided it was time to change my approach and branch out a bit. I love Thomas' work of course, but I didn't want my art to be just a low quality imitation of his! And besides, by that point I'd started discovering a whole lot of other people making generative art in R, such as [Will Chase](https://www.williamrchase.com/), [Antonio Sánchez Chinchón](https://hen.link/antonio), [Marcus Volz](https://marcusvolz.com/), and (somewhat later) [Ijeamaka Anyene](https://ijeamaka-anyene.netlify.app/). Each of them has their own style and -- following the famous advice that *art is theft* -- have shamelessly taken ideas and inspiration from each of them (and many others!) at different times.
+
+Some of those early pieces are still around, as part of the  [Rosemary](https://art.djnavarro.net/gallery/rosemary/) gallery.
+
+<br>
+**Were you an artist before making generative art in R?**
+
+Not really. I always wanted to do more artistic and creative things, but the only thing I'd ever done that required any kind of mix of aesthetic sensibility and craftwork was gardening. I used to have a lovely garden in Adelaide with a mix of Mediterranean and Australian native plants, and I had the same kind of enthusiasm for gardening then as I do for art now. Maybe one day I'll garden again but there's no space for that in my Sydney apartment!
+
+<br>
+**Can you talk about your creative process? Do you begin from code or from the outcome you are looking for? Do you start with the color palette in mind, or is it an iterative process?**
+
+
+<br>
+**What is your inspiration?** 
+
+<br>
+**What is your advice for people who wants to create art in R?**
+
+
+<br>
+**Can you walk us through the pieces in the exhibit?**
+
+
+```{r, echo=FALSE, results='asis'}
+pieces <- list.files(
+  path = "./exhibit", 
+  pattern = "(png|jpg)$"
+)
+purrr::walk(pieces, ~ print(
+  htmltools::img(src = paste0("exhibit/", .x), width = "100%"))
+)
+```
+
+

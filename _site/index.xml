@@ -6,28 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 26 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 08 Jul 2021 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Project structure</title>
+      <title>Making generative art in R</title>
       <dc:creator>Danielle Navarro</dc:creator>
-      <link>https://blog.djnavarro.net/posts/project-structure</link>
-      <description>
-
-
-&lt;h2 id="naming-things"&gt;Naming things&lt;/h2&gt;
-&lt;h3 id="whats-in-a-name"&gt;What’s in a name?&lt;/h3&gt;
-&lt;h3 id="names-machines-like"&gt;Names machines like&lt;/h3&gt;
-&lt;h3 id="names-humans-like"&gt;Names humans like&lt;/h3&gt;
-&lt;h3 id="sorting-and-searching"&gt;Sorting and searching&lt;/h3&gt;
-&lt;h2 id="project-structure"&gt;Project structure&lt;/h2&gt;
-&lt;h3 id="understanding-file-paths"&gt;Understanding file paths&lt;/h3&gt;
-&lt;h3 id="project-templates"&gt;Project templates&lt;/h3&gt;
-&lt;h3 id="readme-files"&gt;README files&lt;/h3&gt;
-&lt;h3 id="where-do-projects-live"&gt;Where do projects live?&lt;/h3&gt;
-&lt;pre class="r distill-force-highlighting-css"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;</description>
-      <distill:md5>f4162a7594c568a497f2f7cc97bf669a</distill:md5>
-      <guid>https://blog.djnavarro.net/posts/project-structure</guid>
-      <pubDate>Mon, 26 Apr 2021 00:00:00 +0000</pubDate>
+      <link>https://blog.djnavarro.net/posts/generative-art-in-r</link>
+      <description>Comments on an exhibit I contributed to as part of useR!2021</description>
+      <guid>https://blog.djnavarro.net/posts/generative-art-in-r</guid>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/generative-art-in-r/other/constellations.png" medium="image" type="image/png" width="3000" height="3000"/>
     </item>
     <item>
       <title>Bootstrap cards in distill</title>
