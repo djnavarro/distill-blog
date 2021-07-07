@@ -14,7 +14,7 @@ output:
 
 **When did you start using R for art? Do you remember your first piece?**
 
-I started making art in R some time in late 2019. I'd discovered some of the art that [Thomas Lin Pedersen](https://www.data-imaginist.com/art) had been making -- at the time he was posting pieces from his *Genesis* series --  and at the same time I found the [ambient](https://github.com/thomasp85/ambient) package that he was using to create the pieces. Thomas famously does not post source code for his art, and being stubborn and curious I wanted to work out how he was doing it, so I started playing with ambient to see if I could reverse engineer his system. My very first piece was the *Constellations* piece below. It's certainly not the prettiest thing I've created, and there are a lot of things I'd like to change about it now, but it's nice to have your early work lying around to see how you've changed since then:
+I started making art in R some time in late 2019. I'd discovered some of the art that [Thomas Lin Pedersen](https://www.data-imaginist.com/art) had been making -- at the time he was posting pieces from his *Genesis* series --  and at the same time I found the [ambient](https://github.com/thomasp85/ambient) package that he was using to create the pieces. Thomas famously does not post source code for his art, and being stubborn and curious I wanted to work out how he was doing it, so I started playing with ambient to see if I could reverse engineer his system. My very first piece was *Constellations*, shown below. It's certainly not the prettiest thing I've created, and there are a lot of things I'd like to change about it now, but it's nice to have your early work lying around to see how you've changed since then:
 
 ```{r results='asis', echo=FALSE}
 htmltools::img(src = "other/constellations.png", width = "100%")
@@ -30,23 +30,51 @@ This is still not quite the same as Thomas' in style, and it's far less detailed
 
 Some of those early pieces are still around, as part of the  [Rosemary](https://art.djnavarro.net/gallery/rosemary/) gallery.
 
-<br>
+
+
+<br><br>
 **Were you an artist before making generative art in R?**
 
 Not really. I always wanted to do more artistic and creative things, but the only thing I'd ever done that required any kind of mix of aesthetic sensibility and craftwork was gardening. I used to have a lovely garden in Adelaide with a mix of Mediterranean and Australian native plants, and I had the same kind of enthusiasm for gardening then as I do for art now. Maybe one day I'll garden again but there's no space for that in my Sydney apartment!
 
-<br>
+
+
+<br><br>
 **Can you talk about your creative process? Do you begin from code or from the outcome you are looking for? Do you start with the color palette in mind, or is it an iterative process?**
 
+I'm honestly not sure I have a consistent process? I spend a lot of time browsing artwork by other people on twitter and instagram, and from time to time I read posts about the techniques that they use. Whenever I do this I end up thinking a bit about how I might use this technique or wondering what methods other artists use to create their work, but I don't usually act on that information until I think of something I *want* to do with it. That kind of technical or stylistic information is like background knowledge that lies dormant until I need it.
 
-<br>
+Most of the time the starting point for my art is an emotion. I might be angry or lonely or tired, or just in need of something to occupy my mind and distract me from something else. When I start implementing a new system it's often (though not always) a modification of a previous one. In principle this modification process could probably go in any direction, but what I find in practice is that my aesthetic sensibilities depend a lot on my state of mind, and that imposes a bias. I tweak the code one way, and see what it produces. If I like it, I keep the change, if I don't I reject it. It's a lot like a Metropolis-Hastings sampler that way, but my mood strongly shapes the accept/reject decision, so the same starting point can lead to different outcomes. As a concrete example, the [Pollen](https://art.djnavarro.net/gallery/pollen/), [Bursts](https://art.djnavarro.net/gallery/bursts/) and [Embers](https://art.djnavarro.net/gallery/embers/) series are all based on the same underlying engine, the [fractal flame](https://en.wikipedia.org/wiki/Fractal_flame) algorithm created by Scott Draves, but my emotional state was very different at the time I coded each version. For example, the *Pollen Cloud* piece I contributed to the useR exhibit is soft and gentle largely because I was feeling peaceful and relaxed at the time:
+
+```{r results='asis', echo=FALSE}
+htmltools::img(src = "exhibit/pollen_cloud.jpg", width = "100%")
+```
+
+By way of contrast, the *Geometry in a Hurricane* piece from *Bursts* is layered in jagged textures with a chaotic energy because I was angry at the time I was coding:
+
+```{r results='asis', echo=FALSE}
+htmltools::img(src = "other/geometry_in_a_hurricane.png", width = "100%")
+```
+
+The *Soft Ember* piece below (also included in the exhibit) has a different feel again. There's more energy to it than the pollen pieces, but it's not as chaotic as the bursts series. Again, that's very much a reflection of my mood. I wasn't angry when I coded this system, but I wasn't relaxed either. At the time, something exciting had happened in my life that I wasn't quite able to do anything about, but I was indulging in the anticipation of a new thing, and some of that emotion ended up showing through in the pieces that I made at the time:
+
+```{r results='asis', echo=FALSE}
+htmltools::img(src = "exhibit/soft_ember.jpg", width = "100%")
+```
+
+To bring all this back to the question, it's very much an iterative process. The driver behind the process is usually an emotion, and the colour choices, the shapes, and the code are all adapted on the fly to meet with how I'm feeling. 
+
+
+<br><br>
 **What is your inspiration?** 
 
-<br>
+
+
+<br><br>
 **What is your advice for people who wants to create art in R?**
 
 
-<br>
+<br><br>
 **Can you walk us through the pieces in the exhibit?**
 
 
