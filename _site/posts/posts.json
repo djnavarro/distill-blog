@@ -17,6 +17,23 @@
     "input_file": {}
   },
   {
+    "path": "posts/git-credential-helpers/",
+    "title": "Setting up a git credential helper",
+    "description": "A short description of the post",
+    "author": [
+      {
+        "name": "Danielle Navarro",
+        "url": "https://djnavarro.net"
+      }
+    ],
+    "date": "2021-07-08",
+    "categories": [],
+    "contents": "\n\n\n\n\n\n\n\n\nHello.\n\nLast updated\n2021-08-07 12:15:45 AEST\nDetails\nsource code, session info, lockfile\n\n\n\n\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-08-07T12:15:49+10:00",
+    "input_file": "git-credential-helpers.knit.md"
+  },
+  {
     "path": "posts/bs4cards-in-distill/",
     "title": "Bootstrap cards in distill",
     "description": "How to enable bootstrap 4 on a distill website, even though you probably \ndon't need to. I like it though because I get to add pretty bootstrap cards",
