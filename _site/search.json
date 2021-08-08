@@ -6,14 +6,14 @@
       "description": "Additional detail about the author, supplied even though no-one asked",
       "author": [],
       "contents": "\n\n\n\nDanielle Navarro is a computational cognitive scientist and Associate Professor at the University of New South Wales. Her research focuses on human concept learning and reasoning, and on statistical methods in the behavioural sciences. Other topics she has researched include data visualisation, decision making, language and cultural evolution, cognitive development, and forensic psychology. Danielle is a cofounder of R-Ladies Sydney, and holds editorial roles at Science and Psychological Review. On occasions she has been known to masquerade as a statistician, data scientist, software developer and generative artist. She is prone to describing herself in the third person in biographies, but is willing to admit that it’s super weird.\nProfile image, courtesy of Mara Averick:\n\n\n\n\n\n\n\n",
-      "last_modified": "2021-07-08T12:59:59+10:00"
+      "last_modified": "2021-08-08T20:22:09+10:00"
     },
     {
       "path": "index.html",
       "title": "Notes from a data witch",
       "author": [],
       "contents": "\n\n\n\n\n\n\n",
-      "last_modified": "2021-07-08T13:00:00+10:00"
+      "last_modified": "2021-08-08T20:22:09+10:00"
     }
   ],
   "collections": ["posts/posts.json"]

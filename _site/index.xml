@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:distill="https://distill.pub/journal/" version="2.0">
+  <channel>
+    <title>Notes from a data witch</title>
+    <link>https://blog.djnavarro.net</link>
+    <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
+    <description/>
+    <generator>Distill</generator>
+    <lastBuildDate>Sun, 08 Aug 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Managing GitHub credentials from R, difficulty level linux</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/git-credential-helpers</link>
+      <description>A sick sad story in which a humble R user was forced to learn something about
+how linux stores passwords and, more importantly, got R to use her GitHub
+credentials properly</description>
+      <guid>https://blog.djnavarro.net/posts/git-credential-helpers</guid>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Generative art in R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/generative-art-in-r</link>
+      <description>Comments on an exhibit I contributed to as part of useR!2021</description>
+      <guid>https://blog.djnavarro.net/posts/generative-art-in-r</guid>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Bootstrap cards in distill</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/bs4cards-in-distill</link>
+      <description>How to enable bootstrap 4 on a distill website, even though you probably 
+don't need to. I like it though because I get to add pretty bootstrap cards</description>
+      <guid>https://blog.djnavarro.net/posts/bs4cards-in-distill</guid>
+      <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Pretty little CLIs</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/pretty-little-clis</link>
+      <description>How to make a gorgeous command line interface in R using the cli package.
+Somewhere along the way I accidentally learned about ANSI control codes,
+which strikes me as unfortunate</description>
+      <guid>https://blog.djnavarro.net/posts/pretty-little-clis</guid>
+      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Welcome to the jungle</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/welcome</link>
+      <description>I have reluctantly decided to create a new blog. Some thoughts on 
+what I hope to achieve, having tried my hand at blogging so very many times 
+before</description>
+      <guid>https://blog.djnavarro.net/posts/welcome</guid>
+      <pubDate>Mon, 05 Apr 2021 00:00:00 +0000</pubDate>
+    </item>
+  </channel>
+</rss>
