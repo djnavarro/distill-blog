@@ -2516,27 +2516,28 @@ user.email=d.navarro@unsw.edu.au</code></pre>
 sudo apt update
 sudo apt install git</code></pre>
 <h2 id="method-1-use-git-cache-with-long-timeout">Method 1: use git cache with long timeout</h2>
-<p><a href="https://git-scm.com/docs/git-credential-cache" class="uri">https://git-scm.com/docs/git-credential-cache</a></p>
+<p>Recent versions of git are released with a <a href="https://git-scm.com/docs/git-credential-cache">credential cache</a> that retains your credentials in memory temporarily. The information is never written to disk, and it expires after a time. You can tell git to use this cache as your “credential helper” by typing the following command at the terminal:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">git</span> config --global credential.helper cache</span></code></pre></div>
 </div>
+<p>After doing this, my <code>.gitconfig</code> file now looks like this:</p>
 <pre><code>[user]
     name = Danielle Navarro
     email = d.navarro@unsw.edu.au
 [credential]
     helper = cache</code></pre>
-<p>This works perfectly well, apart from the minor irritation that the cache will expire after 300 seconds and any credentials that you’d stored using <code>gitcred::gitcred_set()</code> will vanish. This was the source of my problem. I’d find myself creating a GitHub PAT using <code>usethis::create_github_token()</code>, storing it, and everything would work fine… for a little while. Then suddenly R started complaining to me that I didn’t have any credentials, leading to many a tear being shed.</p>
-<p>The absolute simplest solution to this problem is discussed in <a href="https://happygitwithr.com/credential-caching.html#linux-1">Happy Git and GitHub for the UseR</a>, and it’s as simple as asking git to store credentials in the cache for just a tiny bit longer, say, ten million seconds…</p>
+<p>Unfortunately this isn’t an ideal solution, because the cache expires after 900 seconds (15 minutes). As soon as the cache expires, git loses track of your GitHub credentials and as a consequence <code>usethis::pr_push()</code> suddenly stops working, and you have to set the credentials again by calling <code>gitcred::gitcred_set()</code> and entering the PAT again. You did store it in a password manager right? Because if not, you’re going to have to create a new one like I did about a dozen times.</p>
+<p>The simplest solution to this problem is to ask git to store information in the cache for a little bit longer. Instead of 900 seconds, maybe ask for 10 million seconds. That way, you’ll only have to refresh the cache using <code>gitcred::gitcred_set()</code> once every four months instead of four times an hour. Implementing this solution requires only one line of code at the terminal:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">git</span> config --global credential.helper <span class="st">&#39;cache --timeout=10000000&#39;</span></span></code></pre></div>
 </div>
-<p>After I do that, my <code>.gitconfig</code> file looks like this</p>
+<p>After typing this, my <code>.gitconfig</code> file looks like this:</p>
 <pre><code>[user]
     name = Danielle Navarro
     email = d.navarro@unsw.edu.au
 [credential]
     helper = cache --timeout=10000000</code></pre>
-<p>and all is well in the world for almost four months, at which point the credential will vanish. At that point of course you’ve forgotten how you set it up in the first place, a lot of tears are shed, and you start asking yourself why you didn’t buy one of those shiny Macs or Windows boxes that all your friends are using.</p>
+<p>This is a perfectly functional solution to the problem, and is currently the advice that <a href="https://happygitwithr.com/credential-caching.html#linux-1">Happy Git and GitHub for the useR</a> suggests for linux users. Importantly, they are at pains to point out that <em>they</em> took this advice from the <a href="https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git">GitHub documentation</a>, and that it is generally wise to regard the GitHub documentation as the authoritative source on how to cache yout GitHub credentials!</p>
 <h2 id="intermission-its-just-a-program">Intermission: It’s just a program</h2>
 <p><a href="https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage" class="uri">https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage</a></p>
 <h2 id="method-2-use-libsecret-as-your-credential-manager">Method 2: Use libsecret as your credential manager</h2>
@@ -2629,7 +2630,7 @@ sudo apt install git</code></pre>
     useHttpPath = true</code></pre>
 <!--------------- appendices go here ----------------->
 <h2 id="last-updated" class="appendix">Last updated</h2>
-<p>2021-08-08 12:32:39 AEST</p>
+<p>2021-08-08 13:07:56 AEST</p>
 <h2 id="details" class="appendix">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/git-credential-helpers.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
