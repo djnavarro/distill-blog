@@ -2576,8 +2576,8 @@ sudo apt install git</code></pre>
     email = d.navarro@unsw.edu.au
 [credential]
     helper = cache</code></pre>
-<p>Unfortunately this isn’t an ideal solution, because the cache expires after 900 seconds (15 minutes). As soon as the cache expires, git loses track of your GitHub credentials and so does R. So you have to set the credentials again by calling <code>gitcred::gitcred_set()</code> and entering the PAT again. That’s annoying, but you did store the PAT in a password manager right? You were smart. You definitely aren’t going to be foolish like me, forget to store your PAT every time, and end up needing to create a new GitHub token every 15 minutes.</p>
-<p>A simple solution to this problem is to ask git to store information in the cache for just a teeny tiny little bit longer. Instead of having the cache expire after the default 900 seconds, maybe set it to expire after 10 million seconds. That way, you’ll only have to refresh the cache using <code>gitcred::gitcred_set()</code> once every four months instead of four times an hour. Implementing this solution requires only one line of code at the terminal:</p>
+<p>Unfortunately this isn’t an ideal solution, because the cache expires after 900 seconds (15 minutes). As soon as the cache expires, git loses track of your GitHub credentials and so does R. So you have to set the credentials again by calling <code>gitcreds::gitcreds_set()</code> and entering the PAT again. That’s annoying, but you did store the PAT in a password manager right? You were smart. You definitely aren’t going to be foolish like me, forget to store your PAT every time, and end up needing to create a new GitHub token every 15 minutes.</p>
+<p>A simple solution to this problem is to ask git to store information in the cache for just a teeny tiny little bit longer. Instead of having the cache expire after the default 900 seconds, maybe set it to expire after 10 million seconds. That way, you’ll only have to refresh the cache using <code>gitcreds::gitcreds_set()</code> once every four months instead of four times an hour. Implementing this solution requires only one line of code at the terminal:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">git</span> config --global credential.helper <span class="st">&#39;cache --timeout=10000000&#39;</span></span></code></pre></div>
 </div>
@@ -2678,7 +2678,7 @@ sudo apt install git</code></pre>
 </div>
 <!--------------- appendices go here ----------------->
 <h2 id="last-updated" class="appendix">Last updated</h2>
-<p>2021-08-08 21:28:13 AEST</p>
+<p>2021-08-09 09:49:33 AEST</p>
 <h2 id="details" class="appendix">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/git-credential-helpers.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
