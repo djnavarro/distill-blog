@@ -32,36 +32,35 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.21",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "1bf627f1f77313e345f71e779b658578"
+      "Version": "0.22.3",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "bookdown",
+      "RemoteUsername": "rstudio",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "c8883c9bbd70400144b396b7cfc66e5e4f2ae8a5",
+      "Hash": "659903ca9bdc2a86fe93c7d9e68c36fb"
     },
     "box": {
       "Package": "box",
-      "Version": "1.0.0",
+      "Version": "1.0.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f03b4edaceb99e4723dd3ebc8727e5bb"
+      "Hash": "bb2d9d43ff648c18d2e15579008ea0f0"
     },
     "brio": {
       "Package": "brio",
-      "Version": "1.1.1",
+      "Version": "1.1.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "36758510e65a457efeefa50e1e7f0576"
+      "Hash": "2f01e16ff9571fe70381c7b9ae560dc4"
     },
     "bs4cards": {
       "Package": "bs4cards",
       "Version": "0.0.0.9000",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "bs4cards",
-      "RemoteUsername": "djnavarro",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "7da5c4aa1979054106f3cb3dd82f4bd5e68b4909",
-      "Hash": "5c9c5ea241a480cf4043ccf151b876e6"
+      "Source": "unknown",
+      "Hash": "65261648600351885bd0cc9d50294de4"
     },
     "digest": {
       "Package": "digest",
@@ -91,10 +90,10 @@
     },
     "ellipsis": {
       "Package": "ellipsis",
-      "Version": "0.3.1",
+      "Version": "0.3.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "fd2844b3a43ae2d27e70ece2df1b4e2a"
+      "Hash": "bb0eec2fe32e88d9e2836c2f73ea2077"
     },
     "evaluate": {
       "Package": "evaluate",
@@ -133,10 +132,10 @@
     },
     "highr": {
       "Package": "highr",
-      "Version": "0.8",
+      "Version": "0.9",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "4dc5bb88961e347a0f4d8aad597cbfac"
+      "Hash": "8eb36c8125038e648e5d111c0d7b2ed4"
     },
     "htmltools": {
       "Package": "htmltools",
@@ -154,17 +153,17 @@
     },
     "knitr": {
       "Package": "knitr",
-      "Version": "1.31",
+      "Version": "1.33",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "c3994c036d19fc22c5e2a209c8298bfb"
+      "Hash": "0bc1b5da1b0eb07cd4b727e95e9ff0b8"
     },
     "lubridate": {
       "Package": "lubridate",
-      "Version": "1.7.9.2",
+      "Version": "1.7.10",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "5b5b02f621d39a499def7923a5aee746"
+      "Hash": "1ebfdc8a3cfe8fe19184f5481972b092"
     },
     "magrittr": {
       "Package": "magrittr",
@@ -189,10 +188,10 @@
     },
     "openssl": {
       "Package": "openssl",
-      "Version": "1.4.3",
+      "Version": "1.4.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a399e4773075fc2375b71f45fca186c4"
+      "Hash": "f4dbc5a47fd93d3415249884d31d6791"
     },
     "png": {
       "Package": "png",
@@ -203,24 +202,24 @@
     },
     "renv": {
       "Package": "renv",
-      "Version": "0.12.3",
+      "Version": "0.13.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "b5510c50c7f31d453c385c7b460af2b9"
+      "Hash": "079cb1f03ff972b30401ed05623cbe92"
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "0.4.10",
+      "Version": "0.4.11",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "599df23c40a4fce9c7b4764f28c37857"
+      "Hash": "515f341d3affe0de9e4a7f762efb0456"
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.7",
+      "Version": "2.8",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "edbf4cb1aefae783fd8d3a008ae51943"
+      "Hash": "f518ba47713f92d0d603eec7c6888faf"
     },
     "rprojroot": {
       "Package": "rprojroot",
@@ -238,10 +237,10 @@
     },
     "stringi": {
       "Package": "stringi",
-      "Version": "1.5.3",
+      "Version": "1.6.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a063ebea753c92910a4cca7b18bc1f05"
+      "Hash": "9df5e6f9a7fa11b84adf0429961de66a"
     },
     "stringr": {
       "Package": "stringr",
@@ -266,10 +265,10 @@
     },
     "vctrs": {
       "Package": "vctrs",
-      "Version": "0.3.7",
+      "Version": "0.3.8",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "5540dc30a203a43a1ce5dc6a89532b3b"
+      "Hash": "ecf749a1b39ea72bd9b51b76292261f1"
     },
     "whisker": {
       "Package": "whisker",
@@ -280,10 +279,10 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.22",
+      "Version": "0.23",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "eab2f8ba53809c321813e72ecbbd19ba"
+      "Hash": "791a57f43c887111490851dcd166d344"
     },
     "xml2": {
       "Package": "xml2",

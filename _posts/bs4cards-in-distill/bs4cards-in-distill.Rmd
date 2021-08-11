@@ -21,8 +21,7 @@ output:
   distill::distill_article:
     self_contained: false
     toc: true
-    includes:
-      in_header: header_bs4.html
+    css: !expr bs4cards::strapless()
 ---
 
 
@@ -125,28 +124,23 @@ Note that this relies on a currently-in-development feature, so you may need to 
 
 ### Distill
 
-Distill R markdown does not natively use bootstrap, but you can enable it by including the relevant information through the header. This is a two step process. First, create a file called [header_bs4.html](https://blog.djnavarro.net/posts/bs4cards-in-distill/header_bs4.html) or something. The content of the file should be as follows:
+Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn't look visually appealing when mixed with the distill styling.^[The original version of this post used that solution, with a promissory note to do a better job later.] To fix this, bs4cards includes a stripped down version of bootstrap called "strapless", that only uses the subset of bootstrap css relevant to cards. A convenience function `strapless()` returns the path to this file:
 
-```
-<!-- bootstrap 4, for non-distill content -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+```{r}
+bs4cards::strapless()
 ```
 
-
-Then you need to add the following lines to your YAML header:
+To enable the strapless variant of bootstrap 4, add the following lines to your YAML header:
 
 ```
 output:
   distill::distill_article:
-    includes:
-      in_header: header_bs4.html
+    css: !expr bs4cards::strapless()
 ```
 
-If, like me, you only want to enable bootstrap 4 for a specific post, this goes in the YAML header for that post only, and the `header_bs4.html` file goes in the same folder as the `.Rmd` file for your post. Alternatively, if you want to enable bootstrap 4 for the entire site, this markup goes in the `_site.yml` file, and the `header_bs4.html` file goes in the same folder as `_site.yml`. 
+If, like me, you only want to enable strapless for a specific post, this goes in the YAML header for that post only. Alternatively, if you want to enable it for the entire site, this markup goes in the `_site.yml` file.
 
-Once that's done you should be ready to go!^[Well, sort of. This approach enables *all* bootstrap formatting through the whole document, and this does have an impact on how a few other things (e.g., links) are displayed. This footnote is my note-to-self reminding me to fix this issue!]
+Once that's done you should be ready to go!
 
 ## Testing with kittens
 
