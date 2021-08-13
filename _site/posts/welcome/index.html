@@ -2142,27 +2142,29 @@ d-appendix {
 
 /* Optional: embed custom fonts here with `@import`          */
 /* This must remain at the top of this file.                 */
-
-
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
 html {
   /*-- Main font sizes --*/
   --title-size:      40px;
-  --body-size:       1.06rem;
-  --code-size:       14px;
-  --aside-size:      12px;
-  --fig-cap-size:    13px;
+  --body-size:       16px;
+  --code-size:       16px;
+  --aside-size:      14px;
+  --fig-cap-size:    14px;
+
   /*-- Main font colors --*/
   --title-color:     #000000;
   --header-color:    rgba(0, 0, 0, 0.8);
   --body-color:      rgba(0, 0, 0, 0.8);
   --aside-color:     rgba(0, 0, 0, 0.6);
   --fig-cap-color:   rgba(0, 0, 0, 0.6);
+
   /*-- Specify custom fonts ~~~ must be imported above   --*/
-  --heading-font:    sans-serif;
-  --mono-font:       monospace;
-  --body-font:       sans-serif;
-  --navbar-font:     sans-serif;  /* websites + blogs only */
+  --heading-font:    'Atkinson Hyperlegible', sans-serif;
+  --mono-font:       'Fira Code', monospace;
+  --body-font:       'Atkinson Hyperlegible', sans-serif;
+  --navbar-font:     'Atkinson Hyperlegible', sans-serif;  /* websites + blogs only */
 }
 
 /*-- ARTICLE METADATA --*/
@@ -2176,7 +2178,7 @@ d-byline {
 /*-- ARTICLE TABLE OF CONTENTS --*/
 .d-contents {
   --heading-size:    18px;
-  --contents-size:   13px;
+  --contents-size:   16px;
 }
 
 /*-- ARTICLE APPENDIX --*/
@@ -2195,19 +2197,45 @@ d-appendix {
   --text-color:       rgba(255, 255, 255, 0.8);
   --text-size:        15px;
   --hover-color:      white;
-  --bkgd-color:       #0F2E3D;
+  --bkgd-color:       black; /* #0F2E3D; */
 }
 
 .distill-site-footer {
   --text-color:       rgba(255, 255, 255, 0.8);
   --text-size:        15px;
   --hover-color:      white;
-  --bkgd-color:       #0F2E3D;
+  --bkgd-color:       black; /* #0F2E3D; */
 }
 
 /*-- Additional custom styles --*/
 /* Add any additional CSS rules below                      */
-</style>
+
+
+/*-- ARTICLE CODE BLOCK --*/
+d-article pre {
+  background-color: #eeeeee;
+  padding: 10px;
+}
+
+/*-- INLINE CODE -- */
+d-article p code {
+  font-size: 14px;
+  color: #000000;
+  background-color: #eeeeee;
+  padding: 5px;
+}
+
+/* -- REMOVE THUMBNAIL IMAGES -- */
+.posts-list .post-preview .description{
+  width: 75%;
+}
+.posts-list .post-preview .thumbnail {
+  width: 0;
+  display: none;
+}
+.posts-list .post-preview img {
+  display: none;
+}</style>
 <style type="text/css">
 /* base style */
 
