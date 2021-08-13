@@ -2143,27 +2143,29 @@ d-appendix {
 
 /* Optional: embed custom fonts here with `@import`          */
 /* This must remain at the top of this file.                 */
-
-
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
 html {
   /*-- Main font sizes --*/
   --title-size:      40px;
-  --body-size:       1.06rem;
-  --code-size:       14px;
-  --aside-size:      12px;
-  --fig-cap-size:    13px;
+  --body-size:       16px;
+  --code-size:       16px;
+  --aside-size:      14px;
+  --fig-cap-size:    14px;
+
   /*-- Main font colors --*/
   --title-color:     #000000;
   --header-color:    rgba(0, 0, 0, 0.8);
   --body-color:      rgba(0, 0, 0, 0.8);
   --aside-color:     rgba(0, 0, 0, 0.6);
   --fig-cap-color:   rgba(0, 0, 0, 0.6);
+
   /*-- Specify custom fonts ~~~ must be imported above   --*/
-  --heading-font:    sans-serif;
-  --mono-font:       monospace;
-  --body-font:       sans-serif;
-  --navbar-font:     sans-serif;  /* websites + blogs only */
+  --heading-font:    'Atkinson Hyperlegible', sans-serif;
+  --mono-font:       'Fira Code', monospace;
+  --body-font:       'Atkinson Hyperlegible', sans-serif;
+  --navbar-font:     'Atkinson Hyperlegible', sans-serif;  /* websites + blogs only */
 }
 
 /*-- ARTICLE METADATA --*/
@@ -2177,7 +2179,7 @@ d-byline {
 /*-- ARTICLE TABLE OF CONTENTS --*/
 .d-contents {
   --heading-size:    18px;
-  --contents-size:   13px;
+  --contents-size:   16px;
 }
 
 /*-- ARTICLE APPENDIX --*/
@@ -2196,18 +2198,33 @@ d-appendix {
   --text-color:       rgba(255, 255, 255, 0.8);
   --text-size:        15px;
   --hover-color:      white;
-  --bkgd-color:       #0F2E3D;
+  --bkgd-color:       black; /* #0F2E3D; */
 }
 
 .distill-site-footer {
   --text-color:       rgba(255, 255, 255, 0.8);
   --text-size:        15px;
   --hover-color:      white;
-  --bkgd-color:       #0F2E3D;
+  --bkgd-color:       black; /* #0F2E3D; */
 }
 
 /*-- Additional custom styles --*/
 /* Add any additional CSS rules below                      */
+
+
+/*-- ARTICLE CODE BLOCK --*/
+d-article pre {
+  background-color: #eeeeee;
+  padding: 10px;
+}
+
+/*-- INLINE CODE -- */
+d-article p code {
+  font-size: 14px;
+  color: #000000;
+  background-color: #eeeeee;
+  padding: 5px;
+}
 </style>
 <style type="text/css">
 /* base style */
@@ -2556,10 +2573,10 @@ d-appendix d-footnote-list a.footnote-backlink {
 </code></pre>
 </div>
 <div class="card col-12 col-md-4 m-0 p-2 d-flex">
-<img class="card-img-top p-0" src="https://placekitten.com/259/162"/>
+<img class="card-img-top p-0" src="https://placekitten.com/283/166"/>
 <div class="card-body">
 <h5 class="card-title">A kitten card</h5>
-<p class="card-text">Nescio quo modo praetervolavit oratio. Itaque hic ipse iam pridem est reiectus; Tria genera bonorum; At quicum ioca seria, ut dicitur, quicum arcana, quicum occulta omnia?</p>
+<p class="card-text">Facillimum id quidem est, inquam. Paria sunt igitur. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse? Qua ex cognitione facilior facta est investigatio rerum occultissimarum.</p>
 </div>
 </div>
 </div>
@@ -2567,7 +2584,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>Looks about right to me?</p>
 <!--------------- appendices go here ----------------->
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-08-13 15:22:32 AEST</p>
+<p>2021-08-13 18:08:55 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/bs4cards-in-distill.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
