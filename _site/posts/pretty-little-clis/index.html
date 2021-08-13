@@ -20,19 +20,19 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -52,7 +52,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
@@ -2371,12 +2371,13 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
   <meta name="description" content="How to make a gorgeous command line interface in R using the cli package"/>
   <meta name="github-repo" content="djnavarro/distill-blog"/>
   <meta name="twitter:title" content="Pretty little CLIs"/>
   <meta name="twitter:description" content="How to make a gorgeous command line interface in R using the cli package"/>
   <meta name="twitter:url" content="https://blog.djnavarro.net"/>
-  <meta name="twitter:image:src" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
+  <meta name="twitter:image" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
   <meta name="twitter:image:alt" content="Photo of Danielle with R hex stickers superimposed over her hair"/>
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:creator" content="@djnavarro"/>
@@ -2516,7 +2517,7 @@ Lyrics to the title theme of the US TV show, <a href="https://prettylittleliars.
 <pre><code>Dead girls walking.
 --A.</code></pre>
 </div>
-<p>It’s not too difficult to imagine what this message might look like at the R console, but where’s the fun in that? Thanks to the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(Csárdi et al. <a href="#ref-asciiicast" role="doc-biblioref">2019</a>)</span>, there’s no need to leave anything to the imagination, and we can see the malevolent message in screencast form:</p>
+<p>It’s not too difficult to imagine what this message might look like at the R console, but where’s the fun in that? Thanks to the <a href="https://github.com/r-lib/asciicast">asciicast</a> package <span class="citation" data-cites="asciiicast">(<a href="#ref-asciiicast" role="doc-biblioref">Csárdi et al. 2019</a>)</span>, there’s no need to leave anything to the imagination, and we can see the malevolent message in screencast form:</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="output/cat-example.svg" /><!-- --></p>
 </div>
@@ -2525,10 +2526,10 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 </aside>
 <p>Using <code>cat()</code> to craft messages works perfectly well for simple text communication, but sometimes you want something that looks a little fancier. After all, if the big picture plan here is to impersonate a dead teenager and terrorise her friends - and for some reason you’ve chosen R to do so - you might as well put a little effort into the details, right?</p>
 <h2 id="meet-the-cli-package">Meet the cli package</h2>
-<p>One thing I love about the R community is that if you search long enough you’ll find that someone else has already written a package that solves the problem you’re facing. If your problem is “how to craft nicely formatted messages” then you’ll be delighted to learn that many wonderful things become possible if you have the <a href="https://cli.r-lib.org">cli</a> package <span class="citation" data-cites="cli">(Csárdi <a href="#ref-cli" role="doc-biblioref">2021</a><a href="#ref-cli" role="doc-biblioref">a</a>)</span> as your talented assistant. To craft a beautiful command line interface (CLI) of her very own, the first thing A will need to do is load the package:</p>
+<p>One thing I love about the R community is that if you search long enough you’ll find that someone else has already written a package that solves the problem you’re facing. If your problem is “how to craft nicely formatted messages” then you’ll be delighted to learn that many wonderful things become possible if you have the <a href="https://cli.r-lib.org">cli</a> package <span class="citation" data-cites="cli">(<a href="#ref-cli" role="doc-biblioref">Csárdi 2021a</a>)</span> as your talented assistant. To craft a beautiful command line interface (CLI) of her very own, the first thing A will need to do is load the package:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/r-lib/cli#readme'>cli</a></span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://cli.r-lib.org'>cli</a></span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
@@ -2536,8 +2537,8 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>send_cli_threat</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Dead girls walking."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"--A."</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Dead girls walking."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"--A."</span><span class='op'>)</span>
 <span class='op'>}</span>
 <span class='fu'>send_cli_threat</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
@@ -2553,10 +2554,10 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>message_scroll</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>}</span>
 <span class='fu'>message_scroll</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
@@ -2570,12 +2571,12 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>message_inline</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>id</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status.html'>cli_status</a></span><span class='op'>(</span><span class='st'>""</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_status_clear.html'>cli_status_clear</a></span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>
+  <span class='va'>id</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://cli.r-lib.org/reference/cli_status.html'>cli_status</a></span><span class='op'>(</span><span class='st'>""</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"You found my bracelet."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"Now come find me."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"Good luck bitches."</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_status_update.html'>cli_status_update</a></span><span class='op'>(</span><span class='va'>id</span>, <span class='st'>"-A"</span><span class='op'>)</span>; <span class='fu'>wait</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_status_clear.html'>cli_status_clear</a></span><span class='op'>(</span><span class='va'>id</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
 </div>
@@ -2594,10 +2595,10 @@ The ominous text messages used in this post are taken from <em>Pretty Little Lia
 This message was sent to Aria in episode 10 of season one. I’m sure it is deeply important to everyone that I mention this.
 </aside>
 <h2 id="creating-spinners">Creating spinners</h2>
-<p>The ability to control the status bar opens up a world of new possibilities. Progress bars are one such possibility, but the <a href="https://github.com/r-lib/progress">progress</a> package <span class="citation" data-cites="progress">(Csárdi and FitzJohn <a href="#ref-progress" role="doc-biblioref">2019</a>)</span> already does this nicely, and in any case I suspect that A might be more intrigued by the possibility of spinners, since they just spin and spin and give the victim no clue about when the process is going to end. Much more appealing when the developer doesn’t know (or doesn’t want to reveal) when the wait will end. The cli package has a nice <code>makes_spinner</code> function that serves this purpose. Here’s an example:</p>
+<p>The ability to control the status bar opens up a world of new possibilities. Progress bars are one such possibility, but the <a href="https://github.com/r-lib/progress">progress</a> package <span class="citation" data-cites="progress">(<a href="#ref-progress" role="doc-biblioref">Csárdi and FitzJohn 2019</a>)</span> already does this nicely, and in any case I suspect that A might be more intrigued by the possibility of spinners, since they just spin and spin and give the victim no clue about when the process is going to end. Much more appealing when the developer doesn’t know (or doesn’t want to reveal) when the wait will end. The cli package has a nice <code>makes_spinner</code> function that serves this purpose. Here’s an example:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>spinny</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>spinny</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://cli.r-lib.org/reference/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
   which <span class='op'>=</span> <span class='st'>"dots2"</span>,
   template <span class='op'>=</span> <span class='st'>"{spin} It's not over until I say it is."</span>
 <span class='op'>)</span>
@@ -2610,7 +2611,7 @@ This message was sent to Aria in episode 10 of season one. I’m sure it is deep
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>theatrics</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>which</span><span class='op'>)</span> <span class='op'>{</span>
   
   <span class='co'># define the spinner</span>
-  <span class='va'>spinny</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cli/man/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
+  <span class='va'>spinny</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://cli.r-lib.org/reference/make_spinner.html'>make_spinner</a></span><span class='op'>(</span>
     which <span class='op'>=</span> <span class='va'>which</span>,
     template <span class='op'>=</span> <span class='st'>"{spin} It's not over until I say it is."</span>
   <span class='op'>)</span>
@@ -2625,7 +2626,7 @@ This message was sent to Aria in episode 10 of season one. I’m sure it is deep
   <span class='va'>spinny</span><span class='op'>$</span><span class='fu'>finish</span><span class='op'>(</span><span class='op'>)</span>
   
   <span class='co'># send the final part of the message</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Sleep tight while you still can, bitches. -A"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_alert.html'>cli_alert_success</a></span><span class='op'>(</span><span class='st'>"Sleep tight while you still can, bitches. -A"</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
 </div>
@@ -2656,7 +2657,7 @@ This message was sent to all four of the liars in the final episode of season on
 <p>To see the full list use the <code>list_spinners()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/list_spinners.html'>list_spinners</a></span><span class='op'>(</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://cli.r-lib.org/reference/list_spinners.html'>list_spinners</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code> [1] &quot;dots&quot;                &quot;dots2&quot;               &quot;dots3&quot;              
@@ -2683,18 +2684,18 @@ This message was sent to all four of the liars in the final episode of season on
 [64] &quot;dqpb&quot;               </code></pre>
 </div>
 <h2 id="showing-cli-messages-in-r-markdown">Showing cli messages in R markdown</h2>
-<p>Throughout this post I’ve relied on asciicast to display screencasts of the R console as animated SVG files, rather than what I might normally do and rely on regular R markdown code chunks to do the work. There’s a reason for this: the R console is a terminal, and its behaviour doesn’t always translate nicely to HTML. Part of the magic of the <a href="https://rmarkdown.rstudio.com/">rmarkdown</a> package <span class="citation" data-cites="rmarkdown">(Xie, Allaire, and Grolemund <a href="#ref-rmarkdown" role="doc-biblioref">2018</a>)</span> is that <em>most</em> of the time it is able to capture terminal output and translate it seamlessly into HTML, and we mere mortal users never notice how clever this is. However, when dealing with cli output, we run into cases where this breaks down and the <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">law of leaky abstractions</a> comes into play: text generated at the R console does not follow the same rules as text inserted into an HTML document, and R Markdown sometimes needs a little help when transforming one to the other.</p>
+<p>Throughout this post I’ve relied on asciicast to display screencasts of the R console as animated SVG files, rather than what I might normally do and rely on regular R markdown code chunks to do the work. There’s a reason for this: the R console is a terminal, and its behaviour doesn’t always translate nicely to HTML. Part of the magic of the <a href="https://rmarkdown.rstudio.com/">rmarkdown</a> package <span class="citation" data-cites="rmarkdown">(<a href="#ref-rmarkdown" role="doc-biblioref">Xie, Allaire, and Grolemund 2018</a>)</span> is that <em>most</em> of the time it is able to capture terminal output and translate it seamlessly into HTML, and we mere mortal users never notice how clever this is. However, when dealing with cli output, we run into cases where this breaks down and the <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">law of leaky abstractions</a> comes into play: text generated at the R console does not follow the same rules as text inserted into an HTML document, and R Markdown sometimes needs a little help when transforming one to the other.</p>
 <p>An important thing to remember about cli is that the text it produces is a <em>message</em>, so its visibility in R Markdown depends on the chunk option for messages. As long as the message option is set to <code>TRUE</code>, R Markdown will include them as part of the output.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> In the simplest case, R Markdown works nicely, so as long as all A wants to do is send an unformatted threat within an R Markdown document, then this works:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>I&#39;m still here bitches, and I know everything. -A</code></pre>
 </div>
 <p>However, the moment A tries to use any fancy formatting, things will go haywire for her. For example, suppose she wanted to send the message above as a simple “alert” message using <code>cli_alert()</code>, which uses fancy symbols and colours in the output. It is at this point that the cracks in the R Markdown pipeline start to leak. In this case, the leak would result in the document failing to knit and an error message complaining about</p>
 <pre><code>PCDATA invalid Char value</code></pre>
-<p>Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>, but those escape codes aren’t recognised in HTML and – apparently – they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the <a href="https://github.com/r-lib/crayon">crayon</a> package <span class="citation" data-cites="crayon">(Csárdi <a href="#ref-crayon" role="doc-biblioref">2021</a><a href="#ref-crayon" role="doc-biblioref">b</a>)</span>, and per the <a href="https://github.com/r-lib/crayon/issues/24">issue #24</a> thread that I encounter on a semi-regular basis, it can be tricky to manage the process of translating these to HTML via R Markdown.</p>
+<p>Intuitively she might guess that somewhere in the R Markdown pipeline, an invalid or malformed character has been created.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The reason this happens is that the colours and symbols used by cli, and supported in the R console, rely on <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>, but those escape codes aren’t recognised in HTML and – apparently – they can wreak havoc when R markdown writes those characters into the HTML document. ANSI colours in R are usually generated with the help of the <a href="https://github.com/r-lib/crayon">crayon</a> package <span class="citation" data-cites="crayon">(<a href="#ref-crayon" role="doc-biblioref">Csárdi 2021b</a>)</span>, and per the <a href="https://github.com/r-lib/crayon/issues/24">issue #24</a> thread that I encounter on a semi-regular basis, it can be tricky to manage the process of translating these to HTML via R Markdown.</p>
 <p>Solving this issue requires A to jump through a few hoops. It’s annoying I know, but no-one ever said that running an unhinged stalking campaign via text messages was easy, right? Her first task is to make sure that the R Markdown document turns on crayon support:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2702,7 +2703,7 @@ This message was sent to all four of the liars in the final episode of season on
 </code></pre>
 </div>
 </div>
-<p>This isn’t the whole solution, however, because while that tells R Markdown to stop <em>ignoring</em> all the ANSI stuff, it doesn’t necessarily allow it to render ANSI sequences properly. To fix this she needs to specify the knit hooks that explicitly tell R Markdown what to do. She can do this with the help of the <a href="https://github.com/brodieG/fansi">fansi</a> package <span class="citation" data-cites="fansi">(Gaslam <a href="#ref-fansi" role="doc-biblioref">2021</a>)</span>, which contains an obscurely-named function <code>sgr_to_html()</code> that translates a subset of the ANSI control sequences to HTML, and strips out all the others. Using this, she can write an <code>ansi_aware_handler()</code> function that will take an input string <code>x</code> and return HTML output appropriate for the R Markdown context:</p>
+<p>This isn’t the whole solution, however, because while that tells R Markdown to stop <em>ignoring</em> all the ANSI stuff, it doesn’t necessarily allow it to render ANSI sequences properly. To fix this she needs to specify the knit hooks that explicitly tell R Markdown what to do. She can do this with the help of the <a href="https://github.com/brodieG/fansi">fansi</a> package <span class="citation" data-cites="fansi">(<a href="#ref-fansi" role="doc-biblioref">Gaslam 2021</a>)</span>, which contains an obscurely-named function <code>sgr_to_html()</code> that translates a subset of the ANSI control sequences to HTML, and strips out all the others. Using this, she can write an <code>ansi_aware_handler()</code> function that will take an input string <code>x</code> and return HTML output appropriate for the R Markdown context:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ansi_aware_handler</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>options</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2715,7 +2716,7 @@ This message was sent to all four of the liars in the final episode of season on
 </code></pre>
 </div>
 </div>
-<p>From there, it’s relatively easy. All she needs to do is tell <a href="https://yihui.org/knitr/">knitr</a> <span class="citation" data-cites="knitr">(Xie <a href="#ref-knitr" role="doc-biblioref">2021</a>)</span> to use this function whenever it needs to handle output. Just for good measure she might do the same for messages, errors, and warnings:</p>
+<p>From there, it’s relatively easy. All she needs to do is tell <a href="https://yihui.org/knitr/">knitr</a> <span class="citation" data-cites="knitr">(<a href="#ref-knitr" role="doc-biblioref">Xie 2021</a>)</span> to use this function whenever it needs to handle output. Just for good measure she might do the same for messages, errors, and warnings:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/knitr/man/knit_hooks.html'>knit_hooks</a></span><span class='op'>$</span><span class='fu'>set</span><span class='op'>(</span>
@@ -2730,7 +2731,7 @@ This message was sent to all four of the liars in the final episode of season on
 <p>At long last she is done.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Her campaign of bullying and cruelty can continue:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://cli.r-lib.org/reference/cli_alert.html'>cli_alert</a></span><span class='op'>(</span><span class='st'>"I'm still here bitches, and I know everything. -A"</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre class="r-output"><code>→ I'm still here bitches, and I know everything. -A
@@ -2744,16 +2745,16 @@ This message was sent in the pilot episode. Yes, the quotes I’ve used are all 
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>send_cruel_letter_piecewise</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Your husband, Byron, is involved with another woman'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'and when I say involved I mean in a "romantic" way.'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'This is not something recent. It started before your'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'family went away to Iceland and from the look of'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'things, it may be starting up again now that you\'re'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'back. I know this is hard to hear, but it is the'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'truth. If you don\'t believe this about your husband,'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'ask your daughter. She knows all about it.'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Sincerely,'</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'A'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Your husband, Byron, is involved with another woman'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'and when I say involved I mean in a "romantic" way.'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'This is not something recent. It started before your'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'family went away to Iceland and from the look of'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'things, it may be starting up again now that you\'re'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'back. I know this is hard to hear, but it is the'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'truth. If you don\'t believe this about your husband,'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'ask your daughter. She knows all about it.'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Sincerely,'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'A'</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 <span class='fu'>send_cruel_letter_piecewise</span><span class='op'>(</span><span class='op'>)</span>
@@ -2784,17 +2785,17 @@ This message was sent in the pilot episode. Yes, the quotes I’ve used are all 
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>send_cruel_letter_singly</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli.html'>cli</a></span><span class='op'>(</span><span class='op'>{</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Your husband, Byron, is involved with another woman'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'and when I say involved I mean in a "romantic" way.'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'This is not something recent. It started before your'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'family went away to Iceland and from the look of'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'things, it may be starting up again now that you\'re'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'back. I know this is hard to hear, but it is the'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'truth. If you don\'t believe this about your husband,'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'ask your daughter. She knows all about it.'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Sincerely,'</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'A'</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli.html'>cli</a></span><span class='op'>(</span><span class='op'>{</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Your husband, Byron, is involved with another woman'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'and when I say involved I mean in a "romantic" way.'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'This is not something recent. It started before your'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'family went away to Iceland and from the look of'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'things, it may be starting up again now that you\'re'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'back. I know this is hard to hear, but it is the'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'truth. If you don\'t believe this about your husband,'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'ask your daughter. She knows all about it.'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'Sincerely,'</span><span class='op'>)</span>
+    <span class='fu'><a href='https://cli.r-lib.org/reference/cli_text.html'>cli_text</a></span><span class='op'>(</span><span class='st'>'A'</span><span class='op'>)</span>
   <span class='op'>}</span><span class='op'>)</span>
 <span class='op'>}</span>
 
@@ -2821,18 +2822,18 @@ The letter was sent to Ella in episode four season one. Even on a rewatch I’m 
 <p>Writing long messages when sending a threatening letter is a simple enough thing, but at some point A will likely find herself wanting to add some structure to these missives. Lists are nice. Stalkers like keeping lists, I hear. With that in mind, a nice property of cli is that it allows you to separate style from structure using an HTML-like syntax. Top level headings are specified using <code>cli_h1()</code>, and second level headings are produced by <code>cli_h2()</code>. Unordered lists are produced using <code>cli_ul()</code> and ordered lists by <code>cli_ol()</code>. This make it easy to write structured messages to the R console:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli.html'>cli</a></span><span class='op'>(</span><span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Characters"</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"The Liars"</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://cli.r-lib.org/reference/cli.html'>cli</a></span><span class='op'>(</span><span class='op'>{</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_h1.html'>cli_h1</a></span><span class='op'>(</span><span class='st'>"Characters"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"The Liars"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
     <span class='st'>"Alison DiLaurentis"</span>,
     <span class='st'>"Spencer Hastings"</span>,
     <span class='st'>"Aria Montgomery"</span>,
     <span class='st'>"Hanna Marin"</span>,
     <span class='st'>"Emily Fields"</span>
   <span class='op'>)</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"The A-Team"</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_h1.html'>cli_h2</a></span><span class='op'>(</span><span class='st'>"The A-Team"</span><span class='op'>)</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_ul.html'>cli_ul</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
     <span class='st'>"Mona Vanderwaal"</span>,
     <span class='st'>"Lucas Gottesman"</span>,
     <span class='st'>"Melissa Hastings"</span>
@@ -2841,30 +2842,30 @@ The letter was sent to Ella in episode four season one. Even on a rewatch I’m 
 </code></pre>
 </div>
 <pre class="r-output"><code>
-<span style='color: #00BBBB;'>──</span><span> </span><span style='font-weight: bold;'>Characters</span><span> </span><span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span><span>
+<span style='color: #00BBBB;'>──</span> <span style='font-weight: bold;'>Characters</span> <span style='color: #00BBBB;'>────────────────────────────────────────────────────────</span>
 
-── </span><span style='font-weight: bold;'>The Liars</span><span> ──
+── <span style='font-weight: bold;'>The Liars</span> ──
 
-● Alison DiLaurentis
-● Spencer Hastings
-● Aria Montgomery
-● Hanna Marin
-● Emily Fields
+• Alison DiLaurentis
+• Spencer Hastings
+• Aria Montgomery
+• Hanna Marin
+• Emily Fields
 
-── </span><span style='font-weight: bold;'>The A-Team</span><span> ──
+── <span style='font-weight: bold;'>The A-Team</span> ──
 
-● Mona Vanderwaal
-● Lucas Gottesman
-● Melissa Hastings
-</span></code></pre>
+• Mona Vanderwaal
+• Lucas Gottesman
+• Melissa Hastings
+</code></pre>
 </div>
 <p>Better yet, the cli package has a whole swathe of other utilities that follow this same HTML-like naming scheme, making it possible to send elaborate and disturbing messages in so many different ways.</p>
 <h2 id="epilogue">Epilogue</h2>
 <p>There is a lot more to the cli package that I haven’t talked about in this post. I’ve not talked about how to modify the themes, how to create custom cli “apps” that use different themes or send output to different connections. I’ve not talked about how to use conditional logic within a cli call, displaying different messages depending on whether a process succeeds or fails. Those will have to remain secret for now, because this post is quite long enough already and quite frankly I’m still learning myself. Besides, these powers would no doubt would be put to terrible purposes in an R-themed <em>Pretty Little Liars</em> spinoff show, and I’m not entirely sure that all secrets need sharing…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli.html'>cli</a></span><span class='op'>(</span>
-  <span class='fu'><a href='https://rdrr.io/pkg/cli/man/cli_blockquote.html'>cli_blockquote</a></span><span class='op'>(</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://cli.r-lib.org/reference/cli.html'>cli</a></span><span class='op'>(</span>
+  <span class='fu'><a href='https://cli.r-lib.org/reference/cli_blockquote.html'>cli_blockquote</a></span><span class='op'>(</span>
     quote <span class='op'>=</span> <span class='st'>"Friends share secrets, that's what keeps us close"</span>,
     citation <span class='op'>=</span> <span class='st'>"Alison"</span>
   <span class='op'>)</span>
@@ -2872,41 +2873,41 @@ The letter was sent to Ella in episode four season one. Even on a rewatch I’m 
 </code></pre>
 </div>
 <pre class="r-output"><code>
-    <span style='font-style: italic;'>“Friends share secrets, that's what keeps us close”</span><span>
-    </span><span style='font-weight: bold;font-style: italic;'>— Alison</span><span>
-</span></code></pre>
+    <span style='font-style: italic;'>“Friends share secrets, that's what keeps us close”</span>
+    <span style='font-weight: bold; font-style: italic;'>— Alison</span>
+</code></pre>
 </div>
 <!--------------- appendices go here ----------------->
-<h2 id="last-updated" class="appendix">Last updated</h2>
-<p>2021-04-18 21:49:23 AEST</p>
-<h2 id="details" class="appendix">Details</h2>
+<h2 class="appendix" id="last-updated">Last updated</h2>
+<p>2021-08-13 12:06:35 AEST</p>
+<h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/pretty-little-clis.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/pretty-little-clis/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<div id="refs" class="references" role="doc-bibliography">
-<div id="ref-cli">
-<p>Csárdi, Gábor. 2021a. <em>Cli: Helpers for Developing Command Line Interfaces</em>. <a href="https://CRAN.R-project.org/package=cli">https://CRAN.R-project.org/package=cli</a>.</p>
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-cli" class="csl-entry" role="doc-biblioentry">
+Csárdi, Gábor. 2021a. <em>Cli: Helpers for Developing Command Line Interfaces</em>. <a href="https://CRAN.R-project.org/package=cli">https://CRAN.R-project.org/package=cli</a>.
 </div>
-<div id="ref-crayon">
-<p>———. 2021b. <em>Crayon: Colored Terminal Output</em>. <a href="https://CRAN.R-project.org/package=crayon">https://CRAN.R-project.org/package=crayon</a>.</p>
+<div id="ref-crayon" class="csl-entry" role="doc-biblioentry">
+———. 2021b. <em>Crayon: Colored Terminal Output</em>. <a href="https://CRAN.R-project.org/package=crayon">https://CRAN.R-project.org/package=crayon</a>.
 </div>
-<div id="ref-progress">
-<p>Csárdi, Gábor, and Rich FitzJohn. 2019. <em>Progress: Terminal Progress Bars</em>. <a href="https://CRAN.R-project.org/package=progress">https://CRAN.R-project.org/package=progress</a>.</p>
+<div id="ref-progress" class="csl-entry" role="doc-biblioentry">
+Csárdi, Gábor, and Rich FitzJohn. 2019. <em>Progress: Terminal Progress Bars</em>. <a href="https://CRAN.R-project.org/package=progress">https://CRAN.R-project.org/package=progress</a>.
 </div>
-<div id="ref-asciiicast">
-<p>Csárdi, Gábor, Romain Francois, Mario Nebl, and Marcin Kulik. 2019. <em>Asciicast: Create ’Ascii’ Screen Casts from R Scripts</em>. <a href="https://CRAN.R-project.org/package=asciicast">https://CRAN.R-project.org/package=asciicast</a>.</p>
+<div id="ref-asciiicast" class="csl-entry" role="doc-biblioentry">
+Csárdi, Gábor, Romain Francois, Mario Nebl, and Marcin Kulik. 2019. <em>Asciicast: Create ’Ascii’ Screen Casts from r Scripts</em>. <a href="https://CRAN.R-project.org/package=asciicast">https://CRAN.R-project.org/package=asciicast</a>.
 </div>
-<div id="ref-fansi">
-<p>Gaslam, Brodie. 2021. <em>Fansi: ANSI Control Sequence Aware String Functions</em>. <a href="https://CRAN.R-project.org/package=fansi">https://CRAN.R-project.org/package=fansi</a>.</p>
+<div id="ref-fansi" class="csl-entry" role="doc-biblioentry">
+Gaslam, Brodie. 2021. <em>Fansi: ANSI Control Sequence Aware String Functions</em>. <a href="https://CRAN.R-project.org/package=fansi">https://CRAN.R-project.org/package=fansi</a>.
 </div>
-<div id="ref-knitr">
-<p>Xie, Yihui. 2021. <em>Knitr: A General-Purpose Package for Dynamic Report Generation in R</em>. <a href="https://yihui.org/knitr/">https://yihui.org/knitr/</a>.</p>
+<div id="ref-knitr" class="csl-entry" role="doc-biblioentry">
+Xie, Yihui. 2021. <em>Knitr: A General-Purpose Package for Dynamic Report Generation in r</em>. <a href="https://yihui.org/knitr/">https://yihui.org/knitr/</a>.
 </div>
-<div id="ref-rmarkdown">
-<p>Xie, Yihui, J. J. Allaire, and Garrett Grolemund. 2018. <em>R Markdown: The Definitive Guide</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown">https://bookdown.org/yihui/rmarkdown</a>.</p>
+<div id="ref-rmarkdown" class="csl-entry" role="doc-biblioentry">
+Xie, Yihui, J. J. Allaire, and Garrett Grolemund. 2018. <em>R Markdown: The Definitive Guide</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown">https://bookdown.org/yihui/rmarkdown</a>.
 </div>
 </div>
 <section class="footnotes" role="doc-endnotes">

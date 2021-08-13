@@ -20,19 +20,19 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -52,7 +52,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
@@ -122,7 +122,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <meta name="citation_author_institution" content="UNSW Sydney"/>
 <!--/radix_placeholder_meta_tags-->
   
-  <meta name="citation_reference" content="citation_title=Happy git and github for the useR;citation_publication_date=2018;citation_publisher=GitHub;citation_author=Jennifer Bryan"/>
+  <meta name="citation_reference" content="citation_title=Happy git and GitHub for the useR;citation_publication_date=2018;citation_publisher=GitHub;citation_author=Jennifer Bryan"/>
   <meta name="citation_reference" content="citation_title=Usethis: Automate package and project setup;citation_publication_date=2021;citation_author=Hadley Wickham;citation_author=Jennifer Bryan"/>
   <meta name="citation_reference" content="citation_title=Gitcreds: Query ’git’ credentials from ’r’;citation_publication_date=2020;citation_author=Gábor Csárdi"/>
   <!--radix_placeholder_rmarkdown_metadata-->
@@ -2367,12 +2367,13 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
   <meta name="description" content="In which the author wonders why everything in linux is so hard"/>
   <meta name="github-repo" content="djnavarro/distill-blog"/>
   <meta name="twitter:title" content="Managing GitHub credentials from R"/>
   <meta name="twitter:description" content="In which the author wonders why everything in linux is so hard"/>
   <meta name="twitter:url" content="https://blog.djnavarro.net"/>
-  <meta name="twitter:image:src" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
+  <meta name="twitter:image" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
   <meta name="twitter:image:alt" content="Photo of Danielle with R hex stickers superimposed over her hair"/>
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:creator" content="@djnavarro"/>
@@ -2462,15 +2463,18 @@ d-appendix d-footnote-list a.footnote-backlink {
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#the-story-is-quite-short">The story is quite short…</a><ul>
+<li><a href="#the-story-is-quite-short">The story is quite short…</a>
+<ul>
 <li><a href="#using-github-credentials-with-r">Using GitHub credentials with R</a></li>
 <li><a href="#setting-up-the-credentials">Setting up the credentials</a></li>
 </ul></li>
-<li><a href="#unless-youre-on-linux">… unless you’re on linux</a><ul>
+<li><a href="#unless-youre-on-linux">… unless you’re on linux</a>
+<ul>
 <li><a href="#where-did-i-leave-my-config">Where did I leave my config?</a></li>
 <li><a href="#dont-forget-to-update-git">Don’t forget to update git</a></li>
 </ul></li>
-<li><a href="#three-solutions">Three solutions</a><ul>
+<li><a href="#three-solutions">Three solutions</a>
+<ul>
 <li><a href="#set-a-long-timeout-for-the-git-cache">1. Set a long timeout for the git cache</a></li>
 <li><a href="#use-libsecret-credential-manager">2. Use libsecret credential manager</a></li>
 <li><a href="#use-gcm-core">3. Use GCM core</a></li>
@@ -2496,7 +2500,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <h2 id="the-story-is-quite-short">The story is quite short…</h2>
 <h3 id="using-github-credentials-with-r">Using GitHub credentials with R</h3>
 <p>For some years now I have been using git repositories for version control, with some ambivalence to my feelings. I absolutely love version control, and I think GitHub is a fabulous tool, but git itself gives me headaches. It feels counterintuitive and untidy, and I am resistant to learning new git tricks because of that. However, now that GitHub is moving to <a href="https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/">end password authentication for git operations</a>, I find myself needing to do precisely that. Sigh.</p>
-<p>Like many R users, whenever I encounter a git problem my first impulse is to see whether <a href="https://happygitwithr.com/">Happy Git and GitHub for the useR</a> <span class="citation" data-cites="bryan2018happy">(Bryan <a href="#ref-bryan2018happy" role="doc-biblioref">2018</a>)</span> can help me out, and true to form, it can. Having decided that I will revert to being an https girl, renouncing my flirtation with ssh, I’ve found the chapter on <a href="https://happygitwithr.com/credential-caching.html">caching https credentials</a> extremely useful. The usethis article on <a href="https://usethis.r-lib.org/articles/articles/git-credentials.html">git credentials</a> is also worth the read.</p>
+<p>Like many R users, whenever I encounter a git problem my first impulse is to see whether <a href="https://happygitwithr.com/">Happy Git and GitHub for the useR</a> <span class="citation" data-cites="bryan2018happy">(<a href="#ref-bryan2018happy" role="doc-biblioref">Bryan 2018</a>)</span> can help me out, and true to form, it can. Having decided that I will revert to being an https girl, renouncing my flirtation with ssh, I’ve found the chapter on <a href="https://happygitwithr.com/credential-caching.html">caching https credentials</a> extremely useful. The usethis article on <a href="https://usethis.r-lib.org/articles/articles/git-credentials.html">git credentials</a> is also worth the read.</p>
 <p>The problem can be broken into three parts:</p>
 <ul>
 <li>How do I set up an authentication token on my GitHub account?</li>
@@ -2505,14 +2509,14 @@ d-appendix d-footnote-list a.footnote-backlink {
 </ul>
 <p>Thanks to the fabulous work of the <a href="https://www.tidyverse.org/">tidyverse</a> team, it’s possible for R users to solve the problem in a fairly painless way. The solution has been documented repeatedly, but for the sake of completeness I’ll repeat the advice here.</p>
 <h3 id="setting-up-the-credentials">Setting up the credentials</h3>
-<p>The first thing you’ll need to do is set up a GitHub token. You can do this on the GitHub website, but for an R user it’s probably easiest to use the usethis package <span class="citation" data-cites="usethis">(Wickham and Bryan <a href="#ref-usethis" role="doc-biblioref">2021</a>)</span>:</p>
+<p>The first thing you’ll need to do is set up a GitHub token. You can do this on the GitHub website, but for an R user it’s probably easiest to use the usethis package <span class="citation" data-cites="usethis">(<a href="#ref-usethis" role="doc-biblioref">Wickham and Bryan 2021</a>)</span>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>usethis</span><span class='fu'>::</span><span class='fu'><a href='https://usethis.r-lib.org/reference/github-token.html'>create_github_token</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>This will open GitHub in a browser window, take you to the “create a new token page”, and pre-populate all the fields with sensible default values. After accepting these values, the token is created and you’ll be given a PAT, a “personal authentication token”. It’ll look something like this…</p>
+<p>This will open GitHub in a browser window, take you to the “create a new token page,” and pre-populate all the fields with sensible default values. After accepting these values, the token is created and you’ll be given a PAT, a “personal authentication token.” It’ll look something like this…</p>
 <pre><code>ghp_dgdfasdklfjsdklfjsadfDKFJASDLKFJ3453</code></pre>
 <p>…and you should immediately save this in a secure password manager, like <a href="https://1password.com/">1password</a>, <a href="https://www.lastpass.com/">lastpass</a>, etc, because GitHub will only show it to you this one time.</p>
 <p><br><br><br></p>
@@ -2528,7 +2532,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p><br><br><br></p>
 <p>All right then.</p>
 <p><br><br><br></p>
-<p>I’ll trust you’ve taken sensible precautions now, so let’s keep going. The next step in the process is to configure your git installation to use your token. This is, once again, quite easy to do with gitcreds <span class="citation" data-cites="gitcreds">(Csárdi <a href="#ref-gitcreds" role="doc-biblioref">2020</a>)</span>:</p>
+<p>I’ll trust you’ve taken sensible precautions now, so let’s keep going. The next step in the process is to configure your git installation to use your token. This is, once again, quite easy to do with gitcreds <span class="citation" data-cites="gitcreds">(<a href="#ref-gitcreds" role="doc-biblioref">Csárdi 2020</a>)</span>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>gitcreds</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/gitcreds/man/gitcreds_get.html'>gitcreds_set</a></span><span class='op'>(</span><span class='op'>)</span>
@@ -2549,7 +2553,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <h3 id="where-did-i-leave-my-config">Where did I leave my config?</h3>
 <p>Okay, I’m going to need to make changes to my git configuration. Although git makes it possible to store configuration locally, at the repository level, I rarely need this flexibility. The relevant information is stored in the global configuration file: on my machine, this is located at <code>/home/danielle/.gitconfig</code>. I can use <a href="https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config">git config</a> to list these configuration settings, like this</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">git</span> config --global --list</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> <span class="at">--list</span></span></code></pre></div>
 </div>
 <p>and at the start of this exercise the output would have looked like this:</p>
 <pre><code>user.name=Danielle Navarro
@@ -2568,7 +2572,7 @@ sudo apt install git</code></pre>
 <h3 id="set-a-long-timeout-for-the-git-cache">1. Set a long timeout for the git cache</h3>
 <p>Recent versions of git are released with a <a href="https://git-scm.com/docs/git-credential-cache">credential cache</a> that retains your credentials in memory temporarily. The information is never written to disk, and it expires after a time. You can tell git to use this cache as your “credential helper” by typing the following command at the terminal:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">git</span> config --global credential.helper cache</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> credential.helper cache</span></code></pre></div>
 </div>
 <p>After doing this, my <code>.gitconfig</code> file now looks like this:</p>
 <pre><code>[user]
@@ -2579,7 +2583,7 @@ sudo apt install git</code></pre>
 <p>Unfortunately this isn’t an ideal solution, because the cache expires after 900 seconds (15 minutes). As soon as the cache expires, git loses track of your GitHub credentials and so does R. So you have to set the credentials again by calling <code>gitcreds::gitcreds_set()</code> and entering the PAT again. That’s annoying, but you did store the PAT in a password manager right? You were smart. You definitely aren’t going to be foolish like me, forget to store your PAT every time, and end up needing to create a new GitHub token every 15 minutes.</p>
 <p>A simple solution to this problem is to ask git to store information in the cache for just a teeny tiny little bit longer. Instead of having the cache expire after the default 900 seconds, maybe set it to expire after 10 million seconds. That way, you’ll only have to refresh the cache using <code>gitcreds::gitcreds_set()</code> once every four months instead of four times an hour. Implementing this solution requires only one line of code at the terminal:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1"></a><span class="fu">git</span> config --global credential.helper <span class="st">&#39;cache --timeout=10000000&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> credential.helper <span class="st">&#39;cache --timeout=10000000&#39;</span></span></code></pre></div>
 </div>
 <p>After typing this, my <code>.gitconfig</code> file looks like this:</p>
 <pre><code>[user]
@@ -2595,17 +2599,17 @@ sudo apt install git</code></pre>
 <p>It puzzled me slightly that this problem only exists for linux computers, so I did a little more reading on how <a href="https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage">git manages credentials</a>. It turns out you don’t have to rely on the in-memory cache: you can tell git to use some other program to supply the credentials. This is what all those swanky Mac and Windows people have been doing all along. On Macs, for example, git defaults to using the OS X keychain to store credentials safely on disk. It’s possible to do the same thing on linux using <a href="https://wiki.gnome.org/Projects/Libsecret">libsecret</a> (source on <a href="https://gitlab.gnome.org/GNOME/libsecret">gitlab</a>) and thankfully it’s not much harder to set this up than to use the “long cache” trick described in the previous section.</p>
 <p>The first step is ensuring libsecret is installed on your machine. It probably is (or at least, it was on my Ubuntu 20.04 box), but in case it isn’t here’s the command you need</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1"></a><span class="fu">sudo</span> apt install libsecret-1-0 libsecret-1-dev</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install libsecret-1-0 libsecret-1-dev</span></code></pre></div>
 </div>
 <p>It helps to realise that libsecret isn’t an application designed to work with git (i.e., it’s not the credential manager), nor is it the <a href="https://itsfoss.com/ubuntu-keyring/">keyring</a> where the passwords are stored. Rather, it’s a library that communicates with the keyring: I found <a href="https://rtfm.co.ua/en/what-is-linux-keyring-gnome-keyring-secret-service-and-d-bus/">this post</a> useful for making sense of it. So if we want to use libsecret to access the keyring, we’re going to need a git credential manager that knows how to talk to libsecret. As it turns out, git comes with one already, you just have to build it using <code>make</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="bu">cd</span> /usr/share/doc/git/contrib/credential/libsecret</span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="fu">sudo</span> make</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /usr/share/doc/git/contrib/credential/libsecret</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> make</span></code></pre></div>
 </div>
 <p>This will build the <code>git-credential-libsecret</code> application for you and now all you have to do is tell git to use this as the “credential helper” application that supplies the GitHub credentials:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a><span class="fu">git</span> config --global credential.helper \</span>
-<span id="cb12-2"><a href="#cb12-2"></a>  /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> credential.helper <span class="dt">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret</span></code></pre></div>
 </div>
 <p>After typing that, my <code>.gitconfig</code> file looks like this…</p>
 <pre><code>[user]
@@ -2629,13 +2633,13 @@ sudo apt install git</code></pre>
 <p><aside>Quinn et al. (Figure from giphy.com)</aside><img src="https://media.giphy.com/media/10c3XjPPw2Kkbm/giphy.gif" width="100%"/></p>
 </div>
 <h3 id="use-gcm-core">3. Use GCM core</h3>
-<p>As far as I can tell, the libsecret credential manager is a perfectly good solution to the problem, but in the end I made a different choice: I decided to go with “git credential manager core”, or <a href="https://github.com/microsoft/Git-Credential-Manager-Core">GCM Core</a>. It’s developed by Microsoft and, perhaps unsurprisingly, it is what GitHub currently <a href="https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git">recommends</a>. It’s slightly more painful to set up, and the <a href="https://github.com/microsoft/Git-Credential-Manager-Core#linux-install-instructions">installation instructions</a> are different depending on what flavour of linux you’re running. Because I’m on Ubuntu 20.04, I downloaded the .deb file associated with the <a href="https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest">most recent release of GCM core</a>, and then installed the application using the <code>dpkg</code> command:</p>
+<p>As far as I can tell, the libsecret credential manager is a perfectly good solution to the problem, but in the end I made a different choice: I decided to go with “git credential manager core,” or <a href="https://github.com/microsoft/Git-Credential-Manager-Core">GCM Core</a>. It’s developed by Microsoft and, perhaps unsurprisingly, it is what GitHub currently <a href="https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git">recommends</a>. It’s slightly more painful to set up, and the <a href="https://github.com/microsoft/Git-Credential-Manager-Core#linux-install-instructions">installation instructions</a> are different depending on what flavour of linux you’re running. Because I’m on Ubuntu 20.04, I downloaded the .deb file associated with the <a href="https://github.com/microsoft/Git-Credential-Manager-Core/releases/latest">most recent release of GCM core</a>, and then installed the application using the <code>dpkg</code> command:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">sudo</span> dpkg -i <span class="op">&lt;</span>path-to-deb-file<span class="op">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dpkg <span class="at">-i</span> <span class="op">&lt;</span>path-to-deb-file<span class="op">&gt;</span></span></code></pre></div>
 </div>
 <p>This will build GCM core on your system, and once that’s done you can ask it to take care of the git configuration for you:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="ex">git-credential-manager-core</span> configure</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">git-credential-manager-core</span> configure</span></code></pre></div>
 </div>
 <p>This will edit the <code>.gitconfig</code> file, so for me it now looks like this:</p>
 <pre><code>[user]
@@ -2649,7 +2653,7 @@ sudo apt install git</code></pre>
 <p>In a happier world you would be done at this point, but we don’t live in a happy world. We live in a sick sad world that has global pandemics and pineapple on pizzas. So there’s still one job left to do.</p>
 <p>Much like the libsecret credential manager I built in the previous section, GCM core is “just” a git credential manager: it communicates with git, but it isn’t a password manager or a keyring, and it doesn’t store the PAT itself. Instead, it offers you several different <a href="https://github.com/microsoft/Git-Credential-Manager-Core/blob/main/docs/linuxcredstores.md">options</a> for how the PAT is to be stored. If you click through and take a look at the list, the first suggested option is to connect to a <a href="https://specifications.freedesktop.org/secret-service/">secret service API</a>. As far as I can tell “secret service” isn’t an application, it’s a specification, and in practice it’s just a fancy way of referring to a linux keychain. Just as the libsecret credential manager needs some way of communicating with the keychain (i.e., the libsecret library itself), GCM core needs an intermediary. In fact, it turns out GCM core also uses libsecret to talk to the keychain. So that’s the option I went with. The terminal command to set this up is this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">git</span> config --global credential.credentialStore secretservice</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> credential.credentialStore secretservice</span></code></pre></div>
 </div>
 <p>After running the command, my <code>.gitconfig</code> file looks like this:</p>
 <pre><code>[user]
@@ -2677,24 +2681,24 @@ sudo apt install git</code></pre>
 <p><aside>Jane. (Figure from giphy.com)</aside><img src="https://media.giphy.com/media/xrbdBK5A5cIYo/giphy.gif" width="100%"/></p>
 </div>
 <!--------------- appendices go here ----------------->
-<h2 id="last-updated" class="appendix">Last updated</h2>
-<p>2021-08-09 09:49:33 AEST</p>
-<h2 id="details" class="appendix">Details</h2>
+<h2 class="appendix" id="last-updated">Last updated</h2>
+<p>2021-08-13 12:08:50 AEST</p>
+<h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/git-credential-helpers.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/git-credential-helpers/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<div id="refs" class="references" role="doc-bibliography">
-<div id="ref-bryan2018happy">
-<p>Bryan, Jennifer. 2018. <em>Happy Git and Github for the useR</em>. GitHub.</p>
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-bryan2018happy" class="csl-entry" role="doc-biblioentry">
+Bryan, Jennifer. 2018. <em>Happy Git and GitHub for the useR</em>. GitHub.
 </div>
-<div id="ref-gitcreds">
-<p>Csárdi, Gábor. 2020. <em>Gitcreds: Query ’Git’ Credentials from ’R’</em>. <a href="https://CRAN.R-project.org/package=gitcreds">https://CRAN.R-project.org/package=gitcreds</a>.</p>
+<div id="ref-gitcreds" class="csl-entry" role="doc-biblioentry">
+Csárdi, Gábor. 2020. <em>Gitcreds: Query ’Git’ Credentials from ’r’</em>. <a href="https://CRAN.R-project.org/package=gitcreds">https://CRAN.R-project.org/package=gitcreds</a>.
 </div>
-<div id="ref-usethis">
-<p>Wickham, Hadley, and Jennifer Bryan. 2021. <em>Usethis: Automate Package and Project Setup</em>. <a href="https://CRAN.R-project.org/package=usethis">https://CRAN.R-project.org/package=usethis</a>.</p>
+<div id="ref-usethis" class="csl-entry" role="doc-biblioentry">
+Wickham, Hadley, and Jennifer Bryan. 2021. <em>Usethis: Automate Package and Project Setup</em>. <a href="https://CRAN.R-project.org/package=usethis">https://CRAN.R-project.org/package=usethis</a>.
 </div>
 </div>
 <!--radix_placeholder_article_footer-->

@@ -75,7 +75,7 @@ set_session <- function(slug) {
 set_lockfile <- function(slug) {
 
   project <- here::here("_posts", slug)
-  tmp <- utils::capture.output(renv::snapshot(project))
+  tmp <- utils::capture.output(renv::snapshot(project, prompt = FALSE))
   github_url <- paste0(
     "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
     slug, "/renv.lock")
