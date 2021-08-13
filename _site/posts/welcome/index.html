@@ -20,19 +20,19 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -52,7 +52,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
@@ -2363,12 +2363,13 @@ d-appendix d-footnote-list a.footnote-backlink {
   color: var(--hover-color, white);
 }</style>
 <!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
   <meta name="description" content="Some thoughts on starting over, when I have tried my hand at blogging many times before"/>
   <meta name="github-repo" content="djnavarro/distill-blog"/>
   <meta name="twitter:title" content="Welcome to the jungle"/>
   <meta name="twitter:description" content="Some thoughts on starting over, when I have tried my hand at blogging many times before"/>
   <meta name="twitter:url" content="https://blog.djnavarro.net"/>
-  <meta name="twitter:image:src" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
+  <meta name="twitter:image" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
   <meta name="twitter:image:alt" content="Photo of Danielle with R hex stickers superimposed over her hair"/>
   <meta name="twitter:card" content="summary"/>
   <meta name="twitter:creator" content="@djnavarro"/>
@@ -2470,11 +2471,11 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><p><strong>Reproducibility</strong>. A frustration I’ve had with my previous blogs is that my posts were not particularly reproducible. Source code was often missing, information about the R session was not provided, and so on. This time, I’ve set up the blog so that there is a “details” section at the bottom of each post containing links to the source code, the R session information, and a lockfile generated using <code>renv::snapshot()</code>.</p></li>
 </ul>
 <p>At this stage I’m not entirely certain how I’ll use the blog. There are a lot of possibilities, and I have some thoughts on which ones I’d like to explore. A self-contained blog such as this seems nicely suited to teaching materials. An obvious example would be to write blog posts to accompany the data science <a href="https://slides.djnavarro.net">slides</a> and <a href="https://youtube.djnavarro.net">youtube</a> videos I’ve been making. The lack of written material to go with those talks has bothered me for some time. Another possibility might be to write tutorials on generative art. I use my art website to post the art itself, but the site functions as a gallery rather than a classroom. I get a lot of people asking questions about how I make my art, and this blog might be a good place to provide answers. Those aren’t the only possibilities, of course, but they are appealing ones.</p>
-<p>Not sure how this will go, but fingers crossed! 🤞</p>
+<p>Not sure how this will go, but fingers crossed!</p>
 <!--------------- appendices go here ----------------->
-<h2 id="last-updated" class="appendix">Last updated</h2>
-<p>2021-04-06 13:19:30 AEST</p>
-<h2 id="details" class="appendix">Details</h2>
+<h2 class="appendix" id="last-updated">Last updated</h2>
+<p>2021-08-13 12:11:40 AEST</p>
+<h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/welcome/welcome.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/welcome/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/welcome/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
 <div class="layout-chunk" data-layout="l-body">
