@@ -21,7 +21,7 @@ output:
   distill::distill_article:
     self_contained: false
     toc: true
-    css: !expr bs4cards::strapless()
+    css: "strapless.css"
 ---
 
 
@@ -130,12 +130,12 @@ Distill R markdown does not use bootstrap, which is a little inconvenient if you
 bs4cards::strapless()
 ```
 
-To enable the strapless variant of bootstrap 4, add the following lines to your YAML header:
+To enable the strapless variant of bootstrap 4, copy the strapless.css file to the folder containing the R markdown for your post and add the following lines to your YAML header:
 
 ```
 output:
   distill::distill_article:
-    css: !expr bs4cards::strapless()
+    css: "strapless.css"
 ```
 
 If, like me, you only want to enable strapless for a specific post, this goes in the YAML header for that post only. Alternatively, if you want to enable it for the entire site, this markup goes in the `_site.yml` file.
