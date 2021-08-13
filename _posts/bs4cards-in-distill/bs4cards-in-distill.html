@@ -1586,16 +1586,19 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   bootstrap: 4</code></pre>
 <p>Note that this relies on a currently-in-development feature, so you may need to update to the development version of pkgdown to make this work.</p>
 <h3 id="distill">Distill</h3>
-<p>Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn’t look visually appealing when mixed with the distill styling.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> To fix this, bs4cards includes a stripped down version of bootstrap called “strapless,” that only uses the subset of bootstrap css relevant to cards. A convenience function <code>strapless()</code> returns the path to this file:</p>
+<p>Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn’t look visually appealing when mixed with the distill styling.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> To fix this, bs4cards includes a stripped down version of bootstrap called “strapless,” that only uses the subset of bootstrap css relevant to cards. The convenience function <code>use_strapless()</code> will copy the strapless css file to the target location. To copy it to the same location as this post:</p>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>[1] &quot;/home/danielle/R/x86_64-pc-linux-gnu-library/4.1/bs4cards/extdata/strapless.css&quot;</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>bs4cards</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/bs4cards/man/use_strapless.html'>use_strapless</a></span><span class='op'>(</span><span class='fu'>here</span><span class='fu'>::</span><span class='fu'><a href='https://here.r-lib.org//reference/here.html'>here</a></span><span class='op'>(</span><span class='st'>"_posts"</span>, <span class='st'>"bs4cards-in-distill"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
 </div>
-<p>To enable the strapless variant of bootstrap 4, copy the strapless.css file to the folder containing the R markdown for your post and add the following lines to your YAML header:</p>
+</div>
+<p>Next, to enable the library within the post, add the following lines to the YAML header for the post:</p>
 <pre><code>output:
   distill::distill_article:
     css: &quot;strapless.css&quot;</code></pre>
-<p>If, like me, you only want to enable strapless for a specific post, this goes in the YAML header for that post only. Alternatively, if you want to enable it for the entire site, this markup goes in the <code>_site.yml</code> file.</p>
-<p>Once that’s done you should be ready to go!</p>
+<p>Alternatively, if you want to enable strapless for the entire site, this markup goes in the <code>_site.yml</code> file and the css file should go in the home folder for the project.</p>
+<p>Once that’s done you should be ready to go! However, please be careful: this is an experimental feature and has not yet been properly tested.</p>
 <h2 id="testing-with-kittens">Testing with kittens</h2>
 <p>Just to make certain, let’s check that it does what we want by generating a random card using kitten images and lorem ipsum placeholder text:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1604,10 +1607,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </code></pre>
 </div>
 <div class="card col-12 col-md-4 m-0 p-2 d-flex">
-<img class="card-img-top p-0" src="https://placekitten.com/349/193"/>
+<img class="card-img-top p-0" src="https://placekitten.com/259/162"/>
 <div class="card-body">
 <h5 class="card-title">A kitten card</h5>
-<p class="card-text">Omnis est enim de virtutis dignitate contentio. Quam ob rem tandem, inquit, non satisfacit? Sic igitur in homine perfectio ista in eo potissimum, quod est optimum, id est in virtute, laudatur.</p>
+<p class="card-text">Nescio quo modo praetervolavit oratio. Itaque hic ipse iam pridem est reiectus; Tria genera bonorum; At quicum ioca seria, ut dicitur, quicum arcana, quicum occulta omnia?</p>
 </div>
 </div>
 </div>
@@ -1615,14 +1618,14 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>Looks about right to me?</p>
 <!--------------- appendices go here ----------------->
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-08-13 14:37:26 AEST</p>
+<p>2021-08-13 15:22:32 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/bs4cards-in-distill.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
 <div id="ref-distill" class="csl-entry" role="doc-biblioentry">
 Allaire, JJ, Rich Iannone, Alison Presmanes Hill, and Yihui Xie. 2021. <em>Distill: ’R Markdown’ Format for Scientific and Technical Writing</em>. <a href="https://CRAN.R-project.org/package=distill">https://CRAN.R-project.org/package=distill</a>.

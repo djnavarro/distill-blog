@@ -67,8 +67,8 @@
       "RemoteRepo": "bs4cards",
       "RemoteUsername": "djnavarro",
       "RemoteRef": "HEAD",
-      "RemoteSha": "868f0c40ee38a0ca7ab7d34d4e5c4f9cf2c1f01e",
-      "Hash": "fd0ef9d5cacb764bffb023f66b4dfc8d"
+      "RemoteSha": "da4e81433afe879067a9fe68ea55d7862bff015e",
+      "Hash": "7826a2f92601fc325badbdc517abe4e0"
     },
     "crayon": {
       "Package": "crayon",

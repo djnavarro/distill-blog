@@ -124,13 +124,13 @@ Note that this relies on a currently-in-development feature, so you may need to 
 
 ### Distill
 
-Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn't look visually appealing when mixed with the distill styling.^[The original version of this post used that solution, with a promissory note to do a better job later.] To fix this, bs4cards includes a stripped down version of bootstrap called "strapless", that only uses the subset of bootstrap css relevant to cards. A convenience function `strapless()` returns the path to this file:
+Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn't look visually appealing when mixed with the distill styling.^[The original version of this post used that solution, with a promissory note to do a better job later.] To fix this, bs4cards includes a stripped down version of bootstrap called "strapless", that only uses the subset of bootstrap css relevant to cards. The convenience function `use_strapless()` will copy the strapless css file to the target location. To copy it to the same location as this post:
 
-```{r}
-bs4cards::strapless()
+```{r, echo=TRUE}
+bs4cards::use_strapless(here::here("_posts", "bs4cards-in-distill"))
 ```
 
-To enable the strapless variant of bootstrap 4, copy the strapless.css file to the folder containing the R markdown for your post and add the following lines to your YAML header:
+Next, to enable the library within the post, add the following lines to the YAML header for the post:
 
 ```
 output:
@@ -138,9 +138,9 @@ output:
     css: "strapless.css"
 ```
 
-If, like me, you only want to enable strapless for a specific post, this goes in the YAML header for that post only. Alternatively, if you want to enable it for the entire site, this markup goes in the `_site.yml` file.
+Alternatively, if you want to enable strapless for the entire site, this markup goes in the `_site.yml` file and the css file should go in the home folder for the project.
 
-Once that's done you should be ready to go!
+Once that's done you should be ready to go! However, please be careful: this is an experimental feature and has not yet been properly tested.
 
 ## Testing with kittens
 
