@@ -32,12 +32,13 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
 
-# uncomment this line to generate the asciicast svgs
+# uncomment this line to generate the asciicast svgs (needs to use rprojroot note here!!!)
 # source(here::here("_posts", "pretty-little-clis", "source", "create-asciicasts.R"))
 
 # convenience function to insert an asciicast svg
 insert_asciicast <- function(name) {
-  dir <- here::here("_posts", "pretty-little-clis", "output")
+  blogroot <- rprojroot::find_root(".blogroot")
+  dir <- fs::path(blogroot, "_posts", "pretty-little-clis", "output")
   svg <- paste0(name, ".svg")
   knitr::include_graphics(file.path(dir, svg))
 }
@@ -46,12 +47,15 @@ insert_asciicast <- function(name) {
 
 ```{r box, echo=FALSE}
 # ensure box knows where this post is located
-box::set_script_path(
-  path = here::here("_posts", params$slug, paste0(params$slug, ".Rmd"))
-)
+blogroot <- rprojroot::find_root(".blogroot")
+postroot <- fs::path(blogroot, "_posts", params$slug)
+postfile <- fs::path(postroot, paste0(params$slug, ".Rmd"))
 
-# import utility functions as a module
-box::use(../../source/utils[
+box::set_script_path(postfile)
+
+# import utility functions from local copy of utils.R
+old_opts <- options(box.path = postroot)
+box::use(./helpers[
   set_meta, 
   set_redirect, 
   set_source, 
@@ -59,6 +63,7 @@ box::use(../../source/utils[
   set_lockfile,
   set_timestamp
 ])
+options(old_opts)
 ```
 
 ```{r meta, echo=FALSE}

@@ -5,7 +5,7 @@ listing: posts
 ---
 
 ```{r meta, echo=FALSE}
-box::use(source/utils[set_meta])
+box::use(source/helpers[set_meta])
 set_meta(
   title = "Notes from a data witch",
   description = "A blog focusing mostly on R and data science"

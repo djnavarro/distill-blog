@@ -33,12 +33,15 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r box, echo=FALSE}
 # ensure box knows where this post is located
-box::set_script_path(
-  path = here::here("_posts", params$slug, paste0(params$slug, ".Rmd"))
-)
+blogroot <- rprojroot::find_root(".blogroot")
+postroot <- fs::path(blogroot, "_posts", params$slug)
+postfile <- fs::path(postroot, paste0(params$slug, ".Rmd"))
 
-# import utility functions as a module
-box::use(../../source/utils[
+box::set_script_path(postfile)
+
+# import utility functions from local copy of utils.R
+old_opts <- options(box.path = postroot)
+box::use(./helpers[
   set_meta, 
   set_redirect, 
   set_source, 
@@ -46,6 +49,7 @@ box::use(../../source/utils[
   set_lockfile,
   set_timestamp
 ])
+options(old_opts)
 ```
 
 ```{r meta, echo=FALSE}
@@ -127,7 +131,9 @@ Note that this relies on a currently-in-development feature, so you may need to 
 Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn't look visually appealing when mixed with the distill styling.^[The original version of this post used that solution, with a promissory note to do a better job later.] To fix this, bs4cards includes a stripped down version of bootstrap called "strapless", that only uses the subset of bootstrap css relevant to cards. The convenience function `use_strapless()` will copy the strapless css file to the target location. To copy it to the same location as this post:
 
 ```{r, echo=TRUE}
-bs4cards::use_strapless(here::here("_posts", "bs4cards-in-distill"))
+blogroot <- rprojroot::find_root(".blogroot")
+postroot <- fs::path(blogroot, "_posts", "bs4cards-in-distill")
+bs4cards::use_strapless(postroot)
 ```
 
 Next, to enable the library within the post, add the following lines to the YAML header for the post:
