@@ -3,7 +3,8 @@ library(asciicast)
 
 make_asciicast <- function(name, rows) {
 
-  folder <- here::here("_posts", "pretty-little-clis")
+  blogroot <- rprojroot::find_root(".blogroot")
+  folder <- fs::path(blogroot, "pretty-little-clis")
   script <- file.path(folder, "source", paste0(name, ".R"))
   output <- file.path(folder, "output", paste0(name, ".svg"))
 
