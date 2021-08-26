@@ -9,6 +9,7 @@ set_meta <- function(title,
                           twitter_creator = "@djnavarro"
 ) {
   box::use(magrittr[`%>%`])
+  box::use(usethis)
 
   metathis::meta() %>%
     metathis::meta_general(description = description) %>%
@@ -28,14 +29,16 @@ set_meta <- function(title,
 
 #' @export
 set_redirect <- function(from, to = paste0("posts/", from)) {
+  blogroot <- rprojroot::find_root(".blogroot")
+  redirect_file <- fs::path(blogroot, "_redirects")
   redirect <- paste0("/", from, " /", to)
-  content <- brio::read_lines(here::here("_redirects"))
+  content <- brio::read_lines(redirect_file)
   if(!any(content == redirect)) {
     content <- c(content, redirect)
-    brio::write_lines(content, here::here("_redirects"))
+    brio::write_lines(content, redirect_file)
     fs::file_copy(
-      path = here::here("_redirects"),
-      new_path = here::here("_site", "_redirects"),
+      path = redirect_file,
+      new_path = redirect_file,
       overwrite = TRUE
     )
   }
@@ -58,8 +61,8 @@ set_timestamp <- function(tzone = "Australia/Sydney") {
 
 #' @export
 set_session <- function(slug) {
-
-  project <- here::here("_posts", slug)
+  blogroot <- rprojroot::find_root(".blogroot")
+  project <- fs::path(blogroot, "_posts", slug)
   brio::write_lines(
     text = utils::capture.output(utils::sessionInfo()),
     path = file.path(project, "sessioninfo.txt")
@@ -73,8 +76,8 @@ set_session <- function(slug) {
 
 #' @export
 set_lockfile <- function(slug) {
-
-  project <- here::here("_posts", slug)
+  blogroot <- rprojroot::find_root(".blogroot")
+  project <- fs::path(blogroot, "_posts", slug)
   tmp <- utils::capture.output(renv::snapshot(project, prompt = FALSE))
   github_url <- paste0(
     "https://github.com/djnavarro/distill-blog/tree/master/_posts/",
