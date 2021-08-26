@@ -2578,7 +2578,9 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn’t look visually appealing when mixed with the distill styling.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> To fix this, bs4cards includes a stripped down version of bootstrap called “strapless,” that only uses the subset of bootstrap css relevant to cards. The convenience function <code>use_strapless()</code> will copy the strapless css file to the target location. To copy it to the same location as this post:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>bs4cards</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/bs4cards/man/use_strapless.html'>use_strapless</a></span><span class='op'>(</span><span class='fu'>here</span><span class='fu'>::</span><span class='fu'><a href='https://here.r-lib.org//reference/here.html'>here</a></span><span class='op'>(</span><span class='st'>"_posts"</span>, <span class='st'>"bs4cards-in-distill"</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>blogroot</span> <span class='op'>&lt;-</span> <span class='fu'>rprojroot</span><span class='fu'>::</span><span class='fu'><a href='https://rprojroot.r-lib.org//reference/find_root.html'>find_root</a></span><span class='op'>(</span><span class='st'>".blogroot"</span><span class='op'>)</span>
+<span class='va'>postroot</span> <span class='op'>&lt;-</span> <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/path.html'>path</a></span><span class='op'>(</span><span class='va'>blogroot</span>, <span class='st'>"_posts"</span>, <span class='st'>"bs4cards-in-distill"</span><span class='op'>)</span>
+<span class='fu'>bs4cards</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/bs4cards/man/use_strapless.html'>use_strapless</a></span><span class='op'>(</span><span class='va'>postroot</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
@@ -2596,10 +2598,10 @@ d-appendix d-footnote-list a.footnote-backlink {
 </code></pre>
 </div>
 <div class="card col-12 col-md-4 m-0 p-2 d-flex">
-<img class="card-img-top p-0" src="https://placekitten.com/283/166"/>
+<img class="card-img-top p-0" src="https://placekitten.com/288/158"/>
 <div class="card-body">
 <h5 class="card-title">A kitten card</h5>
-<p class="card-text">Facillimum id quidem est, inquam. Paria sunt igitur. An me, inquam, nisi te audire vellem, censes haec dicturum fuisse? Qua ex cognitione facilior facta est investigatio rerum occultissimarum.</p>
+<p class="card-text">Equidem e Cn. Duo Reges: constructio interrete. Quid igitur dubitamus in tota eius natura quaerere quid sit effectum? Et certamen honestum et disputatio splendida!</p>
 </div>
 </div>
 </div>
@@ -2607,7 +2609,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>Looks about right to me?</p>
 <!--------------- appendices go here ----------------->
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-08-13 18:08:55 AEST</p>
+<p>2021-08-26 13:52:15 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/bs4cards-in-distill.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
