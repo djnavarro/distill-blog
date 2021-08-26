@@ -9,6 +9,7 @@ set_meta <- function(title,
                           twitter_creator = "@djnavarro"
 ) {
   box::use(magrittr[`%>%`])
+  box::use(usethis)
 
   metathis::meta() %>%
     metathis::meta_general(description = description) %>%
