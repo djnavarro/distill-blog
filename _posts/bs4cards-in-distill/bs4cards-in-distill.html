@@ -1586,21 +1586,11 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   bootstrap: 4</code></pre>
 <p>Note that this relies on a currently-in-development feature, so you may need to update to the development version of pkgdown to make this work.</p>
 <h3 id="distill">Distill</h3>
-<p>Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn’t look visually appealing when mixed with the distill styling.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> To fix this, bs4cards includes a stripped down version of bootstrap called “strapless,” that only uses the subset of bootstrap css relevant to cards. The convenience function <code>use_strapless()</code> will copy the strapless css file to the target location. To copy it to the same location as this post:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>blogroot</span> <span class='op'>&lt;-</span> <span class='fu'>rprojroot</span><span class='fu'>::</span><span class='fu'><a href='https://rprojroot.r-lib.org//reference/find_root.html'>find_root</a></span><span class='op'>(</span><span class='st'>".blogroot"</span><span class='op'>)</span>
-<span class='va'>postroot</span> <span class='op'>&lt;-</span> <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/path.html'>path</a></span><span class='op'>(</span><span class='va'>blogroot</span>, <span class='st'>"_posts"</span>, <span class='st'>"bs4cards-in-distill"</span><span class='op'>)</span>
-<span class='fu'>bs4cards</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/bs4cards/man/use_strapless.html'>use_strapless</a></span><span class='op'>(</span><span class='va'>postroot</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
-<p>Next, to enable the library within the post, add the following lines to the YAML header for the post:</p>
+<p>Distill R markdown does not use bootstrap, which is a little inconvenient if you want to use bs4cards with distill. With a little effort it is possible to enable the entire bootstrap library in a distill site, but this can lead to undesirable side-effects because bootstrap has a lot of styling that doesn’t look visually appealing when mixed with the istill styling. The solution I’ve adopted for this is to use a custom bootstrap build that includes a minimal number of bootstrap components. If you want to try the same approach, you can download the <a href="https://github.com/djnavarro/strapless/releases/download/0.0.0.9000/strapless.css">strapless.css</a> file to the same folder as the distill post you want to enable it for, and include the following YAML in the post header:</p>
 <pre><code>output:
   distill::distill_article:
     css: &quot;strapless.css&quot;</code></pre>
-<p>Alternatively, if you want to enable strapless for the entire site, this markup goes in the <code>_site.yml</code> file and the css file should go in the home folder for the project.</p>
-<p>Once that’s done you should be ready to go! However, please be careful: this is an experimental feature and has not yet been properly tested.</p>
+<p>If you want to enable strapless for the entire site, this markup goes in the <code>_site.yml</code> file and the css file should go in the home folder for the project. Once that’s done you should be ready to go. That being said, you’d be wise to be careful when adopting this approach: the strapless build is a crude hack, and I haven’t tested it very thoroughly.</p>
 <h2 id="testing-with-kittens">Testing with kittens</h2>
 <p>Just to make certain, let’s check that it does what we want by generating a random card using kitten images and lorem ipsum placeholder text:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1609,10 +1599,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </code></pre>
 </div>
 <div class="card col-12 col-md-4 m-0 p-2 d-flex">
-<img class="card-img-top p-0" src="https://placekitten.com/288/158"/>
+<img class="card-img-top p-0" src="https://placekitten.com/309/199"/>
 <div class="card-body">
 <h5 class="card-title">A kitten card</h5>
-<p class="card-text">Equidem e Cn. Duo Reges: constructio interrete. Quid igitur dubitamus in tota eius natura quaerere quid sit effectum? Et certamen honestum et disputatio splendida!</p>
+<p class="card-text">Ergo ita: non posse honeste vivi, nisi honeste vivatur? Quid de Platone aut de Democrito loquar? Quam ob rem tandem, inquit, non satisfacit?</p>
 </div>
 </div>
 </div>
@@ -1620,7 +1610,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <p>Looks about right to me?</p>
 <!--------------- appendices go here ----------------->
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-08-26 13:52:15 AEST</p>
+<p>2021-08-28 22:01:38 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/bs4cards-in-distill.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
@@ -1639,12 +1629,6 @@ Wickham, Hadley, Jay Hesselberth, and Maëlle Salmon. 2021. <em>Pkgdown: Make St
 Xie, Yihui, Christophe Dervieux, and Emily Riederer. 2020. <em>R Markdown Cookbook</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown-cookbook">https://bookdown.org/yihui/rmarkdown-cookbook</a>.
 </div>
 </div>
-<section class="footnotes" role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn1" role="doc-endnote"><p>The original version of this post used that solution, with a promissory note to do a better job later.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
