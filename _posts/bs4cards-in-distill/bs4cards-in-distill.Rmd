@@ -67,31 +67,20 @@ When creating R markdown websites, I often find myself wanting to organise conte
 
 ```{r, echo=FALSE}
 library(bs4cards)
-slides <- list(
-  
-  card(
-    title = "Starting R markdown",
-    image = "https://slides.djnavarro.net/index_img/starting-rmarkdown.png",
-    link = "https://slides.djnavarro.net/starting-rmarkdown",
-    text = "An introduction to R markdown. The target audience is a novice R user with no previous experience with markdown."
-  ),
-  
-  card(
-    title = "Starting ggplot2",
-    image = "https://slides.djnavarro.net/index_img/starting-ggplot2.png",
-    link = "https://slides.djnavarro.net/starting-ggplot2",
-    text = "An introduction to ggplot2. The target audience is a novice user with no previous experience with R or ggplot2."
-  ),
-  
-  card(
-    title = "Starting programming",
-    image = "https://slides.djnavarro.net/index_img/starting-programming.png",
-    link = "https://slides.djnavarro.net/starting-programming",
-    text = "This is primarily a tutorial on making generative art in R, but in doing so introduces core programming constructs and data structures."
+slides <- data.frame(
+  messy_title = c("Starting R markdown", "Starting ggplot2", "Starting programming"),
+  clean_title = c("starting-rmarkdown", "starting-ggplot2", "starting-programming"),
+  description = c("An introduction to R markdown. The target audience is a novice R user with no previous experience with markdown.", "An introduction to ggplot2. The target audience is a novice user with no previous experience with R or ggplot2.", text = "This is primarily a tutorial on making generative art in R, but in doing so introduces core programming constructs and data structures. It is assumed the user has some previous experience with ggplot2.")
   )
-)
 
-card_grid(slides)
+bs4cards::cards(
+    data = slides,
+    title = messy_title,
+    text = description,
+    link = paste0("https://slides.djnavarro.net/", clean_title),
+    image = paste0("https://slides.djnavarro.net/index_img/", clean_title, ".png"),
+    width = 3
+  )
 ```
 
 It bothered me that this wasn't as straightforward as I was expecting, so for one of my side projects I've been putting together a small package called [bs4cards](https://bs4cards.djnavarro.net) to make this a little easier inside an R markdown document or website. There's an [introductory vignette](https://bs4cards.djnavarro.net/articles/introduction.html) posted on the bs4cards package website showing how the package works, and there's no need to duplicate that content here. However, because this website uses the [distill](https://rstudio.github.io/distill/) package [@distill] and the package website is built using [pkgdown](https://pkgdown.r-lib.org/) [@pkgdown], it seems like a good idea to have at least one post on both sites that uses bs4cards. 
@@ -139,12 +128,14 @@ output:
 If you want to enable strapless for the entire site, this markup goes in the `_site.yml` file and the css file should go in the home folder for the project. Once that's done you should be ready to go. That being said, you'd be wise to be careful when adopting this approach: the strapless build is a crude hack, and I haven't tested it very thoroughly. 
 
 
-## Testing with kittens
+## Testing with pretty pictures
 
-Just to make certain, let's check that it does what we want by generating a random card using kitten images and lorem ipsum placeholder text:
+Just to make certain, let's check that it does what we want by generating cards using the `galleries` data that comes bundled with the bs4cards package:
 
 ```{r, echo=TRUE}
-bs4cards::sample_card()
+library(bs4cards)
+galleries %>% 
+  cards(title = long_name, image = image_url)
 ```
 
 <br>

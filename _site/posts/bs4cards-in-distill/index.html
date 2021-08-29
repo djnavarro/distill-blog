@@ -2507,7 +2507,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#pkgdown">Pkgdown</a></li>
 <li><a href="#distill">Distill</a></li>
 </ul></li>
-<li><a href="#testing-with-kittens">Testing with kittens</a></li>
+<li><a href="#testing-with-pretty-pictures">Testing with pretty pictures</a></li>
 <li><a href="#last-updated">Last updated</a></li>
 <li><a href="#details">Details</a></li>
 </ul>
@@ -2523,38 +2523,40 @@ d-appendix d-footnote-list a.footnote-backlink {
 <!--------------- post begins here ----------------->
 <p>When creating R markdown websites, I often find myself wanting to organise content into a nice-looking grid of links. For example, in a <a href="https://slides.djnavarro.net/">recent project</a> I wanted to be able to create something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="row m-0 mb-3 mt-3 p-0">
-<div class="card col-12 col-md-4 m-0 p-2 d-flex">
+<div>
+<div class="row p-0 row-cols-1 row-cols-md-2 row-cols-lg-3" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
 <a href="https://slides.djnavarro.net/starting-rmarkdown">
-<img class="card-img-top p-0" src="https://slides.djnavarro.net/index_img/starting-rmarkdown.png"/>
+<img src="https://slides.djnavarro.net/index_img/starting-rmarkdown.png" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
 </a>
-<div class="card-body">
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
 <a href="https://slides.djnavarro.net/starting-rmarkdown">
-<h5 class="card-title">Starting R markdown</h5>
+<h5 class="card-title my-auto px-3 pt-3 pb-1">Starting R markdown</h5>
 </a>
-<p class="card-text">An introduction to R markdown. The target audience is a novice R user with no previous experience with markdown.</p>
+<p class="card-text my-auto px-3 pb-3 pt-1">An introduction to R markdown. The target audience is a novice R user with no previous experience with markdown.</p>
 </div>
 </div>
-<div class="card col-12 col-md-4 m-0 p-2 d-flex">
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
 <a href="https://slides.djnavarro.net/starting-ggplot2">
-<img class="card-img-top p-0" src="https://slides.djnavarro.net/index_img/starting-ggplot2.png"/>
+<img src="https://slides.djnavarro.net/index_img/starting-ggplot2.png" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
 </a>
-<div class="card-body">
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
 <a href="https://slides.djnavarro.net/starting-ggplot2">
-<h5 class="card-title">Starting ggplot2</h5>
+<h5 class="card-title my-auto px-3 pt-3 pb-1">Starting ggplot2</h5>
 </a>
-<p class="card-text">An introduction to ggplot2. The target audience is a novice user with no previous experience with R or ggplot2.</p>
+<p class="card-text my-auto px-3 pb-3 pt-1">An introduction to ggplot2. The target audience is a novice user with no previous experience with R or ggplot2.</p>
 </div>
 </div>
-<div class="card col-12 col-md-4 m-0 p-2 d-flex">
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
 <a href="https://slides.djnavarro.net/starting-programming">
-<img class="card-img-top p-0" src="https://slides.djnavarro.net/index_img/starting-programming.png"/>
+<img src="https://slides.djnavarro.net/index_img/starting-programming.png" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
 </a>
-<div class="card-body">
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
 <a href="https://slides.djnavarro.net/starting-programming">
-<h5 class="card-title">Starting programming</h5>
+<h5 class="card-title my-auto px-3 pt-3 pb-1">Starting programming</h5>
 </a>
-<p class="card-text">This is primarily a tutorial on making generative art in R, but in doing so introduces core programming constructs and data structures.</p>
+<p class="card-text my-auto px-3 pb-3 pt-1">This is primarily a tutorial on making generative art in R, but in doing so introduces core programming constructs and data structures. It is assumed the user has some previous experience with ggplot2.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2580,18 +2582,59 @@ d-appendix d-footnote-list a.footnote-backlink {
   distill::distill_article:
     css: &quot;strapless.css&quot;</code></pre>
 <p>If you want to enable strapless for the entire site, this markup goes in the <code>_site.yml</code> file and the css file should go in the home folder for the project. Once that’s done you should be ready to go. That being said, you’d be wise to be careful when adopting this approach: the strapless build is a crude hack, and I haven’t tested it very thoroughly.</p>
-<h2 id="testing-with-kittens">Testing with kittens</h2>
-<p>Just to make certain, let’s check that it does what we want by generating a random card using kitten images and lorem ipsum placeholder text:</p>
+<h2 id="testing-with-pretty-pictures">Testing with pretty pictures</h2>
+<p>Just to make certain, let’s check that it does what we want by generating cards using the <code>galleries</code> data that comes bundled with the bs4cards package:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>bs4cards</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/bs4cards/man/sample_card.html'>sample_card</a></span><span class='op'>(</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/djnavarro/bs4cards'>bs4cards</a></span><span class='op'>)</span>
+<span class='va'>galleries</span> <span class='op'><a href='https://rdrr.io/pkg/bs4cards/man/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://rdrr.io/pkg/bs4cards/man/cards.html'>cards</a></span><span class='op'>(</span>title <span class='op'>=</span> <span class='va'>long_name</span>, image <span class='op'>=</span> <span class='va'>image_url</span><span class='op'>)</span>
 </code></pre>
 </div>
-<div class="card col-12 col-md-4 m-0 p-2 d-flex">
-<img class="card-img-top p-0" src="https://placekitten.com/309/199"/>
-<div class="card-body">
-<h5 class="card-title">A kitten card</h5>
-<p class="card-text">Ergo ita: non posse honeste vivi, nisi honeste vivatur? Quid de Platone aut de Democrito loquar? Quam ob rem tandem, inquit, non satisfacit?</p>
+<div>
+<div class="row p-0 row-cols-1 row-cols-md-2 row-cols-lg-3" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/ash.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Ash Cloud and Blood</h5>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/ghosts.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Ghosts on Marble Paper</h5>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/ice-floes.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Ice Floes</h5>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/native-flora.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Native Flora</h5>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/silhouettes.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Silhouettes</h5>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/track-marks.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Track Marks</h5>
+</div>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah bs4cards-NA" style="padding: .2rem ; border-width: 0; border-radius: .6rem .6rem .6rem .6rem ;">
+<img src="https://bs4cards.djnavarro.net/image/viewports.jpg" class="card-img-top" style="border-style:solid; border-color:#808080FF; border-width:1px 1px 0 1px; border-radius: .6rem .6rem 0 0 ;"/>
+<div class="card-body justify-content-end m-0 p-0" style="visibility: visible; background-color: #FFFFFFAA; border-style:solid; border-color:#808080FF; border-width:1px; border-radius: 0 0 .6rem .6rem ;">
+<h5 class="card-title my-auto px-3 pt-3 pb-3">Viewports</h5>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2599,7 +2642,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>Looks about right to me?</p>
 <!--------------- appendices go here ----------------->
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-08-28 22:01:38 AEST</p>
+<p>2021-08-29 22:38:08 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/bs4cards-in-distill.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/sessioninfo.txt">session info</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/bs4cards-in-distill/renv.lock">lockfile</a></p>
 <!--------------- miscellanea ----------------->
