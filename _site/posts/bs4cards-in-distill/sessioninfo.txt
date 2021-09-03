@@ -28,5 +28,5 @@ loaded via a namespace (and not attached):
 [17] digest_0.6.27      rprojroot_2.0.2    lifecycle_1.0.0    brio_1.1.2        
 [21] box_1.0.2          purrr_0.3.4        sass_0.4.0         vctrs_0.3.8       
 [25] fs_1.5.0           distill_1.2        glue_1.4.2         evaluate_0.14     
-[29] rmarkdown_2.10     stringi_1.7.4      compiler_4.1.1     bslib_0.2.5.1     
+[29] rmarkdown_2.10     stringi_1.7.4      compiler_4.1.1     bslib_0.3.0       
 [33] generics_0.1.0     lubridate_1.7.10   jsonlite_1.7.2     renv_0.14.0       

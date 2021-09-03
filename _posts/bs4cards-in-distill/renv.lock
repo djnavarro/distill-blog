@@ -39,10 +39,10 @@
     },
     "bookdown": {
       "Package": "bookdown",
-      "Version": "0.23",
+      "Version": "0.24",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "bc07f4b5b93bbf21075429e0c7e090f8"
+      "Hash": "3837766a1e1b527af25fa3e2d12a2800"
     },
     "box": {
       "Package": "box",
@@ -66,9 +66,9 @@
       "RemoteUsername": "djnavarro",
       "RemoteRepo": "bs4cards",
       "RemoteRef": "HEAD",
-      "RemoteSha": "ce67033a550d534f0e8a7132d802d20684a04709",
+      "RemoteSha": "974f626d24af169a2a1671589123d56d7be3ab1c",
       "RemoteHost": "api.github.com",
-      "Hash": "9562b956f821f0a89b08975f4f75e56f"
+      "Hash": "abb825b3dba07b54a943418bcd571c1f"
     },
     "cli": {
       "Package": "cli",
@@ -301,10 +301,10 @@
     },
     "openssl": {
       "Package": "openssl",
-      "Version": "1.4.4",
+      "Version": "1.4.5",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "f4dbc5a47fd93d3415249884d31d6791"
+      "Hash": "5406fd37ef0bf9b88c8a4f264d6ec220"
     },
     "png": {
       "Package": "png",
