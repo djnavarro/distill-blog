@@ -83,7 +83,7 @@ bs4cards::cards(
   )
 ```
 
-It bothered me that this wasn't as straightforward as I was expecting, so for one of my side projects I've been putting together a small package called [bs4cards](https://bs4cards.djnavarro.net) to make this a little easier inside an R markdown document or website. There's an [introductory vignette](https://bs4cards.djnavarro.net/articles/introduction.html) posted on the bs4cards package website showing how the package works, and there's no need to duplicate that content here. However, because this website uses the [distill](https://rstudio.github.io/distill/) package [@distill] and the package website is built using [pkgdown](https://pkgdown.r-lib.org/) [@pkgdown], it seems like a good idea to have at least one post on both sites that uses bs4cards. 
+It bothered me that this wasn't as straightforward as I was expecting, so for one of my side projects I've been putting together a small package called [bs4cards](https://bs4cards.djnavarro.net) to make this a little easier inside an R markdown document or website. There are some introductory articles posted on the bs4cards package website showing how the package works, and there's no need to duplicate that content here. However, because this website uses the [distill](https://rstudio.github.io/distill/) package [@distill] and the package website is built using [pkgdown](https://pkgdown.r-lib.org/) [@pkgdown], it seems like a good idea to have at least one post on both sites that uses bs4cards. 
 
 
 ## Enabling bootstrap 4
