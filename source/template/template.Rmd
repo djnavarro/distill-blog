@@ -1,9 +1,9 @@
 ---
-title: "A new post"
+title: template-slug
 description: | 
   Description of the post
 params:
-  slug: template
+  slug: template-slug
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -14,7 +14,7 @@ author:
 date: 1900-01-01
 draft: true
 creative_commons: CC BY
-citation_url: https://blog.djnavarro.net/template
+citation_url: https://blog.djnavarro.net/template-slug
 repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
@@ -47,13 +47,16 @@ box::use(./helpers[
   set_timestamp
 ])
 options(old_opts)
+
+# activate the R environment associated with this post
+renv::activate(project = postroot)
 ```
 
 
 ```{r meta, echo=FALSE}
 # specify meta tags for twitter card (can differ from post summary)
 set_meta(
-  title =  "A new post", 
+  title =  params$slug, 
   description = "Description of the post"
 )
 ```
