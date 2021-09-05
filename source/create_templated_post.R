@@ -26,5 +26,14 @@ create_templated_post <- function(slug) {
   )
 
   # initialise an R environment for the post
-  renv::init(project = post_dir)
+  #renv::init(project = post_dir)
 }
+
+
+
+
+
+
+
+
+

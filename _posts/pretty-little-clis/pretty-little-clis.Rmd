@@ -13,7 +13,7 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
-date: 04-18-2021
+date: "2021-04-18"
 bibliography: pretty-little-clis.bib
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/pretty-little-clis
@@ -31,6 +31,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = TRUE, warning = TRUE)
+refinery::renv_load(params$slug)
 
 # uncomment this line to generate the asciicast svgs (needs to use rprojroot note here!!!)
 # source(here::here("_posts", "pretty-little-clis", "source", "create-asciicasts.R"))
@@ -44,33 +45,11 @@ insert_asciicast <- function(name) {
 }
 ```
 
-
-```{r box, echo=FALSE}
-# ensure box knows where this post is located
-blogroot <- rprojroot::find_root(".blogroot")
-postroot <- fs::path(blogroot, "_posts", params$slug)
-postfile <- fs::path(postroot, paste0(params$slug, ".Rmd"))
-
-box::set_script_path(postfile)
-
-# import utility functions from local copy of utils.R
-old_opts <- options(box.path = postroot)
-box::use(./helpers[
-  set_meta, 
-  set_redirect, 
-  set_source, 
-  set_session,
-  set_lockfile,
-  set_timestamp
-])
-options(old_opts)
-```
-
 ```{r meta, echo=FALSE}
-set_meta(
-  title =  "Pretty little CLIs", 
-  description = "How to make a gorgeous command line interface in R using the cli package"
-)
+#set_meta(
+#  title =  "Pretty little CLIs", 
+#  description = "How to make a gorgeous command line interface in R using the cli package"
+#)
 ```
 
 
@@ -404,20 +383,23 @@ cli(
 
 ## Last updated {.appendix}
 
-`r set_timestamp("Australia/Sydney")`
+```{r}
+refinery::record_timestamp("Australia/Sydney")
+```
 
 ## Details {.appendix}
 
-[source code](`r set_source(params$slug)`), [session info](`r set_session(params$slug)`), [lockfile](`r set_lockfile(params$slug)`)
-
+```{r}
+refinery::record_source("djnavarro/distill-blog", params$slug)
+htmltools::span(", ")
+refinery::record_lockfile("djnavarro/distill-blog", params$slug)
+```
 
 <!--------------- miscellanea ----------------->
 
 ```{r redirect, echo=FALSE}
-set_redirect(params$slug)
+#set_redirect(params$slug)
 ```
-
-
 
 
 

@@ -9,11 +9,11 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r meta, echo=FALSE}
-box::use(source/utils[set_meta])
-set_meta(
-  title = "Notes from a data witch",
-  description = "Additional detail about the author"
-)
+# box::use(source/helpers[set_meta])
+# set_meta(
+#   title = "Notes from a data witch",
+#   description = "Additional detail about the author"
+# )
 ```
 
 
