@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" version="1.0">
   <url>
     <loc>https://blog.djnavarro.net/about.html</loc>
-    <lastmod>2021-09-05T18:28:01+10:00</lastmod>
+    <lastmod>2021-09-06T02:01:02+10:00</lastmod>
   </url>
   <url>
     <loc>https://blog.djnavarro.net/</loc>
@@ -10,22 +10,22 @@
   </url>
   <url>
     <loc>https://blog.djnavarro.net/posts/git-credential-helpers/</loc>
-    <lastmod>2021-09-06T00:56:37+10:00</lastmod>
+    <lastmod>2021-09-06T02:06:34+10:00</lastmod>
   </url>
   <url>
     <loc>https://blog.djnavarro.net/posts/generative-art-in-r/</loc>
-    <lastmod>2021-09-06T00:55:46+10:00</lastmod>
+    <lastmod>2021-09-06T02:06:13+10:00</lastmod>
   </url>
   <url>
     <loc>https://blog.djnavarro.net/posts/bs4cards-in-distill/</loc>
-    <lastmod>2021-09-06T00:56:53+10:00</lastmod>
+    <lastmod>2021-09-06T02:06:40+10:00</lastmod>
   </url>
   <url>
     <loc>https://blog.djnavarro.net/posts/pretty-little-clis/</loc>
-    <lastmod>2021-09-06T00:56:21+10:00</lastmod>
+    <lastmod>2021-09-06T02:06:28+10:00</lastmod>
   </url>
   <url>
     <loc>https://blog.djnavarro.net/posts/welcome/</loc>
-    <lastmod>2021-09-06T00:44:36+10:00</lastmod>
+    <lastmod>2021-09-06T02:06:19+10:00</lastmod>
   </url>
 </urlset>

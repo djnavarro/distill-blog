@@ -24,6 +24,7 @@ Profile image, courtesy of Mara Averick:
 <br>
 
 ```{r, echo=FALSE}
-knitr::include_graphics(here::here("image", "data-witch.png"))
+root <- rprojroot::find_root("_site.yml")
+knitr::include_graphics(fs::path(root, "image", "data-witch.png"))
 ```
 

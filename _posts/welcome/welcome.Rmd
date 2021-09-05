@@ -59,13 +59,13 @@ Not sure how this will go, but fingers crossed!
 
 ## Last updated {.appendix}
 
-```{r}
+```{r, echo=FALSE}
 refinery::record_timestamp("Australia/Sydney")
 ```
 
 ## Details {.appendix}
 
-```{r}
+```{r, echo=FALSE}
 refinery::record_source("djnavarro/distill-blog", params$slug)
 htmltools::span(", ")
 refinery::record_lockfile("djnavarro/distill-blog", params$slug)

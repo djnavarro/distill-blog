@@ -383,13 +383,13 @@ cli(
 
 ## Last updated {.appendix}
 
-```{r}
+```{r, echo=FALSE}
 refinery::record_timestamp("Australia/Sydney")
 ```
 
 ## Details {.appendix}
 
-```{r}
+```{r, echo=FALSE}
 refinery::record_source("djnavarro/distill-blog", params$slug)
 htmltools::span(", ")
 refinery::record_lockfile("djnavarro/distill-blog", params$slug)
@@ -400,6 +400,4 @@ refinery::record_lockfile("djnavarro/distill-blog", params$slug)
 ```{r redirect, echo=FALSE}
 #set_redirect(params$slug)
 ```
-
-
 

@@ -112,6 +112,13 @@
       "Repository": "CRAN",
       "Hash": "d447b40982c576a72b779f0a3b3da227"
     },
+    "fastmap": {
+      "Package": "fastmap",
+      "Version": "1.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "77bd60a6157420d4ffa93b27cf6a58b8"
+    },
     "fs": {
       "Package": "fs",
       "Version": "1.5.0",
@@ -149,10 +156,10 @@
     },
     "htmltools": {
       "Package": "htmltools",
-      "Version": "0.5.1.1",
+      "Version": "0.5.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "af2c2531e55df5cf230c4b5444fc973c"
+      "Hash": "526c484233f42522278ab06fb185cb26"
     },
     "jsonlite": {
       "Package": "jsonlite",
@@ -216,11 +223,11 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "djnavarro",
       "RemoteRepo": "refinery",
-      "RemoteRef": "master",
+      "RemoteUsername": "djnavarro",
+      "RemoteRef": "HEAD",
       "RemoteSha": "8d50ae09f75f44b47ea913433c52e32bb7b13ffd",
-      "Hash": "ad1f2514824f6cdd10d861e3f67dbeba"
+      "Hash": "cf952ed37a5110c3e1e16dbad3e1069a"
     },
     "renv": {
       "Package": "renv",
