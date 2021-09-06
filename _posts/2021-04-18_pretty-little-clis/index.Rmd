@@ -16,6 +16,7 @@ author:
     orcid_id: 0000-0001-7648-6578
 date: "2021-04-18"
 bibliography: pretty-little-clis.bib
+preview: pretty-little-clis.jpg
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/pretty-little-clis
 repository_url: https://github.com/djnavarro/distill-blog
