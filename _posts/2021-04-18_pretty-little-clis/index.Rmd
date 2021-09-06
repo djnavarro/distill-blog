@@ -48,13 +48,6 @@ insert_asciicast <- function(name) {
 }
 ```
 
-```{r meta, echo=FALSE}
-#set_meta(
-#  title =  "Pretty little CLIs", 
-#  description = "How to make a gorgeous command line interface in R using the cli package"
-#)
-```
-
 
 <!--------------- post begins here ----------------->
 

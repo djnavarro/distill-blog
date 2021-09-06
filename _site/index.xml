@@ -6,7 +6,7 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 08 Aug 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 07 Aug 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Managing GitHub credentials from R, difficulty level linux</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -15,8 +15,8 @@
 how linux stores passwords and, more importantly, got R to use her GitHub
 credentials properly</description>
       <guid>https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers</guid>
-      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
-      <media:content url="https://media.giphy.com/media/DEaRw1U6F4s9O/giphy.gif" medium="image" type="image/gif"/>
+      <pubDate>Sat, 07 Aug 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers/credentials.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>
       <title>Generative art in R</title>
@@ -24,7 +24,7 @@ credentials properly</description>
       <link>https://blog.djnavarro.net/posts/2021-07-08_generative-art-in-r</link>
       <description>Comments on an exhibit I contributed to as part of useR!2021</description>
       <guid>https://blog.djnavarro.net/posts/2021-07-08_generative-art-in-r</guid>
-      <pubDate>Wed, 07 Jul 2021 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-07-08_generative-art-in-r/turmite59-in-red.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>

@@ -15,6 +15,7 @@ author:
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
 date: "2021-08-08"
+preview: credentials.jpg # source: https://unsplash.com/photos/lnRPKo7Lo5Q
 bibliography: git-credential-helpers.bib
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/git-credential-helpers
@@ -34,12 +35,6 @@ long_slug <- paste(params$date, params$slug, sep = "_")
 refinery::renv_load(long_slug)
 ```
 
-```{r meta, echo=FALSE}
-#set_meta(
-#  title =  "Managing GitHub credentials from R", 
-#  description = "In which the author wonders why everything in linux is so hard"
-#)
-```
 
 ```{r include=FALSE, echo=FALSE}
 aside <- function(text) {

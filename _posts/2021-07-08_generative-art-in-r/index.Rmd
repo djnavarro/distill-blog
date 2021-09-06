@@ -30,13 +30,6 @@ long_slug <- paste(params$date, params$slug, sep = "_")
 refinery::renv_load(long_slug)
 ```
 
-```{r meta, echo=FALSE}
-#set_meta(
-#  title =  "Generative art in R", 
-#  description = "Comments on my contribution to the 2021 useR! art exhibition"
-#)
-```
-
 
 <!--------------- post begins here ----------------->
 

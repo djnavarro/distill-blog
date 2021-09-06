@@ -36,13 +36,6 @@ refinery::renv_load(long_slug)
 ```
 
 
-```{r meta, echo=FALSE}
-#set_meta(
-#  title =  "Bootstrap cards in distill", 
-#  description = "How to enable bootstrap 4 cards on a distill website"
-#)
-```
-
 
 <!--------------- post begins here ----------------->
 

@@ -32,13 +32,6 @@ long_slug <- paste(params$date, params$slug, sep = "_")
 refinery::renv_load(long_slug)
 ```
 
-```{r meta, echo=FALSE}
-#set_meta(
-#  title =  "Welcome to the jungle", 
-#  description = "Some thoughts on starting over, when I have tried my hand at blogging many times before"
-#)
-```
-
 
 <!--------------- post begins here ----------------->
 
