@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
   <meta name="generator" content="distill" />
-  <link rel="alternate" type="application/rss+xml" href="https://blog.djnavarro.net/index.xml" />
 
   <style type="text/css">
   /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
@@ -87,635 +86,48 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Notes from a data witch</title>
+  <title>Generative art in R</title>
 
+  <meta property="description" itemprop="description" content="Comments on an exhibit I contributed to as part of useR!2021"/>
 
+  <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 
+  <!--  https://schema.org/Article -->
+  <meta property="article:published" itemprop="datePublished" content="2021-07-08"/>
+  <meta property="article:created" itemprop="dateCreated" content="2021-07-08"/>
+  <meta name="article:author" content="Danielle Navarro"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Notes from a data witch"/>
+  <meta property="og:title" content="Generative art in R"/>
   <meta property="og:type" content="article"/>
+  <meta property="og:description" content="Comments on an exhibit I contributed to as part of useR!2021"/>
   <meta property="og:locale" content="en_US"/>
-  <meta property="og:site_name" content="Notes from a data witch"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Notes from a data witch"/>
+  <meta property="twitter:title" content="Generative art in R"/>
+  <meta property="twitter:description" content="Comments on an exhibit I contributed to as part of useR!2021"/>
 
+  <!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
+  <meta name="citation_title" content="Generative art in R"/>
+  <meta name="citation_fulltext_html_url" content="https://blog.djnavarro.net/generative-art-in-r"/>
+  <meta name="citation_fulltext_world_readable" content=""/>
+  <meta name="citation_online_date" content="2021/07/08"/>
+  <meta name="citation_publication_date" content="2021/07/08"/>
+  <meta name="citation_author" content="Danielle Navarro"/>
+  <meta name="citation_author_institution" content="UNSW Sydney"/>
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","site","listing"]}},"value":[{"type":"character","attributes":{},"value":["Notes from a data witch"]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"character","attributes":{},"value":["posts"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","params","author","date","creative_commons","citation_url","repository_url","output"]}},"value":[{"type":"character","attributes":{},"value":["Generative art in R"]},{"type":"character","attributes":{},"value":["Comments on an exhibit I contributed to as part of useR!2021\n"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date"]}},"value":[{"type":"character","attributes":{},"value":["generative-art-in-r"]},{"type":"character","attributes":{},"value":["2021-07-08"]}]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["2021-07-08"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/generative-art-in-r"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["exhibit/fire_and_ice.jpg","exhibit/floral_effect.png","exhibit/leviathan.png","exhibit/orchid_thorn.png","exhibit/pollen_cloud.jpg","exhibit/silhouette_in_teal.jpg","exhibit/soft_ember.jpg","exhibit/turmite59_in_red.jpg","other/bitterness.jpg","other/constellations.png","other/geometry_in_a_hurricane.png","other/rainbow_prisms.png","renv.lock"]}
+  </script>
   <!--radix_placeholder_navigation_in_header-->
-  <meta name="distill:offset" content=""/>
-
-  <script type="application/javascript">
-
-    window.headroom_prevent_pin = false;
-
-    window.document.addEventListener("DOMContentLoaded", function (event) {
-
-      // initialize headroom for banner
-      var header = $('header').get(0);
-      var headerHeight = header.offsetHeight;
-      var headroom = new Headroom(header, {
-        tolerance: 5,
-        onPin : function() {
-          if (window.headroom_prevent_pin) {
-            window.headroom_prevent_pin = false;
-            headroom.unpin();
-          }
-        }
-      });
-      headroom.init();
-      if(window.location.hash)
-        headroom.unpin();
-      $(header).addClass('headroom--transition');
-
-      // offset scroll location for banner on hash change
-      // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
-      window.addEventListener("hashchange", function(event) {
-        window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
-      });
-
-      // responsive menu
-      $('.distill-site-header').each(function(i, val) {
-        var topnav = $(this);
-        var toggle = topnav.find('.nav-toggle');
-        toggle.on('click', function() {
-          topnav.toggleClass('responsive');
-        });
-      });
-
-      // nav dropdowns
-      $('.nav-dropbtn').click(function(e) {
-        $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
-        $(this).parent().siblings('.nav-dropdown')
-           .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
-      });
-      $("body").click(function(e){
-        $('.nav-dropdown-content').removeClass('nav-dropdown-active');
-      });
-      $(".nav-dropdown").click(function(e){
-        e.stopPropagation();
-      });
-    });
-  </script>
-
-  <style type="text/css">
-
-  /* Theme (user-documented overrideables for nav appearance) */
-
-  .distill-site-nav {
-    color: rgba(255, 255, 255, 0.8);
-    background-color: #0F2E3D;
-    font-size: 15px;
-    font-weight: 300;
-  }
-
-  .distill-site-nav a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .distill-site-nav a:hover {
-    color: white;
-  }
-
-  @media print {
-    .distill-site-nav {
-      display: none;
-    }
-  }
-
-  .distill-site-header {
-
-  }
-
-  .distill-site-footer {
-
-  }
-
-
-  /* Site Header */
-
-  .distill-site-header {
-    width: 100%;
-    box-sizing: border-box;
-    z-index: 3;
-  }
-
-  .distill-site-header .nav-left {
-    display: inline-block;
-    margin-left: 8px;
-  }
-
-  @media screen and (max-width: 768px) {
-    .distill-site-header .nav-left {
-      margin-left: 0;
-    }
-  }
-
-
-  .distill-site-header .nav-right {
-    float: right;
-    margin-right: 8px;
-  }
-
-  .distill-site-header a,
-  .distill-site-header .title {
-    display: inline-block;
-    text-align: center;
-    padding: 14px 10px 14px 10px;
-  }
-
-  .distill-site-header .title {
-    font-size: 18px;
-    min-width: 150px;
-  }
-
-  .distill-site-header .logo {
-    padding: 0;
-  }
-
-  .distill-site-header .logo img {
-    display: none;
-    max-height: 20px;
-    width: auto;
-    margin-bottom: -4px;
-  }
-
-  .distill-site-header .nav-image img {
-    max-height: 18px;
-    width: auto;
-    display: inline-block;
-    margin-bottom: -3px;
-  }
-
-
-
-  @media screen and (min-width: 1000px) {
-    .distill-site-header .logo img {
-      display: inline-block;
-    }
-    .distill-site-header .nav-left {
-      margin-left: 20px;
-    }
-    .distill-site-header .nav-right {
-      margin-right: 20px;
-    }
-    .distill-site-header .title {
-      padding-left: 12px;
-    }
-  }
-
-
-  .distill-site-header .nav-toggle {
-    display: none;
-  }
-
-  .nav-dropdown {
-    display: inline-block;
-    position: relative;
-  }
-
-  .nav-dropdown .nav-dropbtn {
-    border: none;
-    outline: none;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 16px 10px;
-    background-color: transparent;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    margin: 0;
-    margin-top: 1px;
-    z-index: 2;
-  }
-
-  .nav-dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 200px;
-    border: 1px solid rgba(0,0,0,0.15);
-    border-radius: 4px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
-    z-index: 1;
-    margin-top: 2px;
-    white-space: nowrap;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  .nav-dropdown-content hr {
-    margin-top: 4px;
-    margin-bottom: 4px;
-    border: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .nav-dropdown-active {
-    display: block;
-  }
-
-  .nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
-    color: black;
-    padding: 6px 24px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-  }
-
-  .nav-dropdown-content .nav-dropdown-header {
-    display: block;
-    padding: 5px 24px;
-    padding-bottom: 0;
-    text-transform: uppercase;
-    font-size: 14px;
-    color: #999999;
-    white-space: nowrap;
-  }
-
-  .nav-dropdown:hover .nav-dropbtn {
-    color: white;
-  }
-
-  .nav-dropdown-content a:hover {
-    background-color: #ddd;
-    color: black;
-  }
-
-  .nav-right .nav-dropdown-content {
-    margin-left: -45%;
-    right: 0;
-  }
-
-  @media screen and (max-width: 768px) {
-    .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
-    .distill-site-header a.nav-toggle {
-      float: right;
-      display: block;
-    }
-    .distill-site-header .title {
-      margin-left: 0;
-    }
-    .distill-site-header .nav-right {
-      margin-right: 0;
-    }
-    .distill-site-header {
-      overflow: hidden;
-    }
-    .nav-right .nav-dropdown-content {
-      margin-left: 0;
-    }
-  }
-
-
-  @media screen and (max-width: 768px) {
-    .distill-site-header.responsive {position: relative; min-height: 500px; }
-    .distill-site-header.responsive a.nav-toggle {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-    .distill-site-header.responsive a,
-    .distill-site-header.responsive .nav-dropdown {
-      display: block;
-      text-align: left;
-    }
-    .distill-site-header.responsive .nav-left,
-    .distill-site-header.responsive .nav-right {
-      width: 100%;
-    }
-    .distill-site-header.responsive .nav-dropdown {float: none;}
-    .distill-site-header.responsive .nav-dropdown-content {position: relative;}
-    .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
-      display: block;
-      width: 100%;
-      text-align: left;
-    }
-  }
-
-  /* Site Footer */
-
-  .distill-site-footer {
-    width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-    z-index: 3;
-    margin-top: 30px;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    text-align: center;
-  }
-
-  /* Headroom */
-
-  d-title {
-    padding-top: 6rem;
-  }
-
-  @media print {
-    d-title {
-      padding-top: 4rem;
-    }
-  }
-
-  .headroom {
-    z-index: 1000;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-  }
-
-  .headroom--transition {
-    transition: all .4s ease-in-out;
-  }
-
-  .headroom--unpinned {
-    top: -100px;
-  }
-
-  .headroom--pinned {
-    top: 0;
-  }
-
-  /* adjust viewport for navbar height */
-  /* helps vertically center bootstrap (non-distill) content */
-  .min-vh-100 {
-    min-height: calc(100vh - 100px) !important;
-  }
-
-  </style>
-
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
-  <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
-  <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
-  <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
-  <script src="site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
-  <script src="site_libs/fuse-6.4.1/fuse.min.js"></script>
-
-  <script type="application/javascript">
-
-  function getMeta(metaName) {
-    var metas = document.getElementsByTagName('meta');
-    for (let i = 0; i < metas.length; i++) {
-      if (metas[i].getAttribute('name') === metaName) {
-        return metas[i].getAttribute('content');
-      }
-    }
-    return '';
-  }
-
-  function offsetURL(url) {
-    var offset = getMeta('distill:offset');
-    return offset ? offset + '/' + url : url;
-  }
-
-  function createFuseIndex() {
-
-    // create fuse index
-    var options = {
-      keys: [
-        { name: 'title', weight: 20 },
-        { name: 'categories', weight: 15 },
-        { name: 'description', weight: 10 },
-        { name: 'contents', weight: 5 },
-      ],
-      ignoreLocation: true,
-      threshold: 0
-    };
-    var fuse = new window.Fuse([], options);
-
-    // fetch the main search.json
-    return fetch(offsetURL('search.json'))
-      .then(function(response) {
-        if (response.status == 200) {
-          return response.json().then(function(json) {
-            // index main articles
-            json.articles.forEach(function(article) {
-              fuse.add(article);
-            });
-            // download collections and index their articles
-            return Promise.all(json.collections.map(function(collection) {
-              return fetch(offsetURL(collection)).then(function(response) {
-                if (response.status === 200) {
-                  return response.json().then(function(articles) {
-                    articles.forEach(function(article) {
-                      fuse.add(article);
-                    });
-                  })
-                } else {
-                  return Promise.reject(
-                    new Error('Unexpected status from search index request: ' +
-                              response.status)
-                  );
-                }
-              });
-            })).then(function() {
-              return fuse;
-            });
-          });
-
-        } else {
-          return Promise.reject(
-            new Error('Unexpected status from search index request: ' +
-                        response.status)
-          );
-        }
-      });
-  }
-
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-
-    // get search element (bail if we don't have one)
-    var searchEl = window.document.getElementById('distill-search');
-    if (!searchEl)
-      return;
-
-    createFuseIndex()
-      .then(function(fuse) {
-
-        // make search box visible
-        searchEl.classList.remove('hidden');
-
-        // initialize autocomplete
-        var options = {
-          autoselect: true,
-          hint: false,
-          minLength: 2,
-        };
-        window.autocomplete(searchEl, options, [{
-          source: function(query, callback) {
-            const searchOptions = {
-              isCaseSensitive: false,
-              shouldSort: true,
-              minMatchCharLength: 2,
-              limit: 10,
-            };
-            var results = fuse.search(query, searchOptions);
-            callback(results
-              .map(function(result) { return result.item; })
-            );
-          },
-          templates: {
-            suggestion: function(suggestion) {
-              var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
-                ? `<img src="${offsetURL(suggestion.preview)}"</img>`
-                : '';
-              var html = `
-                <div class="search-item">
-                  <h3>${suggestion.title}</h3>
-                  <div class="search-item-description">
-                    ${suggestion.description || ''}
-                  </div>
-                  <div class="search-item-preview">
-                    ${img}
-                  </div>
-                </div>
-              `;
-              return html;
-            }
-          }
-        }]).on('autocomplete:selected', function(event, suggestion) {
-          window.location.href = offsetURL(suggestion.path);
-        });
-        // remove inline display style on autocompleter (we want to
-        // manage responsive display via css)
-        $('.algolia-autocomplete').css("display", "");
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-
-  });
-
-  </script>
-
-  <style type="text/css">
-
-  .nav-search {
-    font-size: x-small;
-  }
-
-  /* Algolioa Autocomplete */
-
-  .algolia-autocomplete {
-    display: inline-block;
-    margin-left: 10px;
-    vertical-align: sub;
-    background-color: white;
-    color: black;
-    padding: 6px;
-    padding-top: 8px;
-    padding-bottom: 0;
-    border-radius: 6px;
-    border: 1px #0F2E3D solid;
-    width: 180px;
-  }
-
-
-  @media screen and (max-width: 768px) {
-    .distill-site-nav .algolia-autocomplete {
-      display: none;
-      visibility: hidden;
-    }
-    .distill-site-nav.responsive .algolia-autocomplete {
-      display: inline-block;
-      visibility: visible;
-    }
-    .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
-      margin-left: 0;
-      width: 400px;
-      max-height: 400px;
-    }
-  }
-
-  .algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
-    width: 90%;
-    outline: none;
-    border: none;
-  }
-
-  .algolia-autocomplete .aa-hint {
-    color: #999;
-  }
-  .algolia-autocomplete .aa-dropdown-menu {
-    width: 550px;
-    max-height: 70vh;
-    overflow-x: visible;
-    overflow-y: scroll;
-    padding: 5px;
-    margin-top: 3px;
-    margin-left: -150px;
-    background-color: #fff;
-    border-radius: 5px;
-    border: 1px solid #999;
-    border-top: none;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
-    cursor: pointer;
-    padding: 5px 4px;
-    border-bottom: 1px solid #eee;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
-    border-bottom: none;
-    margin-bottom: 2px;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
-    overflow: hidden;
-    font-size: 0.8em;
-    line-height: 1.4em;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
-    font-size: 1rem;
-    margin-block-start: 0;
-    margin-block-end: 5px;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
-    display: inline-block;
-    overflow: hidden;
-    height: 2.8em;
-    width: 80%;
-    margin-right: 4%;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
-    display: inline-block;
-    width: 15%;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
-    height: 3em;
-    width: auto;
-    display: none;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
-    display: initial;
-  }
-
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
-    background-color: #eee;
-  }
-  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
-    font-weight: bold;
-    font-style: normal;
-  }
-
-  </style>
-
-
   <!--/radix_placeholder_navigation_in_header-->
   <!--radix_placeholder_distill-->
 
@@ -2030,675 +1442,146 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </script>
 
-  <style type="text/css">
-  /* base variables */
-
-  /* Edit the CSS properties in this file to create a custom
-     Distill theme. Only edit values in the right column
-     for each row; values shown are the CSS defaults.
-     To return any property to the default,
-     you may set its value to: unset
-     All rows must end with a semi-colon.                      */
-
-  /* Optional: embed custom fonts here with `@import`          */
-  /* This must remain at the top of this file.                 */
-
-
-
-  html {
-    /*-- Main font sizes --*/
-    --title-size:      50px;
-    --body-size:       1.06rem;
-    --code-size:       14px;
-    --aside-size:      12px;
-    --fig-cap-size:    13px;
-    /*-- Main font colors --*/
-    --title-color:     #000000;
-    --header-color:    rgba(0, 0, 0, 0.8);
-    --body-color:      rgba(0, 0, 0, 0.8);
-    --aside-color:     rgba(0, 0, 0, 0.6);
-    --fig-cap-color:   rgba(0, 0, 0, 0.6);
-    /*-- Specify custom fonts ~~~ must be imported above   --*/
-    --heading-font:    sans-serif;
-    --mono-font:       monospace;
-    --body-font:       sans-serif;
-    --navbar-font:     sans-serif;  /* websites + blogs only */
-  }
-
-  /*-- ARTICLE METADATA --*/
-  d-byline {
-    --heading-size:    0.6rem;
-    --heading-color:   rgba(0, 0, 0, 0.5);
-    --body-size:       0.8rem;
-    --body-color:      rgba(0, 0, 0, 0.8);
-  }
-
-  /*-- ARTICLE TABLE OF CONTENTS --*/
-  .d-contents {
-    --heading-size:    18px;
-    --contents-size:   13px;
-  }
-
-  /*-- ARTICLE APPENDIX --*/
-  d-appendix {
-    --heading-size:    15px;
-    --heading-color:   rgba(0, 0, 0, 0.65);
-    --text-size:       0.8em;
-    --text-color:      rgba(0, 0, 0, 0.5);
-  }
-
-  /*-- WEBSITE HEADER + FOOTER --*/
-  /* These properties only apply to Distill sites and blogs  */
-
-  .distill-site-header {
-    --title-size:       18px;
-    --text-color:       rgba(255, 255, 255, 0.8);
-    --text-size:        15px;
-    --hover-color:      white;
-    --bkgd-color:       #0F2E3D;
-  }
-
-  .distill-site-footer {
-    --text-color:       rgba(255, 255, 255, 0.8);
-    --text-size:        15px;
-    --hover-color:      white;
-    --bkgd-color:       #0F2E3D;
-  }
-
-  /*-- Additional custom styles --*/
-  /* Add any additional CSS rules below                      */
-  </style>
-  <style type="text/css">
-  /* base variables */
-
-  /* Edit the CSS properties in this file to create a custom
-     Distill theme. Only edit values in the right column
-     for each row; values shown are the CSS defaults.
-     To return any property to the default,
-     you may set its value to: unset
-     All rows must end with a semi-colon.                      */
-
-  /* Optional: embed custom fonts here with `@import`          */
-  /* This must remain at the top of this file.                 */
-  @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
-
-  html {
-    /*-- Main font sizes --*/
-    --title-size:      40px;
-    --body-size:       16px;
-    --code-size:       16px;
-    --aside-size:      14px;
-    --fig-cap-size:    14px;
-
-    /*-- Main font colors --*/
-    --title-color:     #000000;
-    --header-color:    rgba(0, 0, 0, 0.8);
-    --body-color:      rgba(0, 0, 0, 0.8);
-    --aside-color:     rgba(0, 0, 0, 0.6);
-    --fig-cap-color:   rgba(0, 0, 0, 0.6);
-
-    /*-- Specify custom fonts ~~~ must be imported above   --*/
-    --heading-font:    'Atkinson Hyperlegible', sans-serif;
-    --mono-font:       'Fira Code', monospace;
-    --body-font:       'Atkinson Hyperlegible', sans-serif;
-    --navbar-font:     'Atkinson Hyperlegible', sans-serif;  /* websites + blogs only */
-  }
-
-  /*-- ARTICLE METADATA --*/
-  d-byline {
-    --heading-size:    0.6rem;
-    --heading-color:   rgba(0, 0, 0, 0.5);
-    --body-size:       0.8rem;
-    --body-color:      rgba(0, 0, 0, 0.8);
-  }
-
-  /*-- ARTICLE TABLE OF CONTENTS --*/
-  .d-contents {
-    --heading-size:    18px;
-    --contents-size:   16px;
-  }
-
-  /*-- ARTICLE APPENDIX --*/
-  d-appendix {
-    --heading-size:    15px;
-    --heading-color:   rgba(0, 0, 0, 0.65);
-    --text-size:       0.8em;
-    --text-color:      rgba(0, 0, 0, 0.5);
-  }
-
-  /*-- WEBSITE HEADER + FOOTER --*/
-  /* These properties only apply to Distill sites and blogs  */
-
-  .distill-site-header {
-    --title-size:       18px;
-    --text-color:       rgba(255, 255, 255, 0.8);
-    --text-size:        15px;
-    --hover-color:      white;
-    --bkgd-color:       black; /* #0F2E3D; */
-  }
-
-  .distill-site-footer {
-    --text-color:       rgba(255, 255, 255, 0.8);
-    --text-size:        15px;
-    --hover-color:      white;
-    --bkgd-color:       black; /* #0F2E3D; */
-  }
-
-  /*-- Additional custom styles --*/
-  /* Add any additional CSS rules below                      */
-
-
-  /*-- ARTICLE CODE BLOCK --*/
-  d-article pre {
-    background-color: #eeeeee;
-    padding: 10px;
-    overflow-x: auto !important;
-  }
-
-  d-article div.sourceCode pre{
-    overflow-x: auto !important;
-  }
-
-
-  /*-- INLINE CODE -- */
-  d-article p code {
-    font-size: 14px;
-    color: #000000;
-    background-color: #eeeeee;
-    padding: 3px;
-  }
-
-  /* -- REMOVE THUMBNAIL IMAGES -- */
-  .posts-list .post-preview .description{
-    width: 75%;
-  }
-  .posts-list .post-preview .thumbnail {
-    width: 0;
-    display: none;
-  }
-  .posts-list .post-preview img {
-    display: none;
-  }
-
-
-  /* -- ASIDE TAGS -- */
-  aside {
-    padding-block-end: 1rem;
-  }</style>
-  <style type="text/css">
-  /* base style */
-
-  /* FONT FAMILIES */
-
-  :root {
-    --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
-    --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
-  }
-
-  body,
-  .posts-list .post-preview p,
-  .posts-list .description p {
-    font-family: var(--body-font), var(--body-default);
-  }
-
-  h1, h2, h3, h4, h5, h6,
-  .posts-list .post-preview h2,
-  .posts-list .description h2 {
-    font-family: var(--heading-font), var(--heading-default);
-  }
-
-  d-article div.sourceCode code,
-  d-article pre code {
-    font-family: var(--mono-font), var(--mono-default);
-  }
-
-
-  /*-- TITLE --*/
-  d-title h1,
-  .posts-list > h1 {
-    color: var(--title-color, black);
-  }
-
-  d-title h1 {
-    font-size: var(--title-size, 50px);
-  }
-
-  /*-- HEADERS --*/
-  d-article h1,
-  d-article h2,
-  d-article h3,
-  d-article h4,
-  d-article h5,
-  d-article h6 {
-    color: var(--header-color, rgba(0, 0, 0, 0.8));
-  }
-
-  /*-- BODY --*/
-  d-article > p,  /* only text inside of <p> tags */
-  d-article > ul, /* lists */
-  d-article > ol {
-    color: var(--body-color, rgba(0, 0, 0, 0.8));
-    font-size: var(--body-size, 1.06rem);
-  }
-
-
-  /*-- CODE --*/
-  d-article div.sourceCode code,
-  d-article pre code {
-    font-size: var(--code-size, 14px);
-  }
-
-  /*-- ASIDE --*/
-  d-article aside {
-    font-size: var(--aside-size, 12px);
-    color: var(--aside-color, rgba(0, 0, 0, 0.6));
-  }
-
-  /*-- FIGURE CAPTIONS --*/
-  figure .caption,
-  figure figcaption,
-  .figure .caption {
-    font-size: var(--fig-cap-size, 13px);
-    color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
-  }
-
-  /*-- METADATA --*/
-  d-byline h3 {
-    font-size: var(--heading-size, 0.6rem);
-    color: var(--heading-color, rgba(0, 0, 0, 0.5));
-  }
-
-  d-byline {
-    font-size: var(--body-size, 0.8rem);
-    color: var(--body-color, rgba(0, 0, 0, 0.8));
-  }
-
-  d-byline a,
-  d-article d-byline a {
-    color: var(--body-color, rgba(0, 0, 0, 0.8));
-  }
-
-  /*-- TABLE OF CONTENTS --*/
-  .d-contents nav h3 {
-    font-size: var(--heading-size, 18px);
-  }
-
-  .d-contents nav a {
-    font-size: var(--contents-size, 13px);
-  }
-
-  /*-- APPENDIX --*/
-  d-appendix h3 {
-    font-size: var(--heading-size, 15px);
-    color: var(--heading-color, rgba(0, 0, 0, 0.65));
-  }
-
-  d-appendix {
-    font-size: var(--text-size, 0.8em);
-    color: var(--text-color, rgba(0, 0, 0, 0.5));
-  }
-
-  d-appendix d-footnote-list a.footnote-backlink {
-    color: var(--text-color, rgba(0, 0, 0, 0.5));
-  }
-
-  /*-- WEBSITE HEADER + FOOTER --*/
-  .distill-site-header .title {
-    font-size: var(--title-size, 18px);
-    font-family: var(--navbar-font), var(--heading-default);
-  }
-
-  .distill-site-header a,
-  .nav-dropdown .nav-dropbtn {
-    font-family: var(--navbar-font), var(--heading-default);
-  }
-
-  .nav-dropdown .nav-dropbtn {
-    color: var(--text-color, rgba(255, 255, 255, 0.8));
-    font-size: var(--text-size, 15px);
-  }
-
-  .distill-site-header a:hover,
-  .nav-dropdown:hover .nav-dropbtn {
-    color: var(--hover-color, white);
-  }
-
-  .distill-site-header {
-    font-size: var(--text-size, 15px);
-    color: var(--text-color, rgba(255, 255, 255, 0.8));
-    background-color: var(--bkgd-color, #0F2E3D);
-  }
-
-  .distill-site-footer {
-    font-size: var(--text-size, 15px);
-    color: var(--text-color, rgba(255, 255, 255, 0.8));
-    background-color: var(--bkgd-color, #0F2E3D);
-  }
-
-  .distill-site-footer a:hover {
-    color: var(--hover-color, white);
-  }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
-  <meta name="description" content="A blog focusing mostly on R and data science"/>
-  <meta name="github-repo" content="djnavarro/distill-blog"/>
-  <meta name="twitter:title" content="Notes from a data witch"/>
-  <meta name="twitter:description" content="A blog focusing mostly on R and data science"/>
-  <meta name="twitter:url" content="https://blog.djnavarro.net"/>
-  <meta name="twitter:image" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
-  <meta name="twitter:image:alt" content="Photo of Danielle with R hex stickers superimposed over her hair"/>
-  <meta name="twitter:card" content="summary"/>
-  <meta name="twitter:creator" content="@djnavarro"/>
-  <meta name="twitter:site" content="@djnavarro"/>
-  <meta property="og:title" content="Notes from a data witch"/>
-  <meta property="og:description" content="A blog focusing mostly on R and data science"/>
-  <meta property="og:url" content="https://blog.djnavarro.net"/>
-  <meta property="og:image" content="https://blog.djnavarro.net/image/twitter-image.jpg"/>
-  <meta property="og:image:alt" content="Photo of Danielle with R hex stickers superimposed over her hair"/>
-  <meta property="og:type" content="website"/>
-  <meta property="og:locale" content="en_US"/>
-  <meta property="article:author" content="Danielle Navarro"/>
-  <script src="site_libs/popper-2.6.0/popper.min.js"></script>
-  <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
-  <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
-  <script src="site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
-  <script src="site_libs/anchor-4.2.2/anchor.min.js"></script>
-  <script src="site_libs/bowser-1.9.3/bowser.min.js"></script>
-  <script src="site_libs/webcomponents-2.0.0/webcomponents.js"></script>
-  <script src="site_libs/distill-2.2.21/template.v2.js"></script>
+  <script src="index_files/header-attrs-2.10/header-attrs.js"></script>
+  <script src="index_files/jquery-1.11.3/jquery.min.js"></script>
+  <script src="index_files/popper-2.6.0/popper.min.js"></script>
+  <link href="index_files/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="index_files/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="index_files/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="index_files/anchor-4.2.2/anchor.min.js"></script>
+  <script src="index_files/bowser-1.9.3/bowser.min.js"></script>
+  <script src="index_files/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="index_files/distill-2.2.21/template.v2.js"></script>
   <!--radix_placeholder_site_in_header-->
-  <!-- plausible -->
-  <script async defer data-domain="blog.djnavarro.net" src="https://plausible.io/js/plausible.js"></script>
-
   <!--/radix_placeholder_site_in_header-->
 
 
 </head>
 
-<body class="layout-listing">
+<body>
 
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Notes from a data witch","authors":[]}
+{"title":"Generative art in R","description":"Comments on an exhibit I contributed to as part of useR!2021","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"UNSW Sydney","affiliationURL":"https://unsw.edu.au","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2021-07-08T00:00:00.000+10:00","citationText":"Navarro, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
 <!--radix_placeholder_navigation_before_body-->
-<header class="header header--fixed" role="banner">
-<nav class="distill-site-nav distill-site-header">
-<div class="nav-left">
-<a class="logo" href="https://djnavarro.net">
-<img src="image/logo-profile.png" alt="Logo"/>
-</a>
-<a href="index.html" class="title">Notes from a data witch</a>
-<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
-</div>
-<div class="nav-right">
-<a href="about.html">
-<i class="fa fa-info" aria-hidden="true"></i>
-</a>
-<a href="index.xml">
-<i class="fa fa-rss" aria-hidden="true"></i>
-</a>
-<a href="https://github.com/djnavarro/distill-blog">
-<i class="fa fa-github" aria-hidden="true"></i>
-</a>
-<a href="https://twitter.com/djnavarro">
-<i class="fa fa-twitter" aria-hidden="true"></i>
-</a>
-<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
-</div>
-</nav>
-</header>
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
-<!--radix_placeholder_article_listing-->
-
-
-<script type="application/javascript">
-
-function init_posts_list() {
-
-  function load_image(img) {
-    var src = $(img).attr('data-src');
-    if (src) {
-      $(img).attr('src', src);
-      $(img).load(function() {
-        img.removeAttribute('data-src');
-      });
-    }
-  }
-
-  function set_posts_visible(posts, visible) {
-    if (visible) {
-
-      // show bottom border by default
-      $(posts).removeClass('post-preview-last');
-
-      // apply limits if need be
-      var max_posts = 25;
-      var apply_limits = $('.posts-container').hasClass('posts-apply-limit');
-      if (apply_limits && posts.length > max_posts) {
-        posts = $(posts).slice(0, max_posts);
-      } else {
-        $('.posts-more a').addClass('hidden');
-      }
-
-      // apply last style
-      $(posts.slice(-1)[0]).addClass('post-preview-last');
-
-      $(posts).removeClass('hidden');
-      $(posts).find('img[data-src]').each(function(i, img) {
-        load_image(img);
-      });
-    } else {
-      $(posts).addClass('hidden');
-    }
-  }
-
-  function apply_hash_filter() {
-
-    // clear active state
-    $('.categories .active').removeClass('active');
-
-    // mark all posts invisible to start
-    set_posts_visible($('.posts-list').children('a'), false);
-
-    // if we have a hash filter
-    if (window.location.hash && window.location.hash.startsWith("#category:")) {
-
-      // mark posts that match the category visible
-      var page_category = window.location.hash.replace(/^#category:/, "");
-      var posts = $('.post-metadata').map(function(idx, script) {
-        var metadata = $.parseJSON($(script).html());
-        var post = null;
-        $.each(metadata.categories, function(idx, category) {
-          category = category.replace(/ /g,"_");
-          if ((page_category || '').toLowerCase() === "articles" || category === page_category) {
-            post = $(script).parent().get();
-            return false;
-          }
-        });
-        return post;
-      });
-      set_posts_visible(posts, true);
-
-      // mark the hash active
-      $('.categories li>a[href="' + window.location.hash + '"]').addClass('active');
-
-      // update the list_caption
-      var list_caption = $('.posts-list-caption');
-      var caption = (page_category || '').toLowerCase() === "articles"
-        ? list_caption.attr('data-caption')
-        : ('Category: ' + page_category.replace(/_/g," "));
-      list_caption.text(caption);
-
-    } else {
-
-      // no hash filter, make all posts visible (subject to max display)
-      set_posts_visible($('.posts-list').children(), true);
-
-      // reset list caption
-      var list_caption = $('.posts-list-caption');
-      list_caption.text(list_caption.attr('data-caption'));
-
-
-    }
-  }
-
-  // more articles
-  function apply_post_limits(apply) {
-    if (apply) {
-      $('.posts-container').addClass('posts-apply-limit');
-      $('.posts-more a').removeClass('hidden');
-    } else {
-      $('.posts-container').removeClass('posts-apply-limit');
-      $('.posts-more a').addClass('hidden');
-    }
-  }
-
-  // click handling for tags
-  $('.dt-tag').click(function(ev) {
-    window.location.hash = '#category:' + $(this).text().replace(/ /g, "_");
-    return false;
-  })
-
-  // hash filter handling
-  apply_hash_filter();
-  $(window).on('hashchange',function() {
-    apply_post_limits(true);
-    apply_hash_filter();
-  });
-
-  // more articles link
-  $('.posts-more a').click(function(e) {
-    e.preventDefault();
-    apply_post_limits(false);
-    apply_hash_filter();
-    return false;
-  });
-
-}
-
-</script>
-
-
-
-<div class="posts-container posts-apply-limit l-page">
-<div class="posts-list">
-<h1 class="posts-list-caption" data-caption="Notes from a data witch">Notes from a data witch</h1>
-<a href="posts/2021-08-08_git-credential-helpers/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Aug. 8, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="https://media.giphy.com/media/DEaRw1U6F4s9O/giphy.gif"/>
-</div>
-<div class="description">
-<h2>Managing GitHub credentials from R, difficulty level linux</h2>
-<div class="dt-tags"></div>
-<p>A sick sad story in which a humble R user was forced to learn something about
-how linux stores passwords and, more importantly, got R to use her GitHub
-credentials properly</p>
-</div>
-</a>
-<a href="posts/2021-07-08_generative-art-in-r/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">July 8, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>Generative art in R</h2>
-<div class="dt-tags"></div>
-<p>Comments on an exhibit I contributed to as part of useR!2021</p>
-</div>
-</a>
-<a href="posts/2021-04-19_bs4cards-in-distill/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">April 19, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>Bootstrap cards in distill</h2>
-<div class="dt-tags"></div>
-<p>How to enable bootstrap 4 on a distill website, even though you probably 
-don't need to. I like it though because I get to add pretty bootstrap cards</p>
-</div>
-</a>
-<a href="posts/2021-04-18_pretty-little-clis/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">April 18, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>Pretty little CLIs</h2>
-<div class="dt-tags"></div>
-<p>How to make a gorgeous command line interface in R using the cli package.
-Somewhere along the way I accidentally learned about ANSI control codes,
-which strikes me as unfortunate</p>
-</div>
-</a>
-<a href="posts/2021-04-05_welcome/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">April 5, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img/>
-</div>
-<div class="description">
-<h2>Welcome to the jungle</h2>
-<div class="dt-tags"></div>
-<p>I have reluctantly decided to create a new blog. Some thoughts on 
-what I hope to achieve, having tried my hand at blogging so very many times 
-before</p>
-</div>
-</a>
-</div>
-<div class="posts-more">
-<a href="#">More articles &raquo;</a>
-</div>
-</div>
-<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
-<h1>Notes from a data witch</h1>
+<h1>Generative art in R</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-
+<p><p>Comments on an exhibit I contributed to as part of useR!2021</p></p>
 </div>
 
+<div class="d-byline">
+  
+  true
+  
+<br/>2021-07-08
+</div>
 
 <div class="d-article">
+<!--------------- my typical setup ----------------->
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<!--------------- post begins here ----------------->
+<p>A little while ago I was invited by <a href="https://twitter.com/MortaraSara">Sara Mortara</a> to contribute art as part of an exhibit to be presented at the <a href="https://user2021.r-project.org/">2021 useR! conference</a>, along with several artists who I admire greatly. I could hardly say no to that, now could I? So I sent some pieces that I’m fond of, most of which are posted somewhere on my <a href="https://art.djnavarro.net/">art website</a>. I realised later though that I was going to have to talk a little about my art too, and Sara suggested an informal Q&amp;A during the timeslot allocated to the exhibit. Naturally, I agreed since that meant I didn’t have to prepare anything formal, and like all artists I am extremely lazy. Later though, it occurred to me that it actually wouldn’t be terrible if I wrote a blog post to accompany my contribution to the exhibit, loosely based on the questions Sara suggested. And so here we are…</p>
+<p><strong>When did you start using R for art? Do you remember your first piece?</strong></p>
+<p>I started making art in R some time in late 2019. I’d discovered some of the art that <a href="https://www.data-imaginist.com/art">Thomas Lin Pedersen</a> had been making – at the time he was posting pieces from his <em>Genesis</em> series – and at the same time I found the <a href="https://github.com/thomasp85/ambient">ambient</a> package that he was using to create the pieces. Thomas famously does not post source code for his art, and being stubborn and curious I wanted to work out how he was doing it, so I started playing with ambient to see if I could reverse engineer his system. My very first piece was <em>Constellations</em>, shown below. It’s certainly not the prettiest thing I’ve created, and there are a lot of things I’d like to change about it now, but it’s nice to have your early work lying around to see how you’ve changed since then:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Constellations</aside><img src="other/constellations.png" width="100%"/></p>
+</div>
+<p>If you follow the link above and look at Thomas’ <em>Genesis</em> pieces you can tell that it’s not even remotely close to the mark, but I did eventually get the hang of it and managed to produce a few pieces like <em>Rainbow Prisms</em> which are closer to the kind of work he was producing:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Rainbow Prisms</aside><img src="other/rainbow_prisms.png" width="100%"/></p>
+</div>
+<p>It’s still not quite the same as Thomas’ in style, but by the time I’d worked out how to produce these I decided it was time to change my approach and branch out a bit. I love Thomas’ work of course, but I didn’t want my art to be just a low quality imitation of his! And besides, by that point I’d started discovering a whole lot of other people making generative art in R, such as <a href="https://www.williamrchase.com/">Will Chase</a>, <a href="https://hen.link/antonio">Antonio Sánchez Chinchón</a>, <a href="https://marcusvolz.com/">Marcus Volz</a>, and (somewhat later) <a href="https://ijeamaka-anyene.netlify.app/">Ijeamaka Anyene</a>. Each has their own style and – following the famous advice that <em>art is theft</em> – have shamelessly taken ideas and inspiration from each at different times.</p>
+<p>Some of those early pieces are still around, as part of the <a href="https://art.djnavarro.net/gallery/rosemary/">Rosemary</a> gallery.</p>
+<p><br><br> <strong>Were you an artist before making generative art in R?</strong></p>
+<p>Not really. I always wanted to do more artistic and creative things, but the only thing I’d ever done that required any kind of mix of aesthetic sensibility and craftwork was gardening. I used to have a lovely garden in Adelaide with a mix of Mediterranean and Australian native plants, and I had the same kind of enthusiasm for gardening then as I do for art now. Maybe one day I’ll garden again but there’s no space for that in my Sydney apartment!</p>
+<p><br><br> <strong>Can you talk about your creative process? Do you begin from code or from the outcome you are looking for? Do you start with the color palette in mind, or is it an iterative process?</strong></p>
+<p>I’m honestly not sure I have a consistent process? I spend a lot of time browsing artwork by other people on twitter and instagram, and from time to time I read posts about the techniques that they use. Whenever I do this I end up thinking a bit about how I might use this technique or wondering what methods other artists use to create their work, but I don’t usually act on that information until I think of something I <em>want</em> to do with it. That kind of technical or stylistic information is like background knowledge that lies dormant until I need it.</p>
+<p>Most of the time the starting point for my art is an emotion. I might be angry or lonely or tired, or just in need of something to occupy my mind and distract me from something else. When I start implementing a new system it’s often (though not always) a modification of a previous one. In principle this modification process <em>could</em> go in any direction, but my aesthetic sensibilities depend a lot on my state of mind, and that imposes a bias. I tweak the code one way, and see what it produces. If I like it, I keep the change, if I don’t I reject it. It’s a lot like a <a href="https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm">Metropolis-Hastings sampler</a> that way, but my mood strongly shapes the accept/reject decision, so the same starting point can lead to different outcomes. As a concrete example, the <a href="https://art.djnavarro.net/gallery/pollen/">Pollen</a>, <a href="https://art.djnavarro.net/gallery/bursts/">Bursts</a> and <a href="https://art.djnavarro.net/gallery/embers/">Embers</a> series are all based on the same underlying engine, the <a href="https://en.wikipedia.org/wiki/Fractal_flame">fractal flame</a> algorithm created by Scott Draves, but my emotional state was very different at the time I coded each version. For example, the <em>Pollen Cloud</em> piece I contributed to the useR exhibit is soft and gentle largely because I was feeling peaceful and relaxed at the time:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Pollen Cloud</aside><img src="exhibit/pollen_cloud.jpg" width="100%"/></p>
+</div>
+<p>By way of contrast, the <em>Geometry in a Hurricane</em> piece from <em>Bursts</em> is layered in jagged textures with a chaotic energy because I was angry at the time I was coding:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Geometry in a Hurricane</aside><img src="other/geometry_in_a_hurricane.png" width="100%"/></p>
+</div>
+<p>The <em>Soft Ember</em> piece below (also included in the exhibit) has a different feel again. There’s more energy to it than the pollen pieces, but it’s not as chaotic as the bursts series. Again, that’s very much a reflection of my mood. I wasn’t angry when I coded this system, but I wasn’t relaxed either. At the time, something exciting had happened in my life that I wasn’t quite able to do anything about, but I was indulging in the anticipation of a new thing, and some of that emotion ended up showing through in the pieces that I made at the time:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Soft Ember</aside><img src="exhibit/soft_ember.jpg" width="100%"/></p>
+</div>
+<p>To bring all this back to the question, it’s very much an iterative process. The driver behind the process is usually an emotion, and the colour choices, the shapes, and the code are all adapted on the fly to meet with how I’m feeling.</p>
+<p><br><br> <strong>What is your inspiration?</strong></p>
+<p>To the extent that my art is driven by emotion, the inspiration for it tends to be tied to sources of strong emotion in my life. Sometimes that emotion comes from the sources of love and joy: family, intimate partners, and so on. The <a href="https://art.djnavarro.net/gallery/heartbleed/">Heartbleed</a> series is one of those. The background texture to these images is generated by simulating a simple Turing machine known as a <a href="https://en.wikipedia.org/wiki/Turmite">turmite</a> and the swirly hearts in the foreground are generated using the toolkit provided by the ambient package. This system is very much motivated from emotional responses to the loved ones in my life. One of the pieces in the exhibit is from this series:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Turmite 59 in Red</aside><img src="exhibit/turmite59_in_red.jpg" width="100%"/></p>
+</div>
+<p>Other times the emotional motivation comes from sources of pain - sometimes things that were physically painful, sometimes that were psychologically painful. The <em>Orchid Thorn</em> piece I included in the exhibit is one of those, linked to an intense physically painful experience.</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Orchid Thorn</aside><img src="exhibit/orchid_thorn.png" width="100%"/></p>
+</div>
+<p>The <em>Bitterness</em> piece below, which I haven’t done much with other than post to my <a href="https://www.instagram.com/daniellenavarro77/">instagram</a>, is strongly tied to the psychological stresses associated with my gender transition. Yes, there’s a softness to the piece, but there’s also a sandpaper-like texture there that makes me think of abrasion. The colour shifts make me think about transitions, but the roughness at some of the boundaries reminds me that change is often painful.</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Bitterness</aside><img src="other/bitterness.jpg" width="100%"/></p>
+</div>
+<p>One odd property of the art, at least from my point of view, is that looking at a given piece recalls to mind the events and emotions that inspired the work, and to some extent that recollection becomes a way of re-experiencing the events. Sometimes that’s a good thing. Not always though.</p>
+<p><br><br> <strong>What is your advice for people who wants to create art in R?</strong></p>
+<p>I think I’d suggest three things. Find artists you like, read about their processes. Sometimes they’ll show source code or link to algorithms like I’ve done in a few places in this piece, and it can be really valuable to try to retrace their steps. There’s nothing wrong with learning technique by initially copying other artists and then developing your own style as you go.</p>
+<p>The second thing I’d suggest, for R folks specifically, is to take advantage of the skills you already have. Most of us have skills in simulation, data wrangling, and data visualisation, and those skills can be repurposed for artistic work quite easily. A lot of my pieces are created using that specific combination. I’ll often define a stochastic process and sample data from it using tools in base R, use <a href="https://dplyr.tidyverse.org/">dplyr</a> to transform and manipulate it, then use <a href="https://ggplot2.tidyverse.org/">ggplot2</a> to map the data structure onto a visualisation. One of the nice things about dplyr and ggplot2 being compositional grammars is the fact that you can “reuse” their parts for different purposes. I get a lot of artistic mileage out of <code>geom_point()</code> and <code>geom_polygon()</code>, and quite frankly <a href="https://purrr.tidyverse.org/">purrr</a> is an absolute godsend when the generative process you’re working with is iterative in nature.</p>
+<p>The other thing would be try not to put pressure on yourself to be good at it immediately. I wasn’t, and I don’t think anyone else was either. Earlier I showed the <em>Constellations</em> piece and referred to it as the first piece I created. In a way that’s true, because it was the first time I reached a level that I felt comfortable showing to other people. But I made a lot of junk before that, and I made a lot of junk after that. I make some good art now (or so people tell me) precisely <em>because</em> I made a lot of bad art before. Even now, though, I can’t tell which systems will end up good and which will end up bad. It’s a bit of a lottery, and I’m trying my best not to worry too much about how the lottery works. I like to have fun playing with visual tools, and sometimes the tinkering takes me interesting places.</p>
+<p><br><br> <strong>Anything to add about your pieces in the exhibit?</strong></p>
+<p>Not a lot. Several of the pieces I’ve contributed are already linked above, but I might just say a little about the other pieces and how they were made. The <em>Silhouette in Teal</em> piece uses the <a href="https://flametree.djnavarro.net/">flametree</a> generative art package to create the tree shown in silhouette in the foreground, and a simple random walk to generate the texture in the background:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Silhouette in Teal</aside><img src="exhibit/silhouette_in_teal.jpg" width="100%"/></p>
+</div>
+<p>It has also been surprisingly popular on my <a href="https://society6.com/djnavarro">Society6</a> store, which you can visit if you want some of my art on random objects. I am not sure why, but I have sold a lot more shower curtains and yoga mats than I would have expected to sell in my lifetime.</p>
+<p><em>Leviathan</em> emerged from my first attempt to create simulated watercolours in R using this <a href="https://tylerxhobbs.com/essays/2017/a-generative-approach-to-simulating-watercolor-paints">guide</a> written by Tyler Hobbs. I was in a dark mood at the time and the ominous mood to the piece seems quite fitting to me.</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Leviathan</aside><img src="exhibit/leviathan.png" width="100%"/></p>
+</div>
+<p>The <em>Floral Effect</em> piece is an odd one. It’s part of the <a href="https://art.djnavarro.net/gallery/viewports/">Viewports</a> series that I created by applying Thomas Lin Pedersen’s <a href="https://ggfx.data-imaginist.com/">ggfx</a> package over the top of the output of the same system I used to create the <a href="https://art.djnavarro.net/gallery/native-flora/">Native Flora</a> series, which in turn is an application of the flametree system I mentioned earlier. I quite like it when these systems build on top of one another.</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Floral Effect</aside><img src="exhibit/floral_effect.png" width="100%"/></p>
+</div>
+<p>The last piece I included, <em>Fire and Ice</em>, is a little different from the others in that it’s not a “pure” generative system. It works by reading an image file into R, using Chris Marcum’s <a href="https://github.com/cmarcum/halftoner">halftoner</a> package to convert it to a <a href="https://en.wikipedia.org/wiki/Halftone">halftone image</a>, and then manipulate that image using the tools provided in the ambient package. The end result is something that still resembles the original image but has more of a painted feel:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><aside>Fire and Ice</aside><img src="exhibit/fire_and_ice.jpg" width="100%"/></p>
+</div>
+<!--------------- appendices go here ----------------->
+<div class="layout-chunk" data-layout="l-body">
+<d-appendix style="display: grid;">
+<h3 id="last-updated" class="appendix">Last updated</h3>
+<div class="l-body">
+<p>
+<span>2021-09-06 16:16:15 AEST</span>
+</p>
+</div>
+</d-appendix>
+<d-appendix style="display: grid;">
+<h3 id="details" class="appendix">Details</h3>
+<div class="l-body">
+<p>
+<span>
+<a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-07-08_generative-art-in-r">source code</a>
+, 
+<a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-07-08_generative-art-in-r/renv.lock">R environment</a>
+</span>
+</p>
+</div>
+</d-appendix>
+</div>
+<!--------------- miscellanea ----------------->
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -2714,7 +1597,22 @@ before</p>
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->
 <!--radix_placeholder_appendices-->
-<div class="appendix-bottom"></div>
+<div class="appendix-bottom">
+<h3 id="updates-and-corrections">Corrections</h3>
+<p>If you see mistakes or want to suggest changes, please <a href="https://github.com/djnavarro/distill-blog/issues/new">create an issue</a> on the source repository.</p>
+<h3 id="reuse">Reuse</h3>
+<p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/djnavarro/distill-blog">https://github.com/djnavarro/distill-blog</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
+<h3 id="citation">Citation</h3>
+<p>For attribution, please cite this work as</p>
+<pre class="citation-appendix short">Navarro (2021, July 8). Generative art in R. Retrieved from https://blog.djnavarro.net/generative-art-in-r</pre>
+<p>BibTeX citation</p>
+<pre class="citation-appendix long">@misc{navarro2021generative,
+  author = {Navarro, Danielle},
+  title = {Generative art in R},
+  url = {https://blog.djnavarro.net/generative-art-in-r},
+  year = {2021}
+}</pre>
+</div>
 <!--/radix_placeholder_appendices-->
 <!--radix_placeholder_navigation_after_body-->
 <!--/radix_placeholder_navigation_after_body-->
