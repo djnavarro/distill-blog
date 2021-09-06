@@ -13,6 +13,7 @@ author:
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
 date: "2021-07-08"
+preview: turmite59-in-red.jpg
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/generative-art-in-r
 repository_url: https://github.com/djnavarro/distill-blog
