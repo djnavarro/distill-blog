@@ -1,19 +1,12 @@
 ---
 title: "What's this about?"
+preview: image/twitter-image.jpg
 description: |
   Additional detail about the author, supplied even though no-one asked
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-```
-
-```{r meta, echo=FALSE}
-# box::use(source/helpers[set_meta])
-# set_meta(
-#   title = "Notes from a data witch",
-#   description = "Additional detail about the author"
-# )
 ```
 
 

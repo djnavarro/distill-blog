@@ -1,13 +1,8 @@
 ---
 title: "Notes from a data witch"
+description: |
+  A blog by Danielle Navarro, focusing mostly on R and data science
 site: distill::distill_website
+preview: image/twitter-image.jpg
 listing: posts
 ---
-
-```{r meta, echo=FALSE}
-box::use(source/helpers[set_meta])
-set_meta(
-  title = "Notes from a data witch",
-  description = "A blog focusing mostly on R and data science"
-)
-```
