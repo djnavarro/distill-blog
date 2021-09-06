@@ -192,6 +192,6 @@ refinery::insert_appendix("djnavarro/distill-blog", long_slug)
 <!--------------- miscellanea ----------------->
 
 ```{r redirect, echo=FALSE}
-#set_redirect(params$slug)
+refinery::insert_netlify_redirect(params$slug, params$date)
 ```
 

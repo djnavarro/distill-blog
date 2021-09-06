@@ -1,7 +1,6 @@
-# Redirects from what the browser requests to what netlify serves.
-# This is automatically updated using set_redirect(), do not edit by hand
-/welcome /posts/welcome
-/pretty-little-clis /posts/pretty-little-clis
-/bs4cards-in-distill /posts/bs4cards-in-distill
-/generative-art-in-r /posts/generative-art-in-r
-/git-credential-helpers /posts/git-credential-helpers
+# netlify redirects file
+/welcome /posts/2021-04-05_welcome
+/pretty-little-clis /posts/2021-04-18_pretty-little-clis
+/bs4cards-in-distill /posts/2021-04-19_bs4cards-in-distill
+/generative-art-in-r /posts/2021-07-08_generative-art-in-r
+/git-credential-helpers /posts/2021-08-08_git-credential-helpers

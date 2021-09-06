@@ -200,15 +200,15 @@
     },
     "refinery": {
       "Package": "refinery",
-      "Version": "0.0.0.9026",
+      "Version": "0.0.0.9028",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "refinery",
       "RemoteUsername": "djnavarro",
       "RemoteRef": "HEAD",
-      "RemoteSha": "7d3d34b63093e18fead9c5815201e8b673f159e9",
-      "Hash": "692a151ebcbb4f2b3ab34e96f7322a71"
+      "RemoteSha": "4ae451416589e18134d407d18e4e55de095ccf07",
+      "Hash": "99484ef785718ee53739b4f2240db713"
     },
     "renv": {
       "Package": "renv",
