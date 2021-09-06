@@ -44,6 +44,13 @@
       "Repository": "CRAN",
       "Hash": "2f01e16ff9571fe70381c7b9ae560dc4"
     },
+    "bs4cards": {
+      "Package": "bs4cards",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f95c5818d79cba499e4fbe771ddbff45"
+    },
     "digest": {
       "Package": "digest",
       "Version": "0.6.27",
@@ -193,15 +200,15 @@
     },
     "refinery": {
       "Package": "refinery",
-      "Version": "0.0.0.9016",
+      "Version": "0.0.0.9026",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "djnavarro",
       "RemoteRepo": "refinery",
-      "RemoteRef": "master",
-      "RemoteSha": "eff27c905b2083b8bbd984a20d04080fe25e403c",
-      "Hash": "2a7093eeb712adb004a3260c75093942"
+      "RemoteUsername": "djnavarro",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "7d3d34b63093e18fead9c5815201e8b673f159e9",
+      "Hash": "692a151ebcbb4f2b3ab34e96f7322a71"
     },
     "renv": {
       "Package": "renv",

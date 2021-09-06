@@ -107,6 +107,13 @@
       "Repository": "CRAN",
       "Hash": "4d243a9c10b00589889fe32314ffd902"
     },
+    "gitcreds": {
+      "Package": "gitcreds",
+      "Version": "0.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f3aefccc1cc50de6338146b62f115de8"
+    },
     "glue": {
       "Package": "glue",
       "Version": "1.4.2",
@@ -193,15 +200,15 @@
     },
     "refinery": {
       "Package": "refinery",
-      "Version": "0.0.0.9015",
+      "Version": "0.0.0.9026",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "djnavarro",
       "RemoteRepo": "refinery",
-      "RemoteRef": "master",
-      "RemoteSha": "c2cb845f44212f2c56fb64f461d28fb5f6cdf9ee",
-      "Hash": "95d7dd370900214230fd764303b41b6e"
+      "RemoteUsername": "djnavarro",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "7d3d34b63093e18fead9c5815201e8b673f159e9",
+      "Hash": "692a151ebcbb4f2b3ab34e96f7322a71"
     },
     "renv": {
       "Package": "renv",

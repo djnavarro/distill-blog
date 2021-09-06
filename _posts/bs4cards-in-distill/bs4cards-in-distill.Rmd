@@ -29,7 +29,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-refinery::renv_use(params$slug)
+refinery::renv_load(params$slug)
 ```
 
 
