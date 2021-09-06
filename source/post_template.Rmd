@@ -23,6 +23,23 @@ output:
     self_contained: false
 ---
 
+<!----
+
+yaml checklist:
+  - edit template-slug in params and citation_url
+  - edit date in params and in date
+  - set the preview image
+  - write title and description
+  
+renv checklist:
+  - initialise the _renv folder with refinery::renv_new(long_slug)
+  - populate the lockfile with refinery::renv_snapshot(long_slug)
+  - update the _renv folder from snapshot with refinery::refresh(long_slug)
+
+setup, appendices, and redirects should "just work" (ish)
+
+---->
+
 <!--------------- setup ----------------->
 
 ```{r setup, include=FALSE}
