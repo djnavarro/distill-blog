@@ -180,22 +180,12 @@ image("exhibit/fire_and_ice.jpg")
 
 
 
-
 <!--------------- appendices go here ----------------->
 
-## Last updated {.appendix}
-
 ```{r, echo=FALSE}
-refinery::record_timestamp("Australia/Sydney")
+refinery::insert_appendix("djnavarro/distill-blog", params$slug)
 ```
 
-## Details {.appendix}
-
-```{r, echo=FALSE}
-refinery::record_source("djnavarro/distill-blog", params$slug)
-htmltools::span(", ")
-refinery::record_lockfile("djnavarro/distill-blog", params$slug)
-```
 
 <!--------------- miscellanea ----------------->
 
