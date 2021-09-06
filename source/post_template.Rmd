@@ -1,0 +1,53 @@
+---
+title: "Title in sentence case"
+description: | 
+  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+  consectetur, adipisci velit
+params:
+  slug: template-slug
+  date: "1901-12-31"
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+date: "1901-12-31"
+preview: preview-image.jpg
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/template-slug
+repository_url: https://github.com/djnavarro/distill-blog
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+<!--------------- setup ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+long_slug <- paste(params$date, params$slug, sep = "_")
+refinery::renv_load(long_slug)
+```
+
+
+<!--------------- post ----------------->
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix("djnavarro/distill-blog", long_slug)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(params$slug, params$date)
+```
+
+
