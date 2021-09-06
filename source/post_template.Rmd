@@ -4,8 +4,8 @@ description: |
   Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
   consectetur, adipisci velit
 params:
-  slug: template-slug
-  date: "1901-12-31"
+  slug: INSERT-SLUG-HERE
+  date: INSERT-DATE-HERE
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -13,10 +13,10 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
-date: "1901-12-31"
+date: INSERT-DATE-HERE
 preview: preview-image.jpg
 creative_commons: CC BY
-citation_url: https://blog.djnavarro.net/template-slug
+citation_url: https://blog.djnavarro.net/INSERT-SLUG-HERE
 repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
@@ -26,8 +26,6 @@ output:
 <!----
 
 yaml checklist:
-  - edit template-slug in params and citation_url
-  - edit date in params and in date
   - set the preview image
   - write title and description
   
