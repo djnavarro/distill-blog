@@ -1,4 +1,11 @@
-# netlify redirects file
+# manually added (for back compatibility)
+/posts/pretty-little-clis /posts/2021-04-18_pretty-little-clis
+/posts/bs4cards-in-distill /posts/2021-04-19_bs4cards-in-distill
+/posts/generative-art-in-r /posts/2021-07-08_generative-art-in-r
+/posts/git-credential-helpers /posts/2021-08-08_git-credential-helpers
+/posts/welcome /posts/2021-04-05_welcome
+
+# automatically added
 /pretty-little-clis /posts/2021-04-18_pretty-little-clis
 /bs4cards-in-distill /posts/2021-04-19_bs4cards-in-distill
 /generative-art-in-r /posts/2021-07-08_generative-art-in-r
