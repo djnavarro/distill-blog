@@ -141,7 +141,7 @@ Each thumbnail image links to a medium resolution (2000 x 2000 pixels) jpg versi
 
 ## Dependencies 
 
-In the remainder of this post I'll walk you through the process of creating pieces "in the style of" the water colours series. If you really want to, you can take a look at the  [actual source](https://github.com/djnavarro/series-water-colours/blob/master/source/watercolours_02.R), but it may not be very helpful: the code is little opaque, poorly structured, and hides a lot of the work in the [halftoner](https://github.com/cmarcum/halftoner) and [jasmines](https://jasmines.djnavarro.net/) packages, neither of which is on CRAN. To make it a little easier on you, I'll build a new system in this post that adopts the same core ideas. 
+In the remainder of this post I'll walk you through the process of creating pieces "in the style of" the water colours series. If you really want to, you can take a look at the  [actual source](https://github.com/djnavarro/series-water-colours/blob/master/source/watercolours_02.R), but it may not be very helpful: the code is little opaque, poorly structured, and delegates a lot of the work to the [halftoner](https://github.com/cmarcum/halftoner) and [jasmines](https://jasmines.djnavarro.net/) packages, neither of which is on CRAN. To make it a little easier on you, I'll build a new system in this post that adopts the same core ideas. 
 
 In this post I'll assume you're already familiar with data wrangling and visualisation with tidyverse tools. This is the subset of [tidyverse](https://www.tidyverse.org/) packages that I have attached, and the code that follows relies on all these in some fashion:
 
@@ -341,7 +341,9 @@ It's simple, but I like it.
 
 ### Extracting the colour channels
 
-Next step, extract the channels
+Up to this point we haven't been manipulating the colours in any of the plots: the hex code in the `shade` variable is left intact. There's no inherent reason we should limit ourselves in such a boring way. Base R provides the `col2rgb()` function that separates the hex code into red, green, blue channels, and represents each with integers between 0 and 255. It also provides the `rgb2hsv()` function that converts this RGB representation into [hue, saturation, and value](https://en.wikipedia.org/wiki/HSL_and_HSV) format.
+
+The code below defines an `extract_channels()` helper function that takes the `shade` column in the data, and adds six new columns that I've unimaginatively named `red`, `grn`, `blu`, `hue`, `sat`, and `val` (I'm a sucker for variable names that are all the same length):
 
 ```{r extract-channels}
 extract_channels <- function(tbl) {
@@ -360,6 +362,8 @@ extract_channels <- function(tbl) {
 }
 ```
 
+After applying this to the `jas` data, we have several new variables that we can play with and recombine in different ways to create new art:
+
 ```{r jasmine-channels-data}
 jas <- extract_channels(jas)
 jas
@@ -367,7 +371,11 @@ jas
 
 ### Art from channel manipulation
 
-One way to use this representation is in halftone images. If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:
+One way to use this representation is in [halftone images](https://en.wikipedia.org/wiki/Halftone). If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:
+
+<aside>
+The [halftoner](https://github.com/cmarcum/halftoner) package will do this for you, incidentally
+</aside>
 
 ```{r jasmine-halftone-image}
 map_size <- function(x) {
@@ -383,8 +391,14 @@ jas %>%
   )
 ```
 
-For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on. But we're not using real printers. There's nothing stopping us retaining the original hue and saturation, while using dot size to represent intensity. That allows us to produce "halftonesque" images:
+<aside>
+In this code the `ambient::normalise()` function is used to rescale the input to fall within a specified range. Usually ggplot2 handles this automatically, but as I mentioned, we've turned off the autopilot...
+</aside>
 
+
+For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on. 
+
+But we're not using real printers. There's nothing stopping us retaining the original hue and saturation, while using dot size to represent intensity. That allows us to produce "halftonesque" images:
 
 ```{r jasmine-halftonesque-image}
 jas %>% 
@@ -398,6 +412,7 @@ jas %>%
   )
 ```
 
+In this code, the `hsv()` function takes the hue and saturation channels from the original image, but combines them with a constant intensity value: the output is a new colour specified as a hex code that ggplot2 can display in the output. Because we have stripped out the value channel, we can reuse the halftone trick. Much like a halftone image, the image above uses the size aesthetic to represent the intensity at the corresponding pixel.
 
 ## Intermission
 

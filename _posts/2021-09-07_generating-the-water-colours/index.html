@@ -1688,7 +1688,7 @@ The data wrangling isn’t shown, but it is in the <a href="https://github.com/d
 </div>
 <p>Each thumbnail image links to a medium resolution (2000 x 2000 pixels) jpg version of the corresponding piece, if you’d like to see the images in a little more detail.</p>
 <h2 id="dependencies">Dependencies</h2>
-<p>In the remainder of this post I’ll walk you through the process of creating pieces “in the style of” the water colours series. If you really want to, you can take a look at the <a href="https://github.com/djnavarro/series-water-colours/blob/master/source/watercolours_02.R">actual source</a>, but it may not be very helpful: the code is little opaque, poorly structured, and hides a lot of the work in the <a href="https://github.com/cmarcum/halftoner">halftoner</a> and <a href="https://jasmines.djnavarro.net/">jasmines</a> packages, neither of which is on CRAN. To make it a little easier on you, I’ll build a new system in this post that adopts the same core ideas.</p>
+<p>In the remainder of this post I’ll walk you through the process of creating pieces “in the style of” the water colours series. If you really want to, you can take a look at the <a href="https://github.com/djnavarro/series-water-colours/blob/master/source/watercolours_02.R">actual source</a>, but it may not be very helpful: the code is little opaque, poorly structured, and delegates a lot of the work to the <a href="https://github.com/cmarcum/halftoner">halftoner</a> and <a href="https://jasmines.djnavarro.net/">jasmines</a> packages, neither of which is on CRAN. To make it a little easier on you, I’ll build a new system in this post that adopts the same core ideas.</p>
 <p>In this post I’ll assume you’re already familiar with data wrangling and visualisation with tidyverse tools. This is the subset of <a href="https://www.tidyverse.org/">tidyverse</a> packages that I have attached, and the code that follows relies on all these in some fashion:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1894,7 +1894,8 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </div>
 <p>It’s simple, but I like it.</p>
 <h3 id="extracting-the-colour-channels">Extracting the colour channels</h3>
-<p>Next step, extract the channels</p>
+<p>Up to this point we haven’t been manipulating the colours in any of the plots: the hex code in the <code>shade</code> variable is left intact. There’s no inherent reason we should limit ourselves in such a boring way. Base R provides the <code>col2rgb()</code> function that separates the hex code into red, green, blue channels, and represents each with integers between 0 and 255. It also provides the <code>rgb2hsv()</code> function that converts this RGB representation into <a href="https://en.wikipedia.org/wiki/HSL_and_HSV">hue, saturation, and value</a> format.</p>
+<p>The code below defines an <code>extract_channels()</code> helper function that takes the <code>shade</code> column in the data, and adds six new columns that I’ve unimaginatively named <code>red</code>, <code>grn</code>, <code>blu</code>, <code>hue</code>, <code>sat</code>, and <code>val</code> (I’m a sucker for variable names that are all the same length):</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>extract_channels</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>tbl</span><span class='op'>)</span> <span class='op'>{</span>
@@ -1914,6 +1915,7 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </code></pre>
 </div>
 </div>
+<p>After applying this to the <code>jas</code> data, we have several new variables that we can play with and recombine in different ways to create new art:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>extract_channels</span><span class='op'>(</span><span class='va'>jas</span><span class='op'>)</span>
@@ -1936,7 +1938,10 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 # … with 5,990 more rows</code></pre>
 </div>
 <h3 id="art-from-channel-manipulation">Art from channel manipulation</h3>
-<p>One way to use this representation is in halftone images. If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:</p>
+<p>One way to use this representation is in <a href="https://en.wikipedia.org/wiki/Halftone">halftone images</a>. If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:</p>
+<aside>
+The <a href="https://github.com/cmarcum/halftoner">halftoner</a> package will do this for you, incidentally
+</aside>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>map_size</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
@@ -1954,7 +1959,11 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </div>
 <p><img src="index_files/figure-html5/jasmine-halftone-image-1.png" width="100%" /></p>
 </div>
-<p>For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on. But we’re not using real printers. There’s nothing stopping us retaining the original hue and saturation, while using dot size to represent intensity. That allows us to produce “halftonesque” images:</p>
+<aside>
+In this code the <code>ambient::normalise()</code> function is used to rescale the input to fall within a specified range. Usually ggplot2 handles this automatically, but as I mentioned, we’ve turned off the autopilot…
+</aside>
+<p>For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on.</p>
+<p>But we’re not using real printers. There’s nothing stopping us retaining the original hue and saturation, while using dot size to represent intensity. That allows us to produce “halftonesque” images:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>%&gt;%</span> 
@@ -1970,6 +1979,7 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </div>
 <p><img src="index_files/figure-html5/jasmine-halftonesque-image-1.png" width="100%" /></p>
 </div>
+<p>In this code, the <code>hsv()</code> function takes the hue and saturation channels from the original image, but combines them with a constant intensity value: the output is a new colour specified as a hex code that ggplot2 can display in the output. Because we have stripped out the value channel, we can reuse the halftone trick. Much like a halftone image, the image above uses the size aesthetic to represent the intensity at the corresponding pixel.</p>
 <h2 id="intermission">Intermission</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div>
@@ -2342,7 +2352,7 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-08 22:13:05 AEST</span>
+<span>2021-09-08 22:44:59 AEST</span>
 </p>
 </div>
 </d-appendix>
