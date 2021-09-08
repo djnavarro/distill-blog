@@ -6,7 +6,17 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Sat, 07 Aug 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 06 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Generative art, jasmines, and the water colours series</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-07_generating-the-water-colours</link>
+      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+consectetur, adipisci velit</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-07_generating-the-water-colours</guid>
+      <pubDate>Mon, 06 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-07_generating-the-water-colours/jasmine-recollected.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
     <item>
       <title>Managing GitHub credentials from R, difficulty level linux</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -15,7 +25,7 @@
 how linux stores passwords and, more importantly, got R to use her GitHub
 credentials properly</description>
       <guid>https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers</guid>
-      <pubDate>Sat, 07 Aug 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers/credentials.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>
