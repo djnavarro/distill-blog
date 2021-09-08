@@ -1,0 +1,557 @@
+---
+title: "Generative art, jasmines, and the water colours series"
+description: | 
+  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+  consectetur, adipisci velit
+params:
+  slug: generating-the-water-colours
+  date: 2021-09-07
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+date: 2021-09-07
+preview: jasmine-recollected.png
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/generating-the-water-colours
+repository_url: https://github.com/djnavarro/distill-blog
+output:
+  distill::distill_article:
+    toc: true
+    css: "strapless.css"
+    self_contained: false
+---
+
+<!----
+
+yaml checklist:
+- set the preview image
+- write title and description
+
+renv checklist:
+- initialise the _renv folder with refinery::renv_new(long_slug)
+- populate the lockfile with refinery::renv_snapshot(long_slug)
+- update the _renv folder from snapshot with refinery::refresh(long_slug)
+
+setup, appendices, and redirects should "just work" (ish)
+
+---->
+
+<!--------------- setup ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="100%")
+long_slug <- paste(params$date, params$slug, sep = "_")
+# refinery::renv_load(long_slug) # <-- disable for now
+```
+
+```{r environment, include=FALSE, message=FALSE}
+library(magrittr)
+library(readr)
+library(tidyr)
+library(tibble)
+library(stringr)
+library(ggplot2)
+library(purrr)
+library(dplyr)
+
+conflicted::conflict_prefer("extract", "tidyr")
+conflicted::conflict_prefer("select", "dplyr")
+conflicted::conflict_prefer("filter", "dplyr")
+```
+
+
+<!--------------- post ----------------->
+
+> I find it so amazing when people tell me that electronic music has no soul. You can't blame the computer. If there's no soul in the music, it's because nobody put it there ([Björk](https://www.azquotes.com/quote/564301), via [Tim de Sousa](https://twitter.com/TimdeSousa/status/1432898952907554822))
+
+
+## Prelude
+
+In recent weeks I've been posting generative art from the [Water Colours](https://art.djnavarro.net/gallery/water-colours/) series on twitter. The series has been popular, prompting requests that I sell prints, mint NFTs, or write a tutorial showing how they are made. For personal reasons I didn't want to commercialise this series. Instead, I chose to make the pieces freely available under a CC0 public domain licence and asked people to donate to a [gofundme](https://au.gofundme.com/f/data-science-art-to-support-a-womens-refuge) I set up for a charitable organisation I care about (the [Lou's Place](https://www.lousplace.com.au/) women's refuge here in Sydney). I'm not going to discuss the personal story behind this series, but it does matter. As I've mentioned [previously](/posts/2021-07-08_generative-art-in-r/), the art I make is inherently tied to moods and emotions. In hindsight it is easy enough to describe how the system is implemented but this perspective is misleading. Although a clean and unemotional description of the code is useful for explanatory purposes, the actual *process* of creating the system is deeply tied to my life, my history, and my subjective experience. Those details are inextricably bound to the system. A friend of mined described it better than I ever could:
+
+> The computer doesn't make this art any more than a camera makes a photograph; art is always intimate ([Amy Patterson](https://twitter.com/justanotheramy/status/1432916731794579460))
+
+In this post I'll aim to describe the mechanistic processes involved in creating these pieces, but this is woefully inadequate as a description of the artistic process. The optical mechanics of a camera do not circumscribe the work of a skilled photographer. So it goes with generative art. The code describes the mechanics; it does not describe the art. There is a deeply personal story underneath these pieces, and I would no more mint an NFT from that story than I would sell a piece of my soul to a collector.
+
+## The water colours
+
+```{r water-colour-manifest, echo=FALSE, message=FALSE, cache=TRUE}
+manifest <- read_csv("https://djnavarro.net/series-water-colours/manifest.csv")
+
+manifest <- manifest %>% 
+  filter(
+    resolution %in% c(500, 2000), 
+    format == "jpg"
+  ) %>% 
+  mutate(
+    path = paste0("https://djnavarro.net/series-water-colours/", path)
+  ) %>% 
+  pivot_wider(
+    names_from = resolution, 
+    names_prefix = "path_", 
+    values_from = path
+  )
+```
+
+There's a manifest file in the art repository containing metadata assocated with each piece. After a small amount of data wrangling I get this:
+
+```{r show-manifest}
+manifest
+```
+
+Here are some of the pieces from this series:
+
+```{r water-colour-cards, message=FALSE, cache=TRUE}
+manifest[1:8, ] %>% 
+  bs4cards::cards(
+    image = path_500,
+    link = path_2000,
+    title = long_name,
+    spacing = 3,
+    width = 2
+  )  
+```
+
+## Dependencies 
+
+A subset of tidyverse packages are loaded 
+
+```{r}
+library(magrittr)
+library(readr)
+library(tidyr)
+library(tibble)
+library(stringr)
+library(ggplot2)
+library(purrr)
+library(dplyr)
+```
+
+Besides tidyverse and base R functions, I'll use a few other packages as well: in addition to the bs4cards package that made a brief appearance earlier, the magick, raster, rprojroot, fs, and ambient packages are all used in making the art. Because functions from those packages may not be as familiar to you, I'll namespace the calls to them in the same way I did with `bs4cards::cards()` previously. Hopefully that will make it easier to see which functions belong to one of those packages
+
+
+## Art by image processing
+
+As in life, the place to start is knowing where you are. 
+
+```{r define-paths}
+name <- paste(params$date, params$slug, sep = "_")
+blog <- rprojroot::find_root("_site.yml")
+post <- fs::path(blog, "_posts", name)
+file <- fs::path(post, "jasmine.jpg")
+```
+
+Here it is:
+
+```{r jasmine-photo}
+knitr::include_graphics(file)
+```
+
+The photo has an emotional resonance to me: it dates back to 2011 and appeared on the cover of [Learning Statistics with R](https://learningstatisticswithr.com). In fact, although 10 years separate the *Water Colours* series from the text book and the jasmines photo, the two are linked by a shared connection to events from a decade ago. Nor is it coincidental that "Jasmine" is my middle name. 
+
+
+The next step is importing the image, scaling it down to a manageable resolution, and then converting it to matrix. The magick and raster packages are doing the work here:
+
+```{r import-image}
+import_image <- function(path, width, height) {
+  geometry <- paste0(width, "x", height)
+  path %>% 
+    magick::image_read() %>% 
+    magick::image_scale(geometry)
+}
+```
+
+```{r construct-matrix}
+construct_matrix <- function(image) {
+  
+  # read matrix
+  mat <- image %>% 
+    as.raster() %>%
+    as.matrix()
+  
+  # use the row and column names to represent co-ordinates
+  rownames(mat) <- paste0("y", nrow(mat):1) # <- flip y
+  colnames(mat) <- paste0("x", 1:ncol(mat))
+  
+  return(mat)
+}
+```
+
+```{r construct-tibble}
+construct_tibble <- function(mat) {
+  
+  # convert to tibble
+  tbl <- mat %>%
+    as.data.frame() %>%
+    rownames_to_column("y") %>%
+    as_tibble() 
+  
+  # reshape
+  tbl <- tbl %>%
+    pivot_longer(
+      cols = starts_with("x"),
+      names_to = "x",
+      values_to = "shade"
+    ) 
+  
+  # tidy
+  tbl <- tbl %>%
+    arrange(x, y) %>% 
+    mutate(
+      x = x %>% str_remove_all("x") %>% as.numeric(),
+      y = y %>% str_remove_all("y") %>% as.numeric(),
+      id = row_number()
+    )
+  
+  return(tbl)
+}
+```
+
+```{r jasmines-data}
+jas <- file %>% 
+  import_image(width = 100, height = 60) %>% 
+  construct_matrix() %>% 
+  construct_tibble()
+
+jas
+```
+
+Every plot is going to use this, so:
+
+```{r ggplot-themed}
+ggplot_themed <- function(data) {
+  data %>% 
+    ggplot(aes(x, y)) +
+    coord_equal() + 
+    scale_size_identity() + 
+    scale_colour_identity() + 
+    scale_fill_identity() + 
+    theme_void() 
+}
+```
+
+We can use `geom_tile()` to draw the original image:
+
+```{r jasmine-raster-image}
+jas %>% 
+  ggplot_themed() + 
+  geom_tile(aes(fill = shade)) 
+```
+
+As an aside, if you map the borders of each cell to the shade you get something neat:
+
+```{r jasmine-raster-variant-image}
+jas %>% 
+  ggplot_themed() + 
+  geom_tile(aes(colour = shade)) 
+```
+
+I didn't go down that path originally, but it's worth noting that there might be something worth playing with. Generative art, much like any other kind of art, is as much about exploration and discovery as it is about technical prowess. 
+
+Corresponding scatter plot:
+
+```{r jasmine-scatter-image}
+jas %>% 
+  ggplot_themed() + 
+  geom_point(aes(colour = shade)) 
+```
+
+Next step, extract the channels
+
+```{r extract-channels}
+extract_channels <- function(tbl) {
+  rgb <- with(tbl, col2rgb(shade))
+  hsv <- rgb2hsv(rgb)
+  tbl <- tbl %>% 
+    mutate(
+      red = rgb[1, ],
+      grn = rgb[2, ],
+      blu = rgb[3, ],
+      hue = hsv[1, ],
+      sat = hsv[2, ],
+      val = hsv[3, ]
+    )
+  return(tbl)
+}
+```
+
+```{r jasmine-channels-data}
+jas <- extract_channels(jas)
+jas
+```  
+
+One way to use this representation is in halftone images. If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:
+
+```{r jasmine-halftone-image}
+map_size <- function(x) {
+  ambient::normalise(1-x, to = c(0, 2))
+}
+
+jas %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(size = map_size(val)),
+    colour = "black", 
+    show.legend = FALSE
+  )
+```
+
+For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on. But we're not using real printers. There's nothing stopping us retaining the original hue and saturation, while using dot size to represent intensity. That allows us to produce "halftonesque" images:
+
+
+```{r jasmine-halftonesque-image}
+jas %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(
+      colour = hsv(hue, sat, .5), 
+      size = map_size(val)
+    ), 
+    show.legend = FALSE
+  )
+```
+
+
+## Intermission
+
+```{r water-colour-cards-2, message=FALSE, echo=FALSE, cache=TRUE}
+manifest[9:12, ] %>% 
+  bs4cards::cards(
+    image = path_500,
+    link = path_2000,
+    title = long_name,
+    spacing = 3,
+    width = 2
+  )  
+```
+
+
+## Art from noise generators
+
+
+Generating vector fields using the ambient package: 
+
+```{r field}
+field <- function(points, frequency = .1, octaves = 1) {
+  ambient::curl_noise(
+    generator = ambient::fracture,
+    fractal = ambient::billow,
+    noise = ambient::gen_simplex,
+    x = points$x,
+    y = points$y,
+    frequency = frequency,
+    octaves = octaves,
+    seed = 1
+  )
+}
+```
+
+```{r shift}
+shift <- function(points, amount, ...) {
+  vectors <- field(points, ...)
+  points <- points %>%
+    mutate(
+      x = x + vectors$x * amount,
+      y = y + vectors$y * amount,
+      time = time + 1,
+      id = id
+    )
+  return(points)
+}
+```
+
+```{r noise-stepped-data}
+points_time0 <- expand_grid(x = 1:50, y = 1:30) %>% 
+  mutate(time = 0, id = row_number())
+
+points_time1 <- shift(points_time0, amount = 1)
+points_time2 <- shift(points_time1, amount = 1)
+points_time3 <- shift(points_time2, amount = 1)
+
+pts <- bind_rows(
+  points_time0, 
+  points_time1, 
+  points_time2,
+  points_time3
+)
+```
+
+```{r noise-stepped-image}
+map_size <- function(x) {
+  ambient::normalise(x, to = c(0, 2))
+}
+
+map_alpha <- function(x) {
+  ambient::normalise(-x, to = c(0, .5))
+}
+
+pts %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(
+      size = map_size(time), 
+      alpha = map_alpha(time)
+    ),
+    show.legend = FALSE
+  )
+```
+
+The purrr package provides a useful tool for iterating:
+
+```{r iterate}
+iterate <- function(pts, time, step, ...) {
+  bind_rows(accumulate(
+    .x = rep(step, time), 
+    .f = shift, 
+    .init = pts,
+    ...
+  ))
+}
+```
+
+```{r extract-points}
+extract_points <- function(data) {
+  data %>% 
+    select(x, y, id) %>% 
+    mutate(time = 0)
+}
+```
+
+```{r accumulated-noise-data}
+pts <- jas %>% 
+  extract_points() %>% 
+  iterate(time = 20, step = .1)
+```
+
+```{r accumulated-noise-image, cache=TRUE}
+map_size <- function(x) {
+  ambient::normalise(x^2, to = c(0, 5))
+}
+
+pts %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(size = map_size(time)),
+    alpha = .01,
+    show.legend = FALSE
+  ) 
+```
+
+
+## Assembling the parts
+
+```{r join-parts}
+join_parts <- function(jas, pts) {
+  jas %>% 
+    select(-x, -y) %>% 
+    full_join(pts, by = "id") %>% 
+    arrange(time, id) 
+}
+
+```
+
+```{r noisy-jasmine-data, cache=TRUE}
+jas <- join_parts(jas, pts)
+jas
+```
+
+```{r noisy-jasmine-image, cache=TRUE}
+map_size <- function(x, y) {
+  ambient::normalise((1 - x) * y^2, to = c(0, 5))
+}
+
+jas %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(
+      colour = hsv(hue, sat, .5), 
+      size = map_size(val, time)
+    ), 
+    alpha = .03,
+    show.legend = FALSE
+  )
+```
+
+
+Repeat at higher resolution:
+
+```{r jasmine-detailed-data, cache=TRUE}
+jas <- file %>% 
+  import_image(width = 200, height = 120) %>% 
+  construct_matrix() %>% 
+  construct_tibble() %>% 
+  extract_channels()
+
+pts <- jas %>% 
+  extract_points() %>% 
+  iterate(
+    time = 40, 
+    step = .2, 
+    octaves = 10, 
+    frequency = .05
+  )
+
+jas <- join_parts(jas, pts)
+```
+
+
+```{r jasmine-detailed-image, cache=TRUE}
+map_size <- function(x, y) {
+  12 * (1 - x) * (max(y)^2 - y^2) / y^2
+}
+
+pic <- jas %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(
+      colour = shade, 
+      size = map_size(val, time)
+    ), 
+    alpha = 1,
+    stroke = 0,
+    show.legend = FALSE
+  ) 
+
+pic
+```
+
+
+```{r jasmine-cropped-image, cache=TRUE}
+pic +
+  scale_x_continuous(limits = c(11, 190), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(7, 114), expand = c(0, 0))
+```
+
+
+## Epilogue
+
+```{r water-colour-cards-3, message=FALSE, echo=FALSE, cache=TRUE}
+manifest[13:20, ] %>% 
+  bs4cards::cards(
+    image = path_500,
+    link = path_2000,
+    title = long_name,
+    spacing = 3,
+    width = 2
+  )  
+```
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix("djnavarro/distill-blog", long_slug)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(params$slug, params$date)
+```
+
+
