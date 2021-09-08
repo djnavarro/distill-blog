@@ -45,7 +45,7 @@ setup, appendices, and redirects should "just work" (ish)
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, out.width="100%")
 long_slug <- paste(params$date, params$slug, sep = "_")
-# refinery::renv_load(long_slug) # <-- disable for now
+refinery::renv_load(long_slug)
 ```
 
 ```{r environment, include=FALSE, message=FALSE}
