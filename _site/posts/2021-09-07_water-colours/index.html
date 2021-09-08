@@ -2539,13 +2539,13 @@ d-appendix d-footnote-list a.footnote-backlink {
 <p>Eventually I decided it made more sense to have one repository per series. Each one uses the “series-” prefix to remind me it’s an art repo. I don’t use these repositories during development: they exist solely to snapshot the release. For example, the <a href="https://github.com/djnavarro/series-water-colours">series-water-colours</a> repository isn’t going to be updated regularly, it’s really just an archive combined with a “docs” folder that is used to host a minimal GitHub Pages site that makes the images public. It’s convenient for my purposes because my art website doesn’t have to host any of the images: all it does is hotlink to the images that are exposed via the series repo.</p>
 <p>It may seem surprising that I’ve used GitHub for this. Image files aren’t exactly well suited to version control, but it’s not like they’re going to be updated. Plus, there are a lot of advantages. I can explicitly include licencing information in the repository, I can release source code (when I want to), and I can include a readme file for anyone who wants to use it.</p>
 <h3 id="the-manifest-file">The manifest file</h3>
-<p>One nice feature of doing things this way is that it has encouraged me to include a <a href="%22https://djnavarro.net/series-water-colours/manifest.csv%22">manifest file</a>, a plain csv file with one row per image, and one column for each piece of metadata I want to retain about the images. Again, it seems like overkill, but I’m starting to realise that if I don’t have a system I’ll forget things like “what the piece is called” or “when I made it”.</p>
+<p>One nice feature of doing things this way is that it has encouraged me to include a <a href="%22https://djnavarro.net/series-water-colours/manifest.csv%22">manifest file</a>. Because the image files belong to a completely different repository to the website, I need a way to automatically inspect the image repository and construct the links I need (because I’m waaaaaay too lazy to add the links by hand). That’s the primary function of the manifest. The manifest.csv file is a plain csv file with one row per image, and one column for each piece of metadata I want to retain about the images. It might seem like organisational overkill to be this precise about the art, but I’m starting to realise that if I don’t have a proper system in place I’ll forget minor details like <em>“what the piece is called”</em> or <em>“when I made it”</em>. That seems bad :-)</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <p>I can use <code>readr::read_csv()</code> to download the manifest and do a little data wrangling to organise it into a format that is handy to me right now:</p>
 <aside>
-The data wrangling isn’t shown, but it is in the <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_generating-the-water-colours">source code</a>
+The data wrangling code is <a href="https://github.com/djnavarro/distill-blog/blob/master/_posts/2021-09-07_water-colours/index.Rmd#L79-L95">here</a>
 </aside>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2694,13 +2694,13 @@ The data wrangling isn’t shown, but it is in the <a href="https://github.com/d
 </div>
 </div>
 <aside>
-For more information about the R environment see the <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_generating-the-water-colours/renv.lock">lockfile</a> for with this post. It’s a story for another post, but for reproducibility purposes I have a separate <a href="https://rstudio.github.io/renv/">renv configuration</a> for every post
+The R environment is specified formally in the <a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_water-colours/renv.lock">lockfile</a>. It’s a story for another day, but for reproducibility purposes I have a separate <a href="https://rstudio.github.io/renv/">renv configuration</a> for every post
 </aside>
 <p>In addition to tidyverse and base R functions, I’ll use a few other packages as well. The <a href="https://docs.ropensci.org/magick/">magick</a>, <a href="https://github.com/rspatial/raster/">raster</a>, <a href="https://rprojroot.r-lib.org/">rprojroot</a>, <a href="https://fs.r-lib.org/">fs</a>, and <a href="https://ambient.data-imaginist.com/">ambient</a> packages are all used in making the art. Because functions from those packages may not be as familiar to everyone, I’ll namespace the calls to them in the same way I did with <code>bs4cards::cards()</code> previously. Hopefully that will make it easier to see which functions belong to one of those packages.</p>
 <h2 id="art-from-image-processing">Art from image processing</h2>
 <h3 id="finding-the-image-file">Finding the image file</h3>
 <p>As in life, the place to start is knowing where you are.</p>
-<p>This post is part of my blog, and I’ll need to make use of an image file called <code>"jasmine.jpg"</code> stored alongside my R markdown. First, I can use <code>rprojroot::find_root()</code> to find out where my blog is stored on my laptop. I’ll do that by searching for a <code>"_site.yml"</code> file:</p>
+<p>This post is part of my blog, and I’ll need to make use of an image file called <code>"jasmine.jpg"</code> stored alongside my R markdown. First, I can use <a href="https://rprojroot.r-lib.org/">rprojroot</a> to find out where my blog is stored. I’ll do that by searching for a <code>"_site.yml"</code> file:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>blog</span> <span class='op'>&lt;-</span> <span class='fu'>rprojroot</span><span class='fu'>::</span><span class='fu'><a href='https://rprojroot.r-lib.org//reference/find_root.html'>find_root</a></span><span class='op'>(</span><span class='st'>"_site.yml"</span><span class='op'>)</span>
@@ -2709,8 +2709,8 @@ For more information about the R environment see the <a href="https://github.com
 </div>
 <pre><code>[1] &quot;/home/danielle/GitHub/sites/distill-blog&quot;</code></pre>
 </div>
-<p>I suspect that most people reading this would be more familiar with the <a href="https://here.r-lib.org/">here</a> package that provides a simplified interface to rprojroot and will automatically detect the .Rproj or .here file associated with your project. Because <code>here::here()</code> is so convenient, in most situations you don’t need rprojroot, but there are exceptions. For example some of my projects are comprised of partially independent sub-projects that each need their own root folder. It’s not usually a good idea to have RStudio projects nestled inside one another, so I’ve found rprojroot handy when I need to distinguish between different kinds of root (e.g., project root or sub-project root).</p>
-<p>The next step in orientation is finding the post folder. Because this is a <a href="https://rstudio.github.io/distill/">distill</a> blog, all my posts are stored in the <code>_posts</code> folder, and I’ve adopted a consistent <a href="https://slides.djnavarro.net/project-structure/">naming</a> <a href="https://speakerdeck.com/jennybc/how-to-name-files">convention</a> for my post folders. Every one begins with the post date in year-month-day format, followed by a human-readable “slug”:</p>
+<p>I suspect that most people reading this would be more familiar with the <a href="https://here.r-lib.org/">here</a> package that provides a simplified interface to rprojroot and will automatically detect the .Rproj or .here file associated with your project. In fact, because the <code>here::here()</code> function is so convenient, it’s usually my preferred method for solving this problem. Sometimes, however, the additional flexibility provided by rprojroot is very useful. Some of my projects are comprised of partially independent sub-projects, each with a distinct root directory. That happens sometimes when blogging: there are contexts in which you might want to consider “the blog” to be the project, but other contexts in which “the post” might be the project. If you’re not careful this can lead to chaos (e.g., RStudio projects nested inside other RStudio projects), and I’ve found rprojroot very helpful in avoiding ambiguity in these situations.</p>
+<p>Having chosen “the blog” as the root folder, the next step in orientation is to find the post folder. Because this is a <a href="https://rstudio.github.io/distill/">distill</a> blog, all my posts are stored in the <code>_posts</code> folder, and I’ve adopted a consistent <a href="https://slides.djnavarro.net/project-structure/">naming</a> <a href="https://speakerdeck.com/jennybc/how-to-name-files">convention</a> for organising the post folders. Every name begins with the post date in year-month-day format, followed by a human-readable “slug”:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>post</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='va'>params</span><span class='op'>$</span><span class='va'>date</span>, <span class='va'>params</span><span class='op'>$</span><span class='va'>slug</span>, sep <span class='op'>=</span> <span class='st'>"_"</span><span class='op'>)</span>
@@ -2719,7 +2719,7 @@ For more information about the R environment see the <a href="https://github.com
 </div>
 <pre><code>[1] &quot;2021-09-07_water-colours&quot;</code></pre>
 </div>
-<p>This allows me to construct the path to the image file and display it in the post:</p>
+<p>This allows me to construct the path to the image file and display it here:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>file</span> <span class='op'>&lt;-</span> <span class='fu'>fs</span><span class='fu'>::</span><span class='fu'><a href='http://fs.r-lib.org/reference/path.html'>path</a></span><span class='op'>(</span><span class='va'>blog</span>, <span class='st'>"_posts"</span>, <span class='va'>post</span>, <span class='st'>"jasmine.jpg"</span><span class='op'>)</span>
@@ -2732,11 +2732,11 @@ For more information about the R environment see the <a href="https://github.com
 The photo has an emotional resonance to me: it dates back to 2011 and appeared on the cover of <a href="https://learningstatisticswithr.com">Learning Statistics with R</a>. Although 10 years separate the <em>Water Colours</em> series from the text and the photo, the two are linked by a shared connection to events from a decade ago
 </aside>
 <h3 id="importing-the-image">Importing the image</h3>
-<p>Now that we have the path to the image file, the next step is to import it into R at a suitable resolution. The original image size is 1000x600 pixels, which is a little more than we need. Here’s a simple <code>import_image()</code> function that will read it into R at the desired <code>width</code> and <code>height</code>:</p>
+<p>Our next step is to import the image into R at a suitable resolution. The original image size is 1000x600 pixels, which is a little more than we need. Here’s a simple <code>import_image()</code> function that does this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>import_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>path</span>, <span class='va'>width</span>, <span class='va'>height</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>geometry</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>width</span>, <span class='st'>"x"</span>, <span class='va'>height</span><span class='op'>)</span>
+  <span class='va'>geometry</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='va'>width</span>, <span class='st'>"x"</span>, <span class='va'>height</span><span class='op'>)</span> <span class='co'># e.g., "100x60"</span>
   <span class='va'>path</span> <span class='op'>%&gt;%</span> 
     <span class='fu'>magick</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_read</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
     <span class='fu'>magick</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/magick/reference/transform.html'>image_scale</a></span><span class='op'>(</span><span class='va'>geometry</span><span class='op'>)</span>
@@ -2744,9 +2744,10 @@ The photo has an emotional resonance to me: it dates back to 2011 and appeared o
 </code></pre>
 </div>
 </div>
-<p>Internally, all the work is being done by the fabulous magick package that provides bindings to the <a href="https://imagemagick.org/">ImageMagick</a> library. In fact, it’s the ImageMagick library that is doing all the work here. The data structure that is loaded into R is merely a pointer to an object that ImageMagick is manipulating. Generally that’s a good thing for performance reasons, but in this case we’re going to work with the raw image data inside R.</p>
+<p>Internally, the work is being done by the fabulous <a href="https://docs.ropensci.org/magick/">magick</a> package that provides bindings to the <a href="https://imagemagick.org/">ImageMagick</a> library. In truth, it’s the ImageMagick library that is doing most the work here. R doesn’t load the complete image, it lets ImageMagick take care of that. Generally that’s a good thing for performance reasons (you don’t want to load large images into memory if you can avoid it), but in this case we’re going to work with the raw image data inside R.</p>
+<p>This brings us to the next task…</p>
 <h3 id="converting-the-image-to-data">Converting the image to data</h3>
-<p>Converting the image into a data structure we can use is a two step process. First, we create a matrix that represents the image in a format similar to the image itself, which is the job of the <code>construct_matrix()</code> function below. It takes the <code>image</code> as input, and first coerces it to a raster object and then to a regular matrix: in the code below, the matrix is named <code>mat</code>, and the pixel on the i-th row and j-th column of the image is represented by the contents of <code>mat[i, j]</code>.</p>
+<p>Converting the image into a data structure we can use is a two step process. First, we create a matrix that represents the image in a format similar to the image itself. That’s the job of the <code>construct_matrix()</code> function below. It takes the <code>image</code> as input, and first coerces it to a raster object and then to a regular matrix: in the code below, the matrix is named <code>mat</code>, and the pixel on the i-th row and j-th column of the image is represented by the contents of <code>mat[i, j]</code>.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>construct_matrix</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>image</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2766,8 +2767,8 @@ The photo has an emotional resonance to me: it dates back to 2011 and appeared o
 </div>
 </div>
 <p>A little care is needed when interpreting the rows of this matrix. When we think about graphs, the values on y-axis increase as we move our eyes upwards from the bottom, so our mental model has the small numbers at the bottom and the big numbers at the top. But that’s not the only mental model in play here. When we read a matrix or a table we don’t <em>look</em> at it, we <em>read</em> it - and we read from top to bottom. A numbered list, for example, has the smallest numbers at the top, and the numbers get bigger as we read down the list. Both of those mental models are sensible, but it’s hard to switch between them.</p>
-<p>The tricky part here is that the raw image is written in “reading format”. It’s supposed to be read like a table or a list, so the indices increase as we read down the image. The image data returned by <code>construct_matrix()</code> is organised this format. However, when we draw pictures with ggplot2 later on, we’re going to need to reverse this convention and switch to “graph format” with the small numbers at the bottom. That’s the reason why the code above flips the order of the row names: our next task will be to convert this (reading-formatted) matrix into a tidy tibble, and those row and column names will become become our (graph-formatted) x- and y-coordinates.</p>
-<p>The code that does this transformation is shown below in the <code>construct_tibble()</code> function:</p>
+<p>The tricky part here is that the raw image is encoded in “reading format”. It’s supposed to be read like a table or a list, so the indices increase as we read down the image. The image data returned by <code>construct_matrix()</code> is organised this format. However, when we draw pictures with ggplot2 later on, we’re going to need to switch to a “graph format” convention with the small numbers at the bottom. That’s the reason why the code above flips the order of the row names. Our next task will be to convert this (reading-formatted) matrix into a tidy tibble, and those row and column names will become become our (graph-formatted) x- and y-coordinates, so the row names need to be labelled in reverse order.</p>
+<p>To transform the image matrix into a tidy tibble, I’ve written a handy <code>construct_tibble()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>construct_tibble</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>mat</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2800,12 +2801,16 @@ The photo has an emotional resonance to me: it dates back to 2011 and appeared o
 </code></pre>
 </div>
 </div>
-<p>The first line coerces the matrix to a plain data frame, then uses <code>rownames_to_columns()</code> to extract the row names before coercing it to a tibble. This step is necessary because tibbles don’t have row names, and we need to have a variable <code>y</code> to store those co-ordinate values. The next step uses <code>pivot_longer()</code> to capture all the other variables (currently named <code>x1</code>, <code>x2</code>, etc) and pull them down into a single column that specifies the <code>x</code> co-ordinate.</p>
-<p>So at this stage, the <code>tbl</code> tibble contains three variables: an <code>x</code> value, a <code>y</code> value, and a <code>shade</code> that contains the hex code for a colour. The last step is to tidy up the values. After <code>pivot_longer()</code> does its job, the <code>x</code> variable contains strings like <code>"x1"</code>, <code>"x2"</code>, etc, but we’d prefer them to be actual numbers like <code>1</code>, <code>2</code>, etc. The same is true for the <code>y</code> variable. To fix this, the last part of the code does a tiny bit of string manipulation using <code>str_remove_all()</code> to get rid of the unwanted prefixes, and then coerces the result to a number.</p>
+<p>The code has the following strucure:</p>
+<ul>
+<li><p>The first part of this code coerces the matrix to a plain data frame, then uses <code>rownames_to_columns()</code> to extract the row names before coercing it to a tibble. This step is necessary because tibbles don’t have row names, and we need those row names: our end goal is to have a variable <code>y</code> to store those co-ordinate values.</p></li>
+<li><p>The second part of the code uses <code>pivot_longer()</code> to capture all the other variables (currently named <code>x1</code>, <code>x2</code>, etc) and pull them down into a single column that specifies the <code>x</code> co-ordinate. At this stage, the <code>tbl</code> tibble contains three variables: an <code>x</code> value, a <code>y</code> value, and a <code>shade</code> that contains the hex code for a colour.</p></li>
+<li><p>The last step is to tidy up the values. After <code>pivot_longer()</code> does its job, the <code>x</code> variable contains strings like <code>"x1"</code>, <code>"x2"</code>, etc, but we’d prefer them to be actual numbers like <code>1</code>, <code>2</code>, etc. The same is true for the <code>y</code> variable. To fix this, the last part of the code does a tiny bit of string manipulation using <code>str_remove_all()</code> to get rid of the unwanted prefixes, and then coerces the result to a number.</p></li>
+</ul>
 <aside>
-The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do this without the extra step, but I prefer the verbose form. I think it’s more readable and it handles <code>x</code> and <code>y</code> at the same code location
+The <code>names_prefix</code> argument to <code>pivot_longer()</code> can transform <code>x</code> without the third step, but I prefer the verbose form. I find it easier to read and it treats <code>x</code> and <code>y</code> the same
 </aside>
-<p>Taken together, the <code>import_image()</code>, <code>construct_matrix()</code>, and <code>construct_tibble()</code> functions provide us with everything we need to pull the data from the image file and organise it into a format that ggplot2 is expecting:</p>
+<p>Taken together, the <code>import_image()</code>, <code>construct_matrix()</code>, and <code>construct_tibble()</code> functions provide us with everything we need to pull the data from the image file and wrangle it into a format that ggplot2 is expecting:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='va'>file</span> <span class='op'>%&gt;%</span> 
@@ -2831,11 +2836,11 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 10    18     1 #944b61ff    10
 # … with 5,990 more rows</code></pre>
 </div>
-<p>A little unusually, the hex codes here are specified in RGBA format: the first two numbers specify the hexadecimal code for the red level, the second two represent the green level (or “channel”), the third two are the blue channel, and the last two are the opacity level (the alpha channel). I’m going to ignore the alpha channel for this exercise though.</p>
-<p>There’s one last thing to point out before turning to the fun art part. Notice that <code>jas</code> also contains an <code>id</code> column. It’s generally good practice to have an <code>id</code> column that uniquely identifies each row, and will turn out to be useful later when we need to join this data set with other data sets that we’ll generate.</p>
+<p>A little unusually, the hex codes here are specified in RGBA format: the first two alphanumeric characters specify the hexadecimal code for the red level, the second two represent the green level (or “channel”), the third two are the blue channel, and the last two are the opacity level (the alpha channel). I’m going to ignore the alpha channel for this exercise though.</p>
+<p>There’s one last thing to point out before turning to the fun art part. Notice that <code>jas</code> also contains an <code>id</code> column (added by the third part of the <code>construct_tibble()</code> function). It’s generally good practice to have an <code>id</code> column that uniquely identifies each row, and will turn out to be useful later when we need to join this data set with other data sets that we’ll generate.</p>
 <h3 id="art-from-data-visualisation">Art from data visualisation</h3>
 <p>Let the art begin!</p>
-<p>The first step is to define a helper function <code>ggplot_themed()</code> that provides a template that we’ll reuse in every plot. Mostly this involves preventing ggplot2 from doing things it wants to do. When we’re doing data visualisation it’s great that ggplot2 automatically provides things like “legends”, “axes”, and “scales” to map from data to visual aesthetics, but they’re not much use to us artistically, so we might as well have a function that gets rid of all those things:</p>
+<p>The first step is to define a helper function <code>ggplot_themed()</code> that provides a template that we’ll reuse in every plot. Mostly this involves preventing ggplot2 from doing things it wants to do. When we’re doing data visualisation it’s great that ggplot2 automatically provides things like “legends”, “axes”, and “scales” to map from data to visual aesthetics, but from an artistic perspective they’re just clutter. I don’t want to manually strip that out every time I make a plot, so it makes sense to have a function that gets rid of all those things:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggplot_themed</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2850,8 +2855,8 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </code></pre>
 </div>
 </div>
-<p>This template will make all our later code easier: the <code>x</code> and <code>y</code> aesthetics are already specified, ggplot2 won’t try to “interpret” our colours and sizes for us, and it won’t mess with the aspect ratio. In effect, this turns off the autopilot: we’re flying this thing manually…</p>
-<p>There are a lot of ways to plot the <code>jas</code> data. The least imaginative possibility is <code>geom_tile()</code>, which produces a pixellated version of the jasmines photo where each cell is filled with the same colour as the corresponding pixel:</p>
+<p>This “template function” allows us to start with a clean slate, and it makes our subsequent coding task easier. The <code>x</code> and <code>y</code> aesthetics are already specified, ggplot2 won’t try to “interpret” our colours and sizes for us, and it won’t mess with the aspect ratio. In a sense, this function turns off the autopilot: we’re flying this thing manually…</p>
+<p>There are many ways to plot the <code>jas</code> data in ggplot2. The least imaginative possibility is <code>geom_tile()</code>, which produces a pixellated version of the jasmines photo:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>%&gt;%</span> 
@@ -2871,7 +2876,7 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </div>
 <p><img src="index_files/figure-html5/jasmine-raster-variant-image-1.png" width="100%" /></p>
 </div>
-<p>It’s surprisingly pretty, and (yet another) demonstration of how good the visual system is at reconstructing images from low-quality input: the original image is still perceptible despite the fact that most of the plot area is black. I didn’t end up pursuing this (yet!) but I think there’s a lot of artistic potential here. It might be worth playing with at a later date. In that sense generative art is a lot like any other kind of art (or, for that matter, science). It is as much about exploration and discovery as it is about technical prowess.</p>
+<p>It’s surprisingly pretty, and a cute demonstration of how good the visual system is at reconstructing images from low-quality input: remarkably, the jasmines are still perceptible despite the fact that most of the plot area is black. I didn’t end up pursuing this (yet!) but I think there’s a lot of artistic potential here. It might be worth playing with at a later date. In that sense generative art is a lot like any other kind of art (or, for that matter, science). It is as much about exploration and discovery as it is about technical prowess.</p>
 <p>The path I did follow is based on <code>geom_point()</code>. Each pixel in the original image is plotted as a circular marker in the appropriate colour. Here’s the simplest version of this idea applied to the <code>jas</code> data:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2884,8 +2889,9 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </div>
 <p>It’s simple, but I like it.</p>
 <h3 id="extracting-the-colour-channels">Extracting the colour channels</h3>
-<p>Up to this point we haven’t been manipulating the colours in any of the plots: the hex code in the <code>shade</code> variable is left intact. There’s no inherent reason we should limit ourselves in such a boring way. Base R provides the <code>col2rgb()</code> function that separates the hex code into red, green, blue channels, and represents each with integers between 0 and 255. It also provides the <code>rgb2hsv()</code> function that converts this RGB representation into <a href="https://en.wikipedia.org/wiki/HSL_and_HSV">hue, saturation, and value</a> format.</p>
-<p>The code below defines an <code>extract_channels()</code> helper function that takes the <code>shade</code> column in the data, and adds six new columns that I’ve unimaginatively named <code>red</code>, <code>grn</code>, <code>blu</code>, <code>hue</code>, <code>sat</code>, and <code>val</code> (I’m a sucker for variable names that are all the same length):</p>
+<p>Up to this point we haven’t been manipulating the colours in any of the plots: the hex code in the <code>shade</code> variable is left intact. There’s no inherent reason we should limit ourselves to such boring visualisations. All we need to do is extract the different “colour channels” and start playing around.</p>
+<p>It’s not too difficult to do this: base R provides the <code>col2rgb()</code> function that separates the hex code into red, green, blue channels, and represents each channel with integers between 0 and 255. It also provides the <code>rgb2hsv()</code> function that converts this RGB format into <a href="https://en.wikipedia.org/wiki/HSL_and_HSV">hue, saturation, and value</a> format, represented as numeric values between 0 and 1.</p>
+<p>This technique is illustrated by the <code>extract_channels()</code> helper function shown below. It looks at the <code>shade</code> column in the data frame, and adds six new columns, one for each channel. I’m a sucker for variable names that are all the same length (often unwisely), and I’ve named them <code>red</code>, <code>grn</code>, <code>blu</code>, <code>hue</code>, <code>sat</code>, and <code>val</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>extract_channels</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>tbl</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2905,7 +2911,7 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 </code></pre>
 </div>
 </div>
-<p>After applying this to the <code>jas</code> data, we have several new variables that we can play with and recombine in different ways to create new art:</p>
+<p>Here’s what that looks like applied to the <code>jas</code> data:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>extract_channels</span><span class='op'>(</span><span class='va'>jas</span><span class='op'>)</span>
@@ -2927,11 +2933,9 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can do thi
 10    18     1 #944b61ff    10   148    75    97 0.950  0.493 0.580
 # … with 5,990 more rows</code></pre>
 </div>
+<p>A whole new world of artistic possibilities has just emerged!</p>
 <h3 id="art-from-channel-manipulation">Art from channel manipulation</h3>
 <p>One way to use this representation is in <a href="https://en.wikipedia.org/wiki/Halftone">halftone images</a>. If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:</p>
-<aside>
-The <a href="https://github.com/cmarcum/halftoner">halftoner</a> package will do this for you, incidentally
-</aside>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>map_size</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2953,7 +2957,7 @@ The <a href="https://github.com/cmarcum/halftoner">halftoner</a> package will do
 In this code the <code>ambient::normalise()</code> function is used to rescale the input to fall within a specified range. Usually ggplot2 handles this automatically, but as I mentioned, we’ve turned off the autopilot…
 </aside>
 <p>For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on.</p>
-<p>But we’re not using real printers. There’s nothing stopping us retaining the original hue and saturation, while using dot size to represent intensity. That allows us to produce “halftonesque” images:</p>
+<p>But we’re not using real printers, and in any case the image above is not a very good example of a halftone format: I’m crudely mapping <code>1-val</code> to the size aesthetic, and that’s not actually the right way to do this (if you want to see this done properly, look at the <a href="https://github.com/cmarcum/halftoner">halftoner</a> package). The image above is “inspired by” the halftone concept, not the real thing. I’m okay with that, and having abandoned the idea of remaining fidelity opens up new possibilities. For example, there’s nothing stopping us retaining the original hue and saturation, while using dot size to represent the intensity value, That allows us to produce “halftonesque” images like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>%&gt;%</span> 
@@ -2971,7 +2975,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p>In this code, the <code>hsv()</code> function takes the hue and saturation channels from the original image, but combines them with a constant intensity value: the output is a new colour specified as a hex code that ggplot2 can display in the output. Because we have stripped out the value channel, we can reuse the halftone trick. Much like a halftone image, the image above uses the size aesthetic to represent the intensity at the corresponding pixel.</p>
 <h2 id="intermission">Intermission</h2>
-<p>Up to this point I’ve talked about image manipulation, and I hope you can see the artistic potential created when we pair image processing tools like magick with data visualisation tools like ggplot2. What I haven’t talked about is how to choose (or generate!) the images to manipulate, and I haven’t talked about how we might introduce a probabilistic component to the process. I’m not going to say much about how to choose images. The possibilities are endless. I’ve used a photo I took in my garden in this post, but the pieces in <em>Water Colours</em> series have a different origin. I dripped some food colouring into a glass of water and took some photos of the dye diffusing. Small sections were cropped out of these photos and often preprocessed in some fashion by changing the hue, saturation etc. These manipulated photos were then passed into a noise generation process, and the output produced images like this:</p>
+<p>Up to this point I’ve talked about image manipulation, and I hope you can see the artistic potential created when we pair image processing tools like magick with data visualisation tools like ggplot2. What I haven’t talked about is how to choose (or generate!) the images to manipulate, and I haven’t talked about how we might introduce a probabilistic component to the process. I’m not going to say much about how to choose images. The possibilities are endless. For this post I’ve used a photo I took in my garden many years ago, but the pieces in <em>Water Colours</em> series have a different origin: I dripped some food colouring into a glass of water and took some photos of the dye diffusing. Small sections were cropped out of these photos and often preprocessed in some fashion by changing the hue, saturation etc. These manipulated photos were then passed into a noise generation process, and the output produced images like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div>
 <div class="row p-0 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4" style="margin-left: -.4rem; margin-right: -.4rem; margin-top: 1rem; margin-bottom: 1rem; ">
@@ -3429,7 +3433,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 01:37:22 AEST</span>
+<span>2021-09-09 09:49:40 AEST</span>
 </p>
 </div>
 </d-appendix>
