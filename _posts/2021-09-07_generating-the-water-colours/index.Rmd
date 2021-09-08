@@ -75,9 +75,11 @@ In recent weeks I've been posting generative art from the [Water Colours](https:
 
 > The computer doesn't make this art any more than a camera makes a photograph; art is always intimate ([Amy Patterson](https://twitter.com/justanotheramy/status/1432916731794579460))
 
-In this post I'll describe the mechanistic processes involved in creating these pieces, but this is woefully inadequate as a description of the artistic process as a whole. The optical mechanics of a camera do not circumscribe the work of a skilled photographer. So it goes with generative art. The code describes the mechanics; it does not describe the art. There is a deeply personal story underneath these pieces, and I would no more mint an NFT from that story than I would sell a piece of my soul to a collector.
+In this post I'll describe the mechanistic processes involved in creating these pieces, but this is woefully inadequate as a description of the artistic process as a whole. The optical mechanics of a camera do not circumscribe the work of a skilled photographer. So it goes with generative art. The code describes the mechanics; it does not describe the art. There is a deeply personal story underneath these pieces (one that I won't tell here), and I would no more mint an NFT from that story than I would sell a piece of my soul to a collector.
 
 ## The water colours repository
+
+### Why use version control here?
 
 When I started making generative art I didn't think much about archiving my art or keeping it organised. I liked making pretty things, and that was as far as my thought process went. I didn't place the code under version control, and I stored everything in my Dropbox folder. There's nothing wrong with that: some things don't belong on GitHub. During the development phase of any art project that's still what I do, and I'm perfectly happy with it.
 
@@ -86,6 +88,8 @@ Things become a little trickier when you want to share the art. My [art website]
 Eventually I decided it made more sense to have one repository per series. Each one uses the "series-" prefix to remind me it's an art repo. I don't use these repositories during development: they exist solely to snapshot the release. For example, the [series-water-colours](https://github.com/djnavarro/series-water-colours) repository isn't going to be updated regularly, it's really just an archive combined with a "docs" folder that is used to host a minimal GitHub Pages site that makes the images public. It's convenient for my purposes because my art website doesn't have to host any of the images: all it does is hotlink to the images that are exposed via the series repo.
 
 It may seem surprising that I've used GitHub for this. Image files aren't exactly well suited to version control, but it's not like they're going to be updated. Plus, there are a lot of advantages. I can explicitly include licencing information in the repository, I can release source code (when I want to), and I can include a readme file for anyone who wants to use it. 
+
+### The manifest file
 
 One nice feature of doing things this way is that it has encouraged me to include a [manifest file]("https://djnavarro.net/series-water-colours/manifest.csv"), a plain csv file with one row per image, and one column for each piece of metadata I want to retain about the images. Again, it seems like overkill, but I'm starting to realise that if I don't have a system I'll forget things like "what the piece is called" or "when I made it". 
 
@@ -109,11 +113,18 @@ manifest <- manifest %>%
 
 I can use `readr::read_csv()` to download the manifest and do a little data wrangling to organise it into a format that is handy to me right now:
 
+<aside>
+The data wrangling isn't shown, but it is in the [source code](https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_generating-the-water-colours) 
+</aside>
+
 ```{r show-manifest}
 manifest
 ```
 
-The data wrangling I used to get it into this format isn't shown in the post, but you can always look at the [source code](https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_generating-the-water-colours) for this post if you're curious. More to the point, the `manifest` data frame is nicely suited for use with the [bs4cards](https://bs4cards.djnavarro.net/) package, so I can display some of the pieces in a neat and tidy thumbnail grid:
+
+### Previewing the artwork
+
+More to the point, the `manifest` data frame is nicely suited for use with the [bs4cards](https://bs4cards.djnavarro.net/) package, so I can display some of the pieces in a neat and tidy thumbnail grid. Here are the first eight pieces from the series, arranged by date of creation:
 
 ```{r water-colour-cards, message=FALSE, cache=TRUE}
 manifest[1:8, ] %>% 
@@ -130,7 +141,9 @@ Each thumbnail image links to a medium resolution (2000 x 2000 pixels) jpg versi
 
 ## Dependencies 
 
-A subset of tidyverse packages are loaded 
+In the remainder of this post I'll walk you through the process of creating pieces "in the style of" the water colours series. If you really want to, you can take a look at the  [actual source](https://github.com/djnavarro/series-water-colours/blob/master/source/watercolours_02.R), but it may not be very helpful: the code is little opaque, poorly structured, and hides a lot of the work in the [halftoner](https://github.com/cmarcum/halftoner) and [jasmines](https://jasmines.djnavarro.net/) packages, neither of which is on CRAN. To make it a little easier on you, I'll build a new system in this post that adopts the same core ideas. 
+
+In this post I'll assume you're already familiar with data wrangling and visualisation with tidyverse tools. This is the subset of [tidyverse](https://www.tidyverse.org/) packages that I have attached, and the code that follows relies on all these in some fashion:
 
 ```{r}
 library(magrittr)
@@ -143,30 +156,50 @@ library(purrr)
 library(dplyr)
 ```
 
-Besides tidyverse and base R functions, I'll use a few other packages as well: in addition to the bs4cards package that made a brief appearance earlier, the [magick](https://docs.ropensci.org/magick/), [raster](https://github.com/rspatial/raster/), [rprojroot](https://rprojroot.r-lib.org/), [fs](https://fs.r-lib.org/), and [ambient](https://ambient.data-imaginist.com/) packages are all used in making the art. Because functions from those packages may not be as familiar to you, I'll namespace the calls to them in the same way I did with `bs4cards::cards()` previously. Hopefully that will make it easier to see which functions belong to one of those packages
+<aside>
+For more information about the R environment see the [lockfile](https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_generating-the-water-colours/renv.lock) for with this post. It's a story for another post, but for reproducibility purposes I have a separate [renv configuration](https://rstudio.github.io/renv/) for every post
+</aside>
 
 
-## Art by image processing
+In addition to tidyverse and base R functions, I'll use a few other packages as well. The [magick](https://docs.ropensci.org/magick/), [raster](https://github.com/rspatial/raster/), [rprojroot](https://rprojroot.r-lib.org/), [fs](https://fs.r-lib.org/), and [ambient](https://ambient.data-imaginist.com/) packages are all used in making the art. Because functions from those packages may not be as familiar to everyone, I'll namespace the calls to them in the same way I did with `bs4cards::cards()` previously. Hopefully that will make it easier to see which functions belong to one of those packages.
+
+
+## Art from image processing
+
+### Finding the image file
 
 As in life, the place to start is knowing where you are. 
 
-```{r define-paths}
-name <- paste(params$date, params$slug, sep = "_")
+This post is part of my blog, and I'll need to make use of an image file called `"jasmine.jpg"` stored alongside my R markdown. First, I can use `rprojroot::find_root()` to find out where my blog is stored on my laptop. I'll do that by searching for a `"_site.yml"` file:
+
+```{r define-paths-1}
 blog <- rprojroot::find_root("_site.yml")
-post <- fs::path(blog, "_posts", name)
-file <- fs::path(post, "jasmine.jpg")
+blog
 ```
 
-Here it is:
+I suspect that most people reading this would be more familiar with the [here](https://here.r-lib.org/) package that provides a simplified interface to rprojroot and will automatically detect the .Rproj or .here file associated with your project. Because `here::here()` is so convenient, in most situations you don't need rprojroot, but there are exceptions. For example some of my projects are comprised of partially independent sub-projects that each need their own root folder. It's not usually a good idea to have RStudio projects nestled inside one another, so I've found rprojroot handy when I need to distinguish between different kinds of root (e.g., project root or sub-project root).
+
+The next step in orientation is finding the post folder. Because this is a [distill](https://rstudio.github.io/distill/) blog, all my posts are stored in the `_posts` folder, and I've adopted a consistent [naming](https://slides.djnavarro.net/project-structure/) [convention](https://speakerdeck.com/jennybc/how-to-name-files) for my post folders. Every one begins with the post date in year-month-day format, followed by a human-readable "slug":
+
+```{r define-paths-2}
+post <- paste(params$date, params$slug, sep = "_")
+post
+```
+
+This allows me to construct the path to the image file and display it in the post:
 
 ```{r jasmine-photo}
+file <- fs::path(blog, "_posts", post, "jasmine.jpg")
 knitr::include_graphics(file)
 ```
 
-The photo has an emotional resonance to me: it dates back to 2011 and appeared on the cover of [Learning Statistics with R](https://learningstatisticswithr.com). In fact, although 10 years separate the *Water Colours* series from the text book and the jasmines photo, the two are linked by a shared connection to events from a decade ago. Nor is it coincidental that "Jasmine" is my middle name. 
+<aside>
+The photo has an emotional resonance to me: it dates back to 2011 and appeared on the cover of [Learning Statistics with R](https://learningstatisticswithr.com). Although 10 years separate the *Water Colours* series from the text and the photo, the two are linked by a shared connection to events from a decade ago 
+</aside>
 
+### Importing the image
 
-The next step is importing the image, scaling it down to a manageable resolution, and then converting it to matrix. The magick and raster packages are doing the work here:
+Now that we have the path to the image file, the next step is to import it into R at a suitable resolution. The original image size is 1000x600 pixels, which is a little more than we need. Here's a simple `import_image()` function that will read it into R at the desired `width` and `height`:
 
 ```{r import-image}
 import_image <- function(path, width, height) {
@@ -176,6 +209,12 @@ import_image <- function(path, width, height) {
     magick::image_scale(geometry)
 }
 ```
+
+Internally, all the work is being done by the fabulous magick package that provides bindings to the [ImageMagick](https://imagemagick.org/) library. In fact, it's the ImageMagick library that is doing all the work here. The data structure that is loaded into R is merely a pointer to an object that ImageMagick is manipulating. Generally that's a good thing for performance reasons, but in this case we're going to work with the raw image data inside R.
+
+### Converting the image to data
+
+Converting the image into a data structure we can use is a two step process. First, we create a matrix that represents the image in a format similar to the image itself, which is the job of the `construct_matrix()` function below. It takes the `image` as input, and first coerces it to a raster object and then to a regular matrix: in the code below, the matrix is named `mat`, and the pixel on the i-th row and j-th column of the image is represented by the contents of `mat[i, j]`. 
 
 ```{r construct-matrix}
 construct_matrix <- function(image) {
@@ -192,6 +231,12 @@ construct_matrix <- function(image) {
   return(mat)
 }
 ```
+
+A little care is needed when interpreting the rows of this matrix. When we think about graphs, the values on y-axis increase as we move our eyes upwards from the bottom, so our mental model has the small numbers at the bottom and the big numbers at the top. But that's not the only mental model in play here. When we read a matrix or a table we don't *look* at it, we *read* it - and we read from top to bottom. A numbered list, for example, has the smallest numbers at the top, and the numbers get bigger as we read down the list. Both of those mental models are sensible, but it's hard to switch between them. 
+
+The tricky part here is that the raw image is written in "reading format". It's supposed to be read like a table or a list, so the indices increase as we read down the image. The image data returned by `construct_matrix()` is organised this format. However, when we draw pictures with ggplot2 later on, we're going to need to reverse this convention and switch to "graph format" with the small numbers at the bottom. That's the reason why the code above flips the order of the row names: our next task will be to convert this (reading-formatted) matrix into a tidy tibble, and those row and column names will become become our (graph-formatted) x- and y-coordinates. 
+
+The code that does this transformation is shown below in the `construct_tibble()` function:
 
 ```{r construct-tibble}
 construct_tibble <- function(mat) {
@@ -223,6 +268,16 @@ construct_tibble <- function(mat) {
 }
 ```
 
+The first line coerces the matrix to a plain data frame, then uses `rownames_to_columns()` to extract the row names before coercing it to a tibble. This step is necessary because tibbles don't have row names, and we need to have a variable `y` to store those co-ordinate values. The next step uses `pivot_longer()` to capture all the other variables (currently named `x1`, `x2`, etc) and pull them down into a single column that specifies the `x` co-ordinate. 
+
+So at this stage, the `tbl` tibble contains three variables: an `x` value, a `y` value, and a `shade` that contains the hex code for a colour. The last step is to tidy up the values. After `pivot_longer()` does its job, the `x` variable contains strings like `"x1"`, `"x2"`, etc, but we'd prefer them to be actual numbers like `1`, `2`, etc. The same is true for the `y` variable. To fix this, the last part of the code does a tiny bit of string manipulation using `str_remove_all()` to get rid of the unwanted prefixes, and then coerces the result to a number.
+
+<aside>
+The `names_prefix` argument to `pivot_longer()` can do this without the extra step, but I prefer the verbose form. I think it's more readable and it handles `x` and `y` at the same code location
+</aside>
+
+Taken together, the `import_image()`, `construct_matrix()`, and `construct_tibble()` functions provide us with everything we need to pull the data from the image file and organise it into a format that ggplot2 is expecting:
+
 ```{r jasmines-data}
 jas <- file %>% 
   import_image(width = 100, height = 60) %>% 
@@ -232,7 +287,15 @@ jas <- file %>%
 jas
 ```
 
-Every plot is going to use this, so:
+A little unusually, the hex codes here are specified in RGBA format: the first two numbers specify the hexadecimal code for the red level, the second two represent the green level (or "channel"), the third two are the blue channel, and the last two are the opacity level (the alpha channel). I'm going to ignore the alpha channel for this exercise though.
+
+There's one last thing to point out before turning to the fun art part. Notice that `jas` also contains an `id` column. It's generally good practice to have an `id` column that uniquely identifies each row, and will turn out to be useful later when we need to join this data set with other data sets that we'll generate.
+
+### Art from data visualisation
+
+Let the art begin!
+
+The first step is to define a helper function `ggplot_themed()` that provides a template that we'll reuse in every plot. Mostly this involves preventing ggplot2 from doing things it wants to do. When we're doing data visualisation it's great that ggplot2 automatically provides things like "legends", "axes", and "scales" to map from data to visual aesthetics, but they're not much use to us artistically, so we might as well have a function that gets rid of all those things:
 
 ```{r ggplot-themed}
 ggplot_themed <- function(data) {
@@ -246,7 +309,9 @@ ggplot_themed <- function(data) {
 }
 ```
 
-We can use `geom_tile()` to draw the original image:
+This template will make all our later code easier: the `x` and `y` aesthetics are already specified, ggplot2 won't try to "interpret" our colours and sizes for us, and it won't mess with the aspect ratio. In effect, this turns off the autopilot: we're flying this thing manually... 
+
+There are a lot of ways to plot the `jas` data. The least imaginative possibility is `geom_tile()`, which produces a pixellated version of the jasmines photo where each cell is filled with the same colour as the corresponding pixel:
 
 ```{r jasmine-raster-image}
 jas %>% 
@@ -254,7 +319,7 @@ jas %>%
   geom_tile(aes(fill = shade)) 
 ```
 
-As an aside, if you map the borders of each cell to the shade you get something neat:
+Of course, if you are like me you always forget to use the fill aesthetic. The muscle memory tells me to use the colour aesthetic, so I often end up drawing something where only the borders of the tiles are coloured:
 
 ```{r jasmine-raster-variant-image}
 jas %>% 
@@ -262,15 +327,19 @@ jas %>%
   geom_tile(aes(colour = shade)) 
 ```
 
-I didn't go down that path originally, but it's worth noting that there might be something worth playing with. Generative art, much like any other kind of art, is as much about exploration and discovery as it is about technical prowess. 
+It's surprisingly pretty, and (yet another) demonstration of how good the visual system is at reconstructing images from low-quality input: the original image is still perceptible despite the fact that most of the plot area is black. I didn't end up pursuing this (yet!) but I think there's a lot of artistic potential here. It might be worth playing with at a later date. In that sense generative art is a lot like any other kind of art (or, for that matter, science). It is as much about exploration and discovery as it is about technical prowess. 
 
-Corresponding scatter plot:
+The path I did follow is based on `geom_point()`. Each pixel in the original image is plotted as a circular marker in the appropriate colour. Here's the simplest version of this idea applied to the `jas` data:
 
 ```{r jasmine-scatter-image}
 jas %>% 
   ggplot_themed() + 
   geom_point(aes(colour = shade)) 
 ```
+
+It's simple, but I like it.
+
+### Extracting the colour channels
 
 Next step, extract the channels
 
@@ -295,6 +364,8 @@ extract_channels <- function(tbl) {
 jas <- extract_channels(jas)
 jas
 ```  
+
+### Art from channel manipulation
 
 One way to use this representation is in halftone images. If you have a printer that contains only black ink, you can approximate shades of grey by using the size of each dot to represent how dark that pixel should be:
 
