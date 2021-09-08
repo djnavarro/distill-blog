@@ -603,6 +603,8 @@ pts %>%
 
 ### Joining the noise with jasmine colours
 
+We can now take the pixels from the jasmines image and make them "flow" across the image. The next step is to reintroduce the colour information. We can do this using `full_join()` from the dplyr package. The convenience function `join_parts()` does this only after removing the `x` and `y` coordinates from the `jas` data: we want the positional information to come from `pts`, not the original image, so we discard those coordinates and join the two tables by the `id` column (I promised it would be useful!)
+
 ```{r join-parts}
 join_parts <- function(jas, pts) {
   jas %>% 
@@ -613,10 +615,14 @@ join_parts <- function(jas, pts) {
 
 ```
 
+The result is a tibble that looks like this:
+
 ```{r noisy-jasmine-data, cache=TRUE}
 jas <- join_parts(jas, pts)
 jas
 ```
+
+More importantly though, it produces images like this:
 
 ```{r noisy-jasmine-image, cache=TRUE}
 map_size <- function(x, y) {
@@ -635,15 +641,23 @@ jas %>%
   )
 ```
 
+When colouring the image, we're using the same "halftonesque" trick from earlier. The colours vary only in capture only in hue and saturation. The intensity values are recoded as size, but this time around we're also using size to capture the "temporal" information. The points get larger as time increases. There are, of course, endless ways in which you could combine the positional, temporal, and shading data to create interesting generative art. This is only one example.
 
-### A higher resolution example
+### The last chapter
 
-```{r jasmine-detailed-data, cache=TRUE}
+At last we have the tools we need to create images in a style similar (though not identical) to those produced by the *Water Colours* system. We can import, reorganise, and separate the data:
+
+```{r jasmine-detailed-read, cache=TRUE}
 jas <- file %>% 
   import_image(width = 200, height = 120) %>% 
   construct_matrix() %>% 
   construct_tibble() %>% 
   extract_channels()
+```
+
+We can define flow fields with different properties, move the pixels through the fields, and rejoin the modified positions with the colour information
+
+```{r jasmine-detailed-data, cache=TRUE}
 
 pts <- jas %>% 
   extract_points() %>% 
@@ -655,14 +669,20 @@ pts <- jas %>%
   )
 
 jas <- join_parts(jas, pts)
+jas
 ```
 
+We can write customised helpers to guide how information is used:
 
-```{r jasmine-detailed-image, cache=TRUE}
+```{r jasmine-detailed-image-helper}
 map_size <- function(x, y) {
   12 * (1 - x) * (max(y)^2 - y^2) / y^2
 }
+```
 
+And we can render the images with ggplot2:
+
+```{r jasmine-detailed-image, cache=TRUE}
 pic <- jas %>% 
   ggplot_themed() +  
   geom_point(
@@ -678,6 +698,7 @@ pic <- jas %>%
 pic
 ```
 
+The colour bleeding over the edges here is to be expected. Some of the points created with `geom_point()` are quite large, and they extend some distance beyond the boundaries of the original jasmines photograph. In a way it's rather aesthetic, like a little frame, but if you prefer to hide this part of the image we can modify the scale limits in ggplot2:
 
 ```{r jasmine-cropped-image, cache=TRUE}
 pic +
@@ -685,6 +706,9 @@ pic +
   scale_y_continuous(limits = c(7, 114), expand = c(0, 0))
 ```
 
+The end result is something that has a qualitative similarity to the *Water Colours* pieces, but is also possessed of a style that is very much its own. This is as it should be. It may be true that "all art is theft" -- as Picasso is often misquoted as saying -- but a good artistic theft is no mere replication. It can also be growth, change, and reconstruction. 
+
+A happy ending after all.
 
 ## Epilogue
 

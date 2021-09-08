@@ -1521,7 +1521,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <ul>
 <li><a href="#adding-noise-to-jasmines-coordinates">Adding noise to jasmines coordinates</a></li>
 <li><a href="#joining-the-noise-with-jasmine-colours">Joining the noise with jasmine colours</a></li>
-<li><a href="#a-higher-resolution-example">A higher resolution example</a></li>
+<li><a href="#the-last-chapter">The last chapter</a></li>
 </ul></li>
 <li><a href="#epilogue">Epilogue</a></li>
 </ul>
@@ -2210,6 +2210,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <p><img src="index_files/figure-html5/accumulated-noise-image-1.png" width="100%" /></p>
 </div>
 <h3 id="joining-the-noise-with-jasmine-colours">Joining the noise with jasmine colours</h3>
+<p>We can now take the pixels from the jasmines image and make them “flow” across the image. The next step is to reintroduce the colour information. We can do this using <code>full_join()</code> from the dplyr package. The convenience function <code>join_parts()</code> does this only after removing the <code>x</code> and <code>y</code> coordinates from the <code>jas</code> data: we want the positional information to come from <code>pts</code>, not the original image, so we discard those coordinates and join the two tables by the <code>id</code> column (I promised it would be useful!)</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>join_parts</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2221,6 +2222,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
+<p>The result is a tibble that looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>join_parts</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span>
@@ -2242,6 +2244,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 10 #944b…    10   148    75    97 0.950  0.493 0.580     1    18     0
 # … with 125,990 more rows</code></pre>
 </div>
+<p>More importantly though, it produces images like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>map_size</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2262,7 +2265,9 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p><img src="index_files/figure-html5/noisy-jasmine-image-1.png" width="100%" /></p>
 </div>
-<h3 id="a-higher-resolution-example">A higher resolution example</h3>
+<p>When colouring the image, we’re using the same “halftonesque” trick from earlier. The colours vary only in capture only in hue and saturation. The intensity values are recoded as size, but this time around we’re also using size to capture the “temporal” information. The points get larger as time increases. There are, of course, endless ways in which you could combine the positional, temporal, and shading data to create interesting generative art. This is only one example.</p>
+<h3 id="the-last-chapter">The last chapter</h3>
+<p>At last we have the tools we need to create images in a style similar (though not identical) to those produced by the <em>Water Colours</em> system. We can import, reorganise, and separate the data:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='va'>file</span> <span class='op'>%&gt;%</span> 
@@ -2270,8 +2275,13 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
   <span class='fu'>construct_matrix</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>construct_tibble</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>extract_channels</span><span class='op'>(</span><span class='op'>)</span>
-
-<span class='va'>pts</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
+</code></pre>
+</div>
+</div>
+<p>We can define flow fields with different properties, move the pixels through the fields, and rejoin the modified positions with the colour information</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pts</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>extract_points</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>iterate</span><span class='op'>(</span>
     time <span class='op'>=</span> <span class='fl'>40</span>, 
@@ -2281,16 +2291,37 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
   <span class='op'>)</span>
 
 <span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>join_parts</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span>
+<span class='va'>jas</span>
 </code></pre>
 </div>
+<pre><code># A tibble: 984,000 × 11
+   shade    id   red   grn   blu    hue    sat   val     x     y  time
+   &lt;chr&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 #9c8…     1   156   129   120 0.0417 0.231  0.612     1     1     0
+ 2 #81b…     2   129   181   100 0.274  0.448  0.710     1    10     0
+ 3 #8b7…     3   139   120   112 0.0494 0.194  0.545     1   100     0
+ 4 #eed…     4   238   223   219 0.0351 0.0798 0.933     1   101     0
+ 5 #c29…     5   194   154   163 0.962  0.206  0.761     1   102     0
+ 6 #d5e…     6   213   225   195 0.233  0.133  0.882     1   103     0
+ 7 #bde…     7   189   232   190 0.337  0.185  0.910     1   104     0
+ 8 #b3d…     8   179   223   188 0.367  0.197  0.875     1   105     0
+ 9 #b2d…     9   178   220   189 0.377  0.191  0.863     1   106     0
+10 #b3d…    10   179   217   191 0.386  0.175  0.851     1   107     0
+# … with 983,990 more rows</code></pre>
 </div>
+<p>We can write customised helpers to guide how information is used:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>map_size</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>y</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fl'>12</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='va'>x</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>)</span><span class='op'>^</span><span class='fl'>2</span> <span class='op'>-</span> <span class='va'>y</span><span class='op'>^</span><span class='fl'>2</span><span class='op'>)</span> <span class='op'>/</span> <span class='va'>y</span><span class='op'>^</span><span class='fl'>2</span>
 <span class='op'>}</span>
-
-<span class='va'>pic</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
+</code></pre>
+</div>
+</div>
+<p>And we can render the images with ggplot2:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pic</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>ggplot_themed</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>  
   <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>
     mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
@@ -2307,6 +2338,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p><img src="index_files/figure-html5/jasmine-detailed-image-1.png" width="100%" /></p>
 </div>
+<p>The colour bleeding over the edges here is to be expected. Some of the points created with <code>geom_point()</code> are quite large, and they extend some distance beyond the boundaries of the original jasmines photograph. In a way it’s rather aesthetic, like a little frame, but if you prefer to hide this part of the image we can modify the scale limits in ggplot2:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pic</span> <span class='op'>+</span>
@@ -2316,6 +2348,8 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p><img src="index_files/figure-html5/jasmine-cropped-image-1.png" width="100%" /></p>
 </div>
+<p>The end result is something that has a qualitative similarity to the <em>Water Colours</em> pieces, but is also possessed of a style that is very much its own. This is as it should be. It may be true that “all art is theft” – as Picasso is often misquoted as saying – but a good artistic theft is no mere replication. It can also be growth, change, and reconstruction.</p>
+<p>A happy ending after all.</p>
 <h2 id="epilogue">Epilogue</h2>
 <blockquote>
 <p>I find it so amazing when people tell me that electronic music has no soul. You can’t blame the computer. If there’s no soul in the music, it’s because nobody put it there (<a href="https://www.azquotes.com/quote/564301">Björk</a>, via <a href="https://twitter.com/TimdeSousa/status/1432898952907554822">Tim de Sousa</a>)</p>
@@ -2412,7 +2446,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 00:34:15 AEST</span>
+<span>2021-09-09 01:07:08 AEST</span>
 </p>
 </div>
 </d-appendix>
@@ -2433,7 +2467,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
