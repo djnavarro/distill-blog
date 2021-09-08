@@ -3,7 +3,7 @@ title: "Art, jasmines, and the water colours"
 description: | 
   An essay and tutorial covering a few useful art techniques in R
 params:
-  slug: generating-the-water-colours
+  slug: water-colours
   date: 2021-09-07
 author:
   - first_name: "Danielle"
@@ -15,7 +15,7 @@ author:
 date: 2021-09-07
 preview: jasmine-recollected.png
 creative_commons: CC BY
-citation_url: https://blog.djnavarro.net/generating-the-water-colours
+citation_url: https://blog.djnavarro.net/water-colours
 repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
