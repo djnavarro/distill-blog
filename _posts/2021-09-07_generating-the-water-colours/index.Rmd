@@ -71,13 +71,23 @@ conflicted::conflict_prefer("filter", "dplyr")
 
 ## Prelude
 
-In recent weeks I've been posting generative art from the [Water Colours](https://art.djnavarro.net/gallery/water-colours/) series on twitter. The series has been popular, prompting requests that I sell prints, mint NFTs, or write a tutorial showing how they are made. For personal reasons I didn't want to commercialise this series. Instead, I chose to make the pieces freely available under a CC0 public domain licence and asked people to donate to a [gofundme](https://au.gofundme.com/f/data-science-art-to-support-a-womens-refuge) I set up for a charitable organisation I care about (the [Lou's Place](https://www.lousplace.com.au/) women's refuge here in Sydney). I'm not going to discuss the personal story behind this series, but it does matter. As I've mentioned [previously](/posts/2021-07-08_generative-art-in-r/), the art I make is inherently tied to moods and emotions. In hindsight it is easy enough to describe how the system is implemented but this perspective is misleading. Although a clean and unemotional description of the code is useful for explanatory purposes, the actual *process* of creating the system is deeply tied to my life, my history, and my subjective experience. Those details are inextricably bound to the system. A friend of mined described it better than I ever could:
+In recent weeks I've been posting generative art from the [Water Colours](https://art.djnavarro.net/gallery/water-colours/) series on twitter. The series has been popular, prompting requests that I sell prints, mint NFTs, or write a tutorial showing how they are made. For personal reasons I didn't want to commercialise this series. Instead, I chose to make the pieces freely available under a CC0 public domain licence and asked people to donate to a [gofundme](https://au.gofundme.com/f/data-science-art-to-support-a-womens-refuge) I set up for a charitable organisation I care about (the [Lou's Place](https://www.lousplace.com.au/) women's refuge here in Sydney). I'm not going to discuss the personal story behind this series, but it does matter. As I've mentioned [previously](/posts/2021-07-08_generative-art-in-r/), the art I make is inherently tied to moods and emotions. In hindsight it is easy enough to describe how the system is implemented but this perspective is misleading. Although a clean and unemotional description of the code is useful for explanatory purposes, the actual *process* of creating the system is deeply tied to my life, my history, and my subjective experience. Those details are inextricably bound to the system. A friend described it better than I ever could:
 
 > The computer doesn't make this art any more than a camera makes a photograph; art is always intimate ([Amy Patterson](https://twitter.com/justanotheramy/status/1432916731794579460))
 
-In this post I'll aim to describe the mechanistic processes involved in creating these pieces, but this is woefully inadequate as a description of the artistic process. The optical mechanics of a camera do not circumscribe the work of a skilled photographer. So it goes with generative art. The code describes the mechanics; it does not describe the art. There is a deeply personal story underneath these pieces, and I would no more mint an NFT from that story than I would sell a piece of my soul to a collector.
+In this post I'll describe the mechanistic processes involved in creating these pieces, but this is woefully inadequate as a description of the artistic process as a whole. The optical mechanics of a camera do not circumscribe the work of a skilled photographer. So it goes with generative art. The code describes the mechanics; it does not describe the art. There is a deeply personal story underneath these pieces, and I would no more mint an NFT from that story than I would sell a piece of my soul to a collector.
 
-## The water colours
+## The water colours repository
+
+When I started making generative art I didn't think much about archiving my art or keeping it organised. I liked making pretty things, and that was as far as my thought process went. I didn't place the code under version control, and I stored everything in my Dropbox folder. There's nothing wrong with that: some things don't belong on GitHub. During the development phase of any art project that's still what I do, and I'm perfectly happy with it.
+
+Things become a little trickier when you want to share the art. My [art website](https://art.djnavarro.net) is hosted on GitHub pages, and so my initial approach was to keep the art in the website repository. *Huuuuge mistake.* Sometimes the image files can be quite large and sometimes a series contains a large number of images. By the time I'd reached 40+ series, Hugo took a very long time to build the site (several minutes), and GitHub took even longer to deploy it (over half an hour).
+
+Eventually I decided it made more sense to have one repository per series. Each one uses the "series-" prefix to remind me it's an art repo. I don't use these repositories during development: they exist solely to snapshot the release. For example, the [series-water-colours](https://github.com/djnavarro/series-water-colours) repository isn't going to be updated regularly, it's really just an archive combined with a "docs" folder that is used to host a minimal GitHub Pages site that makes the images public. It's convenient for my purposes because my art website doesn't have to host any of the images: all it does is hotlink to the images that are exposed via the series repo.
+
+It may seem surprising that I've used GitHub for this. Image files aren't exactly well suited to version control, but it's not like they're going to be updated. Plus, there are a lot of advantages. I can explicitly include licencing information in the repository, I can release source code (when I want to), and I can include a readme file for anyone who wants to use it. 
+
+One nice feature of doing things this way is that it has encouraged me to include a [manifest file]("https://djnavarro.net/series-water-colours/manifest.csv"), a plain csv file with one row per image, and one column for each piece of metadata I want to retain about the images. Again, it seems like overkill, but I'm starting to realise that if I don't have a system I'll forget things like "what the piece is called" or "when I made it". 
 
 ```{r water-colour-manifest, echo=FALSE, message=FALSE, cache=TRUE}
 manifest <- read_csv("https://djnavarro.net/series-water-colours/manifest.csv")
@@ -97,13 +107,13 @@ manifest <- manifest %>%
   )
 ```
 
-There's a manifest file in the art repository containing metadata assocated with each piece. After a small amount of data wrangling I get this:
+I can use `readr::read_csv()` to download the manifest and do a little data wrangling to organise it into a format that is handy to me right now:
 
 ```{r show-manifest}
 manifest
 ```
 
-Here are some of the pieces from this series:
+The data wrangling I used to get it into this format isn't shown in the post, but you can always look at the [source code](https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-07_generating-the-water-colours) for this post if you're curious. More to the point, the `manifest` data frame is nicely suited for use with the [bs4cards](https://bs4cards.djnavarro.net/) package, so I can display some of the pieces in a neat and tidy thumbnail grid:
 
 ```{r water-colour-cards, message=FALSE, cache=TRUE}
 manifest[1:8, ] %>% 
@@ -115,6 +125,8 @@ manifest[1:8, ] %>%
     width = 2
   )  
 ```
+
+Each thumbnail image links to a medium resolution (2000 x 2000 pixels) jpg version of the corresponding piece, if you'd like to see the images in a little more detail. 
 
 ## Dependencies 
 
@@ -131,7 +143,7 @@ library(purrr)
 library(dplyr)
 ```
 
-Besides tidyverse and base R functions, I'll use a few other packages as well: in addition to the bs4cards package that made a brief appearance earlier, the magick, raster, rprojroot, fs, and ambient packages are all used in making the art. Because functions from those packages may not be as familiar to you, I'll namespace the calls to them in the same way I did with `bs4cards::cards()` previously. Hopefully that will make it easier to see which functions belong to one of those packages
+Besides tidyverse and base R functions, I'll use a few other packages as well: in addition to the bs4cards package that made a brief appearance earlier, the [magick](https://docs.ropensci.org/magick/), [raster](https://github.com/rspatial/raster/), [rprojroot](https://rprojroot.r-lib.org/), [fs](https://fs.r-lib.org/), and [ambient](https://ambient.data-imaginist.com/) packages are all used in making the art. Because functions from those packages may not be as familiar to you, I'll namespace the calls to them in the same way I did with `bs4cards::cards()` previously. Hopefully that will make it easier to see which functions belong to one of those packages
 
 
 ## Art by image processing
