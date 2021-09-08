@@ -66,8 +66,6 @@ conflicted::conflict_prefer("filter", "dplyr")
 
 <!--------------- post ----------------->
 
-> I find it so amazing when people tell me that electronic music has no soul. You can't blame the computer. If there's no soul in the music, it's because nobody put it there ([Björk](https://www.azquotes.com/quote/564301), via [Tim de Sousa](https://twitter.com/TimdeSousa/status/1432898952907554822))
-
 
 ## Prelude
 
@@ -569,6 +567,8 @@ pts %>%
 
 ### Adding noise to jasmines coordinates
 
+The time has come to start assembling the pieces of the jigsaw puzzle, by applying the flow fields from the previous section to the data associated with the jasmines image. The first step in doing so is to write a small `extract_points()` function that will take a data frame (like `jas`) as input, extract the positional information (`x` and `y`) and the identifier column (`id`), and add a `time` column so that we can modify positions over time:
+
 ```{r extract-points}
 extract_points <- function(data) {
   data %>% 
@@ -577,15 +577,19 @@ extract_points <- function(data) {
 }
 ```
 
+Here's how we can use this. The code below extracts the positional information from `jas` and then use the `iterate()` function from before to gradually move those positions along the paths traced out by a flow field:
+
 ```{r accumulated-noise-data}
 pts <- jas %>% 
   extract_points() %>% 
   iterate(time = 20, step = .1)
 ```
 
+The `pts` tibble doesn't contain any of the colour information from `jas`, but it does have the "right kind" of positional information. It's also rather pretty in its own right:
+
 ```{r accumulated-noise-image, cache=TRUE}
 map_size <- function(x) {
-  ambient::normalise(x^2, to = c(0, 5))
+  ambient::normalise(x^2, to = c(0, 3.5))
 }
 
 pts %>% 
@@ -683,6 +687,9 @@ pic +
 
 
 ## Epilogue
+
+> I find it so amazing when people tell me that electronic music has no soul. You can't blame the computer. If there's no soul in the music, it's because nobody put it there ([Björk](https://www.azquotes.com/quote/564301), via [Tim de Sousa](https://twitter.com/TimdeSousa/status/1432898952907554822))
+
 
 ```{r water-colour-cards-3, message=FALSE, echo=FALSE, cache=TRUE}
 manifest[13:20, ] %>% 

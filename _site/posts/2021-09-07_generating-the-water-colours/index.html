@@ -2540,9 +2540,6 @@ setup, appendices, and redirects should "just work" (ish)
 ---->
 <!--------------- setup ----------------->
 <!--------------- post ----------------->
-<blockquote>
-<p>I find it so amazing when people tell me that electronic music has no soul. You can’t blame the computer. If there’s no soul in the music, it’s because nobody put it there (<a href="https://www.azquotes.com/quote/564301">Björk</a>, via <a href="https://twitter.com/TimdeSousa/status/1432898952907554822">Tim de Sousa</a>)</p>
-</blockquote>
 <h2 id="prelude">Prelude</h2>
 <p>In recent weeks I’ve been posting generative art from the <a href="https://art.djnavarro.net/gallery/water-colours/">Water Colours</a> series on twitter. The series has been popular, prompting requests that I sell prints, mint NFTs, or write a tutorial showing how they are made. For personal reasons I didn’t want to commercialise this series. Instead, I chose to make the pieces freely available under a CC0 public domain licence and asked people to donate to a <a href="https://au.gofundme.com/f/data-science-art-to-support-a-womens-refuge">gofundme</a> I set up for a charitable organisation I care about (the <a href="https://www.lousplace.com.au/">Lou’s Place</a> women’s refuge here in Sydney). I’m not going to discuss the personal story behind this series, but it does matter. As I’ve mentioned <a href="/posts/2021-07-08_generative-art-in-r/">previously</a>, the art I make is inherently tied to moods. It is emotional in nature. In hindsight it is easy enough to describe how the system is implemented but this perspective is misleading. Although a clean and unemotional description of the code is useful for explanatory purposes, the actual <em>process</em> of creating the system is deeply tied to my life, my history, and my subjective experience. Those details are inextricably bound to the system. A friend described it better than I ever could:</p>
 <blockquote>
@@ -3171,6 +3168,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <h2 id="assembling-the-parts">Assembling the parts</h2>
 <h3 id="adding-noise-to-jasmines-coordinates">Adding noise to jasmines coordinates</h3>
+<p>The time has come to start assembling the pieces of the jigsaw puzzle, by applying the flow fields from the previous section to the data associated with the jasmines image. The first step in doing so is to write a small <code>extract_points()</code> function that will take a data frame (like <code>jas</code>) as input, extract the positional information (<code>x</code> and <code>y</code>) and the identifier column (<code>id</code>), and add a <code>time</code> column so that we can modify positions over time:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>extract_points</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>data</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3181,6 +3179,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
+<p>Here’s how we can use this. The code below extracts the positional information from <code>jas</code> and then use the <code>iterate()</code> function from before to gradually move those positions along the paths traced out by a flow field:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pts</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
@@ -3189,10 +3188,11 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
+<p>The <code>pts</code> tibble doesn’t contain any of the colour information from <code>jas</code>, but it does have the “right kind” of positional information. It’s also rather pretty in its own right:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>map_size</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'>ambient</span><span class='fu'>::</span><span class='fu'><a href='https://ambient.data-imaginist.com/reference/modifications.html'>normalise</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>^</span><span class='fl'>2</span>, to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'>ambient</span><span class='fu'>::</span><span class='fu'><a href='https://ambient.data-imaginist.com/reference/modifications.html'>normalise</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>^</span><span class='fl'>2</span>, to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>3.5</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 <span class='va'>pts</span> <span class='op'>%&gt;%</span> 
@@ -3314,6 +3314,9 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <p><img src="index_files/figure-html5/jasmine-cropped-image-1.png" width="100%" /></p>
 </div>
 <h2 id="epilogue">Epilogue</h2>
+<blockquote>
+<p>I find it so amazing when people tell me that electronic music has no soul. You can’t blame the computer. If there’s no soul in the music, it’s because nobody put it there (<a href="https://www.azquotes.com/quote/564301">Björk</a>, via <a href="https://twitter.com/TimdeSousa/status/1432898952907554822">Tim de Sousa</a>)</p>
+</blockquote>
 <div class="layout-chunk" data-layout="l-body">
 <div>
 <div class="row p-0 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4" style="margin-left: -.4rem; margin-right: -.4rem; margin-top: 1rem; margin-bottom: 1rem; ">
@@ -3406,7 +3409,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 00:12:12 AEST</span>
+<span>2021-09-09 00:34:15 AEST</span>
 </p>
 </div>
 </d-appendix>
