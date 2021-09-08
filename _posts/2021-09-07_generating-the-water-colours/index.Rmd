@@ -71,7 +71,7 @@ conflicted::conflict_prefer("filter", "dplyr")
 
 ## Prelude
 
-In recent weeks I've been posting generative art from the [Water Colours](https://art.djnavarro.net/gallery/water-colours/) series on twitter. The series has been popular, prompting requests that I sell prints, mint NFTs, or write a tutorial showing how they are made. For personal reasons I didn't want to commercialise this series. Instead, I chose to make the pieces freely available under a CC0 public domain licence and asked people to donate to a [gofundme](https://au.gofundme.com/f/data-science-art-to-support-a-womens-refuge) I set up for a charitable organisation I care about (the [Lou's Place](https://www.lousplace.com.au/) women's refuge here in Sydney). I'm not going to discuss the personal story behind this series, but it does matter. As I've mentioned [previously](/posts/2021-07-08_generative-art-in-r/), the art I make is inherently tied to moods and emotions. In hindsight it is easy enough to describe how the system is implemented but this perspective is misleading. Although a clean and unemotional description of the code is useful for explanatory purposes, the actual *process* of creating the system is deeply tied to my life, my history, and my subjective experience. Those details are inextricably bound to the system. A friend described it better than I ever could:
+In recent weeks I've been posting generative art from the [Water Colours](https://art.djnavarro.net/gallery/water-colours/) series on twitter. The series has been popular, prompting requests that I sell prints, mint NFTs, or write a tutorial showing how they are made. For personal reasons I didn't want to commercialise this series. Instead, I chose to make the pieces freely available under a CC0 public domain licence and asked people to donate to a [gofundme](https://au.gofundme.com/f/data-science-art-to-support-a-womens-refuge) I set up for a charitable organisation I care about (the [Lou's Place](https://www.lousplace.com.au/) women's refuge here in Sydney). I'm not going to discuss the personal story behind this series, but it does matter. As I've mentioned [previously](/posts/2021-07-08_generative-art-in-r/), the art I make is inherently tied to moods. It is emotional in nature. In hindsight it is easy enough to describe how the system is implemented but this perspective is misleading. Although a clean and unemotional description of the code is useful for explanatory purposes, the actual *process* of creating the system is deeply tied to my life, my history, and my subjective experience. Those details are inextricably bound to the system. A friend described it better than I ever could:
 
 > The computer doesn't make this art any more than a camera makes a photograph; art is always intimate ([Amy Patterson](https://twitter.com/justanotheramy/status/1432916731794579460))
 
@@ -145,7 +145,7 @@ In the remainder of this post I'll walk you through the process of creating piec
 
 In this post I'll assume you're already familiar with data wrangling and visualisation with tidyverse tools. This is the subset of [tidyverse](https://www.tidyverse.org/) packages that I have attached, and the code that follows relies on all these in some fashion:
 
-```{r}
+```{r library-list}
 library(magrittr)
 library(readr)
 library(tidyr)
@@ -416,6 +416,9 @@ In this code, the `hsv()` function takes the hue and saturation channels from th
 
 ## Intermission
 
+Up to this point I've talked about image manipulation, and I hope you can see the artistic potential created when we pair image processing tools like magick with data visualisation tools like ggplot2. What I haven't talked about is how to choose (or generate!) the images to manipulate, and I haven't talked about how we might introduce a probabilistic component to the process. I'm not going to say much about how to choose images. The possibilities are endless. I've used a photo I took in my garden in this post, but the pieces in *Water Colours* series have a different origin. I dripped some food colouring into a glass of water and took some photos of the dye diffusing. Small sections were cropped out of these photos and often preprocessed in some fashion by changing the hue, saturation etc. These manipulated photos were then passed into a noise generation process, and the output produced images like this:
+
+
 ```{r water-colour-cards-2, message=FALSE, echo=FALSE, cache=TRUE}
 manifest[9:12, ] %>% 
   bs4cards::cards(
@@ -430,8 +433,13 @@ manifest[9:12, ] %>%
 
 ## Art from noise generators
 
+### Multidimensional noise generation
 
-Generating vector fields using the ambient package: 
+How can we generate interesting noise patterns in R? As usual, there are many different ways you can do this, but my favourite method is to use the [ambient](https://ambient.data-imaginist.com/) package that provides bindings to the [FastNoise](https://github.com/Auburn/FastNoiseLite) C++ library. A proper description of what you can do with ambient is beyond what I can accomplish here. There are a *lot* of things you can do with a tool like this, and I've explored only a small subset of the possibilities in my art. Instead, what I'll do is link to a lovely essay on [flow fields](https://tylerxhobbs.com/essays/2020/flow-fields) and encourage you to play around yourself.
+
+The `field()` function below provides one example. At its heart is `ambient::gen_simplex()`, a function that generates [simplex noise](https://en.wikipedia.org/wiki/Simplex_noise) (examples [here](https://ambient.data-imaginist.com/reference/noise_simplex.html)), a useful form of multidimensional noise that has applications in computer graphics. In the code below, the simplex noise is then modified by a [billow fractal](https://ambient.data-imaginist.com/reference/billow.html) that makes it "lumpier". That's the job of `ambient::gen_billow()` and `ambient::fracture()`. This is then modified one last time by the `ambient::curl_noise()` function to avoid some undesirable properties of the flow fields created by simplex noise.
+
+In any case, here is the code. You'll probably need to read through the ambient documentation to understand all the moving parts here, but for our purposes the main things to note are the arguments. The `points` argument takes a data frame or tibble that contains the `x` and `y` coordinates of a set of points. The `frequency` argument controls the overall "scale" of the noise: does it change quickly or slowly as you move across the image? The `octaves` argument controls the amount of fractal-ness (hush, I know that's not a word) to the image. How many times do you apply the underlying transformation?
 
 ```{r field}
 field <- function(points, frequency = .1, octaves = 1) {
@@ -448,6 +456,8 @@ field <- function(points, frequency = .1, octaves = 1) {
 }
 ```
 
+The output of the `field()` function is best interpreted as a set of vectors: it's not the locations of new points. Rather, it's telling you how fast the x- and y-components are flowing at each of the locations at the specified `points`. If we want to `shift()` a set of points along the directions specified by the `field()`, we'll need a function like this:
+
 ```{r shift}
 shift <- function(points, amount, ...) {
   vectors <- field(points, ...)
@@ -462,10 +472,25 @@ shift <- function(points, amount, ...) {
 }
 ```
 
-```{r noise-stepped-data}
+The set of `points` is passed to the `field()`, and then they are moved by a certain `amount` (a single number specifying a step size) in the relevant direction. The result is a new data frame with the same columns and the same number of rows. 
+
+It's worth noting that the `shift()` function assumes that `points` contains an `id` column as well as the `x` and `y` columns. This will be crucial later when we want to merge the output with the `jas` data. Because the positions of each point are changing, the `id` column will be the method we use to join the two data sets. It's also worth noting that `shift()` keeps track of `time` for you. The `points` input contains a `time` column: the output from `shift()` increments that by one, indicating we have stepped forward in time as well as moved the points in space. 
+
+### Art from the noise
+
+To illustrate how this all works, I'll start by creating a regular 50x30 grid of points:
+
+```{r plain-grid}
 points_time0 <- expand_grid(x = 1:50, y = 1:30) %>% 
   mutate(time = 0, id = row_number())
 
+ggplot_themed(points_time0) + 
+  geom_point(size = .5)
+```
+
+Next, I'll apply the `shift()` function three times in succession, and bind the results into a single tibble that contains the the data at each point in time:
+
+```{r noise-stepped-data}
 points_time1 <- shift(points_time0, amount = 1)
 points_time2 <- shift(points_time1, amount = 1)
 points_time3 <- shift(points_time2, amount = 1)
@@ -478,14 +503,55 @@ pts <- bind_rows(
 )
 ```
 
-```{r noise-stepped-image}
+Then I'll quickly write a couple of boring wrapper functions that will control how the size and transparency of the markers changes as a function of time...
+
+```{r boring-wrappers}
 map_size <- function(x) {
   ambient::normalise(x, to = c(0, 2))
 }
-
 map_alpha <- function(x) {
   ambient::normalise(-x, to = c(0, .5))
 }
+```
+
+...and now we can create some art:
+
+```{r noise-stepped-image}
+pts %>% 
+  ggplot_themed() +  
+  geom_point(
+    mapping = aes(
+      size = map_size(time), 
+      alpha = map_alpha(time)
+    ),
+    show.legend = FALSE
+  )
+```
+
+### Accumulating art with purrr
+
+The code above is inelegant. I've "iteratively" created a sequence of data frames by writing the same line of code several times. I could solve this problem by writing a loop, but I've become a fan of the functional programming tools in [purrr](https://purrr.tidyverse.org/) and I'll take advantage of that. In particular, the `purrr::accumulate()` function is an [underappreciated gem](https://adv-r.hadley.nz/functionals.html#accumulate). It does *precisely* the thing we want to do here. It takes one object (e.g., `points`) as input, together with a second quantity (e.g., an `amount`) and uses the user-supplied function (e.g., `shift()` to produce a *new* object that can again be passed to that function (i.e., new `points`). It continues with this process, taking the output of the last iteration of `shift()` and using it as input to the next iteration until it runs out of `amount` values. It is very similar to the better-known `purrr::reduce()` function, except that it doesn't throw away the intermediate values. The `reduce()` function is only interested in the destination; `accumulate()` is a whole *journey*. 
+
+So let's use it. 
+
+The `iterate()` function below gives a convenient interface...
+
+```{r iterate}
+iterate <- function(pts, time, step, ...) {
+  bind_rows(accumulate(
+    .x = rep(step, time), 
+    .f = shift, 
+    .init = pts,
+    ...
+  ))
+}
+```
+
+... and here's the code to recreate the image shown above:
+
+```{r noise-stepped-data-2}
+pts <- points_time0 %>% 
+  iterate(time = 3, step = 1)
 
 pts %>% 
   ggplot_themed() +  
@@ -498,18 +564,10 @@ pts %>%
   )
 ```
 
-The purrr package provides a useful tool for iterating:
 
-```{r iterate}
-iterate <- function(pts, time, step, ...) {
-  bind_rows(accumulate(
-    .x = rep(step, time), 
-    .f = shift, 
-    .init = pts,
-    ...
-  ))
-}
-```
+## Assembling the parts
+
+### Adding noise to jasmines coordinates
 
 ```{r extract-points}
 extract_points <- function(data) {
@@ -539,8 +597,7 @@ pts %>%
   ) 
 ```
 
-
-## Assembling the parts
+### Joining the noise with jasmine colours
 
 ```{r join-parts}
 join_parts <- function(jas, pts) {
@@ -575,7 +632,7 @@ jas %>%
 ```
 
 
-Repeat at higher resolution:
+### A higher resolution example
 
 ```{r jasmine-detailed-data, cache=TRUE}
 jas <- file %>% 
@@ -641,7 +698,7 @@ manifest[13:20, ] %>%
 
 <!--------------- appendices ----------------->
 
-```{r, echo=FALSE}
+```{r appendix, echo=FALSE}
 refinery::insert_appendix("djnavarro/distill-blog", long_slug)
 ```
 
