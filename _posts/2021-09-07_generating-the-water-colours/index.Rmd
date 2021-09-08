@@ -1,8 +1,7 @@
 ---
-title: "Generative art, jasmines, and the water colours series"
+title: "Art, jasmines, and the water colours"
 description: | 
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit
+  An essay and tutorial covering a few useful art techniques in R
 params:
   slug: generating-the-water-colours
   date: 2021-09-07
@@ -25,20 +24,6 @@ output:
     self_contained: false
 ---
 
-<!----
-
-yaml checklist:
-- set the preview image
-- write title and description
-
-renv checklist:
-- initialise the _renv folder with refinery::renv_new(long_slug)
-- populate the lockfile with refinery::renv_snapshot(long_slug)
-- update the _renv folder from snapshot with refinery::refresh(long_slug)
-
-setup, appendices, and redirects should "just work" (ish)
-
----->
 
 <!--------------- setup ----------------->
 
