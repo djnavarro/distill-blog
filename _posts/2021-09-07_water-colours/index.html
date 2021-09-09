@@ -1960,7 +1960,7 @@ The <code>names_prefix</code> argument to <code>pivot_longer()</code> can transf
 In this code the <code>ambient::normalise()</code> function is used to rescale the input to fall within a specified range. Usually ggplot2 handles this automatically, but as I mentioned, we’ve turned off the autopilot…
 </aside>
 <p>For real world printers, this approach is very convenient because it allows us to construct any shade we like using only a few different colours of ink. In the halftone world shades of grey are merely blacks of different size, pinks are merely sizes of red (sort of), and so on.</p>
-<p>But we’re not using real printers, and in any case the image above is not a very good example of a halftone format: I’m crudely mapping <code>1-val</code> to the size aesthetic, and that’s not actually the right way to do this (if you want to see this done properly, look at the <a href="https://github.com/cmarcum/halftoner">halftoner</a> package). The image above is “inspired by” the halftone concept, not the real thing. I’m okay with that, and having abandoned the idea of remaining fidelity opens up new possibilities. For example, there’s nothing stopping us retaining the original hue and saturation, while using dot size to represent the intensity value, That allows us to produce “halftonesque” images like this:</p>
+<p>But we’re not using real printers, and in any case the image above is not a very good example of a halftone format: I’m crudely mapping <code>1-val</code> to the size aesthetic, and that’s not actually the right way to do this (if you want to see this done properly, look at the <a href="https://github.com/cmarcum/halftoner">halftoner</a> package). The image above is “inspired by” the halftone concept, not the real thing. I’m okay with that, and having abandoned the idea of fidelity opens up new possibilities. For example, there’s nothing stopping us retaining the original hue and saturation, while using dot size to represent the intensity value, That allows us to produce “halftonesque” images like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>%&gt;%</span> 
@@ -2429,7 +2429,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 10:20:35 AEST</span>
+<span>2021-09-09 10:54:23 AEST</span>
 </p>
 </div>
 </d-appendix>
