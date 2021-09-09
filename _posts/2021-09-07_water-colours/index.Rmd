@@ -444,7 +444,7 @@ field <- function(points, frequency = .1, octaves = 1) {
 }
 ```
 
-Interpreting the output of the `field()` function requires a little care. The result *isn't* a new set of points. Rather, it is a collection of directional vectors that tell you "how fast" the x- and y-components are flowing at each of the locations specified in the `points` input. If we want to compute a new set of points (which is usually true), we need something like the `shift()` function that takes a set of `points` as input, computes the directional vectors at each of the locations, and then moves each point by a specified `amount`, using the flow vectors to work out how far to move and what direction to move. The result is a new data frame with the same columns and the same number of rows:
+Interpreting the output of the `field()` function requires a little care. The result *isn't* a new set of points. Rather, it is a collection of directional vectors that tell you "how fast" the x- and y-components are flowing at each of the locations specified in the `points` input. If we want to compute a new set of points (which is usually true), we need something like the `shift()` function below. It takes a set of `points` as input, computes the directional vectors at each of the locations, and then moves each point by a specified `amount`, using the flow vectors to work out how far to move and what direction to move. The result is a new data frame with the same columns and the same number of rows:
 
 ```{r shift}
 shift <- function(points, amount, ...) {

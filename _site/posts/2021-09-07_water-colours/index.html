@@ -3044,7 +3044,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
-<p>Interpreting the output of the <code>field()</code> function requires a little care. The result <em>isn’t</em> a new set of points. Rather, it is a collection of directional vectors that tell you “how fast” the x- and y-components are flowing at each of the locations specified in the <code>points</code> input. If we want to compute a new set of points (which is usually true), we need something like the <code>shift()</code> function that takes a set of <code>points</code> as input, computes the directional vectors at each of the locations, and then moves each point by a specified <code>amount</code>, using the flow vectors to work out how far to move and what direction to move. The result is a new data frame with the same columns and the same number of rows:</p>
+<p>Interpreting the output of the <code>field()</code> function requires a little care. The result <em>isn’t</em> a new set of points. Rather, it is a collection of directional vectors that tell you “how fast” the x- and y-components are flowing at each of the locations specified in the <code>points</code> input. If we want to compute a new set of points (which is usually true), we need something like the <code>shift()</code> function below. It takes a set of <code>points</code> as input, computes the directional vectors at each of the locations, and then moves each point by a specified <code>amount</code>, using the flow vectors to work out how far to move and what direction to move. The result is a new data frame with the same columns and the same number of rows:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shift</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>points</span>, <span class='va'>amount</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3426,7 +3426,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 10:55:40 AEST</span>
+<span>2021-09-09 11:02:54 AEST</span>
 </p>
 </div>
 </d-appendix>
