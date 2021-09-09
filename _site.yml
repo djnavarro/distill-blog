@@ -11,14 +11,16 @@ navbar:
     image: image/logo-profile.png
     href: https://djnavarro.net
   right:
-    - icon: fa fa-info
+    - text: "About"
       href: about.html
-    - icon: fa fa-rss
+    - text: "RSS"
       href: index.xml
-    - icon: fa fa-github
+    - text: "GitHub"
       href: https://github.com/djnavarro/distill-blog
-    - icon: fa fa-twitter
+    - text: "Twitter"
       href: https://twitter.com/djnavarro
+    - text: "Homepage"
+      href: https://djnavarro.net
 output:
   distill::distill_article:
     includes:
