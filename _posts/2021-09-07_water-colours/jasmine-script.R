@@ -192,6 +192,9 @@ pts <- jas %>%
 jas <- jas %>%
   restore_points(pts)
 
+map_size <- function(x, y) {
+  12 * (1 - x) * (max(y)^2 - y^2) / y^2
+}
 
 pic <- jas %>%
   ggplot_themed() +
