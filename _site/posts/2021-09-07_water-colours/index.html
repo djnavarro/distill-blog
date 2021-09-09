@@ -3183,10 +3183,10 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <p><img src="index_files/figure-html5/accumulated-noise-image-1.png" width="100%" /></p>
 </div>
 <h3 id="joining-the-noise-with-jasmine-colours">Joining the noise with jasmine colours</h3>
-<p>We can now take the pixels from the jasmines image and make them “flow” across the image. To do this, we’ll need to reintroduce the colour information. We can do this using <code>full_join()</code> from the dplyr package. I’ve written a small convenience function <code>join_parts()</code> that performs the join only after removing the original <code>x</code> and <code>y</code> coordinates from the <code>jas</code> data. The reason for this is that the <code>pts</code> data now contains the positional information we need, so we want the <code>x</code> and <code>y</code> values from that data set. That’s easy enough: we drop those coordinates with <code>select()</code> and then join the two tables using only the <code>id</code> column. See? I promised it would be useful!</p>
+<p>We can now take the pixels from the jasmines image and make them “flow” across the image. To do this, we’ll need to reintroduce the colour information. We can do this using <code>full_join()</code> from the dplyr package. I’ve written a small convenience function <code>restore_points()</code> that performs the join only after removing the original <code>x</code> and <code>y</code> coordinates from the <code>jas</code> data. The reason for this is that the <code>pts</code> data now contains the positional information we need, so we want the <code>x</code> and <code>y</code> values from that data set. That’s easy enough: we drop those coordinates with <code>select()</code> and then join the two tables using only the <code>id</code> column. See? I promised it would be useful!</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>join_parts</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span> <span class='op'>{</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>restore_points</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
     <span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>x</span>, <span class='op'>-</span><span class='va'>y</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
     <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>full_join</a></span><span class='op'>(</span><span class='va'>pts</span>, by <span class='op'>=</span> <span class='st'>"id"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
@@ -3198,7 +3198,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <p>The result is a tibble that looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>join_parts</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>restore_points</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span>
 <span class='va'>jas</span>
 </code></pre>
 </div>
@@ -3263,7 +3263,9 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
     frequency <span class='op'>=</span> <span class='fl'>.05</span>
   <span class='op'>)</span>
 
-<span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='fu'>join_parts</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span>
+<span class='va'>jas</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>restore_points</span><span class='op'>(</span><span class='va'>pts</span><span class='op'>)</span>
+
 <span class='va'>jas</span>
 </code></pre>
 </div>
@@ -3419,7 +3421,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 12:16:53 AEST</span>
+<span>2021-09-09 16:48:42 AEST</span>
 </p>
 </div>
 </d-appendix>
