@@ -135,7 +135,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/accumulated-noise-image-1.png","index_files/figure-html5/jasmine-cropped-image-1.png","index_files/figure-html5/jasmine-detailed-image-1.png","index_files/figure-html5/jasmine-halftone-image-1.png","index_files/figure-html5/jasmine-halftonesque-image-1.png","index_files/figure-html5/jasmine-raster-image-1.png","index_files/figure-html5/jasmine-raster-variant-image-1.png","index_files/figure-html5/jasmine-scatter-image-1.png","index_files/figure-html5/noise-stepped-data-2-1.png","index_files/figure-html5/noise-stepped-image-1.png","index_files/figure-html5/noisy-jasmine-image-1.png","index_files/figure-html5/plain-grid-1.png","index_files/header-attrs-2.10/header-attrs.js","index_files/jquery-1.11.3/jquery.min.js","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","jasmine-recollected.png","jasmine.jpg","renv.lock","strapless.css"]}
+  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/accumulated-noise-image-1.png","index_files/figure-html5/jasmine-cropped-image-1.png","index_files/figure-html5/jasmine-detailed-image-1.png","index_files/figure-html5/jasmine-halftone-image-1.png","index_files/figure-html5/jasmine-halftonesque-image-1.png","index_files/figure-html5/jasmine-raster-image-1.png","index_files/figure-html5/jasmine-raster-variant-image-1.png","index_files/figure-html5/jasmine-scatter-image-1.png","index_files/figure-html5/noise-stepped-data-2-1.png","index_files/figure-html5/noise-stepped-data-3-1.png","index_files/figure-html5/noise-stepped-image-1.png","index_files/figure-html5/noisy-jasmine-image-1.png","index_files/figure-html5/plain-grid-1.png","index_files/header-attrs-2.10/header-attrs.js","index_files/jquery-1.11.3/jquery.min.js","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","jasmine-recollected.png","jasmine.jpg","renv.lock","strapless.css"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -3024,9 +3024,9 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <h2 id="art-from-noise-generators">Art from noise generators</h2>
 <h3 id="multidimensional-noise-generation">Multidimensional noise generation</h3>
-<p>How can we generate interesting noise patterns in R? As usual, there are many different ways you can do this, but my favourite method is to use the <a href="https://ambient.data-imaginist.com/">ambient</a> package that provides bindings to the <a href="https://github.com/Auburn/FastNoiseLite">FastNoise</a> C++ library. A proper description of what you can do with ambient is beyond what I can accomplish here. There are a <em>lot</em> of things you can do with a tool like this, and I’ve explored only a small subset of the possibilities in my art. Instead, what I’ll do is link to a lovely essay on <a href="https://tylerxhobbs.com/essays/2020/flow-fields">flow fields</a> and encourage you to play around yourself.</p>
-<p>The <code>field()</code> function below provides one example. At its heart is <code>ambient::gen_simplex()</code>, a function that generates <a href="https://en.wikipedia.org/wiki/Simplex_noise">simplex noise</a> (examples <a href="https://ambient.data-imaginist.com/reference/noise_simplex.html">here</a>), a useful form of multidimensional noise that has applications in computer graphics. In the code below, the simplex noise is then modified by a <a href="https://ambient.data-imaginist.com/reference/billow.html">billow fractal</a> that makes it “lumpier”. That’s the job of <code>ambient::gen_billow()</code> and <code>ambient::fracture()</code>. This is then modified one last time by the <code>ambient::curl_noise()</code> function to avoid some undesirable properties of the flow fields created by simplex noise.</p>
-<p>In any case, here is the code. You’ll probably need to read through the ambient documentation to understand all the moving parts here, but for our purposes the main things to note are the arguments. The <code>points</code> argument takes a data frame or tibble that contains the <code>x</code> and <code>y</code> coordinates of a set of points. The <code>frequency</code> argument controls the overall “scale” of the noise: does it change quickly or slowly as you move across the image? The <code>octaves</code> argument controls the amount of fractal-ness (hush, I know that’s not a word) to the image. How many times do you apply the underlying transformation?</p>
+<p>How can we generate interesting noise patterns in R? As usual, there are many different ways you can do this, but my favourite method is to use the <a href="https://ambient.data-imaginist.com/">ambient</a> package that provides bindings to the <a href="https://github.com/Auburn/FastNoiseLite">FastNoise</a> C++ library. A proper description of what you can do with ambient is beyond what I can accomplish here. There are a <em>lot</em> of things you can do with a tool like this, and I’ve explored only a small subset of the possibilities in my art. Rather than make a long post even longer, what I’ll do is link to a lovely essay on <a href="https://tylerxhobbs.com/essays/2020/flow-fields">flow fields</a> and encourage you to play around yourself.</p>
+<p>To give you a sense of what the possibilities are, I’ve written a <code>field()</code> function that uses the ambient package to generate noise. At its heart is <code>ambient::gen_simplex()</code>, a function that generates <a href="https://en.wikipedia.org/wiki/Simplex_noise">simplex noise</a> (examples <a href="https://ambient.data-imaginist.com/reference/noise_simplex.html">here</a>), a useful form of multidimensional noise that has applications in computer graphics. In the code below, the simplex noise is then modified by a <a href="https://ambient.data-imaginist.com/reference/billow.html">billow fractal</a> that makes it “lumpier”: that’s the job of <code>ambient::gen_billow()</code> and <code>ambient::fracture()</code>. This is then modified one last time by the <code>ambient::curl_noise()</code> function to avoid some undesirable properties of the flow fields created by simplex noise.</p>
+<p>In any case, here is the code. You’ll probably need to read through the ambient documentation to understand all the moving parts here, but for our purposes the main things to note are the arguments. The <code>points</code> argument takes a data frame or tibble that contains the <code>x</code> and <code>y</code> coordinates of a set of points (e.g., something like the <code>jas</code> data!). The <code>frequency</code> argument controls the overall “scale” of the noise: does it change quickly or slowly as you move across the image? The <code>octaves</code> argument controls the amount of fractal-ness (hush, I know that’s not a word) in the image. How many times do you apply the underlying transformation?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>field</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>points</span>, <span class='va'>frequency</span> <span class='op'>=</span> <span class='fl'>.1</span>, <span class='va'>octaves</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3044,7 +3044,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
-<p>The output of the <code>field()</code> function is best interpreted as a set of vectors: it’s not the locations of new points. Rather, it’s telling you how fast the x- and y-components are flowing at each of the locations at the specified <code>points</code>. If we want to <code>shift()</code> a set of points along the directions specified by the <code>field()</code>, we’ll need a function like this:</p>
+<p>Interpreting the output of the <code>field()</code> function requires a little care. The result <em>isn’t</em> a new set of points. Rather, it is a collection of directional vectors that tell you “how fast” the x- and y-components are flowing at each of the locations specified in the <code>points</code> input. If we want to compute a new set of points (which is usually true), we need something like the <code>shift()</code> function that takes a set of <code>points</code> as input, computes the directional vectors at each of the locations, and then moves each point by a specified <code>amount</code>, using the flow vectors to work out how far to move and what direction to move. The result is a new data frame with the same columns and the same number of rows:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shift</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>points</span>, <span class='va'>amount</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3061,8 +3061,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
-<p>The set of <code>points</code> is passed to the <code>field()</code>, and then they are moved by a certain <code>amount</code> (a single number specifying a step size) in the relevant direction. The result is a new data frame with the same columns and the same number of rows.</p>
-<p>It’s worth noting that the <code>shift()</code> function assumes that <code>points</code> contains an <code>id</code> column as well as the <code>x</code> and <code>y</code> columns. This will be crucial later when we want to merge the output with the <code>jas</code> data. Because the positions of each point are changing, the <code>id</code> column will be the method we use to join the two data sets. It’s also worth noting that <code>shift()</code> keeps track of <code>time</code> for you. The <code>points</code> input contains a <code>time</code> column: the output from <code>shift()</code> increments that by one, indicating we have stepped forward in time as well as moved the points in space.</p>
+<p>It’s worth noting that the <code>shift()</code> function assumes that <code>points</code> contains an <code>id</code> column as well as the <code>x</code> and <code>y</code> columns. This will be crucial later when we want to merge the output with the <code>jas</code> data. Because the positions of each point are changing, the <code>id</code> column will be the method we use to join the two data sets. It’s also worth noting that <code>shift()</code> keeps track of time for you. It assumes that the input data contains a <code>time</code> column, and the output data contains the same column with every value incremented by one. In other words, it keeps the <code>id</code> constant so we know which point is referred to by the row, but modifies its position in <code>time</code> and space (<code>x</code> and <code>y</code>). Neat.</p>
 <h3 id="art-from-the-noise">Art from the noise</h3>
 <p>To illustrate how this all works, I’ll start by creating a regular 50x30 grid of points:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3120,10 +3119,11 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p><img src="index_files/figure-html5/noise-stepped-image-1.png" width="100%" /></p>
 </div>
+<p>So pretty!</p>
 <h3 id="accumulating-art-with-purrr">Accumulating art with purrr</h3>
-<p>The code above is inelegant. I’ve “iteratively” created a sequence of data frames by writing the same line of code several times. I could solve this problem by writing a loop, but I’ve become a fan of the functional programming tools in <a href="https://purrr.tidyverse.org/">purrr</a> and I’ll take advantage of that. In particular, the <code>purrr::accumulate()</code> function is an <a href="https://adv-r.hadley.nz/functionals.html#accumulate">underappreciated gem</a>. It does <em>precisely</em> the thing we want to do here. It takes one object (e.g., <code>points</code>) as input, together with a second quantity (e.g., an <code>amount</code>) and uses the user-supplied function (e.g., <code>shift()</code> to produce a <em>new</em> object that can again be passed to that function (i.e., new <code>points</code>). It continues with this process, taking the output of the last iteration of <code>shift()</code> and using it as input to the next iteration until it runs out of <code>amount</code> values. It is very similar to the better-known <code>purrr::reduce()</code> function, except that it doesn’t throw away the intermediate values. The <code>reduce()</code> function is only interested in the destination; <code>accumulate()</code> is a whole <em>journey</em>.</p>
-<p>So let’s use it.</p>
-<p>The <code>iterate()</code> function below gives a convenient interface…</p>
+<p>… but also so ugly. The code I used above is awfully inelegant: I’ve “iteratively” created a sequence of data frames by writing the same line of code several times. That’s almost never the right answer, especially when the code doesn’t know in advance how many times we want to <code>shift()</code> the points! To fix this I could write a loop (and contrary to folklore, there’s nothing wrong with loops in R so long as you’re careful to avoid unnecessary copying). However, I’ve become addicted to functional programming tools in the <a href="https://purrr.tidyverse.org/">purrr</a> package, so I’m going to use those rather than write a loop.</p>
+<p>To solve my problem I’m going to use the <code>purrr::accumulate()</code> function, which I personally feel is an <a href="https://adv-r.hadley.nz/functionals.html#accumulate">underappreciated gem</a> in the functional programming toolkit. It does <em>precisely</em> the thing we want to do here: it takes one object (e.g., <code>points</code>) as input together with a second quantity (e.g., an <code>amount</code>), and uses the user-supplied function (e.g., <code>shift()</code>) to produce a <em>new</em> object that can, once again, be passed to the user-supplied function (yielding new <code>points</code>). It continues with this process, taking the output of the last iteration of <code>shift()</code> and using it as input to the next iteration, until it runs out of <code>amount</code> values. It is very similar to the better-known <code>purrr::reduce()</code> function, except that it doesn’t throw away the intermediate values. The <code>reduce()</code> function is only interested in the destination; <code>accumulate()</code> is a whole journey.</p>
+<p>So let’s use it. The <code>iterate()</code> function below gives a convenient interface:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>iterate</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>pts</span>, <span class='va'>time</span>, <span class='va'>step</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3137,24 +3137,17 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
-<p>… and here’s the code to recreate the image shown above:</p>
+<p>Here’s the code to recreate the <code>pts</code> data from the previous section:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pts</span> <span class='op'>&lt;-</span> <span class='va'>points_time0</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>iterate</span><span class='op'>(</span>time <span class='op'>=</span> <span class='fl'>3</span>, step <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-
-<span class='va'>pts</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'>ggplot_themed</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>  
-  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>
-    mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
-      size <span class='op'>=</span> <span class='fu'>map_size</span><span class='op'>(</span><span class='va'>time</span><span class='op'>)</span>, 
-      alpha <span class='op'>=</span> <span class='fu'>map_alpha</span><span class='op'>(</span><span class='va'>time</span><span class='op'>)</span>
-    <span class='op'>)</span>,
-    show.legend <span class='op'>=</span> <span class='cn'>FALSE</span>
-  <span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="index_files/figure-html5/noise-stepped-data-2-1.png" width="100%" /></p>
+</div>
+<p>It produces the same image, but the code is nicer!</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="index_files/figure-html5/noise-stepped-data-3-1.png" width="100%" /></p>
 </div>
 <h2 id="assembling-the-parts">Assembling the parts</h2>
 <h3 id="adding-noise-to-jasmines-coordinates">Adding noise to jasmines coordinates</h3>
@@ -3169,7 +3162,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </code></pre>
 </div>
 </div>
-<p>Here’s how we can use this. The code below extracts the positional information from <code>jas</code> and then use the <code>iterate()</code> function from before to gradually move those positions along the paths traced out by a flow field:</p>
+<p>Here’s how we can use this. The code below extracts the positional information from <code>jas</code> and then use the <code>iterate()</code> function to iteratively shift those positions along the paths traced out by a flow field:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pts</span> <span class='op'>&lt;-</span> <span class='va'>jas</span> <span class='op'>%&gt;%</span> 
@@ -3197,7 +3190,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <p><img src="index_files/figure-html5/accumulated-noise-image-1.png" width="100%" /></p>
 </div>
 <h3 id="joining-the-noise-with-jasmine-colours">Joining the noise with jasmine colours</h3>
-<p>We can now take the pixels from the jasmines image and make them “flow” across the image. The next step is to reintroduce the colour information. We can do this using <code>full_join()</code> from the dplyr package. The convenience function <code>join_parts()</code> does this only after removing the <code>x</code> and <code>y</code> coordinates from the <code>jas</code> data: we want the positional information to come from <code>pts</code>, not the original image, so we discard those coordinates and join the two tables by the <code>id</code> column (I promised it would be useful!)</p>
+<p>We can now take the pixels from the jasmines image and make them “flow” across the image. To do this, we’ll need to reintroduce the colour information. We can do this using <code>full_join()</code> from the dplyr package. I’ve written a small convenience function <code>join_parts()</code> that performs the join only after removing the original <code>x</code> and <code>y</code> coordinates from the <code>jas</code> data. The reason for this is that the <code>pts</code> data now contains the positional information we need, so we want the <code>x</code> and <code>y</code> values from that data set. That’s easy enough: we drop those coordinates with <code>select()</code> and then join the two tables using only the <code>id</code> column. See? I promised it would be useful!</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>join_parts</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>jas</span>, <span class='va'>pts</span><span class='op'>)</span> <span class='op'>{</span>
@@ -3252,7 +3245,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p><img src="index_files/figure-html5/noisy-jasmine-image-1.png" width="100%" /></p>
 </div>
-<p>When colouring the image, we’re using the same “halftonesque” trick from earlier. The colours vary only in capture only in hue and saturation. The intensity values are recoded as size, but this time around we’re also using size to capture the “temporal” information. The points get larger as time increases. There are, of course, endless ways in which you could combine the positional, temporal, and shading data to create interesting generative art. This is only one example.</p>
+<p>When colouring the image, we’re using the same “halftonesque” trick from earlier. The colours vary only in hue and saturation. The intensity values are mapped to the size aesthetic, much like we did earlier, but this time around the size aesthetic is a function of two variables: it depends on <code>time</code> as well as <code>val</code>. The way I’ve set it up here is to have the points get larger as time increases, but there’s no reason we have to do it that way. There are endless ways in which you could combine the positional, temporal, and shading data to create interesting generative art. This is only one example.</p>
 <h3 id="the-last-chapter">The last chapter</h3>
 <p>At last we have the tools we need to create images in a style similar (though not identical) to those produced by the <em>Water Colours</em> system. We can import, reorganise, and separate the data:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3325,7 +3318,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 </div>
 <p><img src="index_files/figure-html5/jasmine-detailed-image-1.png" width="100%" /></p>
 </div>
-<p>The colour bleeding over the edges here is to be expected. Some of the points created with <code>geom_point()</code> are quite large, and they extend some distance beyond the boundaries of the original jasmines photograph. In a way it’s rather aesthetic, like a little frame, but if you prefer to hide this part of the image we can modify the scale limits in ggplot2:</p>
+<p>The colour bleeding over the edges here is to be expected. Some of the points created with <code>geom_point()</code> are quite large, and they extend some distance beyond the boundaries of the original jasmines photograph. The result doesn’t appeal to my artistic sensibilities, so I’ll adjust the scale limits in ggplot2 so that we don’t get that strange border:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pic</span> <span class='op'>+</span>
@@ -3433,7 +3426,7 @@ In this code the <code>ambient::normalise()</code> function is used to rescale t
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-09 09:49:40 AEST</span>
+<span>2021-09-09 10:20:35 AEST</span>
 </p>
 </div>
 </d-appendix>

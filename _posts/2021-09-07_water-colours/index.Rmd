@@ -423,11 +423,11 @@ manifest[9:12, ] %>%
 
 ### Multidimensional noise generation
 
-How can we generate interesting noise patterns in R? As usual, there are many different ways you can do this, but my favourite method is to use the [ambient](https://ambient.data-imaginist.com/) package that provides bindings to the [FastNoise](https://github.com/Auburn/FastNoiseLite) C++ library. A proper description of what you can do with ambient is beyond what I can accomplish here. There are a *lot* of things you can do with a tool like this, and I've explored only a small subset of the possibilities in my art. Instead, what I'll do is link to a lovely essay on [flow fields](https://tylerxhobbs.com/essays/2020/flow-fields) and encourage you to play around yourself.
+How can we generate interesting noise patterns in R? As usual, there are many different ways you can do this, but my favourite method is to use the [ambient](https://ambient.data-imaginist.com/) package that provides bindings to the [FastNoise](https://github.com/Auburn/FastNoiseLite) C++ library. A proper description of what you can do with ambient is beyond what I can accomplish here. There are a *lot* of things you can do with a tool like this, and I've explored only a small subset of the possibilities in my art. Rather than make a long post even longer, what I'll do is link to a lovely essay on [flow fields](https://tylerxhobbs.com/essays/2020/flow-fields) and encourage you to play around yourself.
 
-The `field()` function below provides one example. At its heart is `ambient::gen_simplex()`, a function that generates [simplex noise](https://en.wikipedia.org/wiki/Simplex_noise) (examples [here](https://ambient.data-imaginist.com/reference/noise_simplex.html)), a useful form of multidimensional noise that has applications in computer graphics. In the code below, the simplex noise is then modified by a [billow fractal](https://ambient.data-imaginist.com/reference/billow.html) that makes it "lumpier". That's the job of `ambient::gen_billow()` and `ambient::fracture()`. This is then modified one last time by the `ambient::curl_noise()` function to avoid some undesirable properties of the flow fields created by simplex noise.
+To give you a sense of what the possibilities are, I've written a `field()` function that uses the ambient package to generate noise. At its heart is `ambient::gen_simplex()`, a function that generates [simplex noise](https://en.wikipedia.org/wiki/Simplex_noise) (examples [here](https://ambient.data-imaginist.com/reference/noise_simplex.html)), a useful form of multidimensional noise that has applications in computer graphics. In the code below, the simplex noise is then modified by a [billow fractal](https://ambient.data-imaginist.com/reference/billow.html) that makes it "lumpier": that's the job of `ambient::gen_billow()` and `ambient::fracture()`. This is then modified one last time by the `ambient::curl_noise()` function to avoid some undesirable properties of the flow fields created by simplex noise.
 
-In any case, here is the code. You'll probably need to read through the ambient documentation to understand all the moving parts here, but for our purposes the main things to note are the arguments. The `points` argument takes a data frame or tibble that contains the `x` and `y` coordinates of a set of points. The `frequency` argument controls the overall "scale" of the noise: does it change quickly or slowly as you move across the image? The `octaves` argument controls the amount of fractal-ness (hush, I know that's not a word) to the image. How many times do you apply the underlying transformation?
+In any case, here is the code. You'll probably need to read through the ambient documentation to understand all the moving parts here, but for our purposes the main things to note are the arguments. The `points` argument takes a data frame or tibble that contains the `x` and `y` coordinates of a set of points (e.g., something like the `jas` data!). The `frequency` argument controls the overall "scale" of the noise: does it change quickly or slowly as you move across the image? The `octaves` argument controls the amount of fractal-ness (hush, I know that's not a word) in the image. How many times do you apply the underlying transformation?
 
 ```{r field}
 field <- function(points, frequency = .1, octaves = 1) {
@@ -444,7 +444,7 @@ field <- function(points, frequency = .1, octaves = 1) {
 }
 ```
 
-The output of the `field()` function is best interpreted as a set of vectors: it's not the locations of new points. Rather, it's telling you how fast the x- and y-components are flowing at each of the locations at the specified `points`. If we want to `shift()` a set of points along the directions specified by the `field()`, we'll need a function like this:
+Interpreting the output of the `field()` function requires a little care. The result *isn't* a new set of points. Rather, it is a collection of directional vectors that tell you "how fast" the x- and y-components are flowing at each of the locations specified in the `points` input. If we want to compute a new set of points (which is usually true), we need something like the `shift()` function that takes a set of `points` as input, computes the directional vectors at each of the locations, and then moves each point by a specified `amount`, using the flow vectors to work out how far to move and what direction to move. The result is a new data frame with the same columns and the same number of rows:
 
 ```{r shift}
 shift <- function(points, amount, ...) {
@@ -460,9 +460,7 @@ shift <- function(points, amount, ...) {
 }
 ```
 
-The set of `points` is passed to the `field()`, and then they are moved by a certain `amount` (a single number specifying a step size) in the relevant direction. The result is a new data frame with the same columns and the same number of rows. 
-
-It's worth noting that the `shift()` function assumes that `points` contains an `id` column as well as the `x` and `y` columns. This will be crucial later when we want to merge the output with the `jas` data. Because the positions of each point are changing, the `id` column will be the method we use to join the two data sets. It's also worth noting that `shift()` keeps track of `time` for you. The `points` input contains a `time` column: the output from `shift()` increments that by one, indicating we have stepped forward in time as well as moved the points in space. 
+It's worth noting that the `shift()` function assumes that `points` contains an `id` column as well as the `x` and `y` columns. This will be crucial later when we want to merge the output with the `jas` data. Because the positions of each point are changing, the `id` column will be the method we use to join the two data sets. It's also worth noting that `shift()` keeps track of time for you. It assumes that the input data contains a `time` column, and the output data contains the same column with every value incremented by one. In other words, it keeps the `id` constant so we know which point is referred to by the row, but modifies its position in `time` and space (`x` and `y`). Neat.
 
 ### Art from the noise
 
@@ -516,13 +514,15 @@ pts %>%
   )
 ```
 
+So pretty!
+
 ### Accumulating art with purrr
 
-The code above is inelegant. I've "iteratively" created a sequence of data frames by writing the same line of code several times. I could solve this problem by writing a loop, but I've become a fan of the functional programming tools in [purrr](https://purrr.tidyverse.org/) and I'll take advantage of that. In particular, the `purrr::accumulate()` function is an [underappreciated gem](https://adv-r.hadley.nz/functionals.html#accumulate). It does *precisely* the thing we want to do here. It takes one object (e.g., `points`) as input, together with a second quantity (e.g., an `amount`) and uses the user-supplied function (e.g., `shift()` to produce a *new* object that can again be passed to that function (i.e., new `points`). It continues with this process, taking the output of the last iteration of `shift()` and using it as input to the next iteration until it runs out of `amount` values. It is very similar to the better-known `purrr::reduce()` function, except that it doesn't throw away the intermediate values. The `reduce()` function is only interested in the destination; `accumulate()` is a whole *journey*. 
+... but also so ugly. The code I used above is awfully inelegant: I've "iteratively" created a sequence of data frames by writing the same line of code several times. That's almost never the right answer, especially when the code doesn't know in advance how many times we want to `shift()` the points! To fix this I could write a loop (and contrary to folklore, there's nothing wrong with loops in R so long as you're careful to avoid unnecessary copying). However, I've become addicted to functional programming tools in the [purrr](https://purrr.tidyverse.org/) package, so I'm going to use those rather than write a loop. 
 
-So let's use it. 
+To solve my problem I'm going to use the `purrr::accumulate()` function, which I personally feel is an [underappreciated gem](https://adv-r.hadley.nz/functionals.html#accumulate) in the functional programming toolkit. It does *precisely* the thing we want to do here: it takes one object (e.g., `points`) as input together with a second quantity (e.g., an `amount`), and uses the user-supplied function (e.g., `shift()`) to produce a *new* object that can, once again, be passed to the user-supplied function (yielding new `points`). It continues with this process, taking the output of the last iteration of `shift()` and using it as input to the next iteration, until it runs out of `amount` values. It is very similar to the better-known `purrr::reduce()` function, except that it doesn't throw away the intermediate values. The `reduce()` function is only interested in the destination; `accumulate()` is a whole journey. 
 
-The `iterate()` function below gives a convenient interface...
+So let's use it. The `iterate()` function below gives a convenient interface:
 
 ```{r iterate}
 iterate <- function(pts, time, step, ...) {
@@ -535,12 +535,16 @@ iterate <- function(pts, time, step, ...) {
 }
 ```
 
-... and here's the code to recreate the image shown above:
+Here's the code to recreate the `pts` data from the previous section:
 
 ```{r noise-stepped-data-2}
 pts <- points_time0 %>% 
   iterate(time = 3, step = 1)
+```
 
+It produces the same image, but the code is nicer!
+
+```{r noise-stepped-data-3, echo=FALSE}
 pts %>% 
   ggplot_themed() +  
   geom_point(
@@ -567,7 +571,7 @@ extract_points <- function(data) {
 }
 ```
 
-Here's how we can use this. The code below extracts the positional information from `jas` and then use the `iterate()` function from before to gradually move those positions along the paths traced out by a flow field:
+Here's how we can use this. The code below extracts the positional information from `jas` and then use the `iterate()` function to iteratively shift those positions along the paths traced out by a flow field:
 
 ```{r accumulated-noise-data}
 pts <- jas %>% 
@@ -593,7 +597,7 @@ pts %>%
 
 ### Joining the noise with jasmine colours
 
-We can now take the pixels from the jasmines image and make them "flow" across the image. The next step is to reintroduce the colour information. We can do this using `full_join()` from the dplyr package. The convenience function `join_parts()` does this only after removing the `x` and `y` coordinates from the `jas` data: we want the positional information to come from `pts`, not the original image, so we discard those coordinates and join the two tables by the `id` column (I promised it would be useful!)
+We can now take the pixels from the jasmines image and make them "flow" across the image. To do this, we'll need to reintroduce the colour information. We can do this using `full_join()` from the dplyr package. I've written a small convenience function `join_parts()` that performs the join only after removing the original `x` and `y` coordinates from the `jas` data. The reason for this is that the `pts` data now contains the positional information we need, so we want the `x` and `y` values from that data set. That's easy enough: we drop those coordinates with `select()` and then join the two tables using only the `id` column. See? I promised it would be useful!
 
 ```{r join-parts}
 join_parts <- function(jas, pts) {
@@ -631,7 +635,7 @@ jas %>%
   )
 ```
 
-When colouring the image, we're using the same "halftonesque" trick from earlier. The colours vary only in capture only in hue and saturation. The intensity values are recoded as size, but this time around we're also using size to capture the "temporal" information. The points get larger as time increases. There are, of course, endless ways in which you could combine the positional, temporal, and shading data to create interesting generative art. This is only one example.
+When colouring the image, we're using the same "halftonesque" trick from earlier. The colours vary only in hue and saturation. The intensity values are mapped to the size aesthetic, much like we did earlier, but this time around the size aesthetic is a function of two variables: it depends on `time` as well as `val`. The way I've set it up here is to have the points get larger as time increases, but there's no reason we have to do it that way. There are endless ways in which you could combine the positional, temporal, and shading data to create interesting generative art. This is only one example.
 
 ### The last chapter
 
@@ -688,7 +692,7 @@ pic <- jas %>%
 pic
 ```
 
-The colour bleeding over the edges here is to be expected. Some of the points created with `geom_point()` are quite large, and they extend some distance beyond the boundaries of the original jasmines photograph. In a way it's rather aesthetic, like a little frame, but if you prefer to hide this part of the image we can modify the scale limits in ggplot2:
+The colour bleeding over the edges here is to be expected. Some of the points created with `geom_point()` are quite large, and they extend some distance beyond the boundaries of the original jasmines photograph. The result doesn't appeal to my artistic sensibilities, so I'll adjust the scale limits in ggplot2 so that we don't get that strange border:
 
 ```{r jasmine-cropped-image, cache=TRUE}
 pic +
