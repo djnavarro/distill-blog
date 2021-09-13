@@ -1,11 +1,8 @@
 ---
-title: "Title in sentence case"
-description: | 
+title: "Title in sentence case" # <---- UPDATE ME
+description:
   Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit
-params:
-  slug: INSERT-SLUG-HERE
-  date: INSERT-DATE-HERE
+  consectetur, adipisci velit # <---- UPDATE ME
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -13,37 +10,34 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
-date: INSERT-DATE-HERE
-preview: preview-image.jpg
+preview: preview-image.jpg  # <---- UPDATE ME 
 creative_commons: CC BY
-citation_url: https://blog.djnavarro.net/INSERT-SLUG-HERE
-repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
     self_contained: false
+params:
+  slug: INSERT-SLUG-HERE
+  date: INSERT-DATE-HERE
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
 ---
 
 <!----
 
-yaml checklist:
-  - set the preview image
-  - write title and description
-  
-renv checklist:
+checklist:
+  - check the "update me" messages in YAML above
   - initialise the _renv folder with refinery::renv_new(long_slug)
   - populate the lockfile with refinery::renv_snapshot(long_slug)
   - update the _renv folder from snapshot with refinery::refresh(long_slug)
 
-setup, appendices, and redirects should "just work" (ish)
-
 ---->
 
-<!--------------- setup ----------------->
+
+<!--------------- setup post ----------------->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-long_slug <- paste(params$date, params$slug, sep = "_")
-refinery::renv_load(long_slug)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 ```
 
 
@@ -55,14 +49,29 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 <!--------------- appendices ----------------->
 
 ```{r, echo=FALSE}
-refinery::insert_appendix("djnavarro/distill-blog", long_slug)
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  dir = paste(params$date, params$slug, sep = "_")
+)
 ```
 
 
 <!--------------- miscellanea ----------------->
 
 ```{r redirect, echo=FALSE}
-refinery::insert_netlify_redirect(params$slug, params$date)
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
 ```
+
+
+<!--------------- derived YAML ----------------->
+---
+date: `r params$date`
+citation_url: `r paste0(params$site, params$slug)`
+repository_url: `r paste0("https://github.com/", params$repo)` 
+---
+
 
 
