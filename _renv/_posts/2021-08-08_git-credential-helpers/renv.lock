@@ -44,13 +44,6 @@
       "Repository": "CRAN",
       "Hash": "2f01e16ff9571fe70381c7b9ae560dc4"
     },
-    "bs4cards": {
-      "Package": "bs4cards",
-      "Version": "0.1.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "f95c5818d79cba499e4fbe771ddbff45"
-    },
     "digest": {
       "Package": "digest",
       "Version": "0.6.27",
@@ -113,6 +106,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "4d243a9c10b00589889fe32314ffd902"
+    },
+    "gitcreds": {
+      "Package": "gitcreds",
+      "Version": "0.1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f3aefccc1cc50de6338146b62f115de8"
     },
     "glue": {
       "Package": "glue",
@@ -200,15 +200,15 @@
     },
     "refinery": {
       "Package": "refinery",
-      "Version": "0.0.0.9029",
+      "Version": "0.0.0.9039",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "refinery",
       "RemoteUsername": "djnavarro",
       "RemoteRef": "HEAD",
-      "RemoteSha": "18b99cbfeba31578d38c81060ea995635332f3a0",
-      "Hash": "a620795add49bab4b567d32a948d558d"
+      "RemoteSha": "fd86339111b01b915edc853e5a388b0dfc34baea",
+      "Hash": "070f6fd2cbf10da0e3c76965eee7f0e2"
     },
     "renv": {
       "Package": "renv",

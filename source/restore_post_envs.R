@@ -1,7 +1,5 @@
-root <- rprojroot::find_root("_site.yml")
-posts <- list.files(file.path(root, "_posts"))
+slug <- refinery::articles_matching("welcome")
+refinery::renv_new(slug)
 
-hydrate <- function(post) {
-  refinery::renv_snapshot(post)
-  refinery::renv_restore(post)
-}
+refinery::renv_snapshot(slug)
+refinery::renv_restore(slug)
