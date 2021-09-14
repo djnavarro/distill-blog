@@ -20,7 +20,9 @@ params:
   date: 2021-09-14
   repo: djnavarro/distill-blog
   site: https://blog.djnavarro.net/
-  data: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv
+  data_billboard: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv
+  data_audio_features: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/audio_features.csv
+  data_readme: https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/readme.md
 ---
 
 <!----
@@ -43,17 +45,109 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-I've never participated in [Tidy Tuesday](https://github.com/rfordatascience/tidytuesday) before, but since I've joined a slack that does, it is high time I did soemthing about that poor track record. 
+I've never participated in [Tidy Tuesday](https://github.com/rfordatascience/tidytuesday) before, but since I've joined a slack that does, it is high time I did something about that poor track record. The data are located on the Tidy Tuesday repository. I've stored the link to the data in the YAML header for this post 
 
-The data are located [here](`r params$data`). I've stored the link in the YAML header for this post so I can read the data with the following code, and set `cache=TRUE` in the chunk options to avoid downloading the data each time I knit the post again:
+```{r show-yaml-params, results='hold'}
+params$data_billboard
+params$data_audio_features
+```
 
-```{r import-data, cache=TRUE}
-billboard <- readr::read_csv(params$data)
+Packages I'm going to use a lot get attached:
+
+```{r attach-packages, message=FALSE}
+library(dplyr)
+library(stringr)
+```
+
+## Import the data
+
+So I can read the data with the following code^[I also set `cache=TRUE` in the chunk options to avoid downloading the data each time I knit the post, and added the cached folder to the `.gitignore` file to avoid placing cached data under version control]
+
+
+```{r import-billboard-data, cache=TRUE}
+billboard <- readr::read_csv(params$data_billboard)
 billboard
 ```
 
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+Repeat for the audio features data:
 
+```{r import-audio-features-data, cache=TRUE}
+audio_features <- readr::read_csv(params$data_audio_features) 
+audio_features
+```
+
+## Assembling the Britney data
+
+Make a decision: today I have love only for Britney. First up, let's take a quick look at the `performer` variable, because I suspect she's going to appear in a few different forms:
+
+```{r look-for-britney-1}
+billboard %>% 
+  pull(performer) %>% 
+  str_subset("(Britney)|(Spears)") %>% 
+  table() %>% 
+  sort(decreasing = TRUE)
+```
+
+Another decision: I'm happy to include her collaborations with other artists, but I only want cases where she is the primary artist. So the regular expression I'm going to use to select Britney songs is `"^Britney Spears"`. That matches the following:
+
+```{r look-for-britney-2}
+billboard %>% 
+  pull(performer) %>% 
+  str_subset("^Britney Spears") %>% 
+  unique()
+```
+
+As a little sanity check, I want to make sure that I obtain the same for the `audio_features` data:
+
+```{r look-for-britney-3}
+audio_features %>% 
+  pull(performer) %>% 
+  str_subset("^Britney Spears") %>% 
+  unique()
+```
+
+It retains Britney songs featuring other artists but not songs by other artists featuring Britney. In my ideal world I'd subset and join the two data sets in one fell swoop but as yet I haven't made anything except the most cursory checks that I know how to join them sensibly. So, one step at a time, sweetie. Filter first: 
+
+```{r filter-to-britney}
+britney_billboard <- billboard %>% 
+  filter(str_detect(performer, "^Britney Spears"))
+
+britney_features <- audio_features %>% 
+  filter(str_detect(performer, "^Britney Spears"))
+```
+  
+A quick `glimpse()` at both:
+
+```{r glimpse-britney-partials}
+glimpse(britney_billboard)
+glimpse(britney_features)
+```
+
+Are the `song_id` values in the two data frames comparable? I suspect that they will be because (I'm told that) Tidy Tuesday does a good job of pre-cleaning the data, but in my old age I have become paranoid. So let's just make sure it's a suitable basis for a join
+
+```{r check-join-key}
+intersect(
+  britney_billboard$song_id, 
+  britney_features$song_id
+)
+setdiff(
+  britney_billboard$song_id, 
+  britney_features$song_id
+)
+setdiff(
+  britney_features$song_id, 
+  britney_billboard$song_id
+)
+```
+
+Everything I ever dreamed of! Okay that's going to make my life so much easier:
+
+```{r join-and-glimpse}
+britney <- britney_billboard %>% 
+  left_join(britney_features)
+
+glimpse(britney)
+```
 
 <!--------------- appendices ----------------->
 

@@ -114,6 +114,13 @@
       "Repository": "CRAN",
       "Hash": "f24f1e44320a978c03050b8403a83793"
     },
+    "dplyr": {
+      "Package": "dplyr",
+      "Version": "1.0.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "36f1ae62f026c8ba9f9b5c9a08c03297"
+    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.3.2",
@@ -200,10 +207,10 @@
     },
     "knitr": {
       "Package": "knitr",
-      "Version": "1.34",
+      "Version": "1.33",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "aa958054ac6f0360926bb952ea302f0f"
+      "Hash": "0bc1b5da1b0eb07cd4b727e95e9ff0b8"
     },
     "lifecycle": {
       "Package": "lifecycle",
@@ -225,6 +232,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "41287f1ac7d28a92f0a286ed507928d3"
+    },
+    "markdown": {
+      "Package": "markdown",
+      "Version": "1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "61e4a10781dd00d7d81dd06ca9b94e95"
     },
     "mime": {
       "Package": "mime",
@@ -295,11 +309,11 @@
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "djnavarro",
       "RemoteRepo": "refinery",
-      "RemoteRef": "master",
+      "RemoteUsername": "djnavarro",
+      "RemoteRef": "HEAD",
       "RemoteSha": "0da2af0f83de6d08c2834e50a1d744113c24d5ba",
-      "Hash": "b38c369647cc8076b926481a5d27688c"
+      "Hash": "6a065008f27660fb820bad51702cf4e3"
     },
     "renv": {
       "Package": "renv",

@@ -124,7 +124,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","preview","creative_commons","output","params","date","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["Title in sentence case"]},{"type":"character","attributes":{},"value":["Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["preview-image.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site","data"]}},"value":[{"type":"character","attributes":{},"value":["tidy-tuesday-billboard"]},{"type":"character","attributes":{},"value":["2021-09-14"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]},{"type":"character","attributes":{},"value":["https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv"]}]},{"type":"character","attributes":{},"value":["09-14-2021"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/"]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","preview","creative_commons","output","params","date","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["Title in sentence case"]},{"type":"character","attributes":{},"value":["Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["preview-image.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site","data_billboard","data_audio_features","data_readme"]}},"value":[{"type":"character","attributes":{},"value":["tidy-tuesday-billboard"]},{"type":"character","attributes":{},"value":["2021-09-14"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]},{"type":"character","attributes":{},"value":["https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv"]},{"type":"character","attributes":{},"value":["https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/audio_features.csv"]},{"type":"character","attributes":{},"value":["https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/readme.md"]}]},{"type":"character","attributes":{},"value":["09-14-2021"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -2483,11 +2483,29 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
-<p>I’ve never participated in <a href="https://github.com/rfordatascience/tidytuesday">Tidy Tuesday</a> before, but since I’ve joined a slack that does, it is high time I did soemthing about that poor track record.</p>
-<p>The data are located <a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv">here</a>. I’ve stored the link in the YAML header for this post so I can read the data with the following code, and set <code>cache=TRUE</code> in the chunk options to avoid downloading the data each time I knit the post again:</p>
+<p>I’ve never participated in <a href="https://github.com/rfordatascience/tidytuesday">Tidy Tuesday</a> before, but since I’ve joined a slack that does, it is high time I did something about that poor track record. The data are located on the Tidy Tuesday repository. I’ve stored the link to the data in the YAML header for this post</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>&lt;-</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='va'>params</span><span class='op'>$</span><span class='va'>data</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>params</span><span class='op'>$</span><span class='va'>data_billboard</span>
+<span class='va'>params</span><span class='op'>$</span><span class='va'>data_audio_features</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv&quot;
+[1] &quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/audio_features.csv&quot;</code></pre>
+</div>
+<p>Packages I’m going to use a lot get attached:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://stringr.tidyverse.org'>stringr</a></span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="import-the-data">Import the data</h2>
+<p>So I can read the data with the following code<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>&lt;-</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='va'>params</span><span class='op'>$</span><span class='va'>data_billboard</span><span class='op'>)</span>
 <span class='va'>billboard</span>
 </code></pre>
 </div>
@@ -2508,14 +2526,262 @@ checklist:
 #   previous_week_position &lt;dbl&gt;, peak_position &lt;dbl&gt;,
 #   weeks_on_chart &lt;dbl&gt;</code></pre>
 </div>
-<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+<p>Repeat for the audio features data:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>audio_features</span> <span class='op'>&lt;-</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='va'>params</span><span class='op'>$</span><span class='va'>data_audio_features</span><span class='op'>)</span> 
+<span class='va'>audio_features</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 29,503 × 22
+   song_id     performer   song      spotify_genre    spotify_track_id
+   &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;           
+ 1 -twistin&#39;-… Bill Black… -twistin… []               &lt;NA&gt;            
+ 2 ¿Dònde Est… Augie Rios  ¿Dònde E… [&#39;novelty&#39;]      &lt;NA&gt;            
+ 3 ......And … Andy Willi… ......An… [&#39;adult standar… 3tvqPPpXyIgKrm4…
+ 4 ...And The… Sandy Nels… ...And T… [&#39;rock-and-roll… 1fHHq3qHU8wpRKH…
+ 5 ...Baby On… Britney Sp… ...Baby … [&#39;dance pop&#39;, &#39;… 3MjUtNVVq3C8Fn0…
+ 6 ...Ready F… Taylor Swi… ...Ready… [&#39;pop&#39;, &#39;post-t… 2yLa0QULdQr0qAI…
+ 7 &#39;03 Bonnie… Jay-Z Feat… &#39;03 Bonn… [&#39;east coast hi… 5ljCWsDlSyJ41kw…
+ 8 &#39;65 Love A… Paul Davis  &#39;65 Love… [&#39;album rock&#39;, … 5nBp8F6tekSrnFg…
+ 9 &#39;98 Thug P… Tragedy, C… &#39;98 Thug… [&#39;english indie… &lt;NA&gt;            
+10 &#39;Round We … Big Sister  &#39;Round W… []               &lt;NA&gt;            
+# … with 29,493 more rows, and 17 more variables:
+#   spotify_track_preview_url &lt;chr&gt;, spotify_track_duration_ms &lt;dbl&gt;,
+#   spotify_track_explicit &lt;lgl&gt;, spotify_track_album &lt;chr&gt;,
+#   danceability &lt;dbl&gt;, energy &lt;dbl&gt;, key &lt;dbl&gt;, loudness &lt;dbl&gt;,
+#   mode &lt;dbl&gt;, speechiness &lt;dbl&gt;, acousticness &lt;dbl&gt;,
+#   instrumentalness &lt;dbl&gt;, liveness &lt;dbl&gt;, valence &lt;dbl&gt;,
+#   tempo &lt;dbl&gt;, time_signature &lt;dbl&gt;, …</code></pre>
+</div>
+<h2 id="assembling-the-britney-data">Assembling the Britney data</h2>
+<p>Make a decision: today I have love only for Britney. First up, let’s take a quick look at the <code>performer</code> variable, because I suspect she’s going to appear in a few different forms:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>performer</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span><span class='st'>"(Britney)|(Spears)"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span><span class='op'>(</span>decreasing <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>.
+                              Britney Spears 
+                                         413 
+            Rihanna Featuring Britney Spears 
+                                          26 
+Britney Spears Featuring Nicki Minaj &amp; Ke$ha 
+                                          24 
+                  will.i.am &amp; Britney Spears 
+                                          24 
+            Britney Spears Featuring Madonna 
+                                          13 
+                            Billie Jo Spears 
+                                           9 
+             Britney Spears Featuring G-Eazy 
+                                           9 
+                Britney Spears &amp; Iggy Azalea 
+                                           8 
+            Britney Spears Featuring Tinashe 
+                                           1 </code></pre>
+</div>
+<p>Another decision: I’m happy to include her collaborations with other artists, but I only want cases where she is the primary artist. So the regular expression I’m going to use to select Britney songs is <code>"^Britney Spears"</code>. That matches the following:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>performer</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span><span class='st'>"^Britney Spears"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;Britney Spears&quot;                              
+[2] &quot;Britney Spears &amp; Iggy Azalea&quot;                
+[3] &quot;Britney Spears Featuring G-Eazy&quot;             
+[4] &quot;Britney Spears Featuring Madonna&quot;            
+[5] &quot;Britney Spears Featuring Tinashe&quot;            
+[6] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
+</div>
+<p>As a little sanity check, I want to make sure that I obtain the same for the <code>audio_features</code> data:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>audio_features</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>performer</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span><span class='st'>"^Britney Spears"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;Britney Spears&quot;                              
+[2] &quot;Britney Spears Featuring G-Eazy&quot;             
+[3] &quot;Britney Spears Featuring Madonna&quot;            
+[4] &quot;Britney Spears &amp; Iggy Azalea&quot;                
+[5] &quot;Britney Spears Featuring Tinashe&quot;            
+[6] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
+</div>
+<p>It retains Britney songs featuring other artists but not songs by other artists featuring Britney. In my ideal world I’d subset and join the two data sets in one fell swoop but as yet I haven’t made anything except the most cursory checks that I know how to join them sensibly. So, one step at a time, sweetie. Filter first:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney_billboard</span> <span class='op'>&lt;-</span> <span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_detect.html'>str_detect</a></span><span class='op'>(</span><span class='va'>performer</span>, <span class='st'>"^Britney Spears"</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='va'>britney_features</span> <span class='op'>&lt;-</span> <span class='va'>audio_features</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_detect.html'>str_detect</a></span><span class='op'>(</span><span class='va'>performer</span>, <span class='st'>"^Britney Spears"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>A quick <code>glimpse()</code> at both:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>britney_billboard</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 468
+Columns: 10
+$ url                    &lt;chr&gt; &quot;http://www.billboard.com/charts/hot-…
+$ week_id                &lt;chr&gt; &quot;4/22/2000&quot;, &quot;10/24/2009&quot;, &quot;12/20/200…
+$ week_position          &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, 1, …
+$ song                   &lt;chr&gt; &quot;Oops!...I Did It Again&quot;, &quot;3&quot;, &quot;Circu…
+$ performer              &lt;chr&gt; &quot;Britney Spears&quot;, &quot;Britney Spears&quot;, &quot;…
+$ song_id                &lt;chr&gt; &quot;Oops!...I Did It AgainBritney Spears…
+$ instance               &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ previous_week_position &lt;dbl&gt; NA, NA, NA, NA, NA, 45, NA, NA, NA, N…
+$ peak_position          &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, 1, …
+$ weeks_on_chart         &lt;dbl&gt; 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 8, 1, 1…</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>britney_features</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 33
+Columns: 22
+$ song_id                   &lt;chr&gt; &quot;...Baby One More TimeBritney Spea…
+$ performer                 &lt;chr&gt; &quot;Britney Spears&quot;, &quot;Britney Spears&quot;…
+$ song                      &lt;chr&gt; &quot;...Baby One More Time&quot;, &quot;(You Dri…
+$ spotify_genre             &lt;chr&gt; &quot;[&#39;dance pop&#39;, &#39;pop&#39;, &#39;post-teen p…
+$ spotify_track_id          &lt;chr&gt; &quot;3MjUtNVVq3C8Fn0MP3zhXa&quot;, &quot;1DSJNBN…
+$ spotify_track_preview_url &lt;chr&gt; &quot;https://p.scdn.co/mp3-preview/da2…
+$ spotify_track_duration_ms &lt;dbl&gt; 211066, 198066, 213173, 196053, 19…
+$ spotify_track_explicit    &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE,…
+$ spotify_track_album       &lt;chr&gt; &quot;...Baby One More Time (Digital De…
+$ danceability              &lt;dbl&gt; 0.759, 0.748, 0.697, 0.712, 0.791,…
+$ energy                    &lt;dbl&gt; 0.699, 0.939, 0.709, 0.911, 0.733,…
+$ key                       &lt;dbl&gt; 0, 0, 5, 5, 6, 7, 4, 3, 7, 2, 0, 5…
+$ loudness                  &lt;dbl&gt; -5.745, -4.288, -1.917, -3.866, -5…
+$ mode                      &lt;dbl&gt; 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1…
+$ speechiness               &lt;dbl&gt; 0.0307, 0.0341, 0.0455, 0.0445, 0.…
+$ acousticness              &lt;dbl&gt; 0.20200, 0.05340, 0.04520, 0.68900…
+$ instrumentalness          &lt;dbl&gt; 1.31e-04, 0.00e+00, 0.00e+00, 8.02…
+$ liveness                  &lt;dbl&gt; 0.4430, 0.3200, 0.1380, 0.1070, 0.…
+$ valence                   &lt;dbl&gt; 0.907, 0.960, 0.787, 0.850, 0.761,…
+$ tempo                     &lt;dbl&gt; 92.960, 104.001, 134.910, 117.533,…
+$ time_signature            &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4…
+$ spotify_track_popularity  &lt;dbl&gt; 77, 61, 65, 60, 77, 69, 41, 63, 54…</code></pre>
+</div>
+<p>Are the <code>song_id</code> values in the two data frames comparable? I suspect that they will be because (I’m told that) Tidy Tuesday does a good job of pre-cleaning the data, but in my old age I have become paranoid. So let’s just make sure it’s a suitable basis for a join</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://generics.r-lib.org/reference/setops.html'>intersect</a></span><span class='op'>(</span>
+  <span class='va'>britney_billboard</span><span class='op'>$</span><span class='va'>song_id</span>, 
+  <span class='va'>britney_features</span><span class='op'>$</span><span class='va'>song_id</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code> [1] &quot;Oops!...I Did It AgainBritney Spears&quot;                           
+ [2] &quot;3Britney Spears&quot;                                                
+ [3] &quot;CircusBritney Spears&quot;                                           
+ [4] &quot;StrongerBritney Spears&quot;                                         
+ [5] &quot;Shattered GlassBritney Spears&quot;                                  
+ [6] &quot;Piece Of MeBritney Spears&quot;                                      
+ [7] &quot;...Baby One More TimeBritney Spears&quot;                            
+ [8] &quot;Pretty GirlsBritney Spears &amp; Iggy Azalea&quot;                       
+ [9] &quot;PerfumeBritney Spears&quot;                                          
+[10] &quot;Hold It Against MeBritney Spears&quot;                               
+[11] &quot;SometimesBritney Spears&quot;                                        
+[12] &quot;(You Drive Me) CrazyBritney Spears&quot;                             
+[13] &quot;CriminalBritney Spears&quot;                                         
+[14] &quot;Make Me...Britney Spears Featuring G-Eazy&quot;                      
+[15] &quot;Me Against The MusicBritney Spears Featuring Madonna&quot;           
+[16] &quot;OverprotectedBritney Spears&quot;                                    
+[17] &quot;LuckyBritney Spears&quot;                                            
+[18] &quot;EverytimeBritney Spears&quot;                                        
+[19] &quot;I&#39;m A Slave 4 UBritney Spears&quot;                                  
+[20] &quot;I Wanna GoBritney Spears&quot;                                       
+[21] &quot;From The Bottom Of My Broken HeartBritney Spears&quot;               
+[22] &quot;Do Somethin&#39;Britney Spears&quot;                                     
+[23] &quot;Break The IceBritney Spears&quot;                                    
+[24] &quot;RadarBritney Spears&quot;                                            
+[25] &quot;OutrageousBritney Spears&quot;                                       
+[26] &quot;Ooh La LaBritney Spears&quot;                                        
+[27] &quot;Slumber PartyBritney Spears Featuring Tinashe&quot;                  
+[28] &quot;Gimme MoreBritney Spears&quot;                                       
+[29] &quot;If U Seek AmyBritney Spears&quot;                                    
+[30] &quot;Till The World EndsBritney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;
+[31] &quot;ToxicBritney Spears&quot;                                            
+[32] &quot;WomanizerBritney Spears&quot;                                        
+[33] &quot;Work B**ch!Britney Spears&quot;                                      </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://generics.r-lib.org/reference/setops.html'>setdiff</a></span><span class='op'>(</span>
+  <span class='va'>britney_billboard</span><span class='op'>$</span><span class='va'>song_id</span>, 
+  <span class='va'>britney_features</span><span class='op'>$</span><span class='va'>song_id</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>character(0)</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://generics.r-lib.org/reference/setops.html'>setdiff</a></span><span class='op'>(</span>
+  <span class='va'>britney_features</span><span class='op'>$</span><span class='va'>song_id</span>, 
+  <span class='va'>britney_billboard</span><span class='op'>$</span><span class='va'>song_id</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>character(0)</code></pre>
+</div>
+<p>Everything I ever dreamed of! Okay that’s going to make my life so much easier:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>&lt;-</span> <span class='va'>britney_billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate-joins.html'>left_join</a></span><span class='op'>(</span><span class='va'>britney_features</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>britney</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 468
+Columns: 29
+$ url                       &lt;chr&gt; &quot;http://www.billboard.com/charts/h…
+$ week_id                   &lt;chr&gt; &quot;4/22/2000&quot;, &quot;10/24/2009&quot;, &quot;12/20/…
+$ week_position             &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, …
+$ song                      &lt;chr&gt; &quot;Oops!...I Did It Again&quot;, &quot;3&quot;, &quot;Ci…
+$ performer                 &lt;chr&gt; &quot;Britney Spears&quot;, &quot;Britney Spears&quot;…
+$ song_id                   &lt;chr&gt; &quot;Oops!...I Did It AgainBritney Spe…
+$ instance                  &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ previous_week_position    &lt;dbl&gt; NA, NA, NA, NA, NA, 45, NA, NA, NA…
+$ peak_position             &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, …
+$ weeks_on_chart            &lt;dbl&gt; 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 8, 1…
+$ spotify_genre             &lt;chr&gt; &quot;[&#39;dance pop&#39;, &#39;pop&#39;, &#39;post-teen p…
+$ spotify_track_id          &lt;chr&gt; NA, &quot;6pymOcrCnMuCWdgGVTvUgP&quot;, &quot;7jk…
+$ spotify_track_preview_url &lt;chr&gt; NA, &quot;https://p.scdn.co/mp3-preview…
+$ spotify_track_duration_ms &lt;dbl&gt; NA, 213173, 192360, 203000, 172400…
+$ spotify_track_explicit    &lt;lgl&gt; NA, FALSE, FALSE, FALSE, FALSE, FA…
+$ spotify_track_album       &lt;chr&gt; NA, &quot;{&#39;album_type&#39;: &#39;compilation&#39;,…
+$ danceability              &lt;dbl&gt; NA, 0.697, 0.791, 0.707, 0.831, 0.…
+$ energy                    &lt;dbl&gt; NA, 0.709, 0.733, 0.923, 0.489, 0.…
+$ key                       &lt;dbl&gt; NA, 5, 6, 11, 0, 11, 0, 7, 3, 0, 1…
+$ loudness                  &lt;dbl&gt; NA, -1.917, -5.215, -3.957, -6.475…
+$ mode                      &lt;dbl&gt; NA, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, …
+$ speechiness               &lt;dbl&gt; NA, 0.0455, 0.0520, 0.0521, 0.0533…
+$ acousticness              &lt;dbl&gt; NA, 0.04520, 0.14700, 0.12800, 0.0…
+$ instrumentalness          &lt;dbl&gt; NA, 0.00e+00, 3.81e-04, 4.37e-04, …
+$ liveness                  &lt;dbl&gt; NA, 0.1380, 0.0713, 0.2730, 0.0740…
+$ valence                   &lt;dbl&gt; NA, 0.787, 0.761, 0.842, 0.376, 0.…
+$ tempo                     &lt;dbl&gt; NA, 134.910, 114.980, 108.049, 120…
+$ time_signature            &lt;dbl&gt; NA, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, …
+$ spotify_track_popularity  &lt;dbl&gt; NA, 65, 77, 66, 45, 65, 77, 60, 53…</code></pre>
+</div>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <d-appendix style="display: grid;">
 <h3 id="last-updated" class="appendix">Last updated</h3>
 <div class="l-body">
 <p>
-<span>2021-09-14 15:16:37 AEST</span>
+<span>2021-09-14 16:37:46 AEST</span>
 </p>
 </div>
 </d-appendix>
@@ -2538,7 +2804,13 @@ checklist:
 </div>
 <h2 id="section"><!--------------- derived YAML -----------------></h2>
 <p>date: 2021-09-14 citation_url: <a href="https://blog.djnavarro.net/tidy-tuesday-billboard" class="uri">https://blog.djnavarro.net/tidy-tuesday-billboard</a> repository_url: <a href="https://github.com/djnavarro/distill-blog" class="uri">https://github.com/djnavarro/distill-blog</a> —</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>I also set <code>cache=TRUE</code> in the chunk options to avoid downloading the data each time I knit the post, and added the cached folder to the <code>.gitignore</code> file to avoid placing cached data under version control<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
