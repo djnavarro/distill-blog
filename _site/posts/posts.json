@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2021-09-14_tidy-tuesday-billboard/",
+    "title": "Title in sentence case",
+    "description": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit",
+    "author": [
+      {
+        "name": "Danielle Navarro",
+        "url": "https://djnavarro.net"
+      }
+    ],
+    "date": "2021-09-14",
+    "categories": [],
+    "contents": "\n\n\n\nI’ve never participated in Tidy Tuesday before, but since I’ve joined a slack that does, it is high time I did soemthing about that poor track record.\nThe data are located here. I’ve stored the link in the YAML header for this post so I can read the data with the following code, and set cache=TRUE in the chunk options to avoid downloading the data each time I knit the post again:\n\n\nbillboard <- readr::read_csv(params$data)\nbillboard\n\n\n# A tibble: 327,895 × 10\n   url      week_id  week_position song   performer song_id   instance\n   <chr>    <chr>            <dbl> <chr>  <chr>     <chr>        <dbl>\n 1 http://… 7/17/19…            34 Don't… Patty Du… Don't Ju…        1\n 2 http://… 7/24/19…            22 Don't… Patty Du… Don't Ju…        1\n 3 http://… 7/31/19…            14 Don't… Patty Du… Don't Ju…        1\n 4 http://… 8/7/1965            10 Don't… Patty Du… Don't Ju…        1\n 5 http://… 8/14/19…             8 Don't… Patty Du… Don't Ju…        1\n 6 http://… 8/21/19…             8 Don't… Patty Du… Don't Ju…        1\n 7 http://… 8/28/19…            14 Don't… Patty Du… Don't Ju…        1\n 8 http://… 9/4/1965            36 Don't… Patty Du… Don't Ju…        1\n 9 http://… 4/19/19…            97 Don't… Teddy Pe… Don't Ke…        1\n10 http://… 4/26/19…            90 Don't… Teddy Pe… Don't Ke…        1\n# … with 327,885 more rows, and 3 more variables:\n#   previous_week_position <dbl>, peak_position <dbl>,\n#   weeks_on_chart <dbl>\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.\n\n\nLast updated\n\n\n2021-09-14 15:16:37 AEST\n\n\nDetails\n\n\n\nsource code\n, \nR environment\n\n\n\n\n\n\n\n\n\ndate: 2021-09-14 citation_url: https://blog.djnavarro.net/tidy-tuesday-billboard repository_url: https://github.com/djnavarro/distill-blog —\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-09-14T15:16:37+10:00",
+    "input_file": "index.knit.md"
+  },
+  {
     "path": "posts/2021-09-07_water-colours/",
     "title": "Art, jasmines, and the water colours",
     "description": "An essay and tutorial covering a few useful art techniques in R",
