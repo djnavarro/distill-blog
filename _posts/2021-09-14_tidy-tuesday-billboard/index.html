@@ -1523,6 +1523,9 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p>I’ve never participated in <a href="https://github.com/rfordatascience/tidytuesday">Tidy Tuesday</a> before, but because I’ve now joined a slack that does, it is high time I did something about that poor track record. I wasn’t sure what I wanted to do with this week’s “Billboard” data, other than I wanted it to have something to do with Britney Spears (because she’s awesome). After going back and forward for a while, I decided what I’d do is put together a couple of plots showing the chart performance of all her songs and – more importantly – write it up as a blog post in which I try to “over-explain” all my choices. There are a lot of people in our slack who haven’t used R very much, and I want to “unpack” some of the bits and pieces that are involved. This post is pitched at beginners who are hoping for a little bit of extra scaffolding to explain some of the processes…</p>
+<aside>
+There’s an R script containing the code from this post <a href="https://github.com/djnavarro/distill-blog/blob/master/_site/posts/2021-09-14_tidy-tuesday-billboard/britney.R">here</a>
+</aside>
 <h2 id="finding-the-data-on-github">Finding the data on GitHub</h2>
 <p>Every week the Tidy Tuesday data are posted online, and the first step in participating is generally to import the data. After a little bit of hunting online, you might discover that the link to the billboard data looks like this:</p>
 <p><a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv</a></p>
