@@ -1,0 +1,2953 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { color: #20794d; } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #20794d; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+  <!--radix_placeholder_meta_tags-->
+<title>Notes from a data witch: Visualising the hits of Queen Britney</title>
+
+<meta property="description" itemprop="description" content="A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools"/>
+
+<link rel="canonical" href="https://blog.djnavarro.net/tidy-tuesday-billboard/"/>
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
+
+<!--  https://schema.org/Article -->
+<meta property="article:published" itemprop="datePublished" content="2021-09-14"/>
+<meta property="article:created" itemprop="dateCreated" content="2021-09-14"/>
+<meta name="article:author" content="Danielle Navarro"/>
+
+<!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+<meta property="og:title" content="Notes from a data witch: Visualising the hits of Queen Britney"/>
+<meta property="og:type" content="article"/>
+<meta property="og:description" content="A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools"/>
+<meta property="og:url" content="https://blog.djnavarro.net/tidy-tuesday-billboard/"/>
+<meta property="og:image" content="https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/britney.jpg"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="Notes from a data witch"/>
+
+<!--  https://dev.twitter.com/cards/types/summary -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:title" content="Notes from a data witch: Visualising the hits of Queen Britney"/>
+<meta property="twitter:description" content="A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools"/>
+<meta property="twitter:url" content="https://blog.djnavarro.net/tidy-tuesday-billboard/"/>
+<meta property="twitter:image" content="https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/britney.jpg"/>
+
+<!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
+<meta name="citation_title" content="Notes from a data witch: Visualising the hits of Queen Britney"/>
+<meta name="citation_fulltext_html_url" content="https://blog.djnavarro.net/tidy-tuesday-billboard"/>
+<meta name="citation_fulltext_world_readable" content=""/>
+<meta name="citation_online_date" content="2021/09/14"/>
+<meta name="citation_publication_date" content="2021/09/14"/>
+<meta name="citation_author" content="Danielle Navarro"/>
+<meta name="citation_author_institution" content="UNSW Sydney"/>
+<!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+<script type="text/json" id="radix-rmarkdown-metadata">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","preview","creative_commons","date","citation_url","repository_url","output","params","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["Visualising the hits of Queen Britney"]},{"type":"character","attributes":{},"value":["A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["britney.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["2021-09-14"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/tidy-tuesday-billboard"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["tidy-tuesday-billboard"]},{"type":"character","attributes":{},"value":["2021-09-14"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/tidy-tuesday-billboard/"]}]}
+</script>
+<!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["britney.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/figure-html5/britney-chart-positions-0-1.png","index_files/figure-html5/britney-chart-positions-1-1.png","index_files/figure-html5/britney-chart-positions-1-2.png","index_files/figure-html5/britney-chart-positions-2-1.png","index_files/figure-html5/britney-chart-positions-3-1.png","index_files/figure-html5/britney-chart-positions-4-1.png","index_files/figure-html5/britney-chart-positions-5-1.png","index_files/figure-html5/unnamed-chunk-1-1.png","index_files/header-attrs-2.10/header-attrs.js","index_files/jquery-1.11.3/jquery.min.js","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+<meta name="distill:offset" content="../.."/>
+
+<script type="application/javascript">
+
+  window.headroom_prevent_pin = false;
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // initialize headroom for banner
+    var header = $('header').get(0);
+    var headerHeight = header.offsetHeight;
+    var headroom = new Headroom(header, {
+      tolerance: 5,
+      onPin : function() {
+        if (window.headroom_prevent_pin) {
+          window.headroom_prevent_pin = false;
+          headroom.unpin();
+        }
+      }
+    });
+    headroom.init();
+    if(window.location.hash)
+      headroom.unpin();
+    $(header).addClass('headroom--transition');
+
+    // offset scroll location for banner on hash change
+    // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+    window.addEventListener("hashchange", function(event) {
+      window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+    });
+
+    // responsive menu
+    $('.distill-site-header').each(function(i, val) {
+      var topnav = $(this);
+      var toggle = topnav.find('.nav-toggle');
+      toggle.on('click', function() {
+        topnav.toggleClass('responsive');
+      });
+    });
+
+    // nav dropdowns
+    $('.nav-dropbtn').click(function(e) {
+      $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+      $(this).parent().siblings('.nav-dropdown')
+         .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $("body").click(function(e){
+      $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $(".nav-dropdown").click(function(e){
+      e.stopPropagation();
+    });
+  });
+</script>
+
+<style type="text/css">
+
+/* Theme (user-documented overrideables for nav appearance) */
+
+.distill-site-nav {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: #0F2E3D;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.distill-site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.distill-site-nav a:hover {
+  color: white;
+}
+
+@media print {
+  .distill-site-nav {
+    display: none;
+  }
+}
+
+.distill-site-header {
+
+}
+
+.distill-site-footer {
+
+}
+
+
+/* Site Header */
+
+.distill-site-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.distill-site-header .nav-left {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header .nav-left {
+    margin-left: 0;
+  }
+}
+
+
+.distill-site-header .nav-right {
+  float: right;
+  margin-right: 8px;
+}
+
+.distill-site-header a,
+.distill-site-header .title {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 10px 14px 10px;
+}
+
+.distill-site-header .title {
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.distill-site-header .logo {
+  padding: 0;
+}
+
+.distill-site-header .logo img {
+  display: none;
+  max-height: 20px;
+  width: auto;
+  margin-bottom: -4px;
+}
+
+.distill-site-header .nav-image img {
+  max-height: 18px;
+  width: auto;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+
+
+@media screen and (min-width: 1000px) {
+  .distill-site-header .logo img {
+    display: inline-block;
+  }
+  .distill-site-header .nav-left {
+    margin-left: 20px;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 20px;
+  }
+  .distill-site-header .title {
+    padding-left: 12px;
+  }
+}
+
+
+.distill-site-header .nav-toggle {
+  display: none;
+}
+
+.nav-dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.nav-dropdown .nav-dropbtn {
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 16px 10px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  margin-top: 1px;
+  z-index: 2;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 200px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 2px;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-dropdown-content hr {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dropdown-active {
+  display: block;
+}
+
+.nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+  color: black;
+  padding: 6px 24px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.nav-dropdown-content .nav-dropdown-header {
+  display: block;
+  padding: 5px 24px;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropbtn {
+  color: white;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.nav-right .nav-dropdown-content {
+  margin-left: -45%;
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+  .distill-site-header a.nav-toggle {
+    float: right;
+    display: block;
+  }
+  .distill-site-header .title {
+    margin-left: 0;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 0;
+  }
+  .distill-site-header {
+    overflow: hidden;
+  }
+  .nav-right .nav-dropdown-content {
+    margin-left: 0;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-header.responsive {position: relative; min-height: 500px; }
+  .distill-site-header.responsive a.nav-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .distill-site-header.responsive a,
+  .distill-site-header.responsive .nav-dropdown {
+    display: block;
+    text-align: left;
+  }
+  .distill-site-header.responsive .nav-left,
+  .distill-site-header.responsive .nav-right {
+    width: 100%;
+  }
+  .distill-site-header.responsive .nav-dropdown {float: none;}
+  .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+  .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Site Footer */
+
+.distill-site-footer {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 3;
+  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Headroom */
+
+d-title {
+  padding-top: 6rem;
+}
+
+@media print {
+  d-title {
+    padding-top: 4rem;
+  }
+}
+
+.headroom {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.headroom--transition {
+  transition: all .4s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+/* adjust viewport for navbar height */
+/* helps vertically center bootstrap (non-distill) content */
+.min-vh-100 {
+  min-height: calc(100vh - 100px) !important;
+}
+
+</style>
+
+<script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+<link href="../../site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+<link href="../../site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+<script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
+<script src="../../site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+<script src="../../site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+<script type="application/javascript">
+
+function getMeta(metaName) {
+  var metas = document.getElementsByTagName('meta');
+  for (let i = 0; i < metas.length; i++) {
+    if (metas[i].getAttribute('name') === metaName) {
+      return metas[i].getAttribute('content');
+    }
+  }
+  return '';
+}
+
+function offsetURL(url) {
+  var offset = getMeta('distill:offset');
+  return offset ? offset + '/' + url : url;
+}
+
+function createFuseIndex() {
+
+  // create fuse index
+  var options = {
+    keys: [
+      { name: 'title', weight: 20 },
+      { name: 'categories', weight: 15 },
+      { name: 'description', weight: 10 },
+      { name: 'contents', weight: 5 },
+    ],
+    ignoreLocation: true,
+    threshold: 0
+  };
+  var fuse = new window.Fuse([], options);
+
+  // fetch the main search.json
+  return fetch(offsetURL('search.json'))
+    .then(function(response) {
+      if (response.status == 200) {
+        return response.json().then(function(json) {
+          // index main articles
+          json.articles.forEach(function(article) {
+            fuse.add(article);
+          });
+          // download collections and index their articles
+          return Promise.all(json.collections.map(function(collection) {
+            return fetch(offsetURL(collection)).then(function(response) {
+              if (response.status === 200) {
+                return response.json().then(function(articles) {
+                  articles.forEach(function(article) {
+                    fuse.add(article);
+                  });
+                })
+              } else {
+                return Promise.reject(
+                  new Error('Unexpected status from search index request: ' +
+                            response.status)
+                );
+              }
+            });
+          })).then(function() {
+            return fuse;
+          });
+        });
+
+      } else {
+        return Promise.reject(
+          new Error('Unexpected status from search index request: ' +
+                      response.status)
+        );
+      }
+    });
+}
+
+window.document.addEventListener("DOMContentLoaded", function (event) {
+
+  // get search element (bail if we don't have one)
+  var searchEl = window.document.getElementById('distill-search');
+  if (!searchEl)
+    return;
+
+  createFuseIndex()
+    .then(function(fuse) {
+
+      // make search box visible
+      searchEl.classList.remove('hidden');
+
+      // initialize autocomplete
+      var options = {
+        autoselect: true,
+        hint: false,
+        minLength: 2,
+      };
+      window.autocomplete(searchEl, options, [{
+        source: function(query, callback) {
+          const searchOptions = {
+            isCaseSensitive: false,
+            shouldSort: true,
+            minMatchCharLength: 2,
+            limit: 10,
+          };
+          var results = fuse.search(query, searchOptions);
+          callback(results
+            .map(function(result) { return result.item; })
+          );
+        },
+        templates: {
+          suggestion: function(suggestion) {
+            var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+              ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+              : '';
+            var html = `
+              <div class="search-item">
+                <h3>${suggestion.title}</h3>
+                <div class="search-item-description">
+                  ${suggestion.description || ''}
+                </div>
+                <div class="search-item-preview">
+                  ${img}
+                </div>
+              </div>
+            `;
+            return html;
+          }
+        }
+      }]).on('autocomplete:selected', function(event, suggestion) {
+        window.location.href = offsetURL(suggestion.path);
+      });
+      // remove inline display style on autocompleter (we want to
+      // manage responsive display via css)
+      $('.algolia-autocomplete').css("display", "");
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+
+});
+
+</script>
+
+<style type="text/css">
+
+.nav-search {
+  font-size: x-small;
+}
+
+/* Algolioa Autocomplete */
+
+.algolia-autocomplete {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: sub;
+  background-color: white;
+  color: black;
+  padding: 6px;
+  padding-top: 8px;
+  padding-bottom: 0;
+  border-radius: 6px;
+  border: 1px #0F2E3D solid;
+  width: 180px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-nav .algolia-autocomplete {
+    display: none;
+    visibility: hidden;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete {
+    display: inline-block;
+    visibility: visible;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+    margin-left: 0;
+    width: 400px;
+    max-height: 400px;
+  }
+}
+
+.algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+  width: 90%;
+  outline: none;
+  border: none;
+}
+
+.algolia-autocomplete .aa-hint {
+  color: #999;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+  width: 550px;
+  max-height: 70vh;
+  overflow-x: visible;
+  overflow-y: scroll;
+  padding: 5px;
+  margin-top: 3px;
+  margin-left: -150px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #999;
+  border-top: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+  cursor: pointer;
+  padding: 5px 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+  border-bottom: none;
+  margin-bottom: 2px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+  overflow: hidden;
+  font-size: 0.8em;
+  line-height: 1.4em;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+  font-size: 1rem;
+  margin-block-start: 0;
+  margin-block-end: 5px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+  display: inline-block;
+  overflow: hidden;
+  height: 2.8em;
+  width: 80%;
+  margin-right: 4%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+  display: inline-block;
+  width: 15%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+  height: 3em;
+  width: auto;
+  display: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+  display: initial;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+  background-color: #eee;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+</style>
+
+
+<!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+<style type="text/css">
+
+body {
+  background-color: white;
+}
+
+.pandoc-table {
+  width: 100%;
+}
+
+.pandoc-table>caption {
+  margin-bottom: 10px;
+}
+
+.pandoc-table th:not([align]) {
+  text-align: left;
+}
+
+.pagedtable-footer {
+  font-size: 15px;
+}
+
+d-byline .byline {
+  grid-template-columns: 2fr 2fr;
+}
+
+d-byline .byline h3 {
+  margin-block-start: 1.5em;
+}
+
+d-byline .byline .authors-affiliations h3 {
+  margin-block-start: 0.5em;
+}
+
+.authors-affiliations .orcid-id {
+  width: 16px;
+  height:16px;
+  margin-left: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+  padding-bottom: 2px;
+}
+
+d-title .dt-tags {
+  margin-top: 1em;
+  grid-column: text;
+}
+
+.dt-tags .dt-tag {
+  text-decoration: none;
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0em 0.4em;
+  margin-right: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 70%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+d-article table.gt_table td,
+d-article table.gt_table th {
+  border-bottom: none;
+}
+
+.html-widget {
+  margin-bottom: 2.0em;
+}
+
+.l-screen-inset {
+  padding-right: 16px;
+}
+
+.l-screen .caption {
+  margin-left: 10px;
+}
+
+.shaded {
+  background: rgb(247, 247, 247);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .html-widget {
+  margin-bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .shaded-content {
+  background: white;
+}
+
+.text-output {
+  margin-top: 0;
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+d-article {
+  padding-top: 2.5rem;
+  padding-bottom: 30px;
+}
+
+d-appendix {
+  padding-top: 30px;
+}
+
+d-article>p>img {
+  width: 100%;
+}
+
+d-article h2 {
+  margin: 1rem 0 1.5rem 0;
+}
+
+d-article h3 {
+  margin-top: 1.5rem;
+}
+
+d-article iframe {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 2.0em;
+  width: 100%;
+}
+
+/* Tweak code blocks */
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: auto;
+}
+
+d-article div.sourceCode {
+  background-color: white;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 10px;
+  font-size: 12px;
+  border-left: 2px solid rgba(0,0,0,0.1);
+}
+
+d-article pre {
+  font-size: 12px;
+  color: black;
+  background: none;
+  margin-top: 0;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+d-article pre a {
+  border-bottom: none;
+}
+
+d-article pre a:hover {
+  border-bottom: none;
+  text-decoration: underline;
+}
+
+d-article details {
+  grid-column: text;
+  margin-bottom: 0.8em;
+}
+
+@media(min-width: 768px) {
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: visible !important;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+d-article pre {
+  font-size: 14px;
+}
+
+}
+
+figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* CSS for d-contents */
+
+.d-contents {
+  grid-column: text;
+  color: rgba(0,0,0,0.8);
+  font-size: 0.9em;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 0.25em;
+  justify-self: start;
+}
+
+@media(min-width: 1000px) {
+  .d-contents.d-contents-float {
+    height: 0;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: center;
+    padding-right: 3em;
+    padding-left: 2em;
+  }
+}
+
+.d-contents nav h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.d-contents li {
+  list-style-type: none
+}
+
+.d-contents nav > ul {
+  padding-left: 0;
+}
+
+.d-contents ul {
+  padding-left: 1em
+}
+
+.d-contents nav ul li {
+  margin-top: 0.6em;
+  margin-bottom: 0.2em;
+}
+
+.d-contents nav a {
+  font-size: 13px;
+  border-bottom: none;
+  text-decoration: none
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.d-contents nav a:hover {
+  text-decoration: underline solid rgba(0, 0, 0, 0.6)
+}
+
+.d-contents nav > ul > li > a {
+  font-weight: 600;
+}
+
+.d-contents nav > ul > li > ul {
+  font-weight: inherit;
+}
+
+.d-contents nav > ul > li > ul > li {
+  margin-top: 0.2em;
+}
+
+
+.d-contents nav ul {
+  margin-top: 0;
+  margin-bottom: 0.25em;
+}
+
+.d-article-with-toc h2:nth-child(2) {
+  margin-top: 0;
+}
+
+
+/* Figure */
+
+.figure {
+  position: relative;
+  margin-bottom: 2.5em;
+  margin-top: 1.5em;
+}
+
+.figure img {
+  width: 100%;
+}
+
+.figure .caption {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5em;
+}
+
+.figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.figure .caption a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.figure .caption b,
+.figure .caption strong, {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+/* Citations */
+
+d-article .citation {
+  color: inherit;
+  cursor: inherit;
+}
+
+div.hanging-indent{
+  margin-left: 1em; text-indent: -1em;
+}
+
+/* Citation hover box */
+
+.tippy-box[data-theme~=light-border] {
+  background-color: rgba(250, 250, 250, 0.95);
+}
+
+.tippy-content > p {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+
+/* Tweak 1000px media break to show more text */
+
+@media(min-width: 1000px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 16px;
+  }
+
+  .grid {
+    grid-column-gap: 16px;
+  }
+
+  d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+  }
+  figure .caption, .figure .caption, figure figcaption {
+    font-size: 13px;
+  }
+}
+
+@media(min-width: 1180px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 32px;
+  }
+
+  .grid {
+    grid-column-gap: 32px;
+  }
+}
+
+
+/* Get the citation styles for the appendix (not auto-injected on render since
+   we do our own rendering of the citation appendix) */
+
+d-appendix .citation-appendix,
+.d-appendix .citation-appendix {
+  font-size: 11px;
+  line-height: 15px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 18px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.02);
+  padding: 10px 18px;
+  border-radius: 3px;
+  color: rgba(150, 150, 150, 1);
+  overflow: hidden;
+  margin-top: -12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Include appendix styles here so they can be overridden */
+
+d-appendix {
+  contain: layout style;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-top: 60px;
+  margin-bottom: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0,0,0,0.5);
+  padding-top: 60px;
+  padding-bottom: 48px;
+}
+
+d-appendix h3 {
+  grid-column: page-start / text-start;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.65);
+}
+
+d-appendix h3 + * {
+  margin-top: 1em;
+}
+
+d-appendix ol {
+  padding: 0 0 0 15px;
+}
+
+@media (min-width: 768px) {
+  d-appendix ol {
+    padding: 0 0 0 30px;
+    margin-left: -30px;
+  }
+}
+
+d-appendix li {
+  margin-bottom: 1em;
+}
+
+d-appendix a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+d-appendix > * {
+  grid-column: text;
+}
+
+d-appendix > d-footnote-list,
+d-appendix > d-citation-list,
+d-appendix > distill-appendix {
+  grid-column: screen;
+}
+
+/* Include footnote styles here so they can be overridden */
+
+d-footnote-list {
+  contain: layout style;
+}
+
+d-footnote-list > * {
+  grid-column: text;
+}
+
+d-footnote-list a.footnote-backlink {
+  color: rgba(0,0,0,0.3);
+  padding-left: 0.5em;
+}
+
+
+
+/* Anchor.js */
+
+.anchorjs-link {
+  /*transition: all .25s linear; */
+  text-decoration: none;
+  border-bottom: none;
+}
+*:hover > .anchorjs-link {
+  margin-left: -1.125em !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Social footer */
+
+.social_footer {
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.67);
+}
+
+.disqus-comments {
+  margin-right: 30px;
+}
+
+.disqus-comment-count {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#disqus_thread {
+  margin-top: 30px;
+}
+
+.article-sharing a {
+  border-bottom: none;
+  margin-right: 8px;
+}
+
+.article-sharing a:hover {
+  border-bottom: none;
+}
+
+.sidebar-section.subscribe {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.subscribe p {
+  margin-bottom: 0.5em;
+}
+
+
+.article-footer .subscribe {
+  font-size: 15px;
+  margin-top: 45px;
+}
+
+
+.sidebar-section.custom {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.custom p {
+  margin-bottom: 0.5em;
+}
+
+/* Styles for listing layout (hide title) */
+.layout-listing d-title, .layout-listing .d-title {
+  display: none;
+}
+
+/* Styles for posts lists (not auto-injected) */
+
+
+.posts-with-sidebar {
+  padding-left: 45px;
+  padding-right: 45px;
+}
+
+.posts-list .description h2,
+.posts-list .description p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.posts-list .description h2 {
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.posts-list h2.post-tag {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 12px;
+}
+.posts-list {
+  margin-top: 60px;
+  margin-bottom: 24px;
+}
+
+.posts-list .post-preview {
+  text-decoration: none;
+  overflow: hidden;
+  display: block;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+}
+
+.post-preview-last {
+  border-bottom: none !important;
+}
+
+.posts-list .posts-list-caption {
+  grid-column: screen;
+  font-weight: 400;
+}
+
+.posts-list .post-preview h2 {
+  margin: 0 0 6px 0;
+  line-height: 1.2em;
+  font-style: normal;
+  font-size: 24px;
+}
+
+.posts-list .post-preview p {
+  margin: 0 0 12px 0;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+.posts-list .post-preview .thumbnail {
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  position: relative;
+  max-width: 500px;
+}
+.posts-list .post-preview img {
+  width: 100%;
+  display: block;
+}
+
+.posts-list .metadata {
+  font-size: 12px;
+  line-height: 1.4em;
+  margin-bottom: 18px;
+}
+
+.posts-list .metadata > * {
+  display: inline-block;
+}
+
+.posts-list .metadata .publishedDate {
+  margin-right: 2em;
+}
+
+.posts-list .metadata .dt-authors {
+  display: block;
+  margin-top: 0.3em;
+  margin-right: 2em;
+}
+
+.posts-list .dt-tags {
+  display: block;
+  line-height: 1em;
+}
+
+.posts-list .dt-tags .dt-tag {
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0.3em 0.4em;
+  margin-right: 0.2em;
+  margin-bottom: 0.4em;
+  font-size: 60%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.posts-list img {
+  opacity: 1;
+}
+
+.posts-list img[data-src] {
+  opacity: 0;
+}
+
+.posts-more {
+  clear: both;
+}
+
+
+.posts-sidebar {
+  font-size: 16px;
+}
+
+.posts-sidebar h3 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.categories ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categories li {
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0;
+}
+
+.categories li>a {
+  border-bottom: none;
+}
+
+.categories li>a:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.categories .active {
+  font-weight: 600;
+}
+
+.categories .category-count {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+@media(min-width: 768px) {
+  .posts-list .post-preview h2 {
+    font-size: 26px;
+  }
+  .posts-list .post-preview .thumbnail {
+    float: right;
+    width: 30%;
+    margin-bottom: 0;
+  }
+  .posts-list .post-preview .description {
+    float: left;
+    width: 45%;
+  }
+  .posts-list .post-preview .metadata {
+    float: left;
+    width: 20%;
+    margin-top: 8px;
+  }
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.5em;
+    font-size: 16px;
+  }
+  .posts-with-sidebar .posts-list {
+    float: left;
+    width: 75%;
+  }
+  .posts-with-sidebar .posts-sidebar {
+    float: right;
+    width: 20%;
+    margin-top: 60px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+
+/* Improve display for browsers without grid (IE/Edge <= 15) */
+
+.downlevel {
+  line-height: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+}
+
+.downlevel .d-title {
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+}
+
+.downlevel .d-title h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1em;
+  margin: 0 0 0.5rem;
+}
+
+.downlevel .d-title p {
+  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.55em;
+  margin-top: 0;
+}
+
+.downlevel .d-byline {
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  font-size: 0.8rem;
+  line-height: 1.8em;
+}
+
+.downlevel .section-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.downlevel .d-article {
+  font-size: 1.06rem;
+  line-height: 1.7em;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+
+.downlevel .d-appendix {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: none;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.5);
+  padding-top: 40px;
+  padding-bottom: 48px;
+}
+
+.downlevel .footnotes ol {
+  padding-left: 13px;
+}
+
+.downlevel .base-grid,
+.downlevel .distill-header,
+.downlevel .d-title,
+.downlevel .d-abstract,
+.downlevel .d-article,
+.downlevel .d-appendix,
+.downlevel .distill-appendix,
+.downlevel .d-byline,
+.downlevel .d-footnote-list,
+.downlevel .d-citation-list,
+.downlevel .distill-footer,
+.downlevel .appendix-bottom,
+.downlevel .posts-container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media(min-width: 768px) {
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+  padding-left: 150px;
+  padding-right: 150px;
+  max-width: 900px;
+}
+}
+
+.downlevel pre code {
+  display: block;
+  border-left: 2px solid rgba(0, 0, 0, .1);
+  padding: 0 0 0 20px;
+  font-size: 14px;
+}
+
+.downlevel code, .downlevel pre {
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+.downlevel .posts-list .post-preview {
+  color: inherit;
+}
+
+
+
+</style>
+
+<script type="application/javascript">
+
+function is_downlevel_browser() {
+  if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                 window.navigator.userAgent)) {
+    return true;
+  } else {
+    return window.load_distill_framework === undefined;
+  }
+}
+
+// show body when load is complete
+function on_load_complete() {
+
+  // add anchors
+  if (window.anchors) {
+    window.anchors.options.placement = 'left';
+    window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+  }
+
+
+  // set body to visible
+  document.body.style.visibility = 'visible';
+
+  // force redraw for leaflet widgets
+  if (window.HTMLWidgets) {
+    var maps = window.HTMLWidgets.findAll(".leaflet");
+    $.each(maps, function(i, el) {
+      var map = this.getMap();
+      map.invalidateSize();
+      map.eachLayer(function(layer) {
+        if (layer instanceof L.TileLayer)
+          layer.redraw();
+      });
+    });
+  }
+
+  // trigger 'shown' so htmlwidgets resize
+  $('d-article').trigger('shown');
+}
+
+function init_distill() {
+
+  init_common();
+
+  // create front matter
+  var front_matter = $('<d-front-matter></d-front-matter>');
+  $('#distill-front-matter').wrap(front_matter);
+
+  // create d-title
+  $('.d-title').changeElementType('d-title');
+
+  // create d-byline
+  var byline = $('<d-byline></d-byline>');
+  $('.d-byline').replaceWith(byline);
+
+  // create d-article
+  var article = $('<d-article></d-article>');
+  $('.d-article').wrap(article).children().unwrap();
+
+  // move posts container into article
+  $('.posts-container').appendTo($('d-article'));
+
+  // create d-appendix
+  $('.d-appendix').changeElementType('d-appendix');
+
+  // flag indicating that we have appendix items
+  var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+  // replace footnotes with <d-footnote>
+  $('.footnote-ref').each(function(i, val) {
+    appendix = true;
+    var href = $(this).attr('href');
+    var id = href.replace('#', '');
+    var fn = $('#' + id);
+    var fn_p = $('#' + id + '>p');
+    fn_p.find('.footnote-back').remove();
+    var text = fn_p.html();
+    var dtfn = $('<d-footnote></d-footnote>');
+    dtfn.html(text);
+    $(this).replaceWith(dtfn);
+  });
+  // remove footnotes
+  $('.footnotes').remove();
+
+  // move refs into #references-listing
+  $('#references-listing').replaceWith($('#refs'));
+
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    var id = $(this).attr('id');
+    $('.d-contents a[href="#' + id + '"]').parent().remove();
+    appendix = true;
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+  });
+
+  // show d-appendix if we have appendix content
+  $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+  // localize layout chunks to just output
+  $('.layout-chunk').each(function(i, val) {
+
+    // capture layout
+    var layout = $(this).attr('data-layout');
+
+    // apply layout to markdown level block elements
+    var elements = $(this).children().not('details, div.sourceCode, pre, script');
+    elements.each(function(i, el) {
+      var layout_div = $('<div class="' + layout + '"></div>');
+      if (layout_div.hasClass('shaded')) {
+        var shaded_content = $('<div class="shaded-content"></div>');
+        $(this).wrap(shaded_content);
+        $(this).parent().wrap(layout_div);
+      } else {
+        $(this).wrap(layout_div);
+      }
+    });
+
+
+    // unwrap the layout-chunk div
+    $(this).children().unwrap();
+  });
+
+  // remove code block used to force  highlighting css
+  $('.distill-force-highlighting-css').parent().remove();
+
+  // remove empty line numbers inserted by pandoc when using a
+  // custom syntax highlighting theme
+  $('code.sourceCode a:empty').remove();
+
+  // load distill framework
+  load_distill_framework();
+
+  // wait for window.distillRunlevel == 4 to do post processing
+  function distill_post_process() {
+
+    if (!window.distillRunlevel || window.distillRunlevel < 4)
+      return;
+
+    // hide author/affiliations entirely if we have no authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+    if (!have_authors)
+      $('d-byline').addClass('hidden');
+
+    // article with toc class
+    $('.d-contents').parent().addClass('d-article-with-toc');
+
+    // strip links that point to #
+    $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+    // add orcid ids
+    $('.authors-affiliations').find('.author').each(function(i, el) {
+      var orcid_id = front_matter.authors[i].orcidID;
+      if (orcid_id) {
+        var a = $('<a></a>');
+        a.attr('href', 'https://orcid.org/' + orcid_id);
+        var img = $('<img></img>');
+        img.addClass('orcid-id');
+        img.attr('alt', 'ORCID ID');
+        img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+        a.append(img);
+        $(this).append(a);
+      }
+    });
+
+    // hide elements of author/affiliations grid that have no value
+    function hide_byline_column(caption) {
+      $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+    }
+
+    // affiliations
+    var have_affiliations = false;
+    for (var i = 0; i<front_matter.authors.length; ++i) {
+      var author = front_matter.authors[i];
+      if (author.affiliation !== "&nbsp;") {
+        have_affiliations = true;
+        break;
+      }
+    }
+    if (!have_affiliations)
+      $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+    // published date
+    if (!front_matter.publishedDate)
+      hide_byline_column("Published");
+
+    // document object identifier
+    var doi = $('d-byline').find('h3:contains("DOI")');
+    var doi_p = doi.next().empty();
+    if (!front_matter.doi) {
+      // if we have a citation and valid citationText then link to that
+      if ($('#citation').length > 0 && front_matter.citationText) {
+        doi.html('Citation');
+        $('<a href="#citation"></a>')
+          .text(front_matter.citationText)
+          .appendTo(doi_p);
+      } else {
+        hide_byline_column("DOI");
+      }
+    } else {
+      $('<a></a>')
+         .attr('href', "https://doi.org/" + front_matter.doi)
+         .html(front_matter.doi)
+         .appendTo(doi_p);
+    }
+
+     // change plural form of authors/affiliations
+    if (front_matter.authors.length === 1) {
+      var grid = $('.authors-affiliations');
+      grid.children('h3:contains("Authors")').text('Author');
+      grid.children('h3:contains("Affiliations")').text('Affiliation');
+    }
+
+    // remove d-appendix and d-footnote-list local styles
+    $('d-appendix > style:first-child').remove();
+    $('d-footnote-list > style:first-child').remove();
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // hoverable references
+    $('span.citation[data-cites]').each(function() {
+      var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+      window.tippy(this, {
+        allowHTML: true,
+        content: refHtml,
+        maxWidth: 500,
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start'
+      });
+    });
+
+    // clear polling timer
+    clearInterval(tid);
+
+    // show body now that everything is ready
+    on_load_complete();
+  }
+
+  var tid = setInterval(distill_post_process, 50);
+  distill_post_process();
+
+}
+
+function init_downlevel() {
+
+  init_common();
+
+   // insert hr after d-title
+  $('.d-title').after($('<hr class="section-separator"/>'));
+
+  // check if we have authors
+  var front_matter = JSON.parse($("#distill-front-matter").html());
+  var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+  // manage byline/border
+  if (!have_authors)
+    $('.d-byline').remove();
+  $('.d-byline').after($('<hr class="section-separator"/>'));
+  $('.d-byline a').remove();
+
+  // remove toc
+  $('.d-contents').remove();
+
+  // move appendix elements
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+  });
+
+
+  // inject headers into references and footnotes
+  var refs_header = $('<h3></h3>');
+  refs_header.text('References');
+  $('#refs').prepend(refs_header);
+
+  var footnotes_header = $('<h3></h3');
+  footnotes_header.text('Footnotes');
+  $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+  // move appendix-bottom entries to the bottom
+  $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+  $('.appendix-bottom').remove();
+
+  // remove appendix if it's empty
+  if ($('.d-appendix').children().length === 0)
+    $('.d-appendix').remove();
+
+  // prepend separator above appendix
+  $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+  // trim code
+  $('pre>code').each(function(i, val) {
+    $(this).html($.trim($(this).html()));
+  });
+
+  // move posts-container right before article
+  $('.posts-container').insertBefore($('.d-article'));
+
+  $('body').addClass('downlevel');
+
+  on_load_complete();
+}
+
+
+function init_common() {
+
+  // jquery plugin to change element types
+  (function($) {
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+        attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+        return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+  })(jQuery);
+
+  // prevent underline for linked images
+  $('a > img').parent().css({'border-bottom' : 'none'});
+
+  // mark non-body figures created by knitr chunks as 100% width
+  $('.layout-chunk').each(function(i, val) {
+    var figures = $(this).find('img, .html-widget');
+    if ($(this).attr('data-layout') !== "l-body") {
+      figures.css('width', '100%');
+    } else {
+      figures.css('max-width', '100%');
+      figures.filter("[width]").each(function(i, val) {
+        var fig = $(this);
+        fig.css('width', fig.attr('width') + 'px');
+      });
+
+    }
+  });
+
+  // auto-append index.html to post-preview links in file: protocol
+  // and in rstudio ide preview
+  $('.post-preview').each(function(i, val) {
+    if (window.location.protocol === "file:")
+      $(this).attr('href', $(this).attr('href') + "index.html");
+  });
+
+  // get rid of index.html references in header
+  if (window.location.protocol !== "file:") {
+    $('.distill-site-header a[href]').each(function(i,val) {
+      $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+    });
+  }
+
+  // add class to pandoc style tables
+  $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+  $('.kable-table').children('table').addClass('pandoc-table');
+
+  // add figcaption style to table captions
+  $('caption').parent('table').addClass("figcaption");
+
+  // initialize posts list
+  if (window.init_posts_list)
+    window.init_posts_list();
+
+  // implmement disqus comment link
+  $('.disqus-comment-count').click(function() {
+    window.headroom_prevent_pin = true;
+    $('#disqus_thread').toggleClass('hidden');
+    if (!$('#disqus_thread').hasClass('hidden')) {
+      var offset = $(this).offset();
+      $(window).resize();
+      $('html, body').animate({
+        scrollTop: offset.top - 35
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (is_downlevel_browser())
+    init_downlevel();
+  else
+    window.addEventListener('WebComponentsReady', init_distill);
+});
+
+</script>
+
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    sans-serif;
+  --mono-font:       monospace;
+  --body-font:       sans-serif;
+  --navbar-font:     sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+</style>
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      40px;
+  --body-size:       16px;
+  --code-size:       16px;
+  --aside-size:      14px;
+  --fig-cap-size:    14px;
+
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    'Atkinson Hyperlegible', sans-serif;
+  --mono-font:       'Fira Code', monospace;
+  --body-font:       'Atkinson Hyperlegible', sans-serif;
+  --navbar-font:     'Atkinson Hyperlegible', sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   16px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       black; /* #0F2E3D; */
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       black; /* #0F2E3D; */
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+
+
+/*-- ARTICLE CODE BLOCK --*/
+d-article pre {
+  background-color: #eeeeee;
+  padding: 10px;
+  overflow-x: auto !important;
+}
+
+d-article div.sourceCode pre{
+  overflow-x: auto !important;
+}
+
+
+/*-- INLINE CODE -- */
+d-article p code {
+  font-size: 14px;
+  color: #000000;
+  background-color: #eeeeee;
+  padding: 3px;
+}
+
+/* -- REMOVE THUMBNAIL IMAGES -- */
+/*
+.posts-list .post-preview .description{
+  width: 75%;
+}
+.posts-list .post-preview .thumbnail {
+  width: 0;
+  display: none;
+}
+.posts-list .post-preview img {
+  display: none;
+}
+*/
+
+
+/* -- ASIDE TAGS -- */
+aside {
+  padding-block-end: 1rem;
+}</style>
+<style type="text/css">
+/* base style */
+
+/* FONT FAMILIES */
+
+:root {
+  --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+body,
+.posts-list .post-preview p,
+.posts-list .description p {
+  font-family: var(--body-font), var(--body-default);
+}
+
+h1, h2, h3, h4, h5, h6,
+.posts-list .post-preview h2,
+.posts-list .description h2 {
+  font-family: var(--heading-font), var(--heading-default);
+}
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: var(--mono-font), var(--mono-default);
+}
+
+
+/*-- TITLE --*/
+d-title h1,
+.posts-list > h1 {
+  color: var(--title-color, black);
+}
+
+d-title h1 {
+  font-size: var(--title-size, 50px);
+}
+
+/*-- HEADERS --*/
+d-article h1,
+d-article h2,
+d-article h3,
+d-article h4,
+d-article h5,
+d-article h6 {
+  color: var(--header-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- BODY --*/
+d-article > p,  /* only text inside of <p> tags */
+d-article > ul, /* lists */
+d-article > ol {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+  font-size: var(--body-size, 1.06rem);
+}
+
+
+/*-- CODE --*/
+d-article div.sourceCode code,
+d-article pre code {
+  font-size: var(--code-size, 14px);
+}
+
+/*-- ASIDE --*/
+d-article aside {
+  font-size: var(--aside-size, 12px);
+  color: var(--aside-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- FIGURE CAPTIONS --*/
+figure .caption,
+figure figcaption,
+.figure .caption {
+  font-size: var(--fig-cap-size, 13px);
+  color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- METADATA --*/
+d-byline h3 {
+  font-size: var(--heading-size, 0.6rem);
+  color: var(--heading-color, rgba(0, 0, 0, 0.5));
+}
+
+d-byline {
+  font-size: var(--body-size, 0.8rem);
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+d-byline a,
+d-article d-byline a {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- TABLE OF CONTENTS --*/
+.d-contents nav h3 {
+  font-size: var(--heading-size, 18px);
+}
+
+.d-contents nav a {
+  font-size: var(--contents-size, 13px);
+}
+
+/*-- APPENDIX --*/
+d-appendix h3 {
+  font-size: var(--heading-size, 15px);
+  color: var(--heading-color, rgba(0, 0, 0, 0.65));
+}
+
+d-appendix {
+  font-size: var(--text-size, 0.8em);
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+d-appendix d-footnote-list a.footnote-backlink {
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+.distill-site-header .title {
+  font-size: var(--title-size, 18px);
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.distill-site-header a,
+.nav-dropdown .nav-dropbtn {
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.nav-dropdown .nav-dropbtn {
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  font-size: var(--text-size, 15px);
+}
+
+.distill-site-header a:hover,
+.nav-dropdown:hover .nav-dropbtn {
+  color: var(--hover-color, white);
+}
+
+.distill-site-header {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer a:hover {
+  color: var(--hover-color, white);
+}</style>
+<!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.10/header-attrs.js"></script>
+  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
+  <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="../../site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="../../site_libs/anchor-4.2.2/anchor.min.js"></script>
+  <script src="../../site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="../../site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+<!-- plausible -->
+<script async defer data-domain="blog.djnavarro.net" src="https://plausible.io/js/plausible.js"></script>
+
+<!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"Visualising the hits of Queen Britney","description":"A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"UNSW Sydney","affiliationURL":"https://unsw.edu.au","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2021-09-14T00:00:00.000+10:00","citationText":"Navarro, 2021"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a class="logo" href="https://djnavarro.net">
+<img src="../../image/logo-profile.png" alt="Logo"/>
+</a>
+<a href="../../index.html" class="title">Notes from a data witch</a>
+<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
+</div>
+<div class="nav-right">
+<a href="../../about.html">About</a>
+<a href="../../index.xml">RSS</a>
+<a href="https://github.com/djnavarro/distill-blog">GitHub</a>
+<a href="https://twitter.com/djnavarro">Twitter</a>
+<a href="https://djnavarro.net">Homepage</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>Visualising the hits of Queen Britney</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p>A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools</p>
+</div>
+
+<div class="d-byline">
+  
+  true
+  
+<br/>2021-09-14
+</div>
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#finding-the-data-on-github">Finding the data on GitHub</a>
+<ul>
+<li><a href="#github-repositories">GitHub repositories</a></li>
+<li><a href="#repositories-have-branches">Repositories have branches</a></li>
+<li><a href="#repositories-are-usually-organised">Repositories are usually organised</a></li>
+<li><a href="#the-anatomy-of-the-data-link">The anatomy of the data link</a></li>
+</ul></li>
+<li><a href="#attaching-packages">Attaching packages</a></li>
+<li><a href="#importing-the-data">Importing the data</a></li>
+<li><a href="#finding-britney">Finding Britney</a>
+<ul>
+<li><a href="#pattern-matching-for-text-data">Pattern matching for text data</a></li>
+<li><a href="#creating-the-britney-data">Creating the Britney data</a></li>
+<li><a href="#fixing-the-dates">Fixing the dates</a></li>
+</ul></li>
+<li><a href="#visualising-a-queen">Visualising a queen</a></li>
+</ul>
+</nav>
+</div>
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new(long_slug)
+  - populate the lockfile with refinery::renv_snapshot(long_slug)
+  - update the _renv folder from snapshot with refinery::refresh(long_slug)
+
+---->
+<!--------------- setup post ----------------->
+<!--------------- post ----------------->
+<p>I’ve never participated in <a href="https://github.com/rfordatascience/tidytuesday">Tidy Tuesday</a> before, but because I’ve now joined a slack that does, it is high time I did something about that poor track record. I wasn’t sure what I wanted to do with this week’s “Billboard” data, other than I wanted it to have something to do with Britney Spears (because she’s awesome). After going back and forward for a while, I decided what I’d do is put together a couple of plots showing the chart performance of all her songs and – more importantly – write it up as a blog post in which I try to “over-explain” all my choices. There are a lot of people in our slack who haven’t used R very much, and I want to “unpack” some of the bits and pieces that are involved. This post is pitched at beginners who are hoping for a little bit of extra scaffolding to explain some of the processes…</p>
+<h2 id="finding-the-data-on-github">Finding the data on GitHub</h2>
+<p>Every week the Tidy Tuesday data are posted online, and the first step in participating is generally to import the data. After a little bit of hunting online, you might discover that the link to the billboard data looks like this:</p>
+<p><a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv</a></p>
+<p>Let’s start by unpacking this link. There is a lot of assumed knowledge buried here, and while it is entirely possible for you to get started without understanding it all, for most of us in the slack group the goal is to learn new data science skills. At some point you are probably going to want to learn the “version control” magic. This post is not the place to learn this sorcery, but I am going to start foreshadowing some important concepts because they will be useful later.</p>
+<h3 id="github-repositories">GitHub repositories</h3>
+<p>The place to start in understanding this link is the peculiar bit at the beginning: what is this “github” nonsense? The long answer is very long, but the short answer is that <a href="https://github.com" class="uri">https://github.com</a> is a website that programmers use to store their code. GitHub is one of several sites (e.g., <a href="https://gitlab.org" class="uri">https://gitlab.org</a>, <a href="https://bitbucket.com" class="uri">https://bitbucket.com</a>) that built on top of a system called “git”. Git is a powerful tool that lets you collaborate with other people when writing code, allows you to keep track of the history of your code, and to backup your code online in case your laptop mysteriously catches on fire. It takes quite some time to get the hang of (I’m still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the “pro” version for free). My username on GitHub is djnavarro, and you can find my profile page here:</p>
+<p><a href="https://github.com/djnavarro" class="uri">https://github.com/djnavarro</a></p>
+<p>The Tidy Tuesday project originated in the “R for data science” learning community (<a href="https://r4ds.had.co.nz/">R for data science</a> is a wonderful free resource written by Hadley Wickham and Garrett Grolemund), and there is a profile page for that community too:</p>
+<p><a href="https://github.com/rfordatascience" class="uri">https://github.com/rfordatascience</a></p>
+<p>Okay, so that’s <em>part</em> of the link explained. The next thing to understand is that when you create projects using git and post them to GitHub, they are organised in a “repository” (“repo” for short). Each repo has its own page. The Tidy Tuesday repo is here:</p>
+<p><a href="https://github.com/rfordatascience/tidytuesday" class="uri">https://github.com/rfordatascience/tidytuesday</a></p>
+<p>If you click on this link, you’ll find that there’s a nice description of the whole project, links to data sets, and a whole lot of other things besides. Most of the work organising this is done by Thomas Mock.</p>
+<h3 id="repositories-have-branches">Repositories have branches</h3>
+<p>Whenever someone creates a git repository, it will automatically have at least one “branch” (usually called “master” or “main”). The idea behind it is really sensible: suppose you’re working on a project and you think “ooooh, I have a cool idea I want to try but maybe it won’t work”. What you can do is create a new “branch” and try out all your new ideas in the new branch all without ever affecting the master branch. It’s a safe way to explore: if your new idea works you can “merge” the changes into the master branch, but if it fails you can switch back to the master branch and pick up where you left off. No harm done. If you have lots of branches, you effectively have a “tree”, and it’s a suuuuuuper handy feature. Later on as you develop your data science skills you’ll learn how to do this yourself, but for now this is enough information. The key thing is that what you’re looking at when you visit the Tidy Tuesday page on GitHub is actually the master branch on the tree:</p>
+<p><a href="https://github.com/rfordatascience/tidytuesday/tree/master" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master</a></p>
+<h3 id="repositories-are-usually-organised">Repositories are usually organised</h3>
+<p>The Tidy Tuesday repository has a lot of different content, and it’s all nicely organised into folders (no different to the folders you’d have on your own computer). One of the folders is called “data”, and inside the “data” folder there is a “2021” folder:</p>
+<p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2021" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2021</a></p>
+<p>Inside that folder you find lots more folders, one for every week this year. If you scroll down to the current week and click on the link, it will take you here:</p>
+<p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14</a></p>
+<p>Being the kind soul that he is, Thomas has included a “readme” file (that’s the nice human readable thing that gets displayed) underneath. Whenever you’re doing a Tidy Tuesday analysis, it’s super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I’d strongly recommend creating readme files yourself: they’re really helpful to anyone using your work, even if that’s just you several months later after you’ve forgotten what you were doing.</p>
+<p>In any case, one of the things you’ll see on that page is a link to the “billboard.csv” data. If you click on that link it will take you here:</p>
+<p><a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv" class="uri">https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv</a></p>
+<p>Notice that this <em>doesn’t</em> take you to the data file itself: it goes to a webpage! Specifically, it takes you to the “blob” link that displays some information about the file (notice the “blob” that has sneakily inserted itself into the link above?). In this case, the page won’t show you very much information at all because the csv file is 43.7MB in size and GitHub doesn’t try to display files that big! However, what it <em>does</em> give you is a link that tells you where they’ve hidden the raw file! If you click on it (which I don’t recommend), it will take you to the “raw” file located at…</p>
+<p><a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv</a></p>
+<p>This is the link that you might have discovered if you’d been googling to find the Billboard data. It’s a GitHub link, but GitHub uses the “raw.githubusercontent.com” site as the mechanism for making raw files accessible, which is why that part of the link has changed.</p>
+<h3 id="the-anatomy-of-the-data-link">The anatomy of the data link</h3>
+<p>All of this tedious exposition should (I hope) help you make sense of what you’re actually looking at when you see this link. In real life I would never bother to do this, but if you wanted to you could decompose the link into its parts. In the snippet below I’ll create separate variables in R, one for each component of the link:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>site</span> <span class='op'>&lt;-</span> <span class='st'>"https://raw.githubusercontent.com"</span>
+<span class='va'>user</span> <span class='op'>&lt;-</span> <span class='st'>"rfordatascience"</span>
+<span class='va'>repo</span> <span class='op'>&lt;-</span> <span class='st'>"tidytuesday"</span>
+<span class='va'>branch</span> <span class='op'>&lt;-</span> <span class='st'>"master"</span>
+<span class='va'>folder1</span> <span class='op'>&lt;-</span> <span class='st'>"data"</span>
+<span class='va'>folder2</span> <span class='op'>&lt;-</span> <span class='st'>"2021"</span> 
+<span class='va'>folder3</span> <span class='op'>&lt;-</span> <span class='st'>"2021-09-14"</span>
+<span class='va'>file</span> <span class='op'>&lt;-</span> <span class='st'>"billboard.csv"</span>
+</code></pre>
+</div>
+</div>
+<p>One thing you might be wondering, when you look at this snippet, is where that pretty “arrow” character comes from. Don’t be fooled. It’s actually two characters. What I’ve actually <em>typed</em> is <code>&lt;-</code>, but this blog uses a fancy pants font that contains a special <a href="https://en.wikipedia.org/wiki/Ligature_(writing)">ligature</a> that joins the two characters together. The font is called <a href="https://fonts.google.com/specimen/Fira+Code#about">“Fira Code”</a>, and a lot of programmers use it on their blogs. Once you know the trick, it’s really nice because it does make the code a little easier to read, but it can be confusing if you’re completely new to programming! It’s one of those little things that people forget to tell you about :-)</p>
+<p>Anyway, getting back on topic. The URL (“uniform resource locator”, a.k.a. “link”) for the Billboard data file is what you get when you <code>paste()</code> all these components together, separated by the “/” character:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>data_url</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span>
+  <span class='va'>site</span>, 
+  <span class='va'>user</span>, 
+  <span class='va'>repo</span>, 
+  <span class='va'>branch</span>,
+  <span class='va'>folder1</span>, 
+  <span class='va'>folder2</span>, 
+  <span class='va'>folder3</span>, 
+  <span class='va'>file</span>, 
+  sep <span class='op'>=</span> <span class='st'>"/"</span>
+<span class='op'>)</span>
+
+<span class='va'>data_url</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv&quot;</code></pre>
+</div>
+<p>Exciting stuff.</p>
+<h2 id="attaching-packages">Attaching packages</h2>
+<p>I’m relatively certain that everyone in the slack has been exposed to the idea of an “R package”. A package is a collection of R functions and data sets that don’t automatically come bundled with R, but are freely available online. The <a href="https://www.tidyverse.org/">tidyverse</a>, for example, is a collection of R packages that a lot people find helpful for data analysis, and you can install all of them onto your machine (or your <a href="https://rstudio.cloud/">RStudio Cloud</a> project) by using this command:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='st'>"tidyverse"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>This can take quite a while to complete because there are a lot of packages that make up the tidyverse! Once the process is completed, you will now be able to use the tidyverse tools. However, it’s important to recognise that just because you’ve “installed” the packages, it doesn’t mean R will automatically use them. You have to be explicit. There are three tidyverse packages that I’m going to use a lot in this post (<a href="https://dplyr.tidyverse.org/">dplyr</a>, <a href="https://stringr.tidyverse.org/">stringr</a>, and <a href="https://ggplot2.tidyverse.org/">ggplot2</a>), so I’ll use the <code>library()</code> function to “attach” the packages (i.e. tell R to make them available):</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://stringr.tidyverse.org'>stringr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="importing-the-data">Importing the data</h2>
+<p>At this point we know where the data set is located, and we have some R tools that we can use to play around with it. The next step is reading the data into R. The <a href="https://readr.tidyverse.org/">readr</a> package is part of the tidyverse, and it contains a useful function called <code>read_csv()</code> that can go online for you, retrive the billboard data, and load it into R. That’s cool and all but if you look at the <code>library()</code> commands above, I didn’t actually attach them. I didn’t want to do this because honestly I’m only going to use the readr package once, and it feels a bit silly to attach the whole package. Instead, what I’ll do is use the “double colon” notation <code>::</code> to refer to the function more directly. When I write <code>readr::read_csv()</code> in R, what I’m doing is telling R to use the <code>read_csv()</code> function inside the <code>readr</code> package. As long as I have readr on my computer, this will work even if I haven’t attached it using <code>library()</code>. The technical name for this is “namespacing”, and if you hang around enough R programmers long enough that’s a word that will pop up from time to time. The way to think about it is that every package (e.g., readr) contains a collection of things, each of which has a name (e.g., “read_csv” is the name of the <code>read_csv()</code> function). So you can think of a “space” of these names… and hence the boring term “namespace”.</p>
+<p>Okay, let’s use a “namespaced” command to import the data, and assign it to a variable (i.e., give the data a name). I’ll call the data <code>billboard</code>:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>&lt;-</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='va'>data_url</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>The <code>billboard</code> data is a nice, rectangular data set. Every row refers to a specific song on a specific date, and tells you its position in the charts on that date. We can type <code>print(billboard)</code> to take a look at the first few rows and columns. In most situations (not all), you can print something out just by typing its name:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 327,895 × 10
+   url      week_id  week_position song   performer song_id   instance
+   &lt;chr&gt;    &lt;chr&gt;            &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;        &lt;dbl&gt;
+ 1 http://… 7/17/19…            34 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 2 http://… 7/24/19…            22 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 3 http://… 7/31/19…            14 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 4 http://… 8/7/1965            10 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 5 http://… 8/14/19…             8 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 6 http://… 8/21/19…             8 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 7 http://… 8/28/19…            14 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 8 http://… 9/4/1965            36 Don&#39;t… Patty Du… Don&#39;t Ju…        1
+ 9 http://… 4/19/19…            97 Don&#39;t… Teddy Pe… Don&#39;t Ke…        1
+10 http://… 4/26/19…            90 Don&#39;t… Teddy Pe… Don&#39;t Ke…        1
+# … with 327,885 more rows, and 3 more variables:
+#   previous_week_position &lt;dbl&gt;, peak_position &lt;dbl&gt;,
+#   weeks_on_chart &lt;dbl&gt;</code></pre>
+</div>
+<p>This view helps you see the data in its “native” orientation: each column is a variable, each row is an observation. It’s a bit frustrating though because a lot of the columns get chopped off in the printout. It’s often more useful to use <code>dplyr::glimpse()</code> to take a peek. When “glimpsing” the data, R rotates the data on its side and shows you a list of all the variables, along with the first few entries for that variable:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>billboard</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 327,895
+Columns: 10
+$ url                    &lt;chr&gt; &quot;http://www.billboard.com/charts/hot-…
+$ week_id                &lt;chr&gt; &quot;7/17/1965&quot;, &quot;7/24/1965&quot;, &quot;7/31/1965&quot;…
+$ week_position          &lt;dbl&gt; 34, 22, 14, 10, 8, 8, 14, 36, 97, 90,…
+$ song                   &lt;chr&gt; &quot;Don&#39;t Just Stand There&quot;, &quot;Don&#39;t Just…
+$ performer              &lt;chr&gt; &quot;Patty Duke&quot;, &quot;Patty Duke&quot;, &quot;Patty Du…
+$ song_id                &lt;chr&gt; &quot;Don&#39;t Just Stand TherePatty Duke&quot;, &quot;…
+$ instance               &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ previous_week_position &lt;dbl&gt; 45, 34, 22, 14, 10, 8, 8, 14, NA, 97,…
+$ peak_position          &lt;dbl&gt; 34, 22, 14, 10, 8, 8, 8, 8, 97, 90, 9…
+$ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</code></pre>
+</div>
+<p>Notice that this time I just typed <code>glimpse</code> rather than <code>dplyr::glimpse</code>. I didn’t need to tell R to look in the dplyr namespace because I’d already attached it when I typed <code>library(dplyr)</code> earlier.</p>
+<h2 id="finding-britney">Finding Britney</h2>
+<p>Time to start analysing the data. I have made a decision that today I have love in my heart only for Britney. So what I want to do is find the rows in <code>billboard</code> that correspond to Britney Spears songs. The natural way to do this would be to pull out the “performer” column and then try to find entries that refer to Britney. The slightly tricky aspect to this is that Britney doesn’t appear solely as “Britney Spears”. For example, “Me Against The Music” features Madonna, and the entry in the <code>performer</code> column is “Britney Spears Featuring Madonna”. So we’re going to have to search in a slightly smarter way. Before turning this into R code, I can sketch out my plan like this:</p>
+<pre><code>get the billboard data, THEN
+  pull out the performer column, THEN
+  search for britney, THEN
+  tidy up a bit</code></pre>
+<p>This kind of workflow is naturally suited to the “pipe”, which is written <code>%&gt;%</code>. You’ll see referred to either as the “magrittr pipe” (referring to the magrittr package where it originally came from) or the “dplyr pipe” (because dplyr kind of made it famous!). I’m sure you’ve seen it before, but it does the same job as the word “THEN” in the pseudo-code I wrote above. It’s job is to take the output of one function and then pass it on as the input to the next one. So here’s that plan re-written in an “R-like” format:</p>
+<pre><code>the_billboard_data %&gt;% 
+  pull_out_the_performer_column() %&gt;% 
+  search_for_britney() %&gt;% 
+  tidy_it_up()</code></pre>
+<p>In fact that’s pretty close to what the actual R code is going to look like! The dplyr package has a function <code>dplyr::pull()</code> that will extract a column from the data set (e.g., all 327,895 listings in the <code>performer</code> column), and base R has a function called <code>unique()</code> that will ignore repeat entries, showing you only the unique elements of a column. So our code is going to look almost exactly like this</p>
+<pre><code>billboard %&gt;% 
+  pull(performer) %&gt;% 
+  search_for_britney() %&gt;% 
+  unique()</code></pre>
+<h3 id="pattern-matching-for-text-data">Pattern matching for text data</h3>
+<p>Inexcusably, however, R does not come with a <code>search_for_britney()</code> function, so we’re going to have to do it manually. This is where the stringr package is very helpful. It contains a lot of functions that are very helpful in searching for text and manipulating text. The actual function I’m going to use here is <code>stringr::str_subset()</code> which will return the subset of values that “match” a particular pattern. Here’s a very simple example, where the “pattern” is just the letter “a”. I’ll quickly define a variable <code>animals</code> containing the names of a few different animals:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>animals</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cat"</span>, <span class='st'>"dog"</span>, <span class='st'>"rat"</span>, <span class='st'>"ant"</span>, <span class='st'>"bug"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>To retain only those strings that contain the letter “a” we do this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span>string <span class='op'>=</span> <span class='va'>animals</span>, pattern <span class='op'>=</span> <span class='st'>"a"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;cat&quot; &quot;rat&quot; &quot;ant&quot;</code></pre>
+</div>
+<p>Alternatively (as a reminder of what the pipe <code>%&gt;%</code> actually does) we could write the same code like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>animals</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span>pattern <span class='op'>=</span> <span class='st'>"a"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;cat&quot; &quot;rat&quot; &quot;ant&quot;</code></pre>
+</div>
+<p>This will let us find all the Britney songs. In real life, whenever you’re working with text data you need to be wary of the possibility of mispellings and other errors, but the Tidy Tuesday data is a little kinder than raw “wild caught” data, so we can safely assume that any song by Britney Spears will include the pattern “Britney” in it <em>somewhere</em>. So let’s do this and see what we get:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>performer</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span><span class='st'>"Britney"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;Britney Spears&quot;                              
+[2] &quot;Rihanna Featuring Britney Spears&quot;            
+[3] &quot;will.i.am &amp; Britney Spears&quot;                  
+[4] &quot;Britney Spears &amp; Iggy Azalea&quot;                
+[5] &quot;Britney Spears Featuring G-Eazy&quot;             
+[6] &quot;Britney Spears Featuring Madonna&quot;            
+[7] &quot;Britney Spears Featuring Tinashe&quot;            
+[8] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
+</div>
+<p>It turns out that Britney is listed in eight different ways. For the sake of this post, I’m happy to include cases where another artist features on a Britney track, but I don’t want to include the two cases where Britney is the featuring artist. Looking at the output above, it seems like I can find those cases by keeping only those rows that <em>start with</em> the word “Britney”. If you know a little bit of <a href="https://towardsdatascience.com/a-gentle-introduction-to-regular-expressions-with-r-df5e897ca432">regular expressions</a>, you would probably recognise that <code>^</code> is used as a special character to mean “start of the string”, so the pattern we want is <code>^Britney</code>, and this works:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>performer</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span><span class='st'>"^Britney"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;Britney Spears&quot;                              
+[2] &quot;Britney Spears &amp; Iggy Azalea&quot;                
+[3] &quot;Britney Spears Featuring G-Eazy&quot;             
+[4] &quot;Britney Spears Featuring Madonna&quot;            
+[5] &quot;Britney Spears Featuring Tinashe&quot;            
+[6] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
+</div>
+<p>The stringr package also has a very handy <code>str_starts()</code> function which I could have used instead, but – given that one of my goals here is to write a post that gently nudges beginners towards intermediate level tools – I decided to use the version that relies on regular expressions. Regular expressions are one of those things you’ll slowly pick up as you go along, and although they can be a huge headache to learn, the reward is worth the effort.</p>
+<h3 id="creating-the-britney-data">Creating the Britney data</h3>
+<p>Okay so now we’re in a position to filter the <code>billboard</code> data, keeping only the rows that correspond to Britney songs. Most people in our slack group have taken an introductory class before, so you’ll be expecting that <code>dplyr::filter()</code> is the tool we need. The kind of filtering you’ve seen before would looks like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>&lt;-</span> <span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>performer</span> <span class='op'>==</span> <span class='st'>"Britney Spears"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>However, this doesn’t work the way we want. The bit of code that reads <code>performer == "Britney Spears"</code> is a logical expression (i.e., a code snippet that only returns <code>TRUE</code> and <code>FALSE</code> values) that will only detect <em>exact</em> matches. What we want is something that detects every case that matches our regular expression <code>"^Britney"</code>. Intuition might tell you to try something like <code>performer == "^Britney"</code> but that won’t work: it’s too literal and it will only detect cases where the performer is literally listed as “^Britney”. That’s no good. What we actually want is something that works <em>like</em> the <code>==</code> test, but uses a regular expression to determin if it’s a match or note. That’s where the <code>str_detect()</code> function from the stringr package is really handy. Instead of using <code>performer == "Britney Spears"</code> to detect exact matches, we’ll use <code>str_detect(performer, "^Britney")</code> to match using the regular expression:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>&lt;-</span> <span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_detect.html'>str_detect</a></span><span class='op'>(</span><span class='va'>performer</span>, <span class='st'>"^Britney"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>This version works the way we want it to, but it’s usually a good idea in practice to check that we haven’t made any mistakes. Perhaps I have forgotten what <code>str_detect()</code> actually does or I’ve made an error in my use of <code>filter()</code>, for example. So let’s take a look at the <code>performer</code> column in the <code>britney</code> data and check that it contains the same six unique strings:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>performer</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/unique.html'>unique</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;Britney Spears&quot;                              
+[2] &quot;Britney Spears &amp; Iggy Azalea&quot;                
+[3] &quot;Britney Spears Featuring G-Eazy&quot;             
+[4] &quot;Britney Spears Featuring Madonna&quot;            
+[5] &quot;Britney Spears Featuring Tinashe&quot;            
+[6] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
+</div>
+<p>That’s reassuring. So let’s take a quick peek at the results of our data wrangling:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>britney</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 468
+Columns: 10
+$ url                    &lt;chr&gt; &quot;http://www.billboard.com/charts/hot-…
+$ week_id                &lt;chr&gt; &quot;4/22/2000&quot;, &quot;10/24/2009&quot;, &quot;12/20/200…
+$ week_position          &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, 1, …
+$ song                   &lt;chr&gt; &quot;Oops!...I Did It Again&quot;, &quot;3&quot;, &quot;Circu…
+$ performer              &lt;chr&gt; &quot;Britney Spears&quot;, &quot;Britney Spears&quot;, &quot;…
+$ song_id                &lt;chr&gt; &quot;Oops!...I Did It AgainBritney Spears…
+$ instance               &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ previous_week_position &lt;dbl&gt; NA, NA, NA, NA, NA, 45, NA, NA, NA, N…
+$ peak_position          &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, 1, …
+$ weeks_on_chart         &lt;dbl&gt; 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 8, 1, 1…</code></pre>
+</div>
+<p>That looks good to me…</p>
+<h3 id="fixing-the-dates">Fixing the dates</h3>
+<p>…or does it? Looking at the <code>week_id</code> column is enough to make any data analyst sigh in mild irritation. This column encodes the date, but the first two entries are <code>"4/22/2000"</code> and <code>"10/24/2009"</code>. They are encoded in a “month/day/year” format. Nobody on this planet except Americans writes dates this way. Most countries use “day/month/year” as their standard way of writing dates, and most programming style guides strongly recommend “year/month/day” (there are good reasons for this, mostly to do with sorting chronologically). Worse yet, it’s just a character string. R doesn’t know that this column corresponds to a date, and unlike Excel it is smart enough not to try. Trying to guess what is and is not a date is notoriously difficult, so R makes that <em>your</em> job as the data analyst. Thankfully, the <a href="https://lubridate.tidyverse.org/">lubridate</a> package exists to make it a little bit easier. In this case, where we have data in month/day/year format, the <code>lubridate::mdy()</code> function will do the conversion for us. You’ll be completely unsurprised to learn that there are <code>lubridate::dmy()</code> and <code>lubridate::ymd()</code> functions that handle other kinds of date formats.</p>
+<p>So let’s do this. I’ll use the <code>dplyr::mutate()</code> function to modify the <code>britney</code> data, like so:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>&lt;-</span> <span class='va'>britney</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>week_id <span class='op'>=</span> <span class='fu'>lubridate</span><span class='fu'>::</span><span class='fu'><a href='http://lubridate.tidyverse.org/reference/ymd.html'>mdy</a></span><span class='op'>(</span><span class='va'>week_id</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>britney</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Rows: 468
+Columns: 10
+$ url                    &lt;chr&gt; &quot;http://www.billboard.com/charts/hot-…
+$ week_id                &lt;date&gt; 2000-04-22, 2009-10-24, 2008-12-20, …
+$ week_position          &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, 1, …
+$ song                   &lt;chr&gt; &quot;Oops!...I Did It Again&quot;, &quot;3&quot;, &quot;Circu…
+$ performer              &lt;chr&gt; &quot;Britney Spears&quot;, &quot;Britney Spears&quot;, &quot;…
+$ song_id                &lt;chr&gt; &quot;Oops!...I Did It AgainBritney Spears…
+$ instance               &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+$ previous_week_position &lt;dbl&gt; NA, NA, NA, NA, NA, 45, NA, NA, NA, N…
+$ peak_position          &lt;dbl&gt; 67, 1, 3, 70, 70, 21, 17, 29, 76, 1, …
+$ weeks_on_chart         &lt;dbl&gt; 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 8, 1, 1…</code></pre>
+</div>
+<p>Much better!</p>
+<h2 id="visualising-a-queen">Visualising a queen</h2>
+<p>I’m now at the point that I have a <code>britney</code> data set I can visualise. However, being the queen she is, Britney has quite a few songs that appear in the Billboard Top 100, so the first thing I’ll do is specify a few favourites that we’ll highlight in the plots:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>highlights</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Work B**ch!"</span>, <span class='st'>"...Baby One More Time"</span>, <span class='st'>"Toxic"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Most people in our slack will probably have encountered the ggplot2 package before, and at least have some experience in creating data visualisations using it. So we might write some code like this, which draws plot showing the date on the horizontal axis (the mapping <code>x = week_id</code>) and the position of the song on the vertical axis (represented by the mapping <code>y = week_position</code>). We’ll also map the colour to the song by setting <code>colour = song</code>. Then we’ll add some points and lines:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span>
+  data <span class='op'>=</span> <span class='va'>britney</span>,
+  mapping <span class='op'>=</span> <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
+    x <span class='op'>=</span> <span class='va'>week_id</span>,
+    y <span class='op'>=</span> <span class='va'>week_position</span>,
+    colour <span class='op'>=</span> <span class='va'>song</span>
+  <span class='op'>)</span>
+<span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span>show.legend <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>show.legend <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="index_files/figure-html5/britney-chart-positions-1-1.png" width="624" /></p>
+</div>
+<p>The reason I’ve included <code>show.legend = FALSE</code> here is that there are quite a few different songs in the data, and if they were all added to a legend it wouldn’t leave any room for the data!</p>
+<p>We can improve on this in a couple of ways. First up, let’s use a <code>scale_y_reverse()</code> to flip the y-axis. That way, a top ranked song appears at the top, and a 100th ranked song appears at the bottom:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
+    x <span class='op'>=</span> <span class='va'>week_id</span>, 
+    y <span class='op'>=</span> <span class='va'>week_position</span>, 
+    colour <span class='op'>=</span> <span class='va'>song</span>
+  <span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span>show.legend <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span>show.legend <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_reverse</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="index_files/figure-html5/britney-chart-positions-2-1.png" width="624" /></p>
+</div>
+<p>Notice that I’ve switched to using the pipe here. I take the <code>britney</code> data, pipe it with <code>%&gt;%</code> to the <code>ggplot()</code> function where I set up the mapping, and then add things to the plot with <code>+</code>. It’s a matter of personal style though. Other people write their code differently!</p>
+<p>Okay, it’s time to do something about the lack of labels. My real interest here is in the three songs I listed in the <code>highlights</code> so I’m going to use the <a href="https://yutannihilation.github.io/gghighlight/">gghighlight</a> package to highlight only those three songs:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
+    x <span class='op'>=</span> <span class='va'>week_id</span>, 
+    y <span class='op'>=</span> <span class='va'>week_position</span>, 
+    colour <span class='op'>=</span> <span class='va'>song</span>
+  <span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_reverse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>gghighlight</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/gghighlight/man/gghighlight.html'>gghighlight</a></span><span class='op'>(</span><span class='va'>song</span> <span class='op'>%in%</span> <span class='va'>highlights</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="index_files/figure-html5/britney-chart-positions-3-1.png" width="624" /></p>
+</div>
+<p>When the data are plotted like this, you get a strong sense of the chronology of Britney’s career, but the downside is that you can’t easily see how the chart performance of “…Baby One More Time” compares to the performance of “Toxic” and "Work B**ch!". To give a better sense of that, it’s better to plot <code>weeks_on_chart</code> on the horizontal axis:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
+    x <span class='op'>=</span> <span class='va'>weeks_on_chart</span>, 
+    y <span class='op'>=</span> <span class='va'>week_position</span>, 
+    group <span class='op'>=</span> <span class='va'>song</span>,
+    colour <span class='op'>=</span> <span class='va'>song</span>
+  <span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_point.html'>geom_point</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_reverse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>gghighlight</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/gghighlight/man/gghighlight.html'>gghighlight</a></span><span class='op'>(</span><span class='va'>song</span> <span class='op'>%in%</span> <span class='va'>highlights</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="index_files/figure-html5/britney-chart-positions-4-1.png" width="624" /></p>
+</div>
+<p>Shown this way, you get a really strong sense of just how much of an impact “…Baby One More Time” had. It wasn’t just Britney’s first hit, it was also her biggest. It’s quite an outlier on the chart!</p>
+<p>If we’re doing exploratory data analysis, and the only goal is to have a picture to show a colleague, that’s good enough. However, if we wanted to share it more widely, you’d probably want to spend a little more time fiddling with the details, adding text, colour and other things that actually matter a lot in real life!</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></span><span class='op'>(</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes</a></span><span class='op'>(</span>
+    x <span class='op'>=</span> <span class='va'>weeks_on_chart</span>, 
+    y <span class='op'>=</span> <span class='va'>week_position</span>, 
+    group <span class='op'>=</span> <span class='va'>song</span>,
+    colour <span class='op'>=</span> <span class='va'>song</span>
+  <span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/geom_path.html'>geom_line</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>1.5</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_continuous.html'>scale_y_reverse</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/scale_brewer.html'>scale_color_brewer</a></span><span class='op'>(</span>palette <span class='op'>=</span> <span class='st'>"Dark2"</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'>gghighlight</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/gghighlight/man/gghighlight.html'>gghighlight</a></span><span class='op'>(</span><span class='va'>song</span> <span class='op'>%in%</span> <span class='va'>highlights</span>, 
+    unhighlighted_params <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>size <span class='op'>=</span> <span class='fl'>.5</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> 
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/ggtheme.html'>theme_minimal</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://ggplot2.tidyverse.org/reference/labs.html'>labs</a></span><span class='op'>(</span>
+    title <span class='op'>=</span> <span class='st'>"Britney Spears' first hit was also her biggest"</span>,
+    subtitle <span class='op'>=</span> <span class='st'>"Chart performance of Britney Spears' songs"</span>,
+    x <span class='op'>=</span> <span class='st'>"Weeks in Billboard Top 100"</span>,
+    y <span class='op'>=</span> <span class='st'>"Chart Position"</span>
+  <span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="index_files/figure-html5/britney-chart-positions-5-1.png" width="624" /></p>
+</div>
+<p>If I were less lazy I would also make sure that the chart includes a reference to the original data source, and something that credits myself as the creator of the plot. That’s generally good etiquette if you’re planning on sharing the image on the interwebs. There’s quite a lot you could do to tinker with the plot to get it to publication quality, but this is good enough for my goals today!</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:britney-las-vegas"></span>
+<img src="britney.jpg" alt="Her Royal Highness Britney Spears, performing in Las Vegas, January 2014. Figure from [wikimedia commons](https://commons.wikimedia.org/wiki/File:Britney_Spears_performing,_Las_Vegas,_January_29,_2014.jpg), released under a CC-BY-2.0 licence by Rhys Adams"  />
+<p class="caption">
+Figure 1: Her Royal Highness Britney Spears, performing in Las Vegas, January 2014. Figure from <a href="https://commons.wikimedia.org/wiki/File:Britney_Spears_performing,_Las_Vegas,_January_29,_2014.jpg">wikimedia commons</a>, released under a CC-BY-2.0 licence by Rhys Adams
+</p>
+</div>
+</div>
+<!--------------- appendices ----------------->
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<!--------------- miscellanea ----------------->
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom">
+  <h3 id="updates-and-corrections">Corrections</h3>
+  <p>If you see mistakes or want to suggest changes, please <a href="https://github.com/djnavarro/distill-blog/issues/new">create an issue</a> on the source repository.</p>
+  <h3 id="reuse">Reuse</h3>
+  <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/djnavarro/distill-blog">https://github.com/djnavarro/distill-blog</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
+  <h3 id="citation">Citation</h3>
+  <p>For attribution, please cite this work as</p>
+  <pre class="citation-appendix short">Navarro (2021, Sept. 14). Notes from a data witch: Visualising the hits of Queen Britney. Retrieved from https://blog.djnavarro.net/tidy-tuesday-billboard</pre>
+  <p>BibTeX citation</p>
+  <pre class="citation-appendix long">@misc{navarro2021visualising,
+  author = {Navarro, Danielle},
+  title = {Notes from a data witch: Visualising the hits of Queen Britney},
+  url = {https://blog.djnavarro.net/tidy-tuesday-billboard},
+  year = {2021}
+}</pre>
+</div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+
+</body>
+
+</html>

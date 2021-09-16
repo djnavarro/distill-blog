@@ -6,7 +6,16 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 07 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Visualising the hits of Queen Britney</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard</link>
+      <description>A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard</guid>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/britney.jpg" medium="image" type="image/jpeg"/>
+    </item>
     <item>
       <title>Art, jasmines, and the water colours</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -43,7 +52,7 @@ credentials properly</description>
       <description>How to enable bootstrap 4 on a distill website, even though you probably 
 don't need to. I like it though because I get to add pretty bootstrap cards</description>
       <guid>https://blog.djnavarro.net/posts/2021-04-19_bs4cards-in-distill</guid>
-      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-04-19_bs4cards-in-distill/bs4cards-logo.png" medium="image" type="image/png" width="2820" height="1620"/>
     </item>
     <item>
