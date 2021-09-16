@@ -1537,8 +1537,11 @@ In the R community, “laptop fires” are universally understood to be a refere
 </aside>
 <p>Git is a complicated tool and it takes quite some time to get the hang of (I’m still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the “pro” version for free). My username on GitHub is djnavarro, and you can find my profile page here:</p>
 <p><a href="https://github.com/djnavarro" class="uri">https://github.com/djnavarro</a></p>
-<p>The Tidy Tuesday project originated in the “R for data science” learning community (<a href="https://r4ds.had.co.nz/">R for data science</a> is a wonderful free resource written by Hadley Wickham and Garrett Grolemund), and there is a profile page for that community too:</p>
+<p>The Tidy Tuesday project originated in the “R for data science” learning community, and there is a profile page for that community too:</p>
 <p><a href="https://github.com/rfordatascience" class="uri">https://github.com/rfordatascience</a></p>
+<aside>
+<a href="https://r4ds.had.co.nz/">R for data science</a> is a wonderful book by Hadley Wickham and Garrett Grolemund
+</aside>
 <p>Okay, so that’s <em>part</em> of the link explained. The next thing to understand is that when you create projects using git and post them to GitHub, they are organised in a “repository” (“repo” for short). Each repo has its own page. The Tidy Tuesday repo is here:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday" class="uri">https://github.com/rfordatascience/tidytuesday</a></p>
 <p>If you click on this link, you’ll find that there’s a nice description of the whole project, links to data sets, and a whole lot of other things besides.</p>
@@ -1551,12 +1554,18 @@ In the R community, “laptop fires” are universally understood to be a refere
 <p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2021" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2021</a></p>
 <p>Inside that folder you find lots more folders, one for every week this year. If you scroll down to the current week and click on the link, it will take you here:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14</a></p>
-<p>Being the kind soul that he is, Thomas has included a “readme” file in this folder: it’s a <a href="https://www.markdownguide.org/">plain markdown file</a> that gets displayed in a nice human readable format on the github page. Whenever you’re doing a Tidy Tuesday analysis, it’s super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I’d strongly recommend creating readme files yourself: they’re reeeeaaaaaally helpful to anyone using your work, even if that’s just you several months later after you’ve forgotten what you were doing. Over and over again when I pick up an old project I curse the me-from-six-months ago when she was lazy and didn’t write one, or feel deeply grateful to her for taking the time to write one. Readme files are your best friend. Seriously.</p>
+<p>Being the kind soul that he is, Thomas has included a “readme” file in this folder: it’s a <a href="https://www.markdownguide.org/">plain markdown file</a> that gets displayed in a nice human readable format on the github page. Whenever you’re doing a Tidy Tuesday analysis, it’s super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I’d strongly recommend creating readme files yourself: they’re reeeeaaaaaally helpful to anyone using your work, even if that’s just you several months later after you’ve forgotten what you were doing. Over and over again when I pick up an old project I curse the me-from-six-months ago when she was lazy and didn’t write one, or feel deeply grateful to her for taking the time to write one.</p>
+<aside>
+Readme files are your best friend. Seriously
+</aside>
 <p>In any case, one of the things you’ll see on that page is a link to the “billboard.csv” data. If you click on that link it will take you here:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv" class="uri">https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv</a></p>
 <p>Notice that this <em>doesn’t</em> take you to the data file itself: it goes to a webpage! Specifically, it takes you to the “blob” link that displays some information about the file (notice the “blob” that has sneakily inserted itself into the link above?). In this case, the page won’t show you very much information at all because the csv file is 43.7MB in size and GitHub doesn’t try to display files that big! However, what it <em>does</em> give you is a link that tells you where they’ve hidden the raw file! If you click on it (which I don’t recommend), it will take you to the “raw” file located at…</p>
 <p><a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv</a></p>
 <p>This is the link that you might have discovered if you’d been googling to find the Billboard data. It’s a GitHub link, but GitHub uses the “raw.githubusercontent.com” site as the mechanism for making raw files accessible, which is why that part of the link has changed.</p>
+<aside>
+I didn’t intend for this section to be this long, honest
+</aside>
 <h3 id="the-anatomy-of-the-data-link">The anatomy of the data link</h3>
 <p>All of this tedious exposition should (I hope) help you make sense of what you’re actually looking at when you see this link. In real life I would never bother to do this, but if you wanted to you could decompose the link into its parts. In the snippet below I’ll create separate variables in R, one for each component of the link:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1643,6 +1652,9 @@ In the R community, “laptop fires” are universally understood to be a refere
 #   previous_week_position &lt;dbl&gt;, peak_position &lt;dbl&gt;,
 #   weeks_on_chart &lt;dbl&gt;</code></pre>
 </div>
+<aside>
+Finally, some data!
+</aside>
 <p>This view helps you see the data in its “native” orientation: each column is a variable, each row is an observation. It’s a bit frustrating though because a lot of the columns get chopped off in the printout. It’s often more useful to use <code>dplyr::glimpse()</code> to take a peek. When “glimpsing” the data, R rotates the data on its side and shows you a list of all the variables, along with the first few entries for that variable:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1669,7 +1681,7 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
   pull out the performer column, THEN
   search for britney, THEN
   tidy up a bit</code></pre>
-<p>This kind of workflow is naturally suited to the “pipe”, which is written <code>%&gt;%</code>. You’ll see referred to either as the “magrittr pipe” (referring to the magrittr package where it originally came from) or the “dplyr pipe” (because dplyr kind of made it famous!). I’m sure you’ve seen it before, but it does the same job as the word “THEN” in the pseudo-code I wrote above. It’s job is to take the output of one function and then pass it on as the input to the next one. So here’s that plan re-written in an “R-like” format:</p>
+<p>This kind of workflow is naturally suited to the “pipe”, which is written <code>%&gt;%</code>. You’ll see referred to either as the “magrittr pipe” (referring to the <a href="https://magrittr.tidyverse.org/">magrittr</a> package where it originally came from) or the “dplyr pipe” (because dplyr made it famous!). I’m sure you’ve seen it before, but since one goal of this post is to be a refresher, I’ll explain it again. The pipe does the same job as the word “THEN” in the pseudo-code I wrote above. Its job is to take the output of one function (whatever is on the left) and then pass it on as the input to the next one (on the right). So here’s that plan re-written in an “R-like” format:</p>
 <pre><code>the_billboard_data %&gt;% 
   pull_out_the_performer_column() %&gt;% 
   search_for_britney() %&gt;% 
@@ -1768,7 +1780,7 @@ In my mental list of “stuff I hatelove in data science”, git and regexes are
 </div>
 </div>
 <aside>
-I should make a confession here. I didn’t technically need to use a regex here. The stringr package also has a handy <code>str_starts()</code> function which I could have used. But half the point of our slack group is to accidentally-on-purpose reveal new tools so… regex it is
+A confession. I didn’t technically need to use a regex here, because stringr has a handy <code>str_starts()</code> function. But half the point of our slack group is to accidentally-on-purpose reveal new tools and also I forgot that <code>str_starts()</code> exists so… regex it is
 </aside>
 <p>This version works the way we want it to, but it’s usually a good idea in practice to check that we haven’t made any mistakes. Perhaps I have forgotten what <code>str_detect()</code> actually does or I’ve made an error in my use of <code>filter()</code>, for example. So let’s take a look at the <code>performer</code> column in the <code>britney</code> data and check that it contains the same six unique strings:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1856,7 +1868,7 @@ $ weeks_on_chart         &lt;dbl&gt; 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 8, 1, 1…</c
 <p><img src="index_files/figure-html5/britney-chart-positions-1-1.png" width="624" /></p>
 </div>
 <p>The reason I’ve included <code>show.legend = FALSE</code> here is that there are quite a few different songs in the data, and if they were all added to a legend it wouldn’t leave any room for the data!</p>
-<p>We can improve on this in a couple of ways. First up, let’s use a <code>scale_y_reverse()</code> to flip the y-axis. That way, a top ranked song appears at the top, and a 100th ranked song appears at the bottom:</p>
+<p>We can improve on this in a couple of ways. First up, let’s use <code>scale_y_reverse()</code> to flip the y-axis. That way, a top ranked song appears at the top, and a 100th ranked song appears at the bottom:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
@@ -1873,7 +1885,7 @@ $ weeks_on_chart         &lt;dbl&gt; 1, 1, 1, 1, 1, 8, 1, 1, 1, 1, 8, 1, 1…</c
 <p><img src="index_files/figure-html5/britney-chart-positions-2-1.png" width="624" /></p>
 </div>
 <p>Notice that I’ve switched to using the pipe here. I take the <code>britney</code> data, pipe it with <code>%&gt;%</code> to the <code>ggplot()</code> function where I set up the mapping, and then add things to the plot with <code>+</code>. It’s a matter of personal style though. Other people write their code differently!</p>
-<p>Okay, it’s time to do something about the lack of labels. My real interest here is in the three songs I listed in the <code>highlights</code> so I’m going to use the <a href="https://yutannihilation.github.io/gghighlight/">gghighlight</a> package to highlight only those three songs:</p>
+<p>Okay, it’s time to do something about the lack of labels. My real interest here is in the three songs I listed in the <code>highlights</code> so I’m going to use the <a href="https://yutannihilation.github.io/gghighlight/">gghighlight</a> package, like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>%&gt;%</span> 
