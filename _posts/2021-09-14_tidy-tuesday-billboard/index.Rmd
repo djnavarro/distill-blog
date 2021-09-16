@@ -12,6 +12,9 @@ author:
     orcid_id: 0000-0001-7648-6578
 preview: preview-image.jpg  # <---- UPDATE ME 
 creative_commons: CC BY
+date: 2021-09-14
+citation_url: https://blog.djnavarro.net/tidy-tuesday-billboard
+repository_url: https://github.com/djnavarro/distill-blog
 output:
   distill::distill_article:
     self_contained: false
@@ -20,10 +23,8 @@ params:
   date: 2021-09-14
   repo: djnavarro/distill-blog
   site: https://blog.djnavarro.net/
-  data_billboard: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv
-  data_audio_features: https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/audio_features.csv
-  data_readme: https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/readme.md
 ---
+
 
 <!----
 
@@ -45,18 +46,103 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-I've never participated in [Tidy Tuesday](https://github.com/rfordatascience/tidytuesday) before, but since I've joined a slack that does, it is high time I did something about that poor track record. The data are located on the Tidy Tuesday repository. I've stored the link to the data in the YAML header for this post 
+I've never participated in [Tidy Tuesday](https://github.com/rfordatascience/tidytuesday) before, but because I've now joined a slack that does, it is high time I did something about that poor track record. I wasn't sure what I wanted to do with this week's "Billboard" data, other than I wanted it to have something to do with Britney Spears (because she's awesome). After going back and forward for a while, I decided what I'd do is put together a couple of plots showing the chart performance of all her songs and -- more importantly -- write it up as a blog post in which I try to "over-explain" all my choices. There are a lot of people in our slack who haven't used R very much, and I want to "unpack" some of the bits and pieces that are involved. This post is pitched at beginners who are hoping for a little bit of extra scaffolding to explain some of the processes...
 
-```{r show-yaml-params, results='hold'}
-params$data_billboard
-params$data_audio_features
+## Finding the data on GitHub
+
+Every week the Tidy Tuesday data are posted online, and the first step in participating is generally to import the data. After a little bit of hunting online, you might discover that the link to the billboard data looks like this:
+
+https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv
+
+Let's start by unpacking this link. There is a lot of assumed knowledge buried here, and while it is entirely possible for you to get started without understanding it all, for most of us in the slack group the goal is to learn new data science skills. At some point you are probably going to want to learn the "version control" magic. This post is not the place to learn this sorcery, but I am going to start foreshadowing some important concepts because they will be useful later. 
+
+### GitHub repositories
+
+The place to start in understanding this link is the peculiar bit at the beginning: what is this "github" nonsense? The long answer is very long, but the short answer is that https://github.com is a website that programmers use to store their code. GitHub is one of several sites (e.g., https://gitlab.org, https://bitbucket.com) that built on top of a system called "git". Git is a powerful tool that lets you collaborate with other people when writing code, allows you to keep track of the history of your code, and to backup your code online in case your laptop mysteriously catches on fire. It takes quite some time to get the hang of (I'm still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the "pro" version for free). My username on GitHub is djnavarro, and you can find my profile page here:
+
+https://github.com/djnavarro
+
+The Tidy Tuesday project originated in the "R for data science" learning community ([R for data science](https://r4ds.had.co.nz/) is a wonderful free resource written by Hadley Wickham and Garrett Grolemund), and there is a profile page for that community too:
+
+https://github.com/rfordatascience
+
+Okay, so that's *part* of the link explained. The next thing to understand is that when you create projects using git and post them to GitHub, they are organised in a "repository" ("repo" for short). Each repo has its own page. The Tidy Tuesday repo is here:
+
+https://github.com/rfordatascience/tidytuesday
+
+If you click on this link, you'll find that there's a nice description of the whole project, links to data sets, and a whole lot of other things besides. Most of the work organising this is done by Thomas Mock. 
+
+### Repositories have branches
+
+Whenever someone creates a git repository, it will automatically have at least one "branch" (usually called "master" or "main"). The idea behind it is really sensible: suppose you're working on a project and you think "ooooh, I have a cool idea I want to try but maybe it won't work". What you can do is create a new "branch" and try out all your new ideas in the new branch all without ever affecting the master branch. It's a safe way to explore: if your new idea works you can "merge" the changes into the master branch, but if it fails you can switch back to the master branch and pick up where you left off. No harm done. If you have lots of branches, you effectively have a "tree", and it's a suuuuuuper handy feature. Later on as you develop your data science skills you'll learn how to do this yourself, but for now this is enough information. The key thing is that what you're looking at when you visit the Tidy Tuesday page on GitHub is actually the master branch on the tree:
+
+https://github.com/rfordatascience/tidytuesday/tree/master
+
+### Repositories are usually organised
+
+The Tidy Tuesday repository has a lot of different content, and it's all nicely organised into folders (no different to the folders you'd have on your own computer). One of the folders is called "data", and inside the "data" folder there is a "2021" folder:
+
+https://github.com/rfordatascience/tidytuesday/tree/master/data/2021
+
+Inside that folder you find lots more folders, one for every week this year. If you scroll down to the current week and click on the link, it will take you here:
+
+https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14
+
+Being the kind soul that he is, Thomas has included a "readme" file (that's the nice human readable thing that gets displayed) underneath. Whenever you're doing a Tidy Tuesday analysis, it's super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I'd strongly recommend creating readme files yourself: they're really helpful to anyone using your work, even if that's just you several months later after you've forgotten what you were doing.
+
+In any case, one of the things you'll see on that page is a link to the "billboard.csv" data. If you click on that link it will take you here:
+
+https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv
+
+Notice that this *doesn't* take you to the data file itself: it goes to a webpage! Specifically, it takes you to the "blob" link that displays some information about the file (notice the "blob" that has sneakily inserted itself into the link above?). In this case, the page won't show you very much information at all because the csv file is 43.7MB in size and GitHub doesn't try to display files that big! However, what it *does* give you is a link that tells you where they've hidden the raw file! If you click on it (which I don't recommend), it will take you to the "raw" file located at...
+
+https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv
+
+This is the link that you might have discovered if you'd been googling to find the Billboard data. It's a GitHub link, but GitHub uses the "raw.githubusercontent.com" site as the mechanism for making raw files accessible, which is why that part of the link has changed. 
+
+### The anatomy of the data link
+
+All of this tedious exposition should (I hope) help you make sense of what you're actually looking at when you see this link. In real life I would never bother to do this, but if you wanted to you could decompose the link into its parts. In the snippet below I'll create separate variables in R, one for each component of the link: 
+
+```{r data-url-parts}
+site <- "https://raw.githubusercontent.com"
+user <- "rfordatascience"
+repo <- "tidytuesday"
+folder1 <- "data"
+folder2 <- "2021" 
+folder3 <- "2021-09-14"
+file <- "billboard.csv"
 ```
+
+One thing you might be wondering, when you look at this snippet, is where that pretty "arrow" character comes from. Don't be fooled. It's actually two characters. What I've actually *typed* is `<-`, but this blog uses a fancy pants font that contains a special [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) that joins the two characters together. The font is called ["Fira Code"](https://fonts.google.com/specimen/Fira+Code#about), and a lot of programmers use it on their blogs. Once you know the trick, it's really nice because it does make the code a little easier to read, but it can be confusing if you're completely new to programming! It's one of those little things that people forget to tell you about :-)
+
+Anyway, getting back on topic. The URL ("uniform resource locator", a.k.a. "link") for the Billboard data file is what you get when you paste all these components together, separated by the `/` character:
+
+```{r data-url}
+data_url <- paste(
+  site, 
+  user, 
+  repo,           
+  folder1, 
+  folder2, 
+  folder3, 
+  file, 
+  sep = "/"
+)
+
+data_url
+```
+
+Exciting stuff.
+
+## Packages
 
 Packages I'm going to use a lot get attached:
 
 ```{r attach-packages, message=FALSE}
 library(dplyr)
 library(stringr)
+library(ggplot2)
 ```
 
 ## Import the data
@@ -65,16 +151,10 @@ So I can read the data with the following code^[I also set `cache=TRUE` in the c
 
 
 ```{r import-billboard-data, cache=TRUE}
-billboard <- readr::read_csv(params$data_billboard)
+billboard <- readr::read_csv(params$data)
 billboard
 ```
 
-Repeat for the audio features data:
-
-```{r import-audio-features-data, cache=TRUE}
-audio_features <- readr::read_csv(params$data_audio_features) 
-audio_features
-```
 
 ## Assembling the Britney data
 
@@ -97,61 +177,62 @@ billboard %>%
   unique()
 ```
 
-As a little sanity check, I want to make sure that I obtain the same for the `audio_features` data:
-
-```{r look-for-britney-3}
-audio_features %>% 
-  pull(performer) %>% 
-  str_subset("^Britney Spears") %>% 
-  unique()
-```
-
-It retains Britney songs featuring other artists but not songs by other artists featuring Britney. In my ideal world I'd subset and join the two data sets in one fell swoop but as yet I haven't made anything except the most cursory checks that I know how to join them sensibly. So, one step at a time, sweetie. Filter first: 
+It retains Britney songs featuring other artists but not songs by other artists featuring Britney. Filter: 
 
 ```{r filter-to-britney}
-britney_billboard <- billboard %>% 
-  filter(str_detect(performer, "^Britney Spears"))
-
-britney_features <- audio_features %>% 
-  filter(str_detect(performer, "^Britney Spears"))
+britney <- billboard %>% 
+  filter(str_detect(performer, "^Britney Spears")) %>% 
+  mutate(date = lubridate::mdy(week_id))
 ```
   
-A quick `glimpse()` at both:
+A quick `glimpse()`:
 
 ```{r glimpse-britney-partials}
-glimpse(britney_billboard)
-glimpse(britney_features)
-```
-
-Are the `song_id` values in the two data frames comparable? I suspect that they will be because (I'm told that) Tidy Tuesday does a good job of pre-cleaning the data, but in my old age I have become paranoid. So let's just make sure it's a suitable basis for a join
-
-```{r check-join-key}
-intersect(
-  britney_billboard$song_id, 
-  britney_features$song_id
-)
-setdiff(
-  britney_billboard$song_id, 
-  britney_features$song_id
-)
-setdiff(
-  britney_features$song_id, 
-  britney_billboard$song_id
-)
-```
-
-Everything I ever dreamed of! Okay that's going to make my life so much easier:
-
-```{r join-and-glimpse}
-britney <- britney_billboard %>% 
-  left_join(britney_features)
-
 glimpse(britney)
 ```
 
+## Visualise 
+
+```{r britney-chart-positions-1}
+highlights <- c("Work B**ch!", "...Baby One More Time", "Toxic")
+
+pic <- britney %>% 
+  ggplot(aes(
+    x = date, 
+    y = week_position, 
+    group = song
+  )) + 
+  geom_line() + 
+  geom_point() + 
+  scale_y_reverse() + 
+  gghighlight::gghighlight(song %in% highlights)
+
+pic
+```
+
+
+```{r britney-chart-positions-2}
+pic <- britney %>% 
+  ggplot(aes(
+    x = weeks_on_chart, 
+    y = week_position, 
+    group = song,
+    colour = song
+  )) + 
+  geom_line() + 
+  geom_point() + 
+  scale_y_reverse() + 
+  gghighlight::gghighlight(
+    song %in% highlights
+  )
+
+pic
+```
+
+
 <!--------------- appendices ----------------->
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 refinery::insert_appendix(
   repo_spec = params$repo, 
   dir = paste(params$date, params$slug, sep = "_")
@@ -167,14 +248,5 @@ refinery::insert_netlify_redirect(
   date = params$date
 )
 ```
-
-
-<!--------------- derived YAML ----------------->
----
-date: `r params$date`
-citation_url: `r paste0(params$site, params$slug)`
-repository_url: `r paste0("https://github.com/", params$repo)` 
----
-
 
 
