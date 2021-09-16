@@ -6,15 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 13 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Sep 2021 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Title in sentence case</title>
+      <title>Visualising the hits of Queen Britney</title>
       <dc:creator>Danielle Navarro</dc:creator>
       <link>https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard</link>
-      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</description>
+      <description>A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools</description>
       <guid>https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard</guid>
-      <pubDate>Mon, 13 Sep 2021 00:00:00 +0000</pubDate>
-      <media:content url="https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/index_files/figure-html5/britney-chart-positions-1-1.png" medium="image" type="image/png" width="1248" height="768"/>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/britney.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>
       <title>Art, jasmines, and the water colours</title>

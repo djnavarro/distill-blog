@@ -1,8 +1,10 @@
 ---
-title: "Title in sentence case" # <---- UPDATE ME
+title: "Visualising the hits of Queen Britney" 
 description:
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit # <---- UPDATE ME
+  A gentle walkthrough of a few data wrangling and visualisation tools
+  using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at
+  beginners looking to refresh their knowledge and maybe get some pointers
+  at intermediate level tools
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -10,7 +12,7 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
-preview: preview-image.jpg  # <---- UPDATE ME 
+preview: britney.jpg 
 creative_commons: CC BY
 date: 2021-09-14
 citation_url: https://blog.djnavarro.net/tidy-tuesday-billboard
@@ -395,6 +397,12 @@ britney %>%
 ```
 
 If I were less lazy I would also make sure that the chart includes a reference to the original data source, and something that credits myself as the creator of the plot. That's generally good etiquette if you're planning on sharing the image on the interwebs. There's quite a lot you could do to tinker with the plot to get it to publication quality, but this is good enough for my goals today!
+
+
+```{r britney-las-vegas, echo=FALSE, fig.cap="Her Royal Highness Britney Spears, performing in Las Vegas, January 2014. Figure from [wikimedia commons](https://commons.wikimedia.org/wiki/File:Britney_Spears_performing,_Las_Vegas,_January_29,_2014.jpg), released under a CC-BY-2.0 licence by Rhys Adams"}
+knitr::include_graphics("britney.jpg")
+```
+
 
 <!--------------- appendices ----------------->
 
