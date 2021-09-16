@@ -2517,13 +2517,18 @@ There’s an R script containing the source code for this analysis <a href="http
 <p><a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-09-14/billboard.csv</a></p>
 <p>Let’s start by unpacking this link. There is a lot of assumed knowledge buried here, and while it is entirely possible for you to get started without understanding it all, for most of us in the slack group the goal is to learn new data science skills. At some point you are probably going to want to learn the “version control” magic. This post is not the place to learn this sorcery, but I am going to start foreshadowing some important concepts because they will be useful later.</p>
 <h3 id="github-repositories">GitHub repositories</h3>
-<p>The place to start in understanding this link is the peculiar bit at the beginning: what is this “github” nonsense? The long answer is very long, but the short answer is that <a href="https://github.com" class="uri">https://github.com</a> is a website that programmers use to store their code. GitHub is one of several sites (e.g., <a href="https://gitlab.org" class="uri">https://gitlab.org</a>, <a href="https://bitbucket.com" class="uri">https://bitbucket.com</a>) that built on top of a system called “git”. Git is a powerful tool that lets you collaborate with other people when writing code, allows you to keep track of the history of your code, and to backup your code online in case your laptop mysteriously catches on fire. It takes quite some time to get the hang of (I’m still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the “pro” version for free). My username on GitHub is djnavarro, and you can find my profile page here:</p>
+<p>The place to start in understanding this link is the peculiar bit at the beginning: what is this “github” nonsense? The long answer is very long, but the short answer is that <a href="https://github.com" class="uri">https://github.com</a> is a website that programmers use to store their code. GitHub is one of several sites (e.g., <a href="https://gitlab.org" class="uri">https://gitlab.org</a>, <a href="https://bitbucket.com" class="uri">https://bitbucket.com</a>) that are all built on top of a version control system called “git”. <a href="https://git-scm.com/">Git</a> is a powerful tool that lets you collaborate with other people when writing code, allows you to keep track of the history of your code, and to backup your code online in case your laptop mysteriously catches on fire.</p>
+<aside>
+In the R community, “laptop fires” are universally understood to be a reference to what happens to you when you foolishly ignore the wise advice of Jenny Bryan
+</aside>
+<p>Git is a complicated tool and it takes quite some time to get the hang of (I’m still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the “pro” version for free). My username on GitHub is djnavarro, and you can find my profile page here:</p>
 <p><a href="https://github.com/djnavarro" class="uri">https://github.com/djnavarro</a></p>
 <p>The Tidy Tuesday project originated in the “R for data science” learning community (<a href="https://r4ds.had.co.nz/">R for data science</a> is a wonderful free resource written by Hadley Wickham and Garrett Grolemund), and there is a profile page for that community too:</p>
 <p><a href="https://github.com/rfordatascience" class="uri">https://github.com/rfordatascience</a></p>
 <p>Okay, so that’s <em>part</em> of the link explained. The next thing to understand is that when you create projects using git and post them to GitHub, they are organised in a “repository” (“repo” for short). Each repo has its own page. The Tidy Tuesday repo is here:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday" class="uri">https://github.com/rfordatascience/tidytuesday</a></p>
-<p>If you click on this link, you’ll find that there’s a nice description of the whole project, links to data sets, and a whole lot of other things besides. Most of the work organising this is done by Thomas Mock.</p>
+<p>If you click on this link, you’ll find that there’s a nice description of the whole project, links to data sets, and a whole lot of other things besides.</p>
+<p>Most of the work organising this is done by Thomas Mock, and it’s very very cool.</p>
 <h3 id="repositories-have-branches">Repositories have branches</h3>
 <p>Whenever someone creates a git repository, it will automatically have at least one “branch” (usually called “master” or “main”). The idea behind it is really sensible: suppose you’re working on a project and you think “ooooh, I have a cool idea I want to try but maybe it won’t work”. What you can do is create a new “branch” and try out all your new ideas in the new branch all without ever affecting the master branch. It’s a safe way to explore: if your new idea works you can “merge” the changes into the master branch, but if it fails you can switch back to the master branch and pick up where you left off. No harm done. If you have lots of branches, you effectively have a “tree”, and it’s a suuuuuuper handy feature. Later on as you develop your data science skills you’ll learn how to do this yourself, but for now this is enough information. The key thing is that what you’re looking at when you visit the Tidy Tuesday page on GitHub is actually the master branch on the tree:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday/tree/master" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master</a></p>
@@ -2532,7 +2537,7 @@ There’s an R script containing the source code for this analysis <a href="http
 <p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2021" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2021</a></p>
 <p>Inside that folder you find lots more folders, one for every week this year. If you scroll down to the current week and click on the link, it will take you here:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14</a></p>
-<p>Being the kind soul that he is, Thomas has included a “readme” file (that’s the nice human readable thing that gets displayed) underneath. Whenever you’re doing a Tidy Tuesday analysis, it’s super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I’d strongly recommend creating readme files yourself: they’re really helpful to anyone using your work, even if that’s just you several months later after you’ve forgotten what you were doing.</p>
+<p>Being the kind soul that he is, Thomas has included a “readme” file in this folder: it’s a <a href="https://www.markdownguide.org/">plain markdown file</a> that gets displayed in a nice human readable format on the github page. Whenever you’re doing a Tidy Tuesday analysis, it’s super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I’d strongly recommend creating readme files yourself: they’re reeeeaaaaaally helpful to anyone using your work, even if that’s just you several months later after you’ve forgotten what you were doing. Over and over again when I pick up an old project I curse the me-from-six-months ago when she was lazy and didn’t write one, or feel deeply grateful to her for taking the time to write one. Readme files are your best friend. Seriously.</p>
 <p>In any case, one of the things you’ll see on that page is a link to the “billboard.csv” data. If you click on that link it will take you here:</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv" class="uri">https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-09-14/billboard.csv</a></p>
 <p>Notice that this <em>doesn’t</em> take you to the data file itself: it goes to a webpage! Specifically, it takes you to the “blob” link that displays some information about the file (notice the “blob” that has sneakily inserted itself into the link above?). In this case, the page won’t show you very much information at all because the csv file is 43.7MB in size and GitHub doesn’t try to display files that big! However, what it <em>does</em> give you is a link that tells you where they’ve hidden the raw file! If you click on it (which I don’t recommend), it will take you to the “raw” file located at…</p>
@@ -2553,8 +2558,8 @@ There’s an R script containing the source code for this analysis <a href="http
 </code></pre>
 </div>
 </div>
-<p>One thing you might be wondering, when you look at this snippet, is where that pretty “arrow” character comes from. Don’t be fooled. It’s actually two characters. What I’ve actually <em>typed</em> is <code>&lt;-</code>, but this blog uses a fancy pants font that contains a special <a href="https://en.wikipedia.org/wiki/Ligature_(writing)">ligature</a> that joins the two characters together. The font is called <a href="https://fonts.google.com/specimen/Fira+Code#about">“Fira Code”</a>, and a lot of programmers use it on their blogs. Once you know the trick, it’s really nice because it does make the code a little easier to read, but it can be confusing if you’re completely new to programming! It’s one of those little things that people forget to tell you about :-)</p>
-<p>Anyway, getting back on topic. The URL (“uniform resource locator”, a.k.a. “link”) for the Billboard data file is what you get when you <code>paste()</code> all these components together, separated by the “/” character:</p>
+<p>Argh. Wait. There’s something slightly off-topic that I should point out… one thing you might be wondering when you look at this snippet, is where that pretty “arrow” character comes from. Don’t be fooled. It’s not a special arrow character, it’s two ordinary characters. What I’ve actually <em>typed</em> is <code>&lt;-</code>, but this blog uses a fancypants font that contains a special <a href="https://en.wikipedia.org/wiki/Ligature_(writing)">ligature</a> that makes <code>&lt;-</code> appear to be a single smooth arrow. The font is called <a href="https://fonts.google.com/specimen/Fira+Code#about">“Fira Code”</a>, and a lot of programmers use it on their blogs. Once you know the trick, it’s really nice because it does make the code a little easier to read, but it can be confusing if you’re completely new to programming! It’s one of those little things that people forget to tell you about :-)</p>
+<p>Anyway, getting back on topic. The URL (a.k.a. “link”) for the Billboard data is what you get when you <code>paste()</code> all these components together, separated by the “/” character:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>data_url</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span>
@@ -2661,14 +2666,14 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
   search_for_britney() %&gt;% 
   unique()</code></pre>
 <h3 id="pattern-matching-for-text-data">Pattern matching for text data</h3>
-<p>Inexcusably, however, R does not come with a <code>search_for_britney()</code> function, so we’re going to have to do it manually. This is where the stringr package is very helpful. It contains a lot of functions that are very helpful in searching for text and manipulating text. The actual function I’m going to use here is <code>stringr::str_subset()</code> which will return the subset of values that “match” a particular pattern. Here’s a very simple example, where the “pattern” is just the letter “a”. I’ll quickly define a variable <code>animals</code> containing the names of a few different animals:</p>
+<p>Inexcusably, however, R does not come with a <code>search_for_britney()</code> function, so we’re going to have to do it manually. This is where the <a href="https://stringr.tidyverse.org/">stringr</a> package is very helpful. It contains a lot of functions that are very helpful in searching for text and manipulating text. The actual function I’m going to use here is <code>stringr::str_subset()</code> which will return the subset of values that “match” a particular pattern. Here’s a very simple example, where the “pattern” is just the letter “a”. I’ll quickly define a variable <code>animals</code> containing the names of a few different animals:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>animals</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cat"</span>, <span class='st'>"dog"</span>, <span class='st'>"rat"</span>, <span class='st'>"ant"</span>, <span class='st'>"bug"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>To retain only those strings that contain the letter “a” we do this:</p>
+<p>To retain only those strings that contain the letter <code>"a"</code> we do this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://stringr.tidyverse.org/reference/str_subset.html'>str_subset</a></span><span class='op'>(</span>string <span class='op'>=</span> <span class='va'>animals</span>, pattern <span class='op'>=</span> <span class='st'>"a"</span><span class='op'>)</span>
@@ -2676,7 +2681,7 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
 </div>
 <pre><code>[1] &quot;cat&quot; &quot;rat&quot; &quot;ant&quot;</code></pre>
 </div>
-<p>Alternatively (as a reminder of what the pipe <code>%&gt;%</code> actually does) we could write the same code like this:</p>
+<p>Alternatively we could write this using the pipe:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>animals</span> <span class='op'>%&gt;%</span> 
@@ -2685,7 +2690,9 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
 </div>
 <pre><code>[1] &quot;cat&quot; &quot;rat&quot; &quot;ant&quot;</code></pre>
 </div>
-<p>This will let us find all the Britney songs. In real life, whenever you’re working with text data you need to be wary of the possibility of mispellings and other errors, but the Tidy Tuesday data is a little kinder than raw “wild caught” data, so we can safely assume that any song by Britney Spears will include the pattern “Britney” in it <em>somewhere</em>. So let’s do this and see what we get:</p>
+<p>I’m not sure this second version is any nicer than the first version, but it can be helpful to see the two versions side by side in order to remind yourself of what the pipe actually does!</p>
+<p>We can use the same tool to find all the Britney songs. In real life, whenever you’re working with text data you need to be wary of the possibility of mispellings and other errors in the raw data. Wild caught data are often very messy, but thankfully for us the Tidy Tuesday data sets tend to be a little kinder. With that in mind can safely assume that any song by Britney Spears will include the pattern “Britney” in it <em>somewhere</em>.</p>
+<p>So let’s do just try this and see what we get:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
@@ -2703,7 +2710,12 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
 [7] &quot;Britney Spears Featuring Tinashe&quot;            
 [8] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
 </div>
-<p>It turns out that Britney is listed in eight different ways. For the sake of this post, I’m happy to include cases where another artist features on a Britney track, but I don’t want to include the two cases where Britney is the featuring artist. Looking at the output above, it seems like I can find those cases by keeping only those rows that <em>start with</em> the word “Britney”. If you know a little bit of <a href="https://towardsdatascience.com/a-gentle-introduction-to-regular-expressions-with-r-df5e897ca432">regular expressions</a>, you would probably recognise that <code>^</code> is used as a special character to mean “start of the string”, so the pattern we want is <code>^Britney</code>, and this works:</p>
+<aside>
+At this point I was sorely tempted to get distracted by Ke$ha and Rihanna, but somehow managed to stay on topic. Somehow
+</aside>
+<p>Okay, so it turns out that Britney is listed in eight different ways. For the sake of this post, I’m happy to include cases where another artist features on a Britney track, but I don’t want to include the two cases where Britney is the featuring artist. Looking at the output above, it seems like I can find those cases by keeping only those rows that <em>start with</em> the word “Britney”.</p>
+<p>Now our question becomes “how do we write down a pattern like that?” and the answer usually involves crying for a bit because the solution is to use a <em>regular expression</em>, or “regex”.</p>
+<p><a href="https://towardsdatascience.com/a-gentle-introduction-to-regular-expressions-with-r-df5e897ca432">Regular expressions</a> are a tool used a lot in programming: they provide a compact way to represent patterns in text. They’re very flexible, but can often be quite hard to wrap your head around because there are a lot of special characters that have particular meanings. Thankfully, for our purposes today we only need to know one of them: the <code>^</code> character is used to mean “the start of the string”. So when interpreted as a regular expression, <code>"^Britney"</code> translates to “any string that begins with ‘Britney’”. Now that we have our regular expression, this works nicely:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
@@ -2719,7 +2731,10 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
 [5] &quot;Britney Spears Featuring Tinashe&quot;            
 [6] &quot;Britney Spears Featuring Nicki Minaj &amp; Ke$ha&quot;</code></pre>
 </div>
-<p>The stringr package also has a very handy <code>str_starts()</code> function which I could have used instead, but – given that one of my goals here is to write a post that gently nudges beginners towards intermediate level tools – I decided to use the version that relies on regular expressions. Regular expressions are one of those things you’ll slowly pick up as you go along, and although they can be a huge headache to learn, the reward is worth the effort.</p>
+<p>Regular expressions are one of those things you’ll slowly pick up as you go along, and although they can be a huuuuuuge headache to learn, the reward is worth the effort.</p>
+<aside>
+In my mental list of “stuff I hatelove in data science”, git and regexes are tied for first place
+</aside>
 <h3 id="creating-the-britney-data">Creating the Britney data</h3>
 <p>Okay so now we’re in a position to filter the <code>billboard</code> data, keeping only the rows that correspond to Britney songs. Most people in our slack group have taken an introductory class before, so you’ll be expecting that <code>dplyr::filter()</code> is the tool we need. The kind of filtering you’ve seen before would looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2729,7 +2744,8 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
 </code></pre>
 </div>
 </div>
-<p>However, this doesn’t work the way we want. The bit of code that reads <code>performer == "Britney Spears"</code> is a logical expression (i.e., a code snippet that only returns <code>TRUE</code> and <code>FALSE</code> values) that will only detect <em>exact</em> matches. What we want is something that detects every case that matches our regular expression <code>"^Britney"</code>. Intuition might tell you to try something like <code>performer == "^Britney"</code> but that won’t work: it’s too literal and it will only detect cases where the performer is literally listed as “^Britney”. That’s no good. What we actually want is something that works <em>like</em> the <code>==</code> test, but uses a regular expression to determin if it’s a match or note. That’s where the <code>str_detect()</code> function from the stringr package is really handy. Instead of using <code>performer == "Britney Spears"</code> to detect exact matches, we’ll use <code>str_detect(performer, "^Britney")</code> to match using the regular expression:</p>
+<p>However, this doesn’t work the way we want. The bit of code that reads <code>performer == "Britney Spears"</code> is a logical expression (i.e., a code snippet that only returns <code>TRUE</code> and <code>FALSE</code> values) that will only detect <em>exact</em> matches. It’s too literal for our purposes. We can’t use the <code>==</code> operator to detect our regular expression either: that will only detect cases where the performer is literally listed as “^Britney”. What we actually want is something that works <em>like</em> the <code>==</code> test, but uses a regular expression to determine if it’s a match or not.</p>
+<p>That’s where the <code>str_detect()</code> function from the stringr package is really handy. Instead of using <code>performer == "Britney Spears"</code> to detect exact matches, we’ll use <code>str_detect(performer, "^Britney")</code> to match using the regular expression:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>britney</span> <span class='op'>&lt;-</span> <span class='va'>billboard</span> <span class='op'>%&gt;%</span> 
@@ -2737,6 +2753,9 @@ $ weeks_on_chart         &lt;dbl&gt; 4, 5, 6, 7, 8, 9, 10, 11, 1, 2, 3, 4,…</c
 </code></pre>
 </div>
 </div>
+<aside>
+I should make a confession here. I didn’t technically need to use a regex here. The stringr package also has a handy <code>str_starts()</code> function which I could have used. But half the point of our slack group is to accidentally-on-purpose reveal new tools so… regex it is
+</aside>
 <p>This version works the way we want it to, but it’s usually a good idea in practice to check that we haven’t made any mistakes. Perhaps I have forgotten what <code>str_detect()</code> actually does or I’ve made an error in my use of <code>filter()</code>, for example. So let’s take a look at the <code>performer</code> column in the <code>britney</code> data and check that it contains the same six unique strings:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">

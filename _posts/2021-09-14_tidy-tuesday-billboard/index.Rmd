@@ -63,7 +63,11 @@ Let's start by unpacking this link. There is a lot of assumed knowledge buried h
 
 ### GitHub repositories
 
-The place to start in understanding this link is the peculiar bit at the beginning: what is this "github" nonsense? The long answer is very long, but the short answer is that https://github.com is a website that programmers use to store their code. GitHub is one of several sites (e.g., https://gitlab.org, https://bitbucket.com) that built on top of a system called "git". Git is a powerful tool that lets you collaborate with other people when writing code, allows you to keep track of the history of your code, and to backup your code online in case your laptop mysteriously catches on fire. It takes quite some time to get the hang of (I'm still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the "pro" version for free). My username on GitHub is djnavarro, and you can find my profile page here:
+The place to start in understanding this link is the peculiar bit at the beginning: what is this "github" nonsense? The long answer is very long, but the short answer is that https://github.com is a website that programmers use to store their code. GitHub is one of several sites (e.g., https://gitlab.org, https://bitbucket.com) that are all built on top of a version control system called "git". [Git](https://git-scm.com/) is a powerful tool that lets you collaborate with other people when writing code, allows you to keep track of the history of your code, and to backup your code online in case your laptop mysteriously catches on fire. 
+
+<aside>In the R community, "laptop fires" are universally understood to be a reference to what happens to you when you foolishly ignore the wise advice of Jenny Bryan</aside>
+
+Git is a complicated tool and it takes quite some time to get the hang of (I'm still learning, quite frankly), but it is worth your effort. When you have time, I recommend starting a free GitHub account. You can sign up using an email address, and if you have a university email address you get the educational discount (basically you get the "pro" version for free). My username on GitHub is djnavarro, and you can find my profile page here:
 
 https://github.com/djnavarro
 
@@ -75,7 +79,9 @@ Okay, so that's *part* of the link explained. The next thing to understand is th
 
 https://github.com/rfordatascience/tidytuesday
 
-If you click on this link, you'll find that there's a nice description of the whole project, links to data sets, and a whole lot of other things besides. Most of the work organising this is done by Thomas Mock. 
+If you click on this link, you'll find that there's a nice description of the whole project, links to data sets, and a whole lot of other things besides. 
+
+Most of the work organising this is done by Thomas Mock, and it's very very cool.
 
 ### Repositories have branches
 
@@ -93,7 +99,7 @@ Inside that folder you find lots more folders, one for every week this year. If 
 
 https://github.com/rfordatascience/tidytuesday/tree/master/data/2021/2021-09-14
 
-Being the kind soul that he is, Thomas has included a "readme" file (that's the nice human readable thing that gets displayed) underneath. Whenever you're doing a Tidy Tuesday analysis, it's super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I'd strongly recommend creating readme files yourself: they're really helpful to anyone using your work, even if that's just you several months later after you've forgotten what you were doing.
+Being the kind soul that he is, Thomas has included a "readme" file in this folder: it's a [plain markdown file](https://www.markdownguide.org/) that gets displayed in a nice human readable format on the github page. Whenever you're doing a Tidy Tuesday analysis, it's super helpful to look at the readme file, because it will provide you a lot of the context you need to understand the data. Whenever doing your own projects, I'd strongly recommend creating readme files yourself: they're reeeeaaaaaally helpful to anyone using your work, even if that's just you several months later after you've forgotten what you were doing. Over and over again when I pick up an old project I curse the me-from-six-months ago when she was lazy and didn't write one, or feel deeply grateful to her for taking the time to write one. Readme files are your best friend. Seriously.
 
 In any case, one of the things you'll see on that page is a link to the "billboard.csv" data. If you click on that link it will take you here:
 
@@ -120,9 +126,9 @@ folder3 <- "2021-09-14"
 file <- "billboard.csv"
 ```
 
-One thing you might be wondering, when you look at this snippet, is where that pretty "arrow" character comes from. Don't be fooled. It's actually two characters. What I've actually *typed* is `<-`, but this blog uses a fancy pants font that contains a special [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) that joins the two characters together. The font is called ["Fira Code"](https://fonts.google.com/specimen/Fira+Code#about), and a lot of programmers use it on their blogs. Once you know the trick, it's really nice because it does make the code a little easier to read, but it can be confusing if you're completely new to programming! It's one of those little things that people forget to tell you about :-)
+Argh. Wait. There's something slightly off-topic that I should point out... one thing you might be wondering when you look at this snippet, is where that pretty "arrow" character comes from. Don't be fooled. It's not a special arrow character, it's two ordinary characters. What I've actually *typed* is `<-`, but this blog uses a fancypants font that contains a special [ligature](https://en.wikipedia.org/wiki/Ligature_(writing)) that makes `<-` appear to be a single smooth arrow. The font is called ["Fira Code"](https://fonts.google.com/specimen/Fira+Code#about), and a lot of programmers use it on their blogs. Once you know the trick, it's really nice because it does make the code a little easier to read, but it can be confusing if you're completely new to programming! It's one of those little things that people forget to tell you about :-)
 
-Anyway, getting back on topic. The URL ("uniform resource locator", a.k.a. "link") for the Billboard data file is what you get when you `paste()` all these components together, separated by the "/" character:
+Anyway, getting back on topic. The URL (a.k.a. "link") for the Billboard data is what you get when you `paste()` all these components together, separated by the "/" character:
 
 ```{r data-url}
 data_url <- paste(
@@ -214,26 +220,30 @@ billboard %>%
 
 ### Pattern matching for text data
 
-Inexcusably, however, R does not come with a `search_for_britney()` function, so we're going to have to do it manually. This is where the stringr package is very helpful. It contains a lot of functions that are very helpful in searching for text and manipulating text. The actual function I'm going to use here is `stringr::str_subset()` which will return the subset of values that "match" a particular pattern. Here's a very simple example, where the "pattern" is just the letter "a". I'll quickly define a variable `animals` containing the names of a few different animals:
+Inexcusably, however, R does not come with a `search_for_britney()` function, so we're going to have to do it manually. This is where the [stringr](https://stringr.tidyverse.org/) package is very helpful. It contains a lot of functions that are very helpful in searching for text and manipulating text. The actual function I'm going to use here is `stringr::str_subset()` which will return the subset of values that "match" a particular pattern. Here's a very simple example, where the "pattern" is just the letter "a". I'll quickly define a variable `animals` containing the names of a few different animals:
 
 ```{r animals}
 animals <- c("cat", "dog", "rat", "ant", "bug")
 ```
 
-To retain only those strings that contain the letter "a" we do this:
+To retain only those strings that contain the letter `"a"` we do this:
 
 ```{r simple-subset}
 str_subset(string = animals, pattern = "a")
 ```
 
-Alternatively (as a reminder of what the pipe `%>%` actually does) we could write the same code like this:
+Alternatively we could write this using the pipe:
 
 ```{r simple-subset-2}
 animals %>% 
   str_subset(pattern = "a")
 ```
 
-This will let us find all the Britney songs. In real life, whenever you're working with text data you need to be wary of the possibility of mispellings and other errors, but the Tidy Tuesday data is a little kinder than raw "wild caught" data, so we can safely assume that any song by Britney Spears will include the pattern "Britney" in it *somewhere*. So let's do this and see what we get:
+I'm not sure this second version is any nicer than the first version, but it can be helpful to see the two versions side by side in order to remind yourself of what the pipe actually does!
+
+We can use the same tool to find all the Britney songs. In real life, whenever you're working with text data you need to be wary of the possibility of mispellings and other errors in the raw data. Wild caught data are often very messy, but thankfully for us the Tidy Tuesday data sets tend to be a little kinder. With that in mind can safely assume that any song by Britney Spears will include the pattern "Britney" in it *somewhere*. 
+
+So let's do just try this and see what we get:
 
 ```{r look-for-britney-1}
 billboard %>% 
@@ -242,7 +252,13 @@ billboard %>%
   unique()
 ```
 
-It turns out that Britney is listed in eight different ways. For the sake of this post, I'm happy to include cases where another artist features on a Britney track, but I don't want to include the two cases where Britney is the featuring artist. Looking at the output above, it seems like I can find those cases by keeping only those rows that *start with* the word "Britney". If you know a little bit of [regular expressions](https://towardsdatascience.com/a-gentle-introduction-to-regular-expressions-with-r-df5e897ca432), you would probably recognise that `^` is used as a special character to mean "start of the string", so the pattern we want is `^Britney`, and this works:
+<aside>At this point I was sorely tempted to get distracted by Ke$ha and Rihanna, but somehow managed to stay on topic. Somehow</aside>
+
+Okay, so it turns out that Britney is listed in eight different ways. For the sake of this post, I'm happy to include cases where another artist features on a Britney track, but I don't want to include the two cases where Britney is the featuring artist. Looking at the output above, it seems like I can find those cases by keeping only those rows that *start with* the word "Britney". 
+
+Now our question becomes "how do we write down a pattern like that?" and the answer usually involves crying for a bit because the solution is to use a *regular expression*, or "regex".
+
+[Regular expressions](https://towardsdatascience.com/a-gentle-introduction-to-regular-expressions-with-r-df5e897ca432) are a tool used a lot in programming: they provide a compact way to represent patterns in text. They're very flexible, but can often be quite hard to wrap your head around because there are a lot of special characters that have particular meanings. Thankfully, for our purposes today we only need to know one of them: the `^` character is used to mean "the start of the string". So when interpreted as a regular expression, `"^Britney"` translates to "any string that begins with 'Britney'". Now that we have our regular expression, this works nicely:
 
 ```{r look-for-britney-2}
 billboard %>% 
@@ -251,7 +267,9 @@ billboard %>%
   unique()
 ```
 
-The stringr package also has a very handy `str_starts()` function which I could have used instead, but -- given that one of my goals here is to write a post that gently nudges beginners towards intermediate level tools -- I decided to use the version that relies on regular expressions. Regular expressions are one of those things you'll slowly pick up as you go along, and although they can be a huge headache to learn, the reward is worth the effort.
+Regular expressions are one of those things you'll slowly pick up as you go along, and although they can be a huuuuuuge headache to learn, the reward is worth the effort.
+
+<aside>In my mental list of "stuff I hatelove in data science", git and regexes are tied for first place</aside>
 
 ### Creating the Britney data
 
@@ -262,12 +280,16 @@ britney <- billboard %>%
   filter(performer == "Britney Spears")
 ```
 
-However, this doesn't work the way we want. The bit of code that reads `performer == "Britney Spears"` is a logical expression (i.e., a code snippet that only returns `TRUE` and `FALSE` values) that will only detect *exact* matches. What we want is something that detects every case that matches our regular expression `"^Britney"`. Intuition might tell you to try something like `performer == "^Britney"` but that won't work: it's too literal and it will only detect cases where the performer is literally listed as "^Britney". That's no good. What we actually want is something that works *like* the `==` test, but uses a regular expression to determin if it's a match or note. That's where the `str_detect()` function from the stringr package is really handy. Instead of using `performer == "Britney Spears"` to detect exact matches, we'll use `str_detect(performer, "^Britney")` to match using the regular expression:
+However, this doesn't work the way we want. The bit of code that reads `performer == "Britney Spears"` is a logical expression (i.e., a code snippet that only returns `TRUE` and `FALSE` values) that will only detect *exact* matches. It's too literal for our purposes. We can't use the `==` operator to detect our regular expression either: that will only detect cases where the performer is literally listed as "^Britney". What we actually want is something that works *like* the `==` test, but uses a regular expression to determine if it's a match or not. 
+
+That's where the `str_detect()` function from the stringr package is really handy. Instead of using `performer == "Britney Spears"` to detect exact matches, we'll use `str_detect(performer, "^Britney")` to match using the regular expression:
 
 ```{r filter-to-britney}
 britney <- billboard %>% 
   filter(str_detect(performer, "^Britney"))
 ```
+  
+<aside>I should make a confession here. I didn't technically need to use a regex here. The stringr package also has a handy `str_starts()` function which I could have used. But half the point of our slack group is to accidentally-on-purpose reveal new tools so... regex it is</aside>
   
 This version works the way we want it to, but it's usually a good idea in practice to check that we haven't made any mistakes. Perhaps I have forgotten what `str_detect()` actually does or I've made an error in my use of `filter()`, for example. So let's take a look at the `performer` column in the `britney` data and check that it contains the same six unique strings:
 
