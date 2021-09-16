@@ -181,61 +181,181 @@ Notice that this time I just typed `glimpse` rather than `dplyr::glimpse`. I did
 
 ## Finding Britney
 
-Make a decision: today I have love only for Britney. First up, let's take a quick look at the `performer` variable, because I suspect she's going to appear in a few different forms:
+Time to start analysing the data. I have made a decision that today I have love in my heart only for Britney. So what I want to do is find the rows in `billboard` that correspond to Britney Spears songs. The natural way to do this would be to pull out the "performer" column and then try to find entries that refer to Britney. The slightly tricky aspect to this is that Britney doesn't appear solely as "Britney Spears". For example, "Me Against The Music" features Madonna, and the entry in the `performer` column is "Britney Spears Featuring Madonna". So we're going to have to search in a slightly smarter way. Before turning this into R code, I can sketch out my plan like this:
+
+```
+get the billboard data, THEN
+  pull out the performer column, THEN
+  search for britney, THEN
+  tidy up a bit
+```
+
+This kind of workflow is naturally suited to the "pipe", which is written `%>%`. You'll see referred to either as the "magrittr pipe" (referring to the magrittr package where it originally came from) or the "dplyr pipe" (because dplyr kind of made it famous!). I'm sure you've seen it before, but it does the same job as the word "THEN" in the pseudo-code I wrote above. It's job is to take the output of one function and then pass it on as the input to the next one. So here's that plan re-written in an "R-like" format:
+
+```
+the_billboard_data %>% 
+  pull_out_the_performer_column() %>% 
+  search_for_britney() %>% 
+  tidy_it_up()
+```
+
+In fact that's pretty close to what the actual R code is going to look like! The dplyr package has a function `dplyr::pull()` that will extract a column from the data set (e.g., all 327,895 listings in the `performer` column), and base R has a function called `unique()` that will ignore repeat entries, showing you only the unique elements of a column. So our code is going to look almost exactly like this
+
+```
+billboard %>% 
+  pull(performer) %>% 
+  search_for_britney() %>% 
+  unique()
+```
+
+### Pattern matching for text data
+
+Inexcusably, however, R does not come with a `search_for_britney()` function, so we're going to have to do it manually. This is where the stringr package is very helpful. It contains a lot of functions that are very helpful in searching for text and manipulating text. The actual function I'm going to use here is `stringr::str_subset()` which will return the subset of values that "match" a particular pattern. Here's a very simple example, where the "pattern" is just the letter "a". I'll quickly define a variable `animals` containing the names of a few different animals:
+
+```{r animals}
+animals <- c("cat", "dog", "rat", "ant", "bug")
+```
+
+To retain only those strings that contain the letter "a" we do this:
+
+```{r simple-subset}
+str_subset(string = animals, pattern = "a")
+```
+
+Alternatively (as a reminder of what the pipe `%>%` actually does) we could write the same code like this:
+
+```{r simple-subset-2}
+animals %>% 
+  str_subset(pattern = "a")
+```
+
+This will let us find all the Britney songs. In real life, whenever you're working with text data you need to be wary of the possibility of mispellings and other errors, but the Tidy Tuesday data is a little kinder than raw "wild caught" data, so we can safely assume that any song by Britney Spears will include the pattern "Britney" in it *somewhere*. So let's do this and see what we get:
 
 ```{r look-for-britney-1}
 billboard %>% 
   pull(performer) %>% 
-  str_subset("(Britney)|(Spears)") %>% 
-  table() %>% 
-  sort(decreasing = TRUE)
+  str_subset("Britney") %>% 
+  unique()
 ```
 
-Another decision: I'm happy to include her collaborations with other artists, but I only want cases where she is the primary artist. So the regular expression I'm going to use to select Britney songs is `"^Britney Spears"`. That matches the following:
+It turns out that Britney is listed in eight different ways. For the sake of this post, I'm happy to include cases where another artist features on a Britney track, but I don't want to include the two cases where Britney is the featuring artist. Looking at the output above, it seems like I can find those cases by keeping only those rows that *start with* the word "Britney". If you know a little bit of [regular expressions](https://towardsdatascience.com/a-gentle-introduction-to-regular-expressions-with-r-df5e897ca432), you would probably recognise that `^` is used as a special character to mean "start of the string", so the pattern we want is `^Britney`, and this works:
 
 ```{r look-for-britney-2}
 billboard %>% 
   pull(performer) %>% 
-  str_subset("^Britney Spears") %>% 
+  str_subset("^Britney") %>% 
   unique()
 ```
 
-It retains Britney songs featuring other artists but not songs by other artists featuring Britney. Filter: 
+The stringr package also has a very handy `str_starts()` function which I could have used instead, but -- given that one of my goals here is to write a post that gently nudges beginners towards intermediate level tools -- I decided to use the version that relies on regular expressions. Regular expressions are one of those things you'll slowly pick up as you go along, and although they can be a huge headache to learn, the reward is worth the effort.
+
+### Creating the Britney data
+
+Okay so now we're in a position to filter the `billboard` data, keeping only the rows that correspond to Britney songs. Most people in our slack group have taken an introductory class before, so you'll be expecting that `dplyr::filter()` is the tool we need. The kind of filtering you've seen before would looks like this:
+
+```{r filter-to-britney-not-really}
+britney <- billboard %>% 
+  filter(performer == "Britney Spears")
+```
+
+However, this doesn't work the way we want. The bit of code that reads `performer == "Britney Spears"` is a logical expression (i.e., a code snippet that only returns `TRUE` and `FALSE` values) that will only detect *exact* matches. What we want is something that detects every case that matches our regular expression `"^Britney"`. Intuition might tell you to try something like `performer == "^Britney"` but that won't work: it's too literal and it will only detect cases where the performer is literally listed as "^Britney". That's no good. What we actually want is something that works *like* the `==` test, but uses a regular expression to determin if it's a match or note. That's where the `str_detect()` function from the stringr package is really handy. Instead of using `performer == "Britney Spears"` to detect exact matches, we'll use `str_detect(performer, "^Britney")` to match using the regular expression:
 
 ```{r filter-to-britney}
 britney <- billboard %>% 
-  filter(str_detect(performer, "^Britney Spears")) %>% 
-  mutate(date = lubridate::mdy(week_id))
+  filter(str_detect(performer, "^Britney"))
 ```
   
-A quick `glimpse()`:
+This version works the way we want it to, but it's usually a good idea in practice to check that we haven't made any mistakes. Perhaps I have forgotten what `str_detect()` actually does or I've made an error in my use of `filter()`, for example. So let's take a look at the `performer` column in the `britney` data and check that it contains the same six unique strings:
+
+```{r cross-check}
+britney %>% 
+  pull(performer) %>% 
+  unique()
+```
+
+That's reassuring. So let's take a quick peek at the results of our data wrangling: 
 
 ```{r glimpse-britney-partials}
 glimpse(britney)
 ```
 
-## Visualise 
+That looks good to me...
+
+### Fixing the dates
+
+...or does it? Looking at the `week_id` column is enough to make any data analyst sigh in mild irritation. This column encodes the date, but the first two entries are `"4/22/2000"` and `"10/24/2009"`. They are encoded in a "month/day/year" format. Nobody on this planet except Americans writes dates this way. Most countries use "day/month/year" as their standard way of writing dates, and most programming style guides strongly recommend "year/month/day" (there are good reasons for this, mostly to do with sorting chronologically). Worse yet, it's just a character string. R doesn't know that this column corresponds to a date, and unlike Excel it is smart enough not to try. Trying to guess what is and is not a date is notoriously difficult, so R makes that *your* job as the data analyst. Thankfully, the [lubridate](https://lubridate.tidyverse.org/) package exists to make it a little bit easier. In this case, where we have data in month/day/year format, the `lubridate::mdy()` function will do the conversion for us. You'll be completely unsurprised to learn that there are `lubridate::dmy()` and `lubridate::ymd()` functions that handle other kinds of date formats.
+
+So let's do this. I'll use the `dplyr::mutate()` function to modify the `britney` data, like so:
+
+```{r}
+britney <- britney %>% 
+  mutate(week_id = lubridate::mdy(week_id))
+
+glimpse(britney)
+```
+
+Much better!
+
+## Visualising a queen
+
+I'm now at the point that I have a `britney` data set I can visualise. However, being the queen she is, Britney has quite a few songs that appear in the Billboard Top 100, so the first thing I'll do is specify a few favourites that we'll highlight in the plots:
+
+```{r set-highlights}
+highlights <- c("Work B**ch!", "...Baby One More Time", "Toxic")
+```
+
+Most people in our slack will probably have encountered the ggplot2 package before, and at least have some experience in creating data visualisations using it. So we might write some code like this, which draws plot showing the date on the horizontal axis (the mapping `x = week_id`) and the position of the song on the vertical axis (represented by the mapping `y = week_position`). We'll also map the colour to the song by setting `colour = song`. Then we'll add some points and lines:
 
 ```{r britney-chart-positions-1}
-highlights <- c("Work B**ch!", "...Baby One More Time", "Toxic")
+ggplot(
+  data = britney,
+  mapping = aes(
+    x = week_id,
+    y = week_position,
+    colour = song
+  )
+) + 
+  geom_line(show.legend = FALSE) + 
+  geom_point(show.legend = FALSE)
+```
 
-pic <- britney %>% 
+The reason I've included `show.legend = FALSE` here is that there are quite a few different songs in the data, and if they were all added to a legend it wouldn't leave any room for the data!
+
+We can improve on this in a couple of ways. First up, let's use a `scale_y_reverse()` to flip the y-axis. That way, a top ranked song appears at the top, and a 100th ranked song appears at the bottom:
+
+```{r britney-chart-positions-2}
+britney %>% 
   ggplot(aes(
-    x = date, 
+    x = week_id, 
     y = week_position, 
-    group = song
+    colour = song
+  )) + 
+  geom_line(show.legend = FALSE) + 
+  geom_point(show.legend = FALSE) + 
+  scale_y_reverse()
+```
+
+Notice that I've switched to using the pipe here. I take the `britney` data, pipe it with `%>%` to the `ggplot()` function where I set up the mapping, and then add things to the plot with `+`. It's a matter of personal style though. Other people write their code differently!
+
+Okay, it's time to do something about the lack of labels. My real interest here is in the three songs I listed in the `highlights` so I'm going to use the [gghighlight](https://yutannihilation.github.io/gghighlight/) package to highlight only those three songs:
+
+```{r britney-chart-positions-3}
+britney %>% 
+  ggplot(aes(
+    x = week_id, 
+    y = week_position, 
+    colour = song
   )) + 
   geom_line() + 
   geom_point() + 
   scale_y_reverse() + 
   gghighlight::gghighlight(song %in% highlights)
-
-pic
 ```
 
+When the data are plotted like this, you get a strong sense of the chronology of Britney's career, but the downside is that you can't easily see how the chart performance of "...Baby One More Time" compares to the performance of "Toxic" and "Work B**ch!". To give a better sense of that, it's better to plot `weeks_on_chart` on the horizontal axis:
 
-```{r britney-chart-positions-2}
-pic <- britney %>% 
+```{r britney-chart-positions-4}
+britney %>% 
   ggplot(aes(
     x = weeks_on_chart, 
     y = week_position, 
@@ -245,13 +365,36 @@ pic <- britney %>%
   geom_line() + 
   geom_point() + 
   scale_y_reverse() + 
-  gghighlight::gghighlight(
-    song %in% highlights
-  )
-
-pic
+  gghighlight::gghighlight(song %in% highlights)
 ```
 
+Shown this way, you get a really strong sense of just how much of an impact "...Baby One More Time" had. It wasn't just Britney's first hit, it was also her biggest. It's quite an outlier on the chart! 
+
+If we're doing exploratory data analysis, and the only goal is to have a picture to show a colleague, that's good enough. However, if we wanted to share it more widely, you'd probably want to spend a little more time fiddling with the details, adding text, colour and other things that actually matter a lot in real life! 
+
+```{r britney-chart-positions-5}
+britney %>% 
+  ggplot(aes(
+    x = weeks_on_chart, 
+    y = week_position, 
+    group = song,
+    colour = song
+  )) + 
+  geom_line(size = 1.5) + 
+  scale_y_reverse() + 
+  scale_color_brewer(palette = "Dark2") + 
+  gghighlight::gghighlight(song %in% highlights, 
+    unhighlighted_params = list(size = .5)) + 
+  theme_minimal() +
+  labs(
+    title = "Britney Spears' first hit was also her biggest",
+    subtitle = "Chart performance of Britney Spears' songs",
+    x = "Weeks in Billboard Top 100",
+    y = "Chart Position"
+  )
+```
+
+If I were less lazy I would also make sure that the chart includes a reference to the original data source, and something that credits myself as the creator of the plot. That's generally good etiquette if you're planning on sharing the image on the interwebs. There's quite a lot you could do to tinker with the plot to get it to publication quality, but this is good enough for my goals today!
 
 <!--------------- appendices ----------------->
 
