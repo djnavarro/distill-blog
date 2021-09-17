@@ -281,7 +281,7 @@ Regular expressions are one of those things you'll slowly pick up as you go alon
 
 ### Creating the Britney data
 
-Okay so now we're in a position to filter the `billboard` data, keeping only the rows that correspond to Britney songs. Most people in our slack group have taken an introductory class before, so you'll be expecting that `dplyr::filter()` is the tool we need. The kind of filtering you've seen before would looks like this:
+Okay so now we're in a position to filter the `billboard` data, keeping only the rows that correspond to Britney songs. Most people in our slack group have taken an introductory class before, so you'll be expecting that `dplyr::filter()` is the tool we need. The kind of filtering you've seen before looks like this:
 
 ```{r filter-to-britney-not-really}
 britney <- billboard %>% 
