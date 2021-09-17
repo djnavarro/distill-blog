@@ -298,10 +298,10 @@
     },
     "knitr": {
       "Package": "knitr",
-      "Version": "1.33",
+      "Version": "1.34",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0bc1b5da1b0eb07cd4b727e95e9ff0b8"
+      "Hash": "aa958054ac6f0360926bb952ea302f0f"
     },
     "labeling": {
       "Package": "labeling",
@@ -344,13 +344,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "41287f1ac7d28a92f0a286ed507928d3"
-    },
-    "markdown": {
-      "Package": "markdown",
-      "Version": "1.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "61e4a10781dd00d7d81dd06ca9b94e95"
     },
     "memoise": {
       "Package": "memoise",
@@ -445,15 +438,15 @@
     },
     "refinery": {
       "Package": "refinery",
-      "Version": "0.0.0.9038",
+      "Version": "0.0.0.9045",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteRepo": "refinery",
       "RemoteUsername": "djnavarro",
       "RemoteRef": "HEAD",
-      "RemoteSha": "158ece4f416d12de066e2951feffe4b0c6ea2c28",
-      "Hash": "93bab0ee2896723ec158321d96554334"
+      "RemoteSha": "e98f559a78e428a23fbd0a25ba3bdde511088ace",
+      "Hash": "25347d8d76fa7a2046889ba2af6fe507"
     },
     "renv": {
       "Package": "renv",
@@ -597,10 +590,10 @@
     },
     "xfun": {
       "Package": "xfun",
-      "Version": "0.25",
+      "Version": "0.26",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "853d45ffff0a9af1e0af017cd359f75e"
+      "Hash": "a270216f7ffda25e53298293046d1d05"
     },
     "xml2": {
       "Package": "xml2",

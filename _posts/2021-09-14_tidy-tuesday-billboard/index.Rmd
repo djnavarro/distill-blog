@@ -438,7 +438,7 @@ knitr::include_graphics("britney.jpg")
 
 <!--------------- appendices ----------------->
 
-```{r, echo=FALSE, eval=FALSE}
+```{r, echo=FALSE}
 refinery::insert_appendix(
   repo_spec = params$repo, 
   dir = paste(params$date, params$slug, sep = "_")
