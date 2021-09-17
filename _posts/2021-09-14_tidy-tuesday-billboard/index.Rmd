@@ -338,7 +338,7 @@ I'm now at the point that I have a `britney` data set I can visualise. However, 
 highlights <- c("Work B**ch!", "...Baby One More Time", "Toxic")
 ```
 
-Most people in our slack will probably have encountered the ggplot2 package before, and at least have some experience in creating data visualisations using it. So we might write some code like this, which draws plot showing the date on the horizontal axis (the mapping `x = week_id`) and the position of the song on the vertical axis (represented by the mapping `y = week_position`). We'll also map the colour to the song by setting `colour = song`. Then we'll add some points and lines:
+Most people in our slack will probably have encountered the ggplot2 package before, and at least have some experience in creating data visualisations using it. So we might write some code like this, which draws a plot showing the date on the horizontal axis (the mapping `x = week_id`) and the position of the song on the vertical axis (represented by the mapping `y = week_position`). We'll also map the colour to the song by setting `colour = song`. Then we'll add some points and lines:
 
 ```{r britney-chart-positions-1}
 ggplot(
