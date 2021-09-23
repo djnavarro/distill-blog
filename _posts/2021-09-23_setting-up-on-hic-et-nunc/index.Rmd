@@ -81,6 +81,174 @@ When you go to the HEN website you'll see a little bit of text on the top right 
 knitr::include_graphics("img/hen_sync.png")
 ```
 
+This will bring up an ovelay that looks like this:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_wallet.png")
+```
+
+If you chose a Temple wallet choose the "Temple - Tezos Wallet (ex. Thanos)" option. It might ask for your password at this point but it probably won't if you're already logged in. What you're more likely to see is a screen like this:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/connect.png")
+```
+
+This is a message from your wallet asking you to confirm that yes, you do want to synchronise with HEN (it also shows you that I currently have a balance of 11 tez, which I guess is something like US$60). Click on connect, and HEN will now be synchronised with your identity. You can see that because the menu at the top now looks something like this: 
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_synced.png")
+```
+
+You're now synced: in effect, you are now logged in to HEN. You still don't have a username, but you *have* authenticated yourself and you can now change some settings. 
+
+## Step 3: Give yourself a name, avatar and bio on HEN
+
+The time has come to give yourself a name. If you do things in the right order and with the right mental model of what's going on, this is pretty easy to do, but it's easy to get a little confused because there are actually multiple things going on here, and you always have to keep in mind that your equivalent of my `Smurf` string is your actual identity.
+
+So... your first step is to tell HEN to link your `Smurf` strng to a name, bio and avatar. This is easy and it doesn't cost you any money. You click on the menu, and you'll see this screen:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_menu.png")
+```
+
+As with everything about HEN, it's very minimalist and slightly atypical, but it's just a menu, same as on any other website. Click on "edit profile". This brings up another slightly unconventional looking screen that has several options you can set. Here's what mine currently looks like:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_profile.png")
+```
+
+There are three "easy" options here:
+
+- If you click on "choose file" you can give yourself an avatar
+- If you type something under "username" you can have a username
+- If you type something under "description" you get a bio.
+
+For the username, you should avoid spaces and special characters, and use lowercase letters because usernames are case sensitive. For R users, that should feel familiar: write your username in `snake_case` or `kebab-case`
+
+Once you're happy you can click "save profile" and -- assuming that HEN isn't running slowly like was when I got set up -- you're all set. Yay!
+
+There are a few other things to notice here. First... when you clicked "save profile" it didn't set up a twitter link or anything. In fact, despite the close proximity of the "save profile" button and the text underneath, those two things aren't related. When the time comes to set your twitter etc, ignore the "save profile" button completely. Instead, you need to rely on the text. Though it's obnoxiously hard to find, the words "Tezos Profiles" in the screenshot above is in fact a link. Later on (not now!) you can click on that link and you can do other things like verify your twitter account, github account etc. However, that's surprisingly finicky to do and it costs money, so leave that until later.
+
+Second... notice that your username functions as an alias, but it's only an alias. The canonical link to my user profile is this ugly thing that includes the `Smurf`:
+
+https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7
+
+However, because I've set up my username on HEN to be `djnavarro` this link will redirect automatically to a more handy profile page:
+
+https://www.hicetnunc.xyz/djnavarro
+
+Even so, it's important to remember that this is just a convenience, and it's specific to HEN. There are other websites that are linked to the same art ecosystem, and you'll find that your `Smurf` equivalent will tend to follow you around across those websites because that's a public identifier. In contrast, only HEN knows that I'm also `djnavarro`, so *this* alias won't necessarily follow me to other sites. But whatever. Right now that's not super important. We can deal with that later.
+
+For more information about editing your profile, you can check out the HEN [FAQ page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile).
+
+## Intermission: Just browse for a while!
+
+There's more stuff you can do to get your account set up, but you might want to take a little breather and look for some art. Maybe you want to search for someone you know in the R community who might be on HEN, and you'd like to find them. The actual HEN website isn't very good for that. If you look at the front page, all you see is art scrolling by
+
+https://www.hicetnunc.xyz/
+
+There's no structure, just a timeline showing the pieces one at a time as they are "minted". It's not searchable or browsable. This is annoying, but there are alternatives. After all, the actual pieces are all public and on the tezos blockchain so other sites can hook into it and display the same pieces in a different way. The "HEN explorer" website is pretty handy here:
+
+https://www.henext.xyz/
+
+There are things you can browse and even a search box. It's a little clunky (e.g., I found the search box didn't always act as I was expecting) but it does the job. This was how I found the other R people I knew about! So if you want to take a moment to explore, this is a pretty good place to go. 
+
+## Step 4: Get some money
+
+Remember when I said that everything about this oozes capitalism? I really meant it: it's hard to do much without spending money, and we're rapidly reaching the point where you'll need a little bit. Thankfully, you don't need very much, and there's a good chance you can ask a friend to help out here (I hope!) I reached out to Will Chase and Thomas Lin Pedersen, and they were both kind enough to each transfer a few tez into my account. You probably won't need much: I whole bunch of mistakes getting set up, and as a consequence spent more money than I needed to, but even with all that it cost less than 1 tez (again, that's currently about $5 in US dollars) for me to get everything up and running. 
+
+There's a part of me that hopes that the R community will look after its own here: I haven't forgotten that Will and Thomas helped me get started (and Antonio offered to help out too!), and so if I sell a few pieces I'd like to return the favour to anyone else looking to get started. Pay it forward folks!
+
+That said, I'm also not naive. It doesn't always work that way. The HEN website has some suggestions for [other places](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) you can ask for help. And of course, there's always the option of speding some real money to by a few tez to get started. If you want to take that option, that's the point at which you'd have to sign up with one of the exchanges. This is probably something that you'd want to research yourself since it will probably be different based on what country you're in, but I went with one of the ones listed on the HEN wiki and signed up with [Kraken](https://www.kraken.com). That part is tedious but very traditional: at this point you're beginning to deal with financial institutions so you'll sign up for accounts, verify your identity with official documents, and link it to your bank accounts. It's annoying and time consuming, but there's nothing that wouldn't be familiar to you if you have a PayPal account and a bank account. Plus, if you do end up making money from your art you'll probably want to convert it back to regular money and transfer it to your bank account, and for that you'll have to go through that process anyway. 
+
+One way or another, I'm hoping that at this point you have a few tez to start out!
+
+## Step 5: Verifying your identity 
+
+At this point you might want to take some steps to link your `Smurf` identity with your real life identity. Sure, *you* know who you are and you can attest to that fact, but the crypto world apparently wants more proof, and they are tediously fixated on non-traditional ways to do that. It annoys me, but these are the hoops artists have to jump through right? So let's do this. 
+
+The first thing to realise (something that is *not* well signposted on the sites), is that there are at least two different systems involved and when you go googling for information you'll find information about both of them. It can get confusing. So let's take then one at a time. 
+
+### tzprofiles.com
+
+Go back to the HEN website, click on the menu and select "edit profile" again. Then go click on the almost-impossible-to-detect "Tezos Profiles" link that I foreshadowed earlier. That will take you to https://tzprofiles.com/, and there is a very prominent "connect wallet" button. Click on that button, confirm with your wallet that you want to allow tzprofiles to connect (the little popup window will appear, like it always does), and then you'll see a screen that looks like this:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/tzprofiles.png")
+```
+
+There are several different things you can do here, and any of them that you verify on tzprofiles will eventually end up on HEN. For example, if you want to verify your twitter account, you'll go through a series of elaborate steps (which, yes, will have to be confirmed with your wallet) and in the end you'll be forced to send a tweet like this one:
+
+https://twitter.com/djnavarro/status/1440133754333237248
+
+To verify your GitHub account it's pretty similar, except that you end up being forced to create a gist. For your website it forces you to create a DNS record (which annoyed the hell out of me because it overwrote my existing DNS records and borked my webpage until I worked out how to fix it... was not pleased). Frankly I'm not sure that verifying the website is worth the effort. I wasted a lot more time on that than I wanted to. Oh well.
+
+In any case, once you're done, I think you have to use your wallet to confirm again (I've forgotten, but I think you do) to allow HEN to use your profile on tzprofiles.com, but once you've done that, you'll see some icons appear on your HEN page, linking to your twitter account, github account, etc:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_profilecomplete.png")
+```
+
+At this point your HEN account is meaningfully linked to your other public identities, and any artwork you create can be verifiably be linked to *you* (and not just your `Smurf`). You can skip the next part if you want. 
+
+### tzkt.io
+
+All right. If you're like me you've probably been exploring as you go and you've been encountering some other sites that seem connected to this ecosystem. One of them I mentioned earlier (i.e., https://henext.xyz). But at some point you've probably clicked on a link attached to your `Smurf` and it's taken you to https://tzkt.io. Most likely it took you to a page that looks like this, and appears to be (and is) showing a bunch of transactions:
+
+https://tzkt.io/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7/operations/
+
+You'll probably end up back at tzkt.io quite a bit, I suspect, because it's the place that everything seems to link to to display transactions. On my page there's is a log of all the things I've been doing on the tezos blockchain. It looks something like this:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/tzkt_screen.png")
+```
+
+A lot of it is gibberish, but you can kind of see what's going on here. Yet again you can see my `Smurf`, there's a bunch of transactions that show me minting NFTs, etc. It makes a kind of sense.
+
+What *doesn't* make any sense (at least not at first), is that my `Smurf` is not linked to my identity. My avatar is missing (that kitty is a randomly assigned avatar, not something I chose), and none of those links go anywhere. There's a *space* for me to have a twitter link, a github link, etc, but they are empty. That seems weird, because I already verified my twitter and github, right?
+
+Well, yes, I did. But I verified those accounts with the other site: https://tzprofiles.com/ knows who I am and has shared that information with HEN, but it hasn't shared anything with https://tzkt.io. This is mildly annoying because other sites in the HEN ecosystem all seem to be looking to https://tzkt.io in order to get profile information about me. Unlike HEN itself, they aren't getting information from https://tzprofiles.com/. 
+
+A good example of this is https://objkt.com/, a site that you can use to auction off your artwork rather than set fixed prices for them (more on that later!) In exactly the same way that the HEN explorer site is able to show all the artwork minted through HEN (and hence you will automatically exist on https://www.henext.xyz/ if you exist on HEN), you automatically exist on objkt.com too, and your profile page is... drumroll, please... your `Smurf`. So here's me:
+
+https://objkt.com/profile/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7/creations
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/objkt.png")
+```
+
+As you can see, it has my `Smurf` and it is showing pictures of art I've minted through HEN, but somehow it doesn't show anything about me! In contrast, if you look at Thomas Lin Pedersen's page there, it has an avatar, a name, and a bio.  
+
+https://objkt.com/profile/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/creations
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/objkt_thomas.png")
+```
+
+In fact, come to think of it, his profile on https://tzkt.io shows the exact same avatar, name, and bio:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/tzkt_thomas.png")
+```
+
+No fair! I want one of those too! What magic does he know that I don't? Well, one clue is to look at his HEN page and note that the bio is slightly different, and the social media icons on his HEN page are slightly different to the social media icons on his OBJKT page:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_profile_thomas.png")
+```
+
+To cut a long story short, OBJKT is pulling the information from TZKT. So if you want to have a profile on OBJKT too, you'll have to verify yourself on TZKT. Gr. Luckily for me (because I am tired of this post already!) there's a good write up of how to do that on the Baking Bad blog:
+
+https://baking-bad.org/blog/2021/09/19/tzkt-alias-verification-f-a-q/
+
+This isn't a random website either. It's linked to the people who actually run TZKT. The long and short of it is that you'll have to fill out a Google Form and then wait for a few days while they manually verify it. Eventually (hopefully), your profile will show up on TZKT and then on OBJKT. 
+
+## Step 6: Mint some art
+
+
+## Step 7: Buy and sell art
+
+
 <!--------------- appendices ----------------->
 
 ```{r, echo=FALSE}
