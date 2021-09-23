@@ -6,7 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 14 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 22 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Setting up your digital art page on hic et nunc</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-23_setting-up-on-hic-et-nunc</link>
+      <description>Not every artist wants to sell cryptoart. I don't even know if I'm one of the ones who does, but I would feel happier about it if I could help make it easier for other artists to get started</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-23_setting-up-on-hic-et-nunc</guid>
+      <pubDate>Wed, 22 Sep 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Visualising the hits of Queen Britney</title>
       <dc:creator>Danielle Navarro</dc:creator>

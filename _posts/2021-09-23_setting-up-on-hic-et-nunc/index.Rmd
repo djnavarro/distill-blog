@@ -1,0 +1,90 @@
+---
+title: "Setting up your digital art page on hic et nunc" 
+description:
+  Not every artist wants to sell cryptoart. I don't even know if
+  I'm one of the ones who does, but I would feel happier about it
+  if I could help make it easier for other artists to get started
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+preview: preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+output:
+  distill::distill_article:
+    toc: true
+    self_contained: false
+params:
+  slug: setting-up-on-hic-et-nunc
+  date: 2021-09-23
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+```
+
+
+<!--------------- post ----------------->
+
+It is no secret that I feel conflicted about selling NFTs from my artwork: I'm on record in multiple places expressing my reservations (e.g., [here](https://essays.djnavarro.net/post/intimacy-and-art/) and [here](https://www.gofundme.com/f/data-science-art-to-support-a-womens-refuge)), and I think there are many perfectly good reasons why a generative artist might not want to sell NFTs. There are also sensible reasons why a generative artist *would* want (or need) to sell NFTs. This post isn't about passing judgment one way or the other, especially since I don't know which way I want to go myself. Nor is this intended as a "what is blockchain?" or "what is an NFT?" kind of post. I'm assuming that anyone reading it has a vague understanding of the gist of what these things are (which, frankly, is all I have too...). It's a different kind of post, one aimed at addressing a practical issue: barriers to entry.
+
+## There are barriers
+
+One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you, and as anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, this is a non-trivial barrier. "By-invitation" systems create barriers by design: they are, unfortunately, inherently exclusionary.
+
+Another kind of barrier comes from the nature of cryptoart. Blockchains were not designed to be energy efficient, and they can be extraordinarily wasteful (much more than you'd think). Environmental considerations also create barriers to entry. This is especially true for "proof of work" (PoW) blockchains that are staggeringly wasteful of computation time. The biggest art markets appear to be based on the Ethereum chain, which (for the time being, at least) uses proof of work, and seems indefensible from an environmental perspective. To my mind that also rules out [OpenSea](https://opensea.io/): despite being the largest marketplace and the easiest one to set up on (e.g., I have an [unused account](https://opensea.io/djnavarro) that I set up in a few minutes), it may be unacceptable to many artists for that reason.
+
+As an alternative, there are "proof of stake" (PoS) blockchains that don't require anywhere near as much computation, and as a consequence are much more energy efficient. I'm sure a true enthusiast could tell me a lot more about the different proof of stake chains, but the one I'm most familiar with is [Tezos](https://tezos.com/). Because I have a personal aversion to "by invitation" systems and because I really don't want the planet to burn, this is appealing to me. Happily, there is an NFT art marketplace based on the Tezos chain which goes by a fancy latin name [hic et nunc](https://www.hicetnunc.xyz/): it translates to "here and now", I'm told, and is often abbreviated to "HEN" or "H=N". Also happily, you don't need an invitation, you don't need to join a club, you can just join. Best of all, there are several artists from the R community who are already on HEN. To my mind this is a big selling point because I actually *like* the R community. There are very few tech communities that have ever made me feel at home, and I deeply value those that do. I'm entirely certain that there are others I don't know about yet, but so far on HEN I've found [Thomas Lin Pedersen](https://www.hicetnunc.xyz/tz/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/), [Will Chase](https://www.hicetnunc.xyz/tz/tz1UTa3LDHvb1xvfcaH5evmsVMWNXQRxrYb2), [Antonio S. Chinchón](https://www.hicetnunc.xyz/tz/tz1LLd8FJJtcTfFLiJeX6UL2oYQeLLAzUH7K), and [George Savva](https://www.hicetnunc.xyz/tz/tz1X5wRkNVQG7QfUg4kSpaQbBWPzCv6wf6mV). And as of a few days ago, [I'm there too](https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7). 
+
+Community! Yay! 
+
+If there's one thing I have learned from the lovely R folks on twitter, everything is better when you are part of a supportive team of people who actually care about each other and work to build each other up. From my perspective, this makes HEN the most promising option. 
+
+Unfortunately, one big limitation to HEN is that it isn't easy to get started there. The user interface is weird, the "how to" guides aren't easy to read, and there are a lot of things that just don't make any sense until *after* you've done all the work of figuring it out. That sucks, and it is also a barrier to entry. And while I can't do anything to make Foundation less exclusionary, nor make OpenSea less of an environmental disaster, I *can* do something to make it easier for other R folks to get started on HEN, just by writing a post walking you through the process. That seems like a valuable thing to do.
+
+## Argh... where do I start?
+
+So... let's say you're at the same point I was at a few days ago. You have a vague idea what cryptocurrencies are (yeah, yeah, digital currency we all know that by now), and you have a vague idea of what an NFT is (basically, it's just a way of making a digitally signed copy of the art). Maybe you've sort of heard of HEN because you've seen some of the R people posting about it, and... that's it. That's all you know. But maybe you want to try it out, just to see if it's for you. If that's you, read on...
+
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  dir = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+<!--------------- derived YAML ----------------->
+
+---
+date: `r params$date`
+citation_url: `r paste0(params$site, params$slug)`
+repository_url: `r paste0("https://github.com/", params$repo)` 
+---
+
+
+
