@@ -56,23 +56,29 @@ The main alternative to the "proof of work" blockchains are the "proof of stake"
 
 Openness! Community! Yay! 
 
-If there's one thing I have learned from the lovely R folks on twitter, everything is better when you are part of a supportive team of people who actually care about each other and work to build each other up. From my perspective, this makes HEN the very attractive option. 
+If there's one thing I have learned from the lovely R folks on twitter, everything is better when you are part of a supportive team of people who actually care about each other and work to build each other up. From my perspective, this makes HEN a very attractive option. 
 
-There is, unfortunately, a catch...
+There is, unfortunately, a catch. There is always a catch.
 
-One big limitation to HEN is that it isn't very easy to get started there unless you are already somewhat enmeshed in that world. The ecosystem is distribted over several sites with weird names, the user interfaces tend to be unconventional (often pointlessly so in my opinion), and the "how to" guides aren't easy to read. In short, there are a lot of things that are kinda confusing and don't make any sense at all until after you've done all the work of figuring things out. This annoys me. I have been a professional educator for 15 years now, and I absolutely guarantee that the net effect of this is that it acts as a de facto barrier: these things serve as a signal to exclude people who aren't already part of the clique. It feels disproportionately uncomfortable if you're an outsider. Well, **fuck**.
+One big limitation to HEN is that it isn't easy to get started there unless you are already somewhat enmeshed in the crypto world generally, or the cryptoart scene specifically. The ecosystem is distributed over several sites that have weird names without enough vowels, the user interfaces on the sites tend to be unconventional (often pointlessly so in my opinion), and the "how to" guides aren't very easy to read. The overall aesthetic and typology screams out **WE ARE THE COOL KIDS** in capital letters. It doesn't even have the good grace to be subtle about it. Taken together, all these little things add up, and it annoys me. I have been a professional educator for 15 years now, and I can absolutely guarantee that the overall effect of this is to create a de facto entry barrier. All these things act as signals to exclude people who aren't already part of the clique. It feels disproportionately uncomfortable if you're an outsider. It tells you that you're not welcome if you're not one of the cool kids. Are you one of the cool kids? No? Then sorry. No HEN for you babe.
 
-I can't do anything to make Foundation less exclusionary, nor can I do anything to make OpenSea less of an environmental disaster, but I *can* do something to HEN more accessible to the R community. I can write a blog post explaining the process. *This* blog post. That appeals to me a lot. 
+Well, **fuck**.
 
-So let's suppose you're at the same point I was at when I decided to try it out. You have a vague idea what cryptocurrencies are (yeah, yeah, digital currency we all know that by now blah blah blah). You have a vague idea of what an NFT is (digitally signed copy of the art, yes we know). Maaaaaybe you've sort of heard of HEN because you've seen some of the R people posting about it? And... that's it. That's all you know. But maybe you want to try it out, just to see if it's for you? Just to try. But you really, really, reaaaaaalllllllly don't want to wade into all the details and you're secretly worried that it's all too complicated and you won't be able to do it and your impostor sydrome is going *wild*. 
+About the only upside I see to the entry barriers to HEN is that I can do something to lower them. I can't do anything to make Foundation less exclusionary, and there's nothing I can do to make OpenSea less of an environmental disaster. But I can do something to HEN less confusing: I can write a blog post explaining the process. This blog post. 
 
-This post is for you.
+So. Let's do this.
+
+Let's assume you're not one of the cool kids. Let's assume you're just a regular human being who likes to make generative art in R, and are a little curious. You have a vague idea of what cryptocurrencies are (yeah, yeah, digital currency blah blah blah). You have a vague idea of what an NFT is (digitally signed copy of the art, whatever dude). Maaaaaybe you've sort of heard of HEN ... but that's only because you've seen some R people posting about it on twitter. And that's it. That's all you know. But maybe you want to try it out, just to see if it's for you? Just to try. But you really, really, reaaaaaalllllllly don't want to wade into all the details and you're secretly worried that it's all too complicated and you won't be able to do it. Your impostor sydrome is going *wild*. Is that you? Do you feel the same way I felt? 
+
+If so, this post is written for you.
 
 ## Step 1: Open a wallet
 
+Let's get started...
+
 The most counterintuitive thing for me was that you don't start by opening a HEN account, and in fact at no point do you have a HEN account in the traditional sense. Everything is handle via your "wallet". Your wallet is used to store "tezos" (abbreviated to "tez" or denoted "ꜩ"), the digital currency that is used to buy and sell art, but it also serves the role of establishing your identity. It's awfully capitalist: who you are is inherently tied to the source of your money. Sigh. However, on the plus side, you're allowed to be poor on blockchain (again: capitalism)... you can create the wallet without putting any money in it. Frankly, I think that's the safest thing to do. 
 
-Okaaaay... at this point you'd probably be wondering "where do I sign up for one of these wallets?" Excellent question. If you go and take a peek at the rather [sparse documentation](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) on the HEN website you'll see that they have a few different suggestions. It's nice to be offered choices, but also anxiety-provoking when you don't even know what the differences are. I chose [Temple Wallet](https://templewallet.com/) for two reasons: it was the first one they listed, and because I was talking to Will Chase about how confused I was and he told me he's been using that one. I suspect the choice is arbitrary though. 
+Okaaaay... at this point you'd probably be wondering "where do I sign up for one of these wallets?" Excellent question. If you take a peek at the rather [sparse documentation](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) on the HEN website you'll see that they have a few different suggestions. It's nice to be offered choices, but also anxiety-provoking when you don't even know what the differences are. I chose [Temple Wallet](https://templewallet.com/). I made that choice for two reasons and only two reasons. First, it was one of the options they listed. Second, I was complaining privately to Will Chase about how confused I was and he told me he's been using Temple. So I did that too. I suspect the choice is arbitrary. 
 
 Awesome, so now you're clicking through to open an account with Temple Wallet and... wait, it's a *browser extension*? Yup. This seems to be very common, and it sort of makes sense because you end up having to validate everything you do (with annoyingly tedious frequency) by clicking on the "confirm" button on a little dialog box that the browser extension creates. I use Firefox as my primary browser, so I installed the Firefox version.
 
@@ -155,7 +161,7 @@ Even so, it's important to remember that this is just a convenience, and it's sp
 
 For more information about editing your profile, you can check out the HEN [FAQ page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile).
 
-## Intermission: Browse!
+## Intermission: Let's browse!
 
 There's more stuff you can do to get your account set up, but you might want to take a little breather and look for some art. Maybe you want to search for someone you know in the R community who might be on HEN, and you'd like to find them. The actual HEN website isn't very good for that. If you look at the front page, all you see is art scrolling by
 
