@@ -1,9 +1,13 @@
 ---
-title: "Setting up your digital art page on hic et nunc" 
+title: "How to mint digital art on HEN" 
 description:
-  Not every artist wants to sell cryptoart. I don't even know if
-  I'm one of the ones who does, but I would feel happier about it
-  if I could help make it easier for other artists to get started
+  Not every artist wants to make cryptoart, and that's okay. Others
+  do, and that's okay too. But if you want to try it out in a 
+  socially responsible way, it takes a bit of effort to get started. 
+  This post attempts to make the process a little easier by walking 
+  you through the whole thing, on the assumption that you are an 
+  artist who (like me) has very little interest in blockchain or 
+  cryptocurrency but would like to get paid and pay the rent
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -36,15 +40,17 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-It is no secret that I feel conflicted about selling NFTs from my artwork: I'm on record in multiple places expressing my reservations (e.g., [here](https://essays.djnavarro.net/post/intimacy-and-art/) and [here](https://www.gofundme.com/f/data-science-art-to-support-a-womens-refuge)), and I think there are many perfectly good reasons why a generative artist might not want to sell NFTs. There are also sensible reasons why a generative artist *would* want (or need) to sell NFTs. This post isn't about passing judgment one way or the other, especially since I don't know which way I want to go myself. Nor is this intended as a "what is blockchain?" or "what is an NFT?" kind of post. I'm assuming that anyone reading it has a vague understanding of the gist of what these things are (which, frankly, is all I have too...). It's a different kind of post, one aimed at addressing a practical issue: barriers to entry.
+Cryptoart can be a touchy subject for generative artists, and it's something a lot of us have messy feelings about. In my case it is no secret that I feel conflicted: I'm on record in multiple places expressing my reservations --  [here](https://essays.djnavarro.net/post/intimacy-and-art/) and [here](https://www.gofundme.com/f/data-science-art-to-support-a-womens-refuge) for example -- and I completely understand why a lot of us are uncomfortable with it. I genuinely believe there are many perfectly good reasons why a generative artist would choose not to participate. On the other hand, I also recognise that there are some very sensible reasons why a generative artist *would* want (or need) to sell NFTs: artists have to pay rent, for example. So this post isn't about passing judgment one way or the other. It's intended to be a guide to help other artists get started in this area, particularly artists in the R community, if they should decide to try it out. That's all. 
 
-## There are barriers
+This post is also not supposed to be an introduction to blockchains or cryptocurrencies. It doesn't dive into the details on what these things are or even what an NFT is. I make art: I don't care about any of these subjects. What I'm assuming is that you're coming to this world from a similar position to me: you have a vague understanding of what blockchain is, what cryptocurrencies are about, and have a similarly vague notion that an NFT is kind of like a "digitally signed copy" of your art that you can sell to other people. That's all you need. 
 
-One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you, and as anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, this is a non-trivial barrier. "By-invitation" systems create barriers by design: they are, unfortunately, inherently exclusionary.
+## Prelude: Barriers to entry 
+
+One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you. As anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, an invitation requirement is a non-trivial and frequently discriminatory barrier. "By invitation" systems create entry barriers by design: for good or ill, they are inherently exclusionary.
 
 Another kind of barrier comes from the nature of cryptoart. Blockchains were not designed to be energy efficient, and they can be extraordinarily wasteful (much more than you'd think). Environmental considerations also create barriers to entry. This is especially true for "proof of work" (PoW) blockchains that are staggeringly wasteful of computation time. The biggest art markets appear to be based on the Ethereum chain, which (for the time being, at least) uses proof of work, and seems indefensible from an environmental perspective. To my mind that also rules out [OpenSea](https://opensea.io/): despite being the largest marketplace and the easiest one to set up on (e.g., I have an [unused account](https://opensea.io/djnavarro) that I set up in a few minutes), it may be unacceptable to many artists for that reason.
 
-As an alternative, there are "proof of stake" (PoS) blockchains that don't require anywhere near as much computation, and as a consequence are much more energy efficient. I'm sure a true enthusiast could tell me a lot more about the different proof of stake chains, but the one I'm most familiar with is [Tezos](https://tezos.com/). Because I have a personal aversion to "by invitation" systems and because I really don't want the planet to burn, this is appealing to me. Happily, there is an NFT art marketplace based on the Tezos chain which goes by a fancy latin name [hic et nunc](https://www.hicetnunc.xyz/): it translates to "here and now", I'm told, and is often abbreviated to "HEN" or "H=N". Also happily, you don't need an invitation, you don't need to join a club, you can just join. Best of all, there are several artists from the R community who are already on HEN. To my mind this is a big selling point because I actually *like* the R community. There are very few tech communities that have ever made me feel at home, and I deeply value those that do. I'm entirely certain that there are others I don't know about yet, but so far on HEN I've found [Thomas Lin Pedersen](https://www.hicetnunc.xyz/tz/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/), [Will Chase](https://www.hicetnunc.xyz/tz/tz1UTa3LDHvb1xvfcaH5evmsVMWNXQRxrYb2), [Antonio S. Chinchón](https://www.hicetnunc.xyz/tz/tz1LLd8FJJtcTfFLiJeX6UL2oYQeLLAzUH7K), and [George Savva](https://www.hicetnunc.xyz/tz/tz1X5wRkNVQG7QfUg4kSpaQbBWPzCv6wf6mV). And as of a few days ago, [I'm there too](https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7). 
+As an alternative, there are "proof of stake" (PoS) blockchains that don't require anywhere near as much computation, and as a consequence are much more energy efficient. I'm sure a true enthusiast could tell me a lot more about the different proof of stake chains, but the one I'm most familiar with is [Tezos](https://tezos.com/). Because I have a personal aversion to "by invitation" systems and because I really don't want the planet to burn, this is appealing to me. Happily, there is an NFT art marketplace based on the Tezos chain which goes by a fancy latin name [hic et nunc](https://www.hicetnunc.xyz/): it translates to "here and now", I'm told, and is often abbreviated to "HEN" or "H=N". Also happily, you don't need an invitation, you don't need to join a club, you can just join. Best of all, there are several artists from the R community who are already on HEN. To my mind this is a big selling point because I actually *like* the R community. There are very few tech communities that have ever made me feel at home, and I deeply value those that do. I'm entirely certain that there are others I don't know about yet, but so far on HEN I've found [Thomas Lin Pedersen](https://www.hicetnunc.xyz/tz/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/), [Will Chase](https://www.hicetnunc.xyz/tz/tz1UTa3LDHvb1xvfcaH5evmsVMWNXQRxrYb2), [Antonio S. Chinchón](https://www.hicetnunc.xyz/tz/tz1LLd8FJJtcTfFLiJeX6UL2oYQeLLAzUH7K), and [George Savva](https://www.hicetnunc.xyz/tz/tz1X5wRkNVQG7QfUg4kSpaQbBWPzCv6wf6mV). As of a few days ago, [I'm there too](https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7). 
 
 Community! Yay! 
 
@@ -123,7 +129,7 @@ There are three "easy" options here:
 - If you type something under "username" you can have a username
 - If you type something under "description" you get a bio.
 
-For the username, you should avoid spaces and special characters, and use lowercase letters because usernames are case sensitive. For R users, that should feel familiar: write your username in `snake_case` or `kebab-case`
+For the username, you should avoid spaces and special characters, and use lowercase letters because usernames are case sensitive. For R users, that should feel familiar: we write our usernames in `snake_case` because that's what all the cool kids do, right?
 
 Once you're happy you can click "save profile" and -- assuming that HEN isn't running slowly like was when I got set up -- you're all set. Yay!
 
@@ -141,7 +147,7 @@ Even so, it's important to remember that this is just a convenience, and it's sp
 
 For more information about editing your profile, you can check out the HEN [FAQ page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile).
 
-## Intermission: Just browse for a while!
+## Intermission: Browse!
 
 There's more stuff you can do to get your account set up, but you might want to take a little breather and look for some art. Maybe you want to search for someone you know in the R community who might be on HEN, and you'd like to find them. The actual HEN website isn't very good for that. If you look at the front page, all you see is art scrolling by
 
@@ -155,13 +161,16 @@ There are things you can browse and even a search box. It's a little clunky (e.g
 
 ## Step 4: Get some money
 
-Remember when I said that everything about this oozes capitalism? I really meant it: it's hard to do much without spending money, and we're rapidly reaching the point where you'll need a little bit. Thankfully, you don't need very much, and there's a good chance you can ask a friend to help out here (I hope!) I reached out to Will Chase and Thomas Lin Pedersen, and they were both kind enough to each transfer a few tez into my account. You probably won't need much: I whole bunch of mistakes getting set up, and as a consequence spent more money than I needed to, but even with all that it cost less than 1 tez (again, that's currently about $5 in US dollars) for me to get everything up and running. 
+Remember when I said that everything about this oozes capitalism? I really meant it: it's hard to do much without spending money, and we're rapidly reaching the point where you'll need a little bit. Thankfully, you don't need very much, and there's a good chance you can ask one of the other R folks on HEN to help out. That's what I did, and I'm grateful to the people who sent me a few tez, and the others who spontaneously offered. R people are lovely. 
 
-There's a part of me that hopes that the R community will look after its own here: I haven't forgotten that Will and Thomas helped me get started (and Antonio offered to help out too!), and so if I sell a few pieces I'd like to return the favour to anyone else looking to get started. Pay it forward folks!
+If the "ask a friend" approach is an option for you, I'd recommend it for artists. The reason I say this is that you have a bigger set up cost (in terms of your time and effort) than someone who is joining in order to purchase art, so from the perspective of the artist all you need -- right now -- is a little start up fund. To use myself as the example, I made a lot of weird mistakes setting up and wasted quite a lot of transactions, but even with all that I think I only spent about 1 tez in total (at the exchange rate at the time that was about US$5). 
 
-That said, I'm also not naive. It doesn't always work that way. The HEN website has some suggestions for [other places](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) you can ask for help. And of course, there's always the option of speding some real money to by a few tez to get started. If you want to take that option, that's the point at which you'd have to sign up with one of the exchanges. This is probably something that you'd want to research yourself since it will probably be different based on what country you're in, but I went with one of the ones listed on the HEN wiki and signed up with [Kraken](https://www.kraken.com). That part is tedious but very traditional: at this point you're beginning to deal with financial institutions so you'll sign up for accounts, verify your identity with official documents, and link it to your bank accounts. It's annoying and time consuming, but there's nothing that wouldn't be familiar to you if you have a PayPal account and a bank account. Plus, if you do end up making money from your art you'll probably want to convert it back to regular money and transfer it to your bank account, and for that you'll have to go through that process anyway. 
+Assuming that you can solve the problem that way, you can take care of the other financials later (and there's a guide on how to do that coming later in the post). There's a part of me that hopes that if the R art community does end up with a larger presence on HEN, we'll look after our own. We're R folks, and we pay it forward because we care for each other. 
 
-One way or another, I'm hoping that at this point you have a few tez to start out!
+
+That being said, I'm also not naive, and I know perfectly well that it doesn't always work that way, so I'll briefly mention other options. For example, the HEN website has some suggestions for [other places](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) you can ask for help. Alternatively if you have a Visa card, one possibility is to buy through https://tzkt.io/buy-tezos (the tzkt.io site will come up later in the post!), though you'll need identification documents for this (or any other option) because it's a financial institution. Finally, you can sign up at a currency exchange, which you'll probably want to do later anyway because that's going to be how you convert the funds from your HEN sales to regular currency. I'll talk about that later on.
+
+Regardless of how you solve this part of the problem, I'm hoping that at this point you have a few tez to start out! 
 
 ## Step 5: Verifying your identity 
 
@@ -237,17 +246,23 @@ No fair! I want one of those too! What magic does he know that I don't? Well, on
 knitr::include_graphics("img/hen_profile_thomas.png")
 ```
 
-To cut a long story short, OBJKT is pulling the information from TZKT. So if you want to have a profile on OBJKT too, you'll have to verify yourself on TZKT. Gr. Luckily for me (because I am tired of this post already!) there's a good write up of how to do that on the Baking Bad blog:
+To cut a long story short, OBJKT is pulling the information from TZKT. So if you want to have a profile on OBJKT too, you'll have to verify yourself on TZKT. Gr. Luckily for me -- because I am tired of this post and I really want to get to the artistic part -- there's a good write up of how to do that on the "Baking Bad" blog:
 
 https://baking-bad.org/blog/2021/09/19/tzkt-alias-verification-f-a-q/
 
-This isn't a random website either. It's linked to the people who actually run TZKT. The long and short of it is that you'll have to fill out a Google Form and then wait for a few days while they manually verify it. Eventually (hopefully), your profile will show up on TZKT and then on OBJKT. 
+It took me a while to realise that this isn't a random website, and the "baking" thing is a reference to some of the boring mechanics of how the tezos currency works. The odd name notwithstanding, the blog is associated with the folks who actually run TZKT, and I've found it helpful to browse on that page to learn more about the system itself. In any case, the long and short of it is that you'll be asked to fill out a Google Form and then wait for a few days while they manually verify the information you provide. When you do this, you'll find that it asks you to do a few tasks to prove your identity, and they're quite similar to the tasks that TZPROFILES asks you to undertake (but a bit less stringent). Eventually (hopefully), your profile will show up on TZKT and then will propagate to OBJKT. 
 
 ## Step 6: Mint some art
 
 
 ## Step 7: Buy and sell art
 
+
+## Step 8: Get paid!
+
+At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to get paid. To do that, you'll want to sign up with one of the currency exchanges. Although you probably have exactly zero interest in being a currency trader, it's a necessity if you want to get paid in real money. Sure, cryptocurrencies are "cool" and everything, but the cold hard truth of the world is that coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research (this is a thing that will depend a bit on where you live). In my case I was able to go with one of their suggested options, and I signed up with [Kraken](https://www.kraken.com). The process was tedious but also very traditional: I signed up for an account, verified my identity using official documents, and linked it to my bank account. It was time consuming to complete the whole process, but also very boring. In other words it's exactly what you'd expect from any financial institution. 
+
+## Epilogue
 
 <!--------------- appendices ----------------->
 
