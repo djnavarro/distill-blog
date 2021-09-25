@@ -48,11 +48,19 @@ This post is also not supposed to be an introduction to blockchains or cryptocur
 
 One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you. As anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, an invitation requirement is a non-trivial and frequently discriminatory barrier. "By invitation" systems create entry barriers by design: for good or ill, they are inherently exclusionary.
 
-Another kind of barrier comes from the nature of cryptoart. Blockchains were not designed to be energy efficient, and they can be extraordinarily wasteful (much more than you'd think). Environmental considerations also create barriers to entry, albeit indirect barriers. For example, the biggest cryptocurrencies like Bitcoin and Ethereum operate on a "proof of work" principle (often abbreviated to "PoW") and as the name suggests, operations on those chains require a lot of computational work. A lot. They are *staggeringly* wasteful, and as a consequence the total energy consumption of these chains is so high that an NFT minted on one of these chains has a very high carbon footprint. Proof of work chains are an environmental disaster, and so (in my mind) they are socially irresponsible. Don't use them if you can avoid it. This poses a problem for artists, unfortunately. The biggest cryptoart markets are based on the Ethereum chain, and that one is proof of work. True, there are plans to change this and make Ethereum more ethical, but it hasn't happened yet and I don't want to participate until the switch actually occurs. This is deeply unfortunate from artistic point of view, because it rules out [OpenSea](https://opensea.io/). That sucks because OpenSea is the largest marketplace and it's very easy to get started there. For instance, I have an [unused account](https://opensea.io/djnavarro) that I set up in a few minutes. So easy! But for me the end-user convenience wasn't worth the environmental costs, so I abandoned this idea at the outset.
+Another kind of barrier comes from the nature of cryptoart. Blockchains were not designed to be energy efficient, and they can be extraordinarily wasteful (much more than you'd think). Environmental considerations also create barriers to entry, albeit indirect barriers. For example, the biggest cryptocurrencies like Bitcoin and Ethereum operate on a "proof of work" principle (often abbreviated to "PoW") and as the name suggests, operations on those chains require a lot of computational work. A lot. They are *staggeringly* wasteful, and as a consequence the total energy consumption of these chains is so high that an NFT minted on one of these chains has a very high carbon footprint. Proof of work chains are an environmental disaster, and so (in my mind) they are socially irresponsible. Don't use them if you can avoid it. This poses a problem for artists, unfortunately. The biggest cryptoart markets are based on the Ethereum chain, and that one is proof of work. True, there are plans to change this and make Ethereum more ethical, but it hasn't happened yet and I don't want to participate until the switch actually occurs. This is deeply unfortunate from artistic point of view, because it rules out [OpenSea](https://opensea.io/). That sucks because OpenSea is the largest marketplace and it's very easy to get started there. For instance, I have an [unused account](https://opensea.io/djnavarro) that I set up in a few minutes. So easy! But for me the end-user convenience wasn't worth the environmental costs, so I abandoned this idea at the outset. On the plus side, OpenSea have [announced](https://blog.opensea.io/announcements/tezos-nfts-are-coming-to-opensea/) that they are planning to support the Tezos blockchain (see below), and when that day comes I will probably make use of my OpenSea account: the thing I take moral issue with is not OpenSea, it is with Ethereum. Personally, I don't want to touch the stuff.
 
 So what are the alternatives?
 
-The main alternative to the "proof of work" blockchains are the "proof of stake" (PoS) blockchains. These don't require anywhere near as much computation, and as a consequence are much more energy efficient. For that reason, NFTs on those chains are often called "clean NFTs". There are a multiple proof of stake chains (Tezos, Solana, etc), but the one I'm most familiar with is [Tezos](https://tezos.com/). Setting up on the Tezos blockchain is particularly appealing because it has an established digital art marketplace called "[hic et nunc](https://www.hicetnunc.xyz/)". The name is Latin in origin and translates to "here and now". You'll usually see it abbreviated to "HEN", which is what I'll call it in this post, but some people use "H=N", I guess because it looks visually similar to the HEN logo. The HEN marketplace is completely open: you don't need an invitation. There's no super-secret club to be invited into (as far as I know!), and to my mind that's a huge positive. Better yet, a few folks from the R art community are already there. I'm entirely certain that there are others I don't know about yet, but so far on HEN I've already found [Thomas Lin Pedersen](https://www.hicetnunc.xyz/tz/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/), [Will Chase](https://www.hicetnunc.xyz/tz/tz1UTa3LDHvb1xvfcaH5evmsVMWNXQRxrYb2), [Antonio S. Chinchón](https://www.hicetnunc.xyz/tz/tz1LLd8FJJtcTfFLiJeX6UL2oYQeLLAzUH7K), and [George Savva](https://www.hicetnunc.xyz/tz/tz1X5wRkNVQG7QfUg4kSpaQbBWPzCv6wf6mV). As of a few days ago, [I'm there too](https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7). 
+The main alternative to the "proof of work" blockchains are the "proof of stake" (PoS) blockchains. These don't require anywhere near as much computation, and as a consequence are much more energy efficient. For that reason, NFTs on those chains are often called "clean NFTs". There are a multiple proof of stake chains (Tezos, Solana, etc), but the one I'm most familiar with is [Tezos](https://tezos.com/). To give you a sense of just how extreme the difference is, this is a screenshot that popped up on one of the sites while I was doing my initial exploration:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/efficiency.png")
+```
+
+Even if this claim is somewhat exaggerated for marketing purposes, the sheer scale of it is remarkable. A multiplicative factor of 1.5 million is... enormous. I could literally mint NFTs on Tezos for every single image that I have ever created for the rest of my life, and it would still be several orders of magnitude more energy efficient than minting *one* piece on Ethereum. To my way of thinking, that makes a massive difference to the moral calculus associated with minting NFTs. In fact, the difference between Tezos and Ethereum is so extreme that there is actually one art marketplace there --  [Bazaar](https://bazaarnft.xyz/) -- that is not just carbon neutral but is actually *carbon negative*. That's only possible because Tezos is so much more efficient than Ethereum, and it becomes practical for the developers to impose a carbon tax on minting: the transaction costs are used to purchase sufficient carbon offsets to ensure the system as a whole remains carbon negative. Right now I wouldn't recommend setting up on Bazaar because it's so early in development that it's hard to use, but I'm absolutely keeping an eye on it for the future!
+
+Setting up on the Tezos blockchain is particularly appealing because it has an established digital art marketplace called "[hic et nunc](https://www.hicetnunc.xyz/)". The name is Latin in origin and translates to "here and now". You'll usually see it abbreviated to "HEN", which is what I'll call it in this post, but some people use "H=N", I guess because it looks visually similar to the HEN logo. The HEN marketplace is completely open: you don't need an invitation. There's no super-secret club to be invited into (as far as I know!), and to my mind that's a huge positive. Better yet, a few folks from the R art community are already there. I'm entirely certain that there are others I don't know about yet, but so far on HEN I've already found [Thomas Lin Pedersen](https://www.hicetnunc.xyz/tz/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/), [Will Chase](https://www.hicetnunc.xyz/tz/tz1UTa3LDHvb1xvfcaH5evmsVMWNXQRxrYb2), [Antonio S. Chinchón](https://www.hicetnunc.xyz/tz/tz1LLd8FJJtcTfFLiJeX6UL2oYQeLLAzUH7K), and [George Savva](https://www.hicetnunc.xyz/tz/tz1X5wRkNVQG7QfUg4kSpaQbBWPzCv6wf6mV). As of a few days ago, [I'm there too](https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7). 
 
 Openness! Community! Yay! 
 
@@ -72,28 +80,47 @@ Let's assume you're not one of the cool kids. Let's assume you're just a regular
 
 If so, this post is written for you.
 
-## Step 1: Open a wallet
+## 1: Get an overview
 
-Let's get started...
+When I started setting up on, I wandered around the Tezos cryptoart landscape in confusion, wandering aimlessly over the terrain. It was all *deeply* unsettling. Eventually I pieced together some overall view of things, but I wouldn't recommend doing things the same way I did. I think the best thing to do first is to "zoom out" and look at the landscape as a whole. The best site for doing that is this one:
 
-The most counterintuitive thing for me was that you don't start by opening a HEN account, and in fact at no point do you have a HEN account in the traditional sense. Everything is handle via your "wallet". Your wallet is used to store "tezos" (abbreviated to "tez" or denoted "ꜩ"), the digital currency that is used to buy and sell art, but it also serves the role of establishing your identity. It's awfully capitalist: who you are is inherently tied to the source of your money. Sigh. However, on the plus side, you're allowed to be poor on blockchain (again: capitalism)... you can create the wallet without putting any money in it. Frankly, I think that's the safest thing to do. 
+https://tezos.art/
 
-Okaaaay... at this point you'd probably be wondering "where do I sign up for one of these wallets?" Excellent question. If you take a peek at the rather [sparse documentation](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) on the HEN website you'll see that they have a few different suggestions. It's nice to be offered choices, but also anxiety-provoking when you don't even know what the differences are. I chose [Temple Wallet](https://templewallet.com/). I made that choice for two reasons and only two reasons. First, it was one of the options they listed. Second, I was complaining privately to Will Chase about how confused I was and he told me he's been using Temple. So I did that too. I suspect the choice is arbitrary. 
+The page has three sections: 
 
-Awesome, so now you're clicking through to open an account with Temple Wallet and... wait, it's a *browser extension*? Yup. This seems to be very common, and it sort of makes sense because you end up having to validate everything you do (with annoyingly tedious frequency) by clicking on the "confirm" button on a little dialog box that the browser extension creates. I use Firefox as my primary browser, so I installed the Firefox version.
+- **Marketplaces**: Sites where you can mint, buy, and sell art
+- **Wallets**: Tools that handle your identity and store your funds
+- **Community**: Places where you can go for help
 
-Moving on... the next little strangeness is that when you set up the wallet you don't create a username, only the password, and you'll be given a "recovery phrase", which is a sequence of 12 random words. Don't lose either of these things. Here, as always, I *strongly* recommend that you use a password manager to store your password, because there are fewer options for recovery if you start losing things. I've been using [1password](https://1password.com/) for a few years and I really like it. Seriously: use a password manager, store your wallet password there and store your recovery phrase there too. Somewhere along the way, you get a public identity, which will be a long string of complete gibberish. This, for example, is me:
+It's worth taking a quick look at this page because it gives you a feel for what all the moving parts are, but doesn't dive into details anywhere. 
+
+You've taken a quick peek, yes? Cool. Let's get started...
+
+## 2: Create a wallet
+
+It's a little counterintuitive, but the natural place to start is *not* the art marketplaces: the first thing you need is a wallet. The reason for this is that your wallet serves two distinct purposes. As the name suggests, the wallet provides a method for storing funds: the currency itself is referred to as "tezos", which you'll see abbreviated to "tez" or denoted "ꜩ". However, it also serves as your unique identifier on the Tezos blockchain. On blockchains as in life it is rather hard to do anything interesting without a public identity, so you need to create one first.
+
+Okaaaay... at this point you'd probably be wondering "where do I sign up for one of these wallets?" Excellent question. As you will have noticed by peeking at the [tezos.art](https://tezos.art) website, you have a few different options. Being offered choices is nice, of course, but it can also be anxiety-provoking when you don't even know what the differences between the options are. So, for whatever it's worth, I'll mention that I [Temple Wallet](https://templewallet.com/). I made that choice for two reasons and only two reasons. First, it was one of the options listed on the [HEN wiki](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos). Second, I was complaining privately to Will Chase about how confused I was and he told me uses Temple and I copied what he did. That being said, I suspect the choice is arbitrary. 
+
+For the sake of argument, I'll assume you decided to use Temple too. So now you're clicking through the link above in order to open an account with Temple Wallet and... wait, it's just a *browser extension*? Yup. This seems to be very common in blockchain land, and initially it struck me as bizarre. The longer I hang around there, however, the more I realise it does make a kind of sense. Once you start *doing* things on Tezos, you'll find that you have to validate everything you do. Any time you ask a website to undertake some action on your behalf, the first thing that will happen is that you'll be asked to authorise the action using your public identity. What that means is that you have to use your wallet all the time, even for things that don't cost money. A browser extension makes this a little easier. When the website asks you to authenticate, the wallet browser extension will create a little popup window that asks you to confirm the transaction. There's a bit of friction to the process sometimes, and it feels a little alien, but it does start to feel normal after a while. 
+
+Moving on... the next little strangeness is that when you set up the wallet you don't create a username, only the password, and you'll be given a "recovery phrase", which is a sequence of 12 random words. Don't lose either of these things. Here, as always, I strongly recommend that you **use a password manager to store your password**, because there aren't that many options for recovery if you start losing passwords. Personally, I've been using [1password](https://1password.com/) for a few years and I really like it. So yes. Use a password manager, store your wallet password there and store your recovery phrase there too. 
+
+At the end of this process you are assigned a public identity, which is a long string of complete gibberish. For example, this is me:
 
 ```
 tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7
 ```
 
-which of course I have committed to heart because I loooooooooooove memorising long strings of alphanumeric characters. Yeah, okay this is rubbish, you're going to need an actual *name*. We'll get to that a little bit later but the key thing for now is that this string is both a public identifier and a bank account number. If you wanted to donate some tez to me, then all you need is that annoying string.
+Naturally, the first thing I did when seeing this is groan. The second thing I did is notice the `Srmojf` substring and it made me think of [Smurfs](https://en.wikipedia.org/wiki/The_Smurfs). So I secretly think of this gibberish identifier as the `Smurf`, and that's how I'll refer to it for the rest of this post. Of course, in the long run you probably don't want to be a random string of digits, you want to have a name! This is possible to do, and I'll walk you through that later. But right now that's not a complication you need to care about.
 
-<aside>Actually, the `Srmojf` part popped out at me and now I think of my handle as the `Smurf`: my own little smurfy companion</aside>
+We'll get to that a little bit later but the key thing for now is that your equivalent of the `Smurf` is both a public identifier and a bank account number. If someone wants to send you some tez, all they need to know is that string.
 
 
-## Step 2: Sync your wallet with HEN
+## 3: Tell HEN who you are
+
+
+### Synchronise with your wallet
 
 When you go to the HEN website you'll see a little bit of text on the top right hand side that has a link that says "sync". Click on that:
 
@@ -121,7 +148,7 @@ knitr::include_graphics("img/hen_synced.png")
 
 You're now synced: in effect, you are now logged in to HEN. You still don't have a username, but you *have* authenticated yourself and you can now change some settings. 
 
-## Step 3: Give yourself a name, avatar and bio on HEN
+### Name, avatar and bio
 
 The time has come to give yourself a name. If you do things in the right order and with the right mental model of what's going on, this is pretty easy to do, but it's easy to get a little confused because there are actually multiple things going on here, and you always have to keep in mind that your equivalent of my `Smurf` string is your actual identity.
 
@@ -147,7 +174,12 @@ For the username, you should avoid spaces and special characters, and use lowerc
 
 Once you're happy you can click "save profile" and -- assuming that HEN isn't running slowly like was when I got set up -- you're all set. Yay!
 
-There are a few other things to notice here. First... when you clicked "save profile" it didn't set up a twitter link or anything. In fact, despite the close proximity of the "save profile" button and the text underneath, those two things aren't related. When the time comes to set your twitter etc, ignore the "save profile" button completely. Instead, you need to rely on the text. Though it's obnoxiously hard to find, the words "Tezos Profiles" in the screenshot above is in fact a link. Later on (not now!) you can click on that link and you can do other things like verify your twitter account, github account etc. However, that's surprisingly finicky to do and it costs money, so leave that until later.
+### Linking to social media?
+
+It's worth noticing that there are a few important things you haven't done yet. For example, when you clicked "save profile" earlier it didn't set up a twitter link, even though there is some text on the settings page that . In fact, despite the close proximity of the "save profile" button and the text underneath, those two things aren't related. It's obnoxiously hard to find in the HEN user interface, byt the words "Tezos Profiles" in that screenshot above are actually a link. Later on in this guide I'll get you to click on that link and it will let you do other things like verify your twitter account, github account etc. However, that's surprisingly finicky to do and it costs money, so leave that until later.
+
+
+### Find your profile
 
 Second... notice that your username functions as an alias, but it's only an alias. The canonical link to my user profile is this ugly thing that includes the `Smurf`:
 
@@ -161,7 +193,7 @@ Even so, it's important to remember that this is just a convenience, and it's sp
 
 For more information about editing your profile, you can check out the HEN [FAQ page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile).
 
-## Intermission: Let's browse!
+## Intermission: Follow people
 
 There's more stuff you can do to get your account set up, but you might want to take a little breather and look for some art. Maybe you want to search for someone you know in the R community who might be on HEN, and you'd like to find them. The actual HEN website isn't very good for that. If you look at the front page, all you see is art scrolling by
 
@@ -173,7 +205,7 @@ https://www.henext.xyz/
 
 There are things you can browse and even a search box. It's a little clunky (e.g., I found the search box didn't always act as I was expecting) but it does the job. This was how I found the other R people I knew about! So if you want to take a moment to explore, this is a pretty good place to go. 
 
-## Step 4: Get some money
+## 4: Get a little money
 
 Remember when I said that everything about this oozes capitalism? I really meant it: it's hard to do much without spending money, and we're rapidly reaching the point where you'll need a little bit. Thankfully, you don't need very much, and there's a good chance you can ask one of the other R folks on HEN to help out. That's what I did, and I'm grateful to the people who sent me a few tez, and the others who spontaneously offered. R people are lovely. 
 
@@ -181,12 +213,15 @@ If the "ask a friend" approach is an option for you, I'd recommend it for artist
 
 Assuming that you can solve the problem that way, you can take care of the other financials later (and there's a guide on how to do that coming later in the post). There's a part of me that hopes that if the R art community does end up with a larger presence on HEN, we'll look after our own. We're R folks, and we pay it forward because we care for each other. 
 
-
 That being said, I'm also not naive, and I know perfectly well that it doesn't always work that way, so I'll briefly mention other options. For example, the HEN website has some suggestions for [other places](https://github.com/hicetnunc2000/hicetnunc/wiki/Getting-Started-with-Tezos) you can ask for help. Alternatively if you have a Visa card, one possibility is to buy through https://tzkt.io/buy-tezos (the tzkt.io site will come up later in the post!), though you'll need identification documents for this (or any other option) because it's a financial institution. Finally, you can sign up at a currency exchange, which you'll probably want to do later anyway because that's going to be how you convert the funds from your HEN sales to regular currency. I'll talk about that later on.
 
 Regardless of how you solve this part of the problem, I'm hoping that at this point you have a few tez to start out! 
 
-## Step 5: Verifying your identity 
+
+## 6: Minting and selling art
+
+
+## 7: Manage your identity 
 
 At this point you might want to take some steps to link your `Smurf` identity with your real life identity. Sure, *you* know who you are and you can attest to that fact, but the crypto world apparently wants more proof, and they are tediously fixated on non-traditional ways to do that. It annoys me, but these are the hoops artists have to jump through right? So let's do this. 
 
@@ -266,17 +301,21 @@ https://baking-bad.org/blog/2021/09/19/tzkt-alias-verification-f-a-q/
 
 It took me a while to realise that this isn't a random website, and the "baking" thing is a reference to some of the boring mechanics of how the tezos currency works. The odd name notwithstanding, the blog is associated with the folks who actually run TZKT, and I've found it helpful to browse on that page to learn more about the system itself. In any case, the long and short of it is that you'll be asked to fill out a Google Form and then wait for a few days while they manually verify the information you provide. When you do this, you'll find that it asks you to do a few tasks to prove your identity, and they're quite similar to the tasks that TZPROFILES asks you to undertake (but a bit less stringent). Eventually (hopefully), your profile will show up on TZKT and then will propagate to OBJKT. 
 
-## Step 6: Mint some art
+### tezos.domains
+
+Okay but... what if, and hear me out... what if you don't want that fucking smurf to follow you around everywhere? What if you would like to... gasp... choose your own address. Perhaps, like me, you'd like the ability to tell people to "send tez to me at `djnavarro.tez` because that's me!". It's not exactly an unreasonable desire. Somehow, "send tez to me at `tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7` becaause that's me!" just doesn't feel the same, you know? If you'd like to do this, it is possible with the assistance of [Tezos Domains](https://tezos.domains/) and it will cost you 1 tez per year to register your very own .tez domain. 
 
 
-## Step 7: Buy and sell art
-
-
-## Step 8: Get paid!
+## 8: Convert tez to dollars
 
 At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to get paid. To do that, you'll want to sign up with one of the currency exchanges. Although you probably have exactly zero interest in being a currency trader, it's a necessity if you want to get paid in real money. Sure, cryptocurrencies are "cool" and everything, but the cold hard truth of the world is that coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research (this is a thing that will depend a bit on where you live). In my case I was able to go with one of their suggested options, and I signed up with [Kraken](https://www.kraken.com). The process was tedious but also very traditional: I signed up for an account, verified my identity using official documents, and linked it to my bank account. It was time consuming to complete the whole process, but also very boring. In other words it's exactly what you'd expect from any financial institution. 
 
 ## Epilogue
+
+
+
+How to share: https://hic.art/ e.g., https://hic.art/354474
+
 
 <!--------------- appendices ----------------->
 
