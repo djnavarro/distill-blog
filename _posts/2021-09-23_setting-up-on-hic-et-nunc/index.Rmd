@@ -44,7 +44,7 @@ Cryptoart can be a touchy subject for generative artists, and it's something a l
 
 This post is also not supposed to be an introduction to blockchains or cryptocurrencies. It doesn't dive into the details on what these things are or even what an NFT is. I make art: I don't care about any of these subjects. What I'm assuming is that you're coming to this world from a similar position to me: you have a vague understanding of what blockchain is, what cryptocurrencies are about, and have a similarly vague notion that an NFT is kind of like a "digitally signed copy" of your art that you can sell to other people. That's all you need. 
 
-## Prelude: Barriers to entry 
+## Prologue: Barriers to entry 
 
 One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you. As anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, an invitation requirement is a non-trivial and frequently discriminatory barrier. "By invitation" systems create entry barriers by design: for good or ill, they are inherently exclusionary.
 
@@ -164,34 +164,14 @@ As with everything about HEN, it's very minimalist and slightly atypical, but it
 knitr::include_graphics("img/hen_profile.png")
 ```
 
-There are three "easy" options here:
+There are three things you can do immediately without any major hassle. First, if you click on "choose file" you can upload an image to give yourself a profile image. Second, you can give yourself a username. The advice I read on the relevant [HEN wiki page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile) suggested that you should avoid spaces and special characters, and should stick to lower case letters because usernames are case sensitive (which surprised me). Third, you can write a brief description of yourself.  
 
-- If you click on "choose file" you can give yourself an avatar
-- If you type something under "username" you can have a username
-- If you type something under "description" you get a bio.
-
-For the username, you should avoid spaces and special characters, and use lowercase letters because usernames are case sensitive. For R users, that should feel familiar: we write our usernames in `snake_case` because that's what all the cool kids do, right?
-
-Once you're happy you can click "save profile" and -- assuming that HEN isn't running slowly like was when I got set up -- you're all set. Yay!
-
-### Linking to social media?
-
-It's worth noticing that there are a few important things you haven't done yet. For example, when you clicked "save profile" earlier it didn't set up a twitter link, even though there is some text on the settings page that . In fact, despite the close proximity of the "save profile" button and the text underneath, those two things aren't related. It's obnoxiously hard to find in the HEN user interface, byt the words "Tezos Profiles" in that screenshot above are actually a link. Later on in this guide I'll get you to click on that link and it will let you do other things like verify your twitter account, github account etc. However, that's surprisingly finicky to do and it costs money, so leave that until later.
+Once you've done those three things, click on "save profile". Ignore everything below the "save profile" button. All that stuff is useful, and it will let you do things like link to your twitter profile and your github profile, but it's surprisingly finicky to set up and it costs money, so we'll leave that until later.
 
 
-### Find your profile
+### More information?
 
-Second... notice that your username functions as an alias, but it's only an alias. The canonical link to my user profile is this ugly thing that includes the `Smurf`:
-
-https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7
-
-However, because I've set up my username on HEN to be `djnavarro` this link will redirect automatically to a more handy profile page:
-
-https://www.hicetnunc.xyz/djnavarro
-
-Even so, it's important to remember that this is just a convenience, and it's specific to HEN. There are other websites that are linked to the same art ecosystem, and you'll find that your `Smurf` equivalent will tend to follow you around across those websites because that's a public identifier. In contrast, only HEN knows that I'm also `djnavarro`, so *this* alias won't necessarily follow me to other sites. But whatever. Right now that's not super important. We can deal with that later.
-
-For more information about editing your profile, you can check out the HEN [FAQ page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile).
+For more information about editing your profile, you can check out the HEN .
 
 ## Intermission: Follow people
 
@@ -218,7 +198,25 @@ That being said, I'm also not naive, and I know perfectly well that it doesn't a
 Regardless of how you solve this part of the problem, I'm hoping that at this point you have a few tez to start out! 
 
 
-## 6: Minting and selling art
+## 5: Release your art!
+
+
+## 6: Share on social media
+
+Most of us in the R community who make art are primarily sharing on twitter. Yes, I have seen some people post on reddit, others on instagram, and no doubt many other places besides, but my social media world is dominated by twitter, and I'd like to be able to post to twitter. To my mild irritation, the HEN website doesn't seem to do twitter cards properly, so if you share the link on its own, people won't see a nice preview image. 
+
+There are a couple of ways to get around this. The first is to post the link on twitter and attach your art as an image: that way folks on twitter will get the link and and the image. But they won't get an actual twitter card displaying the title of the piece.  
+
+The second solution is to use the [hic.art](https://hic.art) website. At the moment, if you visit the website it will tell you that signups are closed, but that actually doesn't matter. You don't need to sign up to use the service. All you have to do is provide the OBJKT identifier. For instance, here's one of my pieces on HEN:
+
+https://www.hicetnunc.xyz/objkt/341880
+
+The identifier here is 341880. If I share the link above on twitter, it won't display a very nice twitter preview. However, if I tweet this link
+
+https://hic.art/354474
+
+It will display a very lovely looking twitter preview, and when the user clicks on the link or the preview it will automatically redirect to the official HEN page. It's a nice service! 
+
 
 
 ## 7: Manage your identity 
@@ -228,6 +226,9 @@ At this point you might want to take some steps to link your `Smurf` identity wi
 The first thing to realise (something that is *not* well signposted on the sites), is that there are at least two different systems involved and when you go googling for information you'll find information about both of them. It can get confusing. So let's take then one at a time. 
 
 ### tzprofiles.com
+
+
+It's worth noticing that there are a few important things you haven't done yet. For example, when you clicked "save profile" earlier it didn't set up a twitter link, even though there is some text on the settings page that . In fact, despite the close proximity of the "save profile" button and the text underneath, those two things aren't related. It's obnoxiously hard to find in the HEN user interface, but the words "Tezos Profiles" in that screenshot above are actually a link.
 
 Go back to the HEN website, click on the menu and select "edit profile" again. Then go click on the almost-impossible-to-detect "Tezos Profiles" link that I foreshadowed earlier. That will take you to https://tzprofiles.com/, and there is a very prominent "connect wallet" button. Click on that button, confirm with your wallet that you want to allow tzprofiles to connect (the little popup window will appear, like it always does), and then you'll see a screen that looks like this:
 
@@ -310,11 +311,8 @@ Okay but... what if, and hear me out... what if you don't want that fucking smur
 
 At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to get paid. To do that, you'll want to sign up with one of the currency exchanges. Although you probably have exactly zero interest in being a currency trader, it's a necessity if you want to get paid in real money. Sure, cryptocurrencies are "cool" and everything, but the cold hard truth of the world is that coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research (this is a thing that will depend a bit on where you live). In my case I was able to go with one of their suggested options, and I signed up with [Kraken](https://www.kraken.com). The process was tedious but also very traditional: I signed up for an account, verified my identity using official documents, and linked it to my bank account. It was time consuming to complete the whole process, but also very boring. In other words it's exactly what you'd expect from any financial institution. 
 
-## Epilogue
+## Epilogue: Is it worth it?
 
-
-
-How to share: https://hic.art/ e.g., https://hic.art/354474
 
 
 <!--------------- appendices ----------------->
