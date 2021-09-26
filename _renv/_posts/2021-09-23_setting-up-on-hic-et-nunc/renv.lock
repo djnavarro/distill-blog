@@ -44,6 +44,13 @@
       "Repository": "CRAN",
       "Hash": "2f01e16ff9571fe70381c7b9ae560dc4"
     },
+    "bs4cards": {
+      "Package": "bs4cards",
+      "Version": "0.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f95c5818d79cba499e4fbe771ddbff45"
+    },
     "digest": {
       "Package": "digest",
       "Version": "0.6.27",

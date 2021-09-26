@@ -21,6 +21,7 @@ output:
   distill::distill_article:
     toc: true
     self_contained: false
+    css: "strapless.css"
 params:
   slug: setting-up-on-hic-et-nunc
   date: 2021-09-23
@@ -272,19 +273,19 @@ Here's an example from Antonio Sánchez Chinchón:
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-
 ## 7: Manage your identity 
 
-At this point you might want to take some steps to link your `Smurf` identity with your real life identity. Sure, *you* know who you are and you can attest to that fact, but the crypto world apparently wants more proof, and they are tediously fixated on non-traditional ways to do that. It annoys me, but these are the hoops artists have to jump through right? So let's do this. 
+There are at least three additional tools that may be useful to you in managing your identity in the peculiar world of cryptoart on the Tezos blockchain: (1) you can set up a [Tezos Profile](https://tzprofiles.com/), (2) you can establish an alias on the [Tezos Blockchain Explorer](https://tzkt.io/), and/or (3) you can purchase a [Tezos Domain](https://tezos.domains/). None of these are strictly necessary, but all of them offer some value to you as an artist on HEN so I'll discuss each one.  
 
-The first thing to realise (something that is *not* well signposted on the sites), is that there are at least two different systems involved and when you go googling for information you'll find information about both of them. It can get confusing. So let's take then one at a time. 
+### Establishing a Tezos Profile
 
-### tzprofiles.com
+Earlier in this post I mentioned that it's possible to connect your twitter profile, github account, website, etc with your HEN profile? You can do this with the assistance of Tezos Profiles. So lets go back HEN, open the menu, click on the option that says "edit profile" and then take a closer look at the window that pops up. It's almost impossible to notice, but the text that reads "Tezos Profiles" is in fact a link:
 
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_profile_annotated.png")
+```
 
-It's worth noticing that there are a few important things you haven't done yet. For example, when you clicked "save profile" earlier it didn't set up a twitter link, even though there is some text on the settings page that . In fact, despite the close proximity of the "save profile" button and the text underneath, those two things aren't related. It's obnoxiously hard to find in the HEN user interface, but the words "Tezos Profiles" in that screenshot above are actually a link.
-
-Go back to the HEN website, click on the menu and select "edit profile" again. Then go click on the almost-impossible-to-detect "Tezos Profiles" link that I foreshadowed earlier. That will take you to https://tzprofiles.com/, and there is a very prominent "connect wallet" button. Click on that button, confirm with your wallet that you want to allow tzprofiles to connect (the little popup window will appear, like it always does), and then you'll see a screen that looks like this:
+Clicking on that link will take you to https://tzprofiles.com/, where you will see a very prominent "connect wallet" button. Click on that button, confirm with your wallet that you want to allow tzprofiles to connect (the little popup window will appear, like it always does), and then you'll see a screen that looks like this:
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("img/tzprofiles.png")
@@ -292,25 +293,25 @@ knitr::include_graphics("img/tzprofiles.png")
 
 There are several different things you can do here, and any of them that you verify on tzprofiles will eventually end up on HEN. For example, if you want to verify your twitter account, you'll go through a series of elaborate steps (which, yes, will have to be confirmed with your wallet) and in the end you'll be forced to send a tweet like this one:
 
-https://twitter.com/djnavarro/status/1440133754333237248
+<blockquote class="twitter-tweet"><p lang="et" dir="ltr">I am attesting that this twitter handle <a href="https://twitter.com/djnavarro?ref_src=twsrc%5Etfw">@djnavarro</a> is linked to the Tezos account tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7 for <a href="https://twitter.com/tzProfiles?ref_src=twsrc%5Etfw">@tzprofiles</a><br><br>sig:edsigtaH3nvbQjpiAfMCnT4zcQESZefXoVLPf2NEYaZeUfhwHjzRYp4oeBiiyDFLdrUAUvjBhvepyDFoxuyE2ynVYxd7TvV9fj6</p>&mdash; Danielle Navarro (@djnavarro) <a href="https://twitter.com/djnavarro/status/1440133754333237248?ref_src=twsrc%5Etfw">September 21, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-To verify your GitHub account it's pretty similar, except that you end up being forced to create a gist. For your website it forces you to create a DNS record (which annoyed the hell out of me because it overwrote my existing DNS records and borked my webpage until I worked out how to fix it... was not pleased). Frankly I'm not sure that verifying the website is worth the effort. I wasted a lot more time on that than I wanted to. Oh well.
+To verify your GitHub account it's pretty similar, except that it forces you to create a gist, using your GitHub account, that includes a signature block similar to the one in the tweet. For a website, it's the same idea except you have to insert it as a DNS record (which I found *extremely* irritating to do). You can verify as many or as few of these as you like, but there is some value to doing them. Because Tezos Profiles forces you to go through the clunky verification process, other people can check your HEN profile and verify for themselves that it really is *you* posting your artwork onto the site, and not someone else who has stolen your piece (apparently, that happens way too often)
 
-In any case, once you're done, I think you have to use your wallet to confirm again (I've forgotten, but I think you do) to allow HEN to use your profile on tzprofiles.com, but once you've done that, you'll see some icons appear on your HEN page, linking to your twitter account, github account, etc:
+Once you're done verifying your accounts, you may need to use your wallet to confirm again so that the updated Tezos Profile information can be accessed by the HEN website. After that's been done, you'll see icons appear on your HEN page, linking to your twitter account, github account, etc:
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("img/hen_profilecomplete.png")
 ```
 
-At this point your HEN account is meaningfully linked to your other public identities, and any artwork you create can be verifiably be linked to *you* (and not just your `Smurf`). You can skip the next part if you want. 
+At this point your HEN profile is meaningfully linked to your other public identities, and any artwork you mint on HEN can be traced back to you, the original artist. 
 
-### tzkt.io
+### Creating an alias on Tezos Blockchain Explorer
 
-All right. If you're like me you've probably been exploring as you go and you've been encountering some other sites that seem connected to this ecosystem. One of them I mentioned earlier (i.e., https://henext.xyz). But at some point you've probably clicked on a link attached to your `Smurf` and it's taken you to https://tzkt.io. Most likely it took you to a page that looks like this, and appears to be (and is) showing a bunch of transactions:
+All right. If you're like me you've probably been exploring as you go and you've been encountering other sites that seem connected to this ecosystem. In particular, you may have clicked on links associated with transactions and it has taken you to the [Tezos Blockchain Explorer](https://tzkt.io) website. As the name suggests, the role of this website is to publicly display transactions that take place on the Tezos blockchain. For example, here's the page showing all the transactions that have involved me in some fashion:
 
 https://tzkt.io/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7/operations/
 
-You'll probably end up back at tzkt.io quite a bit, I suspect, because it's the place that everything seems to link to to display transactions. On my page there's is a log of all the things I've been doing on the tezos blockchain. It looks something like this:
+When I first started (oh so many days ago...) it looked something like this:
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("img/tzkt_screen.png")
@@ -318,52 +319,39 @@ knitr::include_graphics("img/tzkt_screen.png")
 
 A lot of it is gibberish, but you can kind of see what's going on here. Yet again you can see my `Smurf`, there's a bunch of transactions that show me minting NFTs, etc. It makes a kind of sense.
 
-What *doesn't* make any sense (at least not at first), is that my `Smurf` is not linked to my identity. My avatar is missing (that kitty is a randomly assigned avatar, not something I chose), and none of those links go anywhere. There's a *space* for me to have a twitter link, a github link, etc, but they are empty. That seems weird, because I already verified my twitter and github, right?
+What might be surprising, particularly if you've just gone to the effort of setting up a Tezos Profile, is that the account information doesn't show my avatar. It doesn't include my name, or a bio, and it doesn't include my social media links. Instead, all I have is a cartoon image of a very suspicious looking cartoon cat. Unlike HEN, the [tzkt.io](https://tzkt.io) site doesn't pull information from your Tezos Profile. 
 
-Well, yes, I did. But I verified those accounts with the other site: https://tzprofiles.com/ knows who I am and has shared that information with HEN, but it hasn't shared anything with https://tzkt.io. This is mildly annoying because other sites in the HEN ecosystem all seem to be looking to https://tzkt.io in order to get profile information about me. Unlike HEN itself, they aren't getting information from https://tzprofiles.com/. 
-
-A good example of this is https://objkt.com/, a site that you can use to auction off your artwork rather than set fixed prices for them (more on that later!) In exactly the same way that the HEN explorer site is able to show all the artwork minted through HEN (and hence you will automatically exist on https://www.henext.xyz/ if you exist on HEN), you automatically exist on objkt.com too, and your profile page is... drumroll, please... your `Smurf`. So here's me:
-
-https://objkt.com/profile/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7/creations
+The mystery deepens a little when you start noticing that the exact same cartoon cat appears on various other sites. For example, this was how my profile looked on [objkt.com](https://objkt.com/) at the time: 
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("img/objkt.png")
 ```
 
-As you can see, it has my `Smurf` and it is showing pictures of art I've minted through HEN, but somehow it doesn't show anything about me! In contrast, if you look at Thomas Lin Pedersen's page there, it has an avatar, a name, and a bio.  
+The weird cryptocat was following me around across all these websites. Hm. The suspicious kitty is cute and everything, but honestly I'd prefer my usual name and profile image to follow me around instead. 
 
-https://objkt.com/profile/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/creations
+As it turns out, the source for all these skeptical cats is the blockchain explorer site, [tzkt.io](https://tzkt.io), and you can submit an application to the people who run that site to create an alias for you. The process is described in [this post](https://baking-bad.org/blog/2021/09/19/tzkt-alias-verification-f-a-q/) on the "Baking Bad" blog (don't let the name and silly images fool you, the blog is associated with the people who run the site). The post will take you to a Google Form that you can fill out, in order to have your alias created. When you do this, it won't update immediately: there is a manual verification process that takes about three days, so you'll need to be patient. 
 
-```{r, echo=FALSE, fig.align='center'}
-knitr::include_graphics("img/objkt_thomas.png")
-```
-
-In fact, come to think of it, his profile on https://tzkt.io shows the exact same avatar, name, and bio:
+Once that happens you'll discover that your links have appeared on your tzkt.io page, and more importantly perhaps, you have an avatar and description on other sites that make use of this alias. This is what my [profile page](https://objkt.com/profile/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7/creations) on objkt.com looks like now: 
 
 ```{r, echo=FALSE, fig.align='center'}
-knitr::include_graphics("img/tzkt_thomas.png")
+knitr::include_graphics("img/objkt.png")
 ```
 
-No fair! I want one of those too! What magic does he know that I don't? Well, one clue is to look at his HEN page and note that the bio is slightly different, and the social media icons on his HEN page are slightly different to the social media icons on his OBJKT page:
+Mine is a deliberately vague because I'm a peculiar person, but you can see a slightly more informative version if you look at [Thomas Lin Pedersen's profile](https://objkt.com/profile/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/creations):
 
 ```{r, echo=FALSE, fig.align='center'}
-knitr::include_graphics("img/hen_profile_thomas.png")
+knitr::include_graphics("img/objkt.png")
 ```
 
-To cut a long story short, OBJKT is pulling the information from TZKT. So if you want to have a profile on OBJKT too, you'll have to verify yourself on TZKT. Gr. Luckily for me -- because I am tired of this post and I really want to get to the artistic part -- there's a good write up of how to do that on the "Baking Bad" blog:
+### Purchasing a Tezos Domain
 
-https://baking-bad.org/blog/2021/09/19/tzkt-alias-verification-f-a-q/
+When you look at the two profiles above, there's something slightly peculiar. Notice how Thomas' profile now links to `thomasp85.tez` and mine links to `djnavarro.tez`? That's something slightly different again. Those addresses aren't created by the Tezos Profile, nor are they created when you set your alias on the Tezos Blockchain Explorer. Those are [Tezos Domains](https://tezos.domains/). The idea is very sensible: human beings don't really enjoy memorising long strings of random digits. It would be much more convenient if I could message someone and say "hey send tez to me at `djnavarro.tez`, because that's me!". It's certainly nicer than trying to say "send tez to me at `tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7`, because that's me!"
 
-It took me a while to realise that this isn't a random website, and the "baking" thing is a reference to some of the boring mechanics of how the tezos currency works. The odd name notwithstanding, the blog is associated with the folks who actually run TZKT, and I've found it helpful to browse on that page to learn more about the system itself. In any case, the long and short of it is that you'll be asked to fill out a Google Form and then wait for a few days while they manually verify the information you provide. When you do this, you'll find that it asks you to do a few tasks to prove your identity, and they're quite similar to the tasks that TZPROFILES asks you to undertake (but a bit less stringent). Eventually (hopefully), your profile will show up on TZKT and then will propagate to OBJKT. 
-
-### tezos.domains
-
-Okay but... what if, and hear me out... what if you don't want that fucking smurf to follow you around everywhere? What if you would like to... gasp... choose your own address. Perhaps, like me, you'd like the ability to tell people to "send tez to me at `djnavarro.tez` because that's me!". It's not exactly an unreasonable desire. Somehow, "send tez to me at `tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7` becaause that's me!" just doesn't feel the same, you know? If you'd like to do this, it is possible with the assistance of [Tezos Domains](https://tezos.domains/) and it will cost you 1 tez per year to register your very own .tez domain. 
-
+If you'd like to do this, visit [tezos.domains](https://tezos.domains/) and follow the instructions there: it costs 1 tez per year to set one up. 
 
 ## 8: Convert tez to dollars
 
-At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to get paid. To do that, you'll want to sign up with one of the currency exchanges. Although you probably have exactly zero interest in being a currency trader, it's a necessity if you want to get paid in real money. Sure, cryptocurrencies are "cool" and everything, but the cold hard truth of the world is that coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research, because this is a thing that will depend a bit on where you live. I looked into one of their suggested options ([Kraken](https://www.kraken.com)) and it seemed fairly standard, but in the end used an Australian provider, [CoinSpot](https://www.coinspot.com.au/). The sign up process was fairly standard, requiring identification documents for verification. Once that was completed, I was able to send money to my bank account. It ended up being a three-step process:
+At some point, hopefully very soon, you'll sell some artwork and you'll want to get paid. To do that, you'll probably need to sign up with one of the currency exchanges. Although you likely have no desire to be a currency trader, it's a necessity if you want to get paid in real money. Yes, cryptocurrencies sound cool, but coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research, because this is a thing that will depend a bit on where you live. I looked into one of their suggested options ([Kraken](https://www.kraken.com)) and it seemed fairly standard, but in the end used an Australian provider, [CoinSpot](https://www.coinspot.com.au/). The sign up process was fairly standard, requiring identification documents for verification. Once that was completed, I was able to send money to my bank account. It ended up being a three-step process:
 
 - Send tezos from the Temple wallet associated with my public identity (i.e., the one I've been using on HEN etc), to a tezos wallet that is provided for me through my CoinSpot account
 - On CoinSpot, sell the tezos in exchange for Australian dollars
@@ -371,9 +359,36 @@ At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to g
 
 Once I figured it all out it was surprisingly smooth. I imagine the process varies a lot from country to country and from exchange to exchange, but hopefully the description of my process is at least somewhat helpful.
 
-## Epilogue: Is it worth it?
+## Epilogue: Is all it worth it?
 
+I haven't been doing this for very long, but I'm a little surprised to find that I'm enjoying the process of minting art on HEN. I've sold three pieces to people who know me, and it is a nice feeling. I'm not making mountains of money, and I don't expect that I will any time soon, but it is still quite satisfying. The fact that I'm doing it on HEN makes a big difference to how I feel about it too: the environmental costs worry me a lot and don't think I could make myself use a site that relied on Ethereum. And to be honest, it really is nice to get *paid* for my art. Praise is nice, sure, but you can't live off that.
 
+I suppose the other thing I'm noticing already is that I feel a little less constrained on HEN. When I post art to twitter or instagram, it's always with the knowledge that the big social media websites are *also* places where my professional networks exist, and I'm obliged to behave, to be nice, to be the "good girl". I might swear and be grumpy on twitter sometimes, but for the most part I try not to let other parts of my personality and my life show on those sites. That's okay, and it's probably how it should be. Twitter is a place where it's okay to mix some parts of your personal life with some parts of your work life, but there's a tacit understanding that you probably ought to keep some things carefully sequestered from the bird site. There are a lot of things about a person's life that their employer and professional colleagues may not want to know.
+
+Where that runs into some difficulty, for me at least, is that a lot of my generative art is deeply entwined with my personal life, with my moods, and my experiences. When done well, [art is always intimate](https://essays.djnavarro.net/post/intimacy-and-art/), and the intimacy of creating and sharing the art often entails personal disclosures that might not be welcome on twitter. Consider these pieces, for example:
+
+```{r echo=FALSE}
+df <- data.frame(
+  image = c(
+    "img/thorns_05_1014.png", 
+    "img/thorns_05_1047.png", 
+    "img/thorns_05_1053.png", 
+    "img/thorns_05_1079.png"
+  ),
+  link = c(
+    "https://www.hicetnunc.xyz/objkt/341833",
+    "https://www.hicetnunc.xyz/objkt/341852",
+    "https://www.hicetnunc.xyz/objkt/341868",
+    "https://www.hicetnunc.xyz/objkt/341880"
+  ), 
+  objkt = paste("OBJKT", c(341833, 341852, 341868, 341880))
+)
+bs4cards::cards(df, title = objkt, image = image, link = link, width = 2)
+```
+
+I am very fond of these pieces, but they aren't the easiest ones to share on twitter. The title of the series is *Bruises are how sadists kiss*, and the pieces are tagged with "sadomasochism" on my HEN profile. It isn't intended to be provocative or anything: it just happens to be the case that those things are part of my world. The emotional experience expressed through the art (via the code) was one in which a very polite sadist had turned up in my life after a long absence. I was reminiscing, trying to work out what it meant to me, and I wrote the code while I thought about it. This was the system that emerged. On twitter I would not dream of referring to those parts of my world so overtly (and in all honesty I am not entirely keen on mentioning them on this blog). On HEN though, it feels a little more natural: art is often raw, it is often personal, and those subjects do come up if you spend a little time exploring the cryptoart space. 
+
+It turns out, that is a thing that has some value to me.
 
 <!--------------- appendices ----------------->
 
