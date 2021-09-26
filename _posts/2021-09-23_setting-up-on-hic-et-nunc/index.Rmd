@@ -249,7 +249,57 @@ Regardless of how you solve this part of the problem, I'm hoping that at this po
 
 ## 5: Release your art!
 
+Surprisingly, the process of releasing your art on HEN is quite easy, at least when compared to how complicated everything else is. If you open the menu and click on the "OBJKT (mint)" option, it will take you to the [minting page](https://www.hicetnunc.xyz/mint), which looks like this:
 
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_mint.png")
+```
+
+At this stage in the process you upload the file, give it a name and a description, and make some decisions about (a) how many tokens you want to create, and (b) your royalties, the percentage of future sales that are returned to you. Here's me filling one out: 
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_mint_step1.png")
+```
+
+Click on the preview button, and it will show you a preview of what the page will look like when it goes live. If you're happy with it you can proceed and click the "mint OBJKT" button. You'll be asked by your wallet to confirm the minting operation (this costs a small amount of tez), and then after a short time the OBJKT (i.e., the token) exists. In this case, here's the page displaying the OBJKT that I've just created:
+
+https://www.hicetnunc.xyz/objkt/359761
+
+The tokens now exist, but as yet they have not been placed on the market. People can't buy them from you. To place the token for sale, go to the page showing the token (i.e., the link above). It will look something like this:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_mint_step2_annotated.png")
+```
+
+If you want to put the art on sale, click on the "swap" link that I've highlighted here (and if you change your mind and want to destroy it, click on the "burn" link next to it). The interface will look like this:
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/hen_mint_step3.png")
+```
+
+It will then let you decide you many of your tokens you want to put up for sale, and set the price for each one. For this particular piece I'd decided to create a lot of tokens (there are 50 of them), and I'm going to put them all on sale at the very low price of 2 tez. I honestly know nothing about pricing, but I'm playing around with it at the moment: some pieces I mint only a single token and set the price high, others I mint a large number of tokens and set the price low. In any case, when you're happy press the "swap" button, confirm with your wallet, and the pieces will now be on sale!
+
+Here are the Native Flora pieces I posted while writing this post. They're all available for purchase!
+
+
+```{r echo=FALSE}
+df <- data.frame(
+  image = c(
+    "img/native-flora_110.png", 
+    "img/native-flora_184.png", 
+    "img/native-flora_196.png", 
+    "img/native-flora_199.png"
+  ),
+  link = c(
+    "https://www.hicetnunc.xyz/objkt/359814",
+    "https://www.hicetnunc.xyz/objkt/359795",
+    "https://www.hicetnunc.xyz/objkt/359761",
+    "https://www.hicetnunc.xyz/objkt/359745"
+  ), 
+  objkt = paste("OBJKT", c(359814, 359795, 359761, 359745))
+)
+bs4cards::cards(df, title = objkt, image = image, link = link, width = 2)
+```
 
 ## 6: Share on social media
 
