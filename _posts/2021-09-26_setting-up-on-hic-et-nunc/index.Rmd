@@ -161,7 +161,7 @@ knitr::include_graphics("img/hen_menu_annotated.png")
 As with everything about HEN, it's very minimalist. Some of the options are easy to understand, but others are not. The options I've been using most are these:
 
 - **search** takes you to the [HEN search page](https://www.hicetnunc.xyz/search)
-- **edit profile** allows you add some informtion about yourself (see next section)
+- **edit profile** allows you add some information about yourself (see next section)
 - **manage assets** will take you to your profile page (it took me a long time to realise this)
 - **OBJKT (mint)** is the option you select when you want to create art. I'll talk bout that later 
 
@@ -450,11 +450,9 @@ df <- data.frame(
 bs4cards::cards(df, title = objkt, image = image, link = link, width = 2)
 ```
 
-I am very fond of these pieces, but they aren't the easiest ones to share on twitter. The title of the series is *Bruises are how sadists kiss*, and the pieces are tagged with "sadomasochism" on my HEN profile. The title isn't deliberately intended to be provocative or anything of the sort: that's not really my preferred style. Nevertheless, those things are part of my world and part of my life, and they do show up in my art. 
+I am very fond of these pieces, but they aren't the easiest ones to share on twitter. The title of the series is *Bruises are how sadists kiss*, and the pieces are tagged with "sadomasochism" on my HEN profile. The title isn't deliberately intended to be provocative or anything of the sort. That's not really my preferred style. It's much more prosaic: those things are part of my world and part of my life, and sometimes they show up in my art. The emotional experience expressed through the art (via the code) was one in which a very polite sadist had turned up in my life after a long absence. I was reminiscing, trying to work out what he meant to me, and I wrote the code while I was thinking about it. This was the system that emerged. 
 
-The emotional experience expressed through the art (via the code) was one in which a very polite sadist had turned up in my life after a long absence. I was reminiscing, trying to work out what he meant to me, and I wrote the code while I was thinking about it. This was the system that emerged. On twitter I would not dream of referring to those parts of my world so overtly (nor would I typically do so on this blog, focused as it is on technical topics). On HEN though, it feels a little more natural: art is often raw, it is often personal, and those subjects do come up if you spend a little time exploring the cryptoart space. It feels like a place where that version of me is permitted to have an online existence. 
-
-It turns out, that is a thing that has some value to me.
+On twitter I would not dream of referring to those parts of my world so overtly (nor would I typically do so on this blog, focused as it is on technical topics). On HEN though, it feels a little more natural: art is often raw, it is often personal, and those subjects do come up if you spend a little time exploring the cryptoart space. It feels like a place where that version of me is permitted to have an online existence. As it turns out, that's a thing that has some value to me.
 
 <!--------------- appendices ----------------->
 
