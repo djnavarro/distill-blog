@@ -46,11 +46,17 @@ This post is also not supposed to be an introduction to blockchains or cryptocur
 
 ## Prologue: Barriers to entry 
 
-One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you. As anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, an invitation requirement is a non-trivial and frequently discriminatory barrier. "By invitation" systems create entry barriers by design: for good or ill, they are inherently exclusionary.
+One thing I have noticed about the world of cryptoart is that there are *many* barriers to entry. Some barriers are obvious: if you want to sell art on [Foundation](https://foundation.app/about), for example, you need to be invited. To be invited, you need to know someone who can and will invite you. As anyone who has ever been excluded from a fancy venue by virtue of their race, gender, sexual orientation, transgender status etc can attest, an invitation requirement is a non-trivial and frequently discriminatory barrier. "By invitation" systems create entry barriers by design: for good or ill, they are inherently exclusionary. But there are other ways in which cryptoart creates barriers to entry.
 
-Another kind of barrier comes from the nature of cryptoart. Blockchains were not designed to be energy efficient, and they can be extraordinarily wasteful (much more than you'd think). Environmental considerations also create barriers to entry, albeit indirect barriers. For example, the biggest cryptocurrencies like Bitcoin and Ethereum operate on a "proof of work" principle (often abbreviated to "PoW") and as the name suggests, operations on those chains require a lot of computational work. A lot. They are *staggeringly* wasteful, and as a consequence the total energy consumption of these chains is so high that an NFT minted on one of these chains has a very high carbon footprint. Proof of work chains are an environmental disaster, and so (in my mind) they are socially irresponsible. Don't use them if you can avoid it. This poses a problem for artists, unfortunately. The biggest cryptoart markets are based on the Ethereum chain, and that one is proof of work. True, there are plans to change this and make Ethereum more ethical, but it hasn't happened yet and I don't want to participate until the switch actually occurs. This is deeply unfortunate from artistic point of view, because it rules out [OpenSea](https://opensea.io/). That sucks because OpenSea is the largest marketplace and it's very easy to get started there. For instance, I have an [unused account](https://opensea.io/djnavarro) that I set up in a few minutes. So easy! But for me the end-user convenience wasn't worth the environmental costs, so I abandoned this idea at the outset. On the plus side, OpenSea have [announced](https://blog.opensea.io/announcements/tezos-nfts-are-coming-to-opensea/) that they are planning to support the Tezos blockchain (see below), and when that day comes I will probably make use of my OpenSea account: the thing I take moral issue with is not OpenSea, it is with Ethereum. Personally, I don't want to touch the stuff.
+### Environmental costs matter
+
+Another kind of barrier comes from the nature of cryptoart. Blockchains were not designed to be energy efficient, and they can be extraordinarily wasteful (much more than you'd think). Environmental considerations also create barriers to entry, albeit indirect barriers. For example, the biggest cryptocurrencies like Bitcoin and Ethereum operate on a "proof of work" principle (often abbreviated to "PoW") and as the name suggests, operations on those chains require a lot of computational work. A lot. They are [staggeringly wasteful](https://brightly.eco/environmental-impact-nfts/), and as a consequence the total energy consumption of these chains is so high that an NFT minted on one of these chains has a very high carbon footprint. Proof of work chains are an environmental disaster, and so (in my mind) they are socially irresponsible. Don't use them if you can avoid it. 
+
+This poses a problem for artists, unfortunately. The biggest cryptoart markets are based on the Ethereum chain, and Ethereum is a proof of work chain. True, there are plans to change this and make Ethereum more ethical, but it hasn't happened yet and I personally am unwilling to participate until that switch actually occurs. This is deeply unfortunate from artistic point of view, because it rules out [OpenSea](https://opensea.io/). It sucks because OpenSea is the largest marketplace and it's very easy to get started there. For instance, I have an [unused account](https://opensea.io/djnavarro) that I set up in a few minutes before I realised the problem. But for me the end-user convenience wasn't worth the environmental costs, so I abandoned this idea at the outset. On the plus side, OpenSea have [announced](https://blog.opensea.io/announcements/tezos-nfts-are-coming-to-opensea/) that they are planning to support the Tezos blockchain (see below), and when that day comes I will probably make use of my OpenSea account: the thing I take moral issue with is not OpenSea, it is with Ethereum (or more precisely, with proof-of-work chains). Personally, I don't want to touch the stuff.
 
 So what are the alternatives?
+
+### There are alternatives
 
 The main alternative to the "proof of work" blockchains are the "proof of stake" (PoS) blockchains. These don't require anywhere near as much computation, and as a consequence are much more energy efficient. For that reason, NFTs on those chains are often called "clean NFTs". There are a multiple proof of stake chains (Tezos, Solana, etc), but the one I'm most familiar with is [Tezos](https://tezos.com/). To give you a sense of just how extreme the difference is, this is a screenshot that popped up on one of the sites while I was doing my initial exploration:
 
@@ -68,13 +74,15 @@ If there's one thing I have learned from the lovely R folks on twitter, everythi
 
 There is, unfortunately, a catch. There is always a catch.
 
+### It can be confusing
+
 One big limitation to HEN is that it isn't easy to get started there unless you are already somewhat enmeshed in the crypto world generally, or the cryptoart scene specifically. The ecosystem is distributed over several sites that have weird names without enough vowels, the user interfaces on the sites tend to be unconventional (often pointlessly so in my opinion), and the "how to" guides aren't very easy to read. The overall aesthetic and typology screams out **WE ARE THE COOL KIDS** in capital letters. It doesn't even have the good grace to be subtle about it. Taken together, all these little things add up, and it annoys me. I have been a professional educator for 15 years now, and I can absolutely guarantee that the overall effect of this is to create a de facto entry barrier. All these things act as signals to exclude people who aren't already part of the clique. It feels disproportionately uncomfortable if you're an outsider. It tells you that you're not welcome if you're not one of the cool kids. Are you one of the cool kids? No? Then sorry. No HEN for you babe.
 
 Well, **fuck**.
 
-About the only upside I see to the entry barriers to HEN is that I can do something to lower them. I can't do anything to make Foundation less exclusionary, and there's nothing I can do to make OpenSea less of an environmental disaster. But I can do something to HEN less confusing: I can write a blog post explaining the process. This blog post. 
+Yet again, there are barriers to entry to HEN, and that makes me uncomfortable. However, unlike the other cryptoart options I looked at, there's something I can do to improve the situation: I can write a blog post explaining the process. This blog post. 
 
-So. Let's do this.
+### Let's demystify it
 
 Let's assume you're not one of the cool kids. Let's assume you're just a regular human being who likes to make generative art in R, and are a little curious. You have a vague idea of what cryptocurrencies are (yeah, yeah, digital currency blah blah blah). You have a vague idea of what an NFT is (digitally signed copy of the art, whatever dude). Maaaaaybe you've sort of heard of HEN ... but that's only because you've seen some R people posting about it on twitter. And that's it. That's all you know. But maybe you want to try it out, just to see if it's for you? Just to try. But you really, really, reaaaaaalllllllly don't want to wade into all the details and you're secretly worried that it's all too complicated and you won't be able to do it. Your impostor sydrome is going *wild*. Is that you? Do you feel the same way I felt? 
 
@@ -82,19 +90,13 @@ If so, this post is written for you.
 
 ## 1: Get an overview
 
-When I started setting up on, I wandered around the Tezos cryptoart landscape in confusion, wandering aimlessly over the terrain. It was all *deeply* unsettling. Eventually I pieced together some overall view of things, but I wouldn't recommend doing things the same way I did. I think the best thing to do first is to "zoom out" and look at the landscape as a whole. The best site for doing that is this one:
-
-https://tezos.art/
-
-The page has three sections: 
+When I started setting up on, I wandered around the Tezos cryptoart landscape in confusion, wandering aimlessly over the terrain. It was all *deeply* unsettling. Eventually I pieced together some overall view of things, but I wouldn't recommend doing things the same way I did. I think the best thing to do first is to "zoom out" and look at the landscape as a whole. The best site I've found for doing that is [tezos.art](https://tezos.art/). If you click on the link it will take you to a page with the following three sections: 
 
 - **Marketplaces**: Sites where you can mint, buy, and sell art
 - **Wallets**: Tools that handle your identity and store your funds
 - **Community**: Places where you can go for help
 
-It's worth taking a quick look at this page because it gives you a feel for what all the moving parts are, but doesn't dive into details anywhere. 
-
-You've taken a quick peek, yes? Cool. Let's get started...
+It's worth taking a quick look at this page because it gives you a feel for what all the moving parts are, but doesn't dive into details. You've taken a quick peek, yes? Cool. Let's get started...
 
 ## 2: Create a wallet
 
@@ -119,7 +121,6 @@ We'll get to that a little bit later but the key thing for now is that your equi
 
 ## 3: Tell HEN who you are
 
-
 ### Synchronise with your wallet
 
 When you go to the HEN website you'll see a little bit of text on the top right hand side that has a link that says "sync". Click on that:
@@ -128,7 +129,7 @@ When you go to the HEN website you'll see a little bit of text on the top right 
 knitr::include_graphics("img/hen_sync.png")
 ```
 
-This will bring up an ovelay that looks like this:
+This will bring up an overlay that looks like this:
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("img/hen_wallet.png")
@@ -148,46 +149,94 @@ knitr::include_graphics("img/hen_synced.png")
 
 You're now synced: in effect, you are now logged in to HEN. You still don't have a username, but you *have* authenticated yourself and you can now change some settings. 
 
+### The HEN menu is weird
+
+Okay, let's move to the next step. To the right of your `Smurf`, you'll see the "hamburger" menu. It behaves pretty much the same as any menu you'd encounter on the internet, but some of the options have very non-intuitive names. Here's what the menu looks like, with my annotations added:
+
+```{r, echo=FALSE, fig.align='center', fig.width=7}
+knitr::include_graphics("img/hen_menu_annotated.png")
+```
+
+As with everything about HEN, it's very minimalist. Some of the options are easy to understand, but others are not. The options I've been using most are these:
+
+- **search** takes you to the [HEN search page](https://www.hicetnunc.xyz/search)
+- **edit profile** allows you add some informtion about yourself (see next section)
+- **manage assets** will take you to your profile page (it took me a long time to realise this)
+- **OBJKT (mint)** is the option you select when you want to create art. I'll talk bout that later 
+
 ### Name, avatar and bio
 
 The time has come to give yourself a name. If you do things in the right order and with the right mental model of what's going on, this is pretty easy to do, but it's easy to get a little confused because there are actually multiple things going on here, and you always have to keep in mind that your equivalent of my `Smurf` string is your actual identity.
 
-So... your first step is to tell HEN to link your `Smurf` strng to a name, bio and avatar. This is easy and it doesn't cost you any money. You click on the menu, and you'll see this screen:
-
-```{r, echo=FALSE, fig.align='center'}
-knitr::include_graphics("img/hen_menu.png")
-```
-
-As with everything about HEN, it's very minimalist and slightly atypical, but it's just a menu, same as on any other website. Click on "edit profile". This brings up another slightly unconventional looking screen that has several options you can set. Here's what mine currently looks like:
+So... your first step is to tell HEN to link your `Smurf` strng to a name, bio and avatar. Click on "edit profile". This brings up another slightly unconventional looking screen that has several options you can set. Here's what mine currently looks like:
 
 ```{r, echo=FALSE, fig.align='center'}
 knitr::include_graphics("img/hen_profile.png")
 ```
 
-There are three things you can do immediately without any major hassle. First, if you click on "choose file" you can upload an image to give yourself a profile image. Second, you can give yourself a username. The advice I read on the relevant [HEN wiki page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile) suggested that you should avoid spaces and special characters, and should stick to lower case letters because usernames are case sensitive (which surprised me). Third, you can write a brief description of yourself.  
+There are three things you can do immediately without any major hassle: 
 
-Once you've done those three things, click on "save profile". Ignore everything below the "save profile" button. All that stuff is useful, and it will let you do things like link to your twitter profile and your github profile, but it's surprisingly finicky to set up and it costs money, so we'll leave that until later.
+- First, if you click on "choose file" you can upload an image to give yourself a profile image. 
 
+- Second, you can give yourself a username. The advice I read on the relevant [HEN wiki page](https://github.com/hicetnunc2000/hicetnunc/wiki/Edit-your-profile) suggested that you should avoid spaces and special characters, and should stick to lower case letters because usernames are case sensitive. 
 
-### More information?
+- Third, you can write a brief description of yourself. It doesn't have to be very thorough. Most people say something about who they are and what they do, but you don't have to. For example, I've had a habit of identifying myself as "an object of type closure" on all my social media websites. It's intended as a silly reference to the classic R error message:
 
-For more information about editing your profile, you can check out the HEN .
+    ```{r, error=TRUE}
+    identity[]
+    ```
+
+    As it happens, this allowed me to make an even sillier double-layered joke in my HEN bio. When you create art on HEN the tokens that you generate are referred to as OBJKTs, so now I refer to myself as "an OBJKT of type closure". I'm so *funny*.
+
+Aaaaanyway... once you've done those three things, click on "save profile", and you're done for now. Ignore everything below the "save profile" button. All that stuff is useful, and it will let you do things like link to your twitter profile and your github profile, but it's surprisingly finicky to set up and it costs money, so we'll leave that until later.
+
+### Check out your profile
+
+Before moving on, take a quick look at your profile. As I mentioned earlier, you can do this through the menu system, by selecting the "manage assets" option. Personally I wish they'd chosen a better name: I'm not an investor and I don't think of my art as "assets". The page that displays my art is my homepage on HEN, and it bothers me a little that the site frames it in such mercenary terms. It's irritating. But whatever, it's not a dealbreaker. 
+
+It's worth quickly commenting on the URL for your profile. When you click on the "manage assets" link, it will take you to a URL that identifies you using the `Smurf`. For me, that URL is:
+
+https://www.hicetnunc.xyz/tz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7/
+
+As long as you have your very own `Smurf` in your wallet, you'll have this URL. However, if you followed the instructions in the last section, HEN is kind enough to arrange it so that the ugly `Smurf` based URL will automatically redirect to one based on your username. For me, that URL is:
+
+https://www.hicetnunc.xyz/djnavarro/
+
+At this point, you exist on HEN! Yaaaay!
 
 ## Intermission: Follow people
 
-There's more stuff you can do to get your account set up, but you might want to take a little breather and look for some art. Maybe you want to search for someone you know in the R community who might be on HEN, and you'd like to find them. The actual HEN website isn't very good for that. If you look at the front page, all you see is art scrolling by
-
-https://www.hicetnunc.xyz/
-
-There's no structure, just a timeline showing the pieces one at a time as they are "minted". It's not searchable or browsable. This is annoying, but there are alternatives. After all, the actual pieces are all public and on the tezos blockchain so other sites can hook into it and display the same pieces in a different way. The "HEN explorer" website is pretty handy here:
+There's more stuff you can do to get your account set up, but you might want to take a little breather and look for some art. Maybe you want to search for someone you know in the R community who might be on HEN, and you'd like to find them. As I mentioned earlier, the HEN site does have a [search page](https://www.hicetnunc.xyz/search), but there are some limitations. It's okay if you want to search by keywords to *find* art or artists, but what it won't let you do is *follow* them. Personally, I quite like being able to follow artists whose work I love, and it would be pretty cool to have a feed where I can see what they've posted, arranged in chronological order. That's where the the "HEN explorer" website is handy:
 
 https://www.henext.xyz/
 
-There are things you can browse and even a search box. It's a little clunky (e.g., I found the search box didn't always act as I was expecting) but it does the job. This was how I found the other R people I knew about! So if you want to take a moment to explore, this is a pretty good place to go. 
+Like HEN itself, the HEN explorer site has browsing and search capability. It's a little clunky in places (on my browser, there seems to be a bug where the search box only works when you're on the home page), but it does the job. 
+
+To use HEN explorer, you'll need to synchronise with your wallet (i.e., log in). To do that you can click on the "profile" icon in the nav bar (the one that looks like a little person), or just visit
+
+https://henext.xyz/profile
+
+That will bring up a screen that looks like this
+
+```{r, echo=FALSE, fig.align='center'}
+knitr::include_graphics("img/henext_connect.png")
+```
+
+Click on the "connect wallet" button, and it will take you through the same steps that were involved when you connected your wallet to the HEN site. 
+
+Once you've done that, you're logged in to HEN explorer, and you're able to find artists you like and follow them! If you would like to follow me, you can search for "djnavarro" on the HEN explorer search box, or you can visit my HEN explorer profile page directly:
+
+https://www.henext.xyz/tz1hXKn2BcU64HxSrmojfuf7cDoweJ9xwxZ7
+
+Add a few artists you like, and you'll get a sense of what the feed looks like. The location of the feed is
+
+https://www.henext.xyz/following
+
+Happy browsing!
 
 ## 4: Get a little money
 
-Remember when I said that everything about this oozes capitalism? I really meant it: it's hard to do much without spending money, and we're rapidly reaching the point where you'll need a little bit. Thankfully, you don't need very much, and there's a good chance you can ask one of the other R folks on HEN to help out. That's what I did, and I'm grateful to the people who sent me a few tez, and the others who spontaneously offered. R people are lovely. 
+One slightly frustrating thing about this process is that it's hard accomplish very much in this arena without spending money, and we're rapidly reaching the point where you'll need a little bit. Thankfully, if you're an artist wanting to create your own art, and aren't looking to collect anyone else's, you don't need very much to get started. If you're in the R community there's a good chance you can ask one of the other R folks on HEN to help out. That's what I did, and I'm grateful to the people who sent me a few tez, and the others who spontaneously offered. R people are lovely. 
 
 If the "ask a friend" approach is an option for you, I'd recommend it for artists. The reason I say this is that you have a bigger set up cost (in terms of your time and effort) than someone who is joining in order to purchase art, so from the perspective of the artist all you need -- right now -- is a little start up fund. To use myself as the example, I made a lot of weird mistakes setting up and wasted quite a lot of transactions, but even with all that I think I only spent about 1 tez in total (at the exchange rate at the time that was about US$5). 
 
@@ -197,8 +246,8 @@ That being said, I'm also not naive, and I know perfectly well that it doesn't a
 
 Regardless of how you solve this part of the problem, I'm hoping that at this point you have a few tez to start out! 
 
-
 ## 5: Release your art!
+
 
 
 ## 6: Share on social media
@@ -216,6 +265,11 @@ The identifier here is 341880. If I share the link above on twitter, it won't di
 https://hic.art/354474
 
 It will display a very lovely looking twitter preview, and when the user clicks on the link or the preview it will automatically redirect to the official HEN page. It's a nice service! 
+
+Here's an example from Antonio Sánchez Chinchón:
+
+<blockquote class="twitter-tweet" data-partner="tweetdeck"><p lang="en" dir="ltr">Mondrianomie 28<br>Basic cellular multiorganism grown according to neoplasticism assumptions (2033 x 2400 PNG)<br><br>3 ed - 28 tez at <a href="https://twitter.com/hicetnunc2000?ref_src=twsrc%5Etfw">@hicetnunc2000</a><a href="https://t.co/TyNvt1zMBu">https://t.co/TyNvt1zMBu</a><a href="https://twitter.com/hashtag/HEN?src=hash&amp;ref_src=twsrc%5Etfw">#HEN</a> <a href="https://twitter.com/hashtag/hicetnunc?src=hash&amp;ref_src=twsrc%5Etfw">#hicetnunc</a> <a href="https://twitter.com/hashtag/hicetnunc2000?src=hash&amp;ref_src=twsrc%5Etfw">#hicetnunc2000</a> <a href="https://twitter.com/hashtag/nft?src=hash&amp;ref_src=twsrc%5Etfw">#nft</a> <a href="https://twitter.com/hashtag/NFTs?src=hash&amp;ref_src=twsrc%5Etfw">#NFTs</a> <a href="https://twitter.com/hashtag/nftcommunity?src=hash&amp;ref_src=twsrc%5Etfw">#nftcommunity</a> <a href="https://twitter.com/hashtag/nftcollectors?src=hash&amp;ref_src=twsrc%5Etfw">#nftcollectors</a> <a href="https://twitter.com/hashtag/cleannft?src=hash&amp;ref_src=twsrc%5Etfw">#cleannft</a> <a href="https://twitter.com/hashtag/nftart?src=hash&amp;ref_src=twsrc%5Etfw">#nftart</a> <a href="https://twitter.com/hashtag/tezos?src=hash&amp;ref_src=twsrc%5Etfw">#tezos</a> <a href="https://twitter.com/hashtag/tezosart?src=hash&amp;ref_src=twsrc%5Etfw">#tezosart</a></p>&mdash; Antonio Sánchez Chinchón (@aschinchon) <a href="https://twitter.com/aschinchon/status/1441675525651640320?ref_src=twsrc%5Etfw">September 25, 2021</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
 
@@ -309,7 +363,13 @@ Okay but... what if, and hear me out... what if you don't want that fucking smur
 
 ## 8: Convert tez to dollars
 
-At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to get paid. To do that, you'll want to sign up with one of the currency exchanges. Although you probably have exactly zero interest in being a currency trader, it's a necessity if you want to get paid in real money. Sure, cryptocurrencies are "cool" and everything, but the cold hard truth of the world is that coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research (this is a thing that will depend a bit on where you live). In my case I was able to go with one of their suggested options, and I signed up with [Kraken](https://www.kraken.com). The process was tedious but also very traditional: I signed up for an account, verified my identity using official documents, and linked it to my bank account. It was time consuming to complete the whole process, but also very boring. In other words it's exactly what you'd expect from any financial institution. 
+At some point, hopefully very soon, you'll sell some OBJKTs and you'll want to get paid. To do that, you'll want to sign up with one of the currency exchanges. Although you probably have exactly zero interest in being a currency trader, it's a necessity if you want to get paid in real money. Sure, cryptocurrencies are "cool" and everything, but the cold hard truth of the world is that coolness does not pay the rent. My landlord expects to be paid in Australian dollars, and -- by extension -- so do I. That means exchanging your tez for regular money. The HEN wiki lists a couple of options along with the standard warning that you should definitely do your own research, because this is a thing that will depend a bit on where you live. I looked into one of their suggested options ([Kraken](https://www.kraken.com)) and it seemed fairly standard, but in the end used an Australian provider, [CoinSpot](https://www.coinspot.com.au/). The sign up process was fairly standard, requiring identification documents for verification. Once that was completed, I was able to send money to my bank account. It ended up being a three-step process:
+
+- Send tezos from the Temple wallet associated with my public identity (i.e., the one I've been using on HEN etc), to a tezos wallet that is provided for me through my CoinSpot account
+- On CoinSpot, sell the tezos in exchange for Australian dollars
+- Withdraw money from my CoinSpot account and deposit it in my Australian bank account
+
+Once I figured it all out it was surprisingly smooth. I imagine the process varies a lot from country to country and from exchange to exchange, but hopefully the description of my process is at least somewhat helpful.
 
 ## Epilogue: Is it worth it?
 
