@@ -404,7 +404,7 @@ knitr::include_graphics("img/objkt.png")
 Mine is a deliberately vague because I'm a peculiar person, but you can see a slightly more informative version if you look at [Thomas Lin Pedersen's profile](https://objkt.com/profile/tz2Pkj2xWJovKKCsABjnr3NbyMVJTMBkpTvb/creations):
 
 ```{r, echo=FALSE, fig.align='center'}
-knitr::include_graphics("img/objkt.png")
+knitr::include_graphics("img/objkt_thomas.png")
 ```
 
 ### Purchasing a Tezos Domain
