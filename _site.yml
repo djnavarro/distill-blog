@@ -2,6 +2,7 @@ name: "."
 title: "Notes from a data witch"
 description: ""
 output_dir: "_site"
+include: ["_redirects"]
 theme: theme.css
 base_url: https://blog.djnavarro.net
 rss:
@@ -24,4 +25,4 @@ navbar:
 output:
   distill::distill_article:
     includes:
-      in_header: header_plausible.html
+      in_header: header.html
