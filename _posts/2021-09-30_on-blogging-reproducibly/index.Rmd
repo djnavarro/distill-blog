@@ -46,6 +46,36 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 I started my very first blog in the dark ages, when dialup internet was a thing and the 21st century was still shiny and new. There are very few hints that this blog ever existed, which is perhaps fortunate for me since it wasn't very good. For all its flaws though, it was a useful thing to try: rather than use one of the big blogging platforms, I hosted my own static site using the university website, and it got me started thinking about other forms of professional communication besides the tiresome process of writing academic papers. Besides, writing blog posts isn't just useful, it's fun.
 
+It is surprising, then, that I haven't managed to keep any of my many blogs running consistently. I used to think this was a personal failing on my part, but I've come to realise that technical blogging is an extremely difficult thing to do cleanly. In my [first post on this blog](https://blog.djnavarro.net/welcome) I outlined four principles that I've tried to adhere to over the last year or two, and I think they've served me well:
+
+- **Simplicity.** Try to use the simplest tools you can: hidden dependencies will hurt you later
+- **Encapsulation.** Isolate the blog: don't incorporate it into your home page
+- **Focus.** A blog should do one thing well: if want to do many things, you can have many blogs
+- **Reproducibility.** An R blog needs to manage the R environment cleanly
+
+The first three are (I think) somewhat self explanatory. It's the fourth one that I want to talk about here, because it's a lot harder than it looks, and my initial post on this blog underestimated how tricky it can be to get this one right. I won't be so arrogant as to claim that I've gotten it right now, but with the help of Kevin Ushey's very excellent [renv package](https://rstudio.github.io/renv/), I'm slowly making progress!
+
+## Why is this so hard?
+
+Running a programming blog based in [R markdown](https://rmarkdown.rstudio.com/) is fundamentally hard, because of the very thing that makes R markdown attractive: *the blog post is also the source code*. This is a both a blessing and a curse. It's a blessing because it forces you, the blogger, to write code that is readable to your audience. It forces you to write code that actually works: if the code doesn't work, the post doesn't knit. This is extremely valuable to you and to your audience. Having become addicted to literate programming tools such as R markdown, I would never want to go back to the bad old days where you wrote your code in scripts and pasted chunks of non-executable code into a document. Over and over again I found that this introduced horrible problems: I'd fix a bug in the source code, and then forget to update it in the document. With the advent of R markdown and the many tools that rely on it ([distill](https://rstudio.github.io/distill/), [blogdown](https://bookdown.org/yihui/blogdown/), [bookdown](https://www.bookdown.org/), etc), I hope never to be forced to return to that nightmare. 
+
+However, there is a catch. There is *always* a catch. The catch in this cases is that managing your R environment is hard. Every time you write a new post, your R environment is likely to change. Packages will have been updated, and there is a chance that code you wrote in an old post will no longer run the same way now as it did back then. The passage of time means that eventually all your old posts break: they were written using a particular R environment that no longer exists on your computer. What's worse is that *every post has a unique environment*. If you want to ensure that old posts still knit, then every post needs to be associated with its own reproducible R environment. In effect, you're in a situation where you need to maintain many R projects (one per blog post), that are themselves contained within an encompassing R project (the blog itself). That's not easy to do.
+
+## Some useful tools
+
+The difficulty in managing the R environments in a blogging context is something that comes up a lot, and there are a few workarounds that make your life a little easier. For example, in a Distill blog like this one, you maintain manual control over when a post is rendered. Building the whole site with `rmarkdown::render_site()` won't trigger a rebuild of posts, so it's possible to rebuild the rest of the site without attempting to re-knit old posts. This is a very good thing, and in the early days of blogdown the fact that you *didn't* have that protection was the source of a lot of problems (happily, they fixed that now!) 
+
+Another thing you can do to make things a little easier is to use `utils::sessionInfo()` or `devtools::session_info()`. Appending a call to one of these functions to your post will at least ensure that the reader of your post knows something about what the R environment *was* at the time you last knit the post:
+
+```{r sessionInfo}
+sessionInfo()
+```
+
+These are useful, and taken together it's possible to run a blog that won't break on you, but it's still less than ideal. For example, one problem I used to encounter often is the "minor edit" headache. I would often want to revisit an old blog post -- one that no longer knits because the R environment has changed -- and add a brief not mentioning that the code doesn't work with more recent versions of certain packages! This is something I think is important to do, so that anyone reading my old posts won't try using the same code in an R environment that won't run it. At a bare minimum that seems polite, but... in order to *make* the update, I would need to modify the post, which means I'd have to re-knit the post, but... as aforementioned, the post won't knit. It's a [Catch 22](https://en.wikipedia.org/wiki/Catch-22): you can't inform people that the post won't knit unless you are able to knit the post.
+
+## Escaping the Catch 22 with renv
+
+
 
 
 ```{r, echo=FALSE}

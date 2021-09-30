@@ -2484,9 +2484,61 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p>I started my very first blog in the dark ages, when dialup internet was a thing and the 21st century was still shiny and new. There are very few hints that this blog ever existed, which is perhaps fortunate for me since it wasn’t very good. For all its flaws though, it was a useful thing to try: rather than use one of the big blogging platforms, I hosted my own static site using the university website, and it got me started thinking about other forms of professional communication besides the tiresome process of writing academic papers. Besides, writing blog posts isn’t just useful, it’s fun.</p>
+<p>It is surprising, then, that I haven’t managed to keep any of my many blogs running consistently. I used to think this was a personal failing on my part, but I’ve come to realise that technical blogging is an extremely difficult thing to do cleanly. In my <a href="https://blog.djnavarro.net/welcome">first post on this blog</a> I outlined four principles that I’ve tried to adhere to over the last year or two, and I think they’ve served me well:</p>
+<ul>
+<li><strong>Simplicity.</strong> Try to use the simplest tools you can: hidden dependencies will hurt you later</li>
+<li><strong>Encapsulation.</strong> Isolate the blog: don’t incorporate it into your home page</li>
+<li><strong>Focus.</strong> A blog should do one thing well: if want to do many things, you can have many blogs</li>
+<li><strong>Reproducibility.</strong> An R blog needs to manage the R environment cleanly</li>
+</ul>
+<p>The first three are (I think) somewhat self explanatory. It’s the fourth one that I want to talk about here, because it’s a lot harder than it looks, and my initial post on this blog underestimated how tricky it can be to get this one right. I won’t be so arrogant as to claim that I’ve gotten it right now, but with the help of Kevin Ushey’s very excellent <a href="https://rstudio.github.io/renv/">renv package</a>, I’m slowly making progress!</p>
+<h2 id="why-is-this-so-hard">Why is this so hard?</h2>
+<p>Running a programming blog based in <a href="https://rmarkdown.rstudio.com/">R markdown</a> is fundamentally hard, because of the very thing that makes R markdown attractive: <em>the blog post is also the source code</em>. This is a both a blessing and a curse. It’s a blessing because it forces you, the blogger, to write code that is readable to your audience. It forces you to write code that actually works: if the code doesn’t work, the post doesn’t knit. This is extremely valuable to you and to your audience. Having become addicted to literate programming tools such as R markdown, I would never want to go back to the bad old days where you wrote your code in scripts and pasted chunks of non-executable code into a document. Over and over again I found that this introduced horrible problems: I’d fix a bug in the source code, and then forget to update it in the document. With the advent of R markdown and the many tools that rely on it (<a href="https://rstudio.github.io/distill/">distill</a>, <a href="https://bookdown.org/yihui/blogdown/">blogdown</a>, <a href="https://www.bookdown.org/">bookdown</a>, etc), I hope never to be forced to return to that nightmare.</p>
+<p>However, there is a catch. There is <em>always</em> a catch. The catch in this cases is that managing your R environment is hard. Every time you write a new post, your R environment is likely to change. Packages will have been updated, and there is a chance that code you wrote in an old post will no longer run the same way now as it did back then. The passage of time means that eventually all your old posts break: they were written using a particular R environment that no longer exists on your computer. What’s worse is that <em>every post has a unique environment</em>. If you want to ensure that old posts still knit, then every post needs to be associated with its own reproducible R environment. In effect, you’re in a situation where you need to maintain many R projects (one per blog post), that are themselves contained within an encompassing R project (the blog itself). That’s not easy to do.</p>
+<h2 id="some-useful-tools">Some useful tools</h2>
+<p>The difficulty in managing the R environments in a blogging context is something that comes up a lot, and there are a few workarounds that make your life a little easier. For example, in a Distill blog like this one, you maintain manual control over when a post is rendered. Building the whole site with <code>rmarkdown::render_site()</code> won’t trigger a rebuild of posts, so it’s possible to rebuild the rest of the site without attempting to re-knit old posts. This is a very good thing, and in the early days of blogdown the fact that you <em>didn’t</em> have that protection was the source of a lot of problems (happily, they fixed that now!)</p>
+<p>Another thing you can do to make things a little easier is to use <code>utils::sessionInfo()</code> or <code>devtools::session_info()</code>. Appending a call to one of these functions to your post will at least ensure that the reader of your post knows something about what the R environment <em>was</em> at the time you last knit the post:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/sessionInfo.html'>sessionInfo</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>R version 4.1.1 (2021-08-10)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 20.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+
+locale:
+ [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_AU.UTF-8        LC_COLLATE=en_AU.UTF-8    
+ [5] LC_MONETARY=en_AU.UTF-8    LC_MESSAGES=en_AU.UTF-8   
+ [7] LC_PAPER=en_AU.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_AU.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods  
+[7] base     
+
+loaded via a namespace (and not attached):
+ [1] fansi_0.5.0         rprojroot_2.0.2     digest_0.6.28      
+ [4] R6_2.5.1            jsonlite_1.7.2      magrittr_2.0.1     
+ [7] evaluate_0.14       stringi_1.7.4       rlang_0.4.11       
+[10] renv_0.14.0         fs_1.5.0            refinery_0.0.0.9045
+[13] jquerylib_0.1.4     bslib_0.3.0         vctrs_0.3.8        
+[16] rmarkdown_2.10      distill_1.2         tools_4.1.1        
+[19] stringr_1.4.0       xfun_0.26           yaml_2.2.1         
+[22] fastmap_1.1.0       compiler_4.1.1      htmltools_0.5.2    
+[25] knitr_1.34          downlit_0.2.1       sass_0.4.0         </code></pre>
+</div>
+<p>These are useful, and taken together it’s possible to run a blog that won’t break on you, but it’s still less than ideal. For example, one problem I used to encounter often is the “minor edit” headache. I would often want to revisit an old blog post – one that no longer knits because the R environment has changed – and add a brief not mentioning that the code doesn’t work with more recent versions of certain packages! This is something I think is important to do, so that anyone reading my old posts won’t try using the same code in an R environment that won’t run it. At a bare minimum that seems polite, but… in order to <em>make</em> the update, I would need to modify the post, which means I’d have to re-knit the post, but… as aforementioned, the post won’t knit. It’s a <a href="https://en.wikipedia.org/wiki/Catch-22">Catch 22</a>: you can’t inform people that the post won’t knit unless you are able to knit the post.</p>
+<h2 id="escaping-the-catch-22-with-renv">Escaping the Catch 22 with renv</h2>
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-09-30 12:18:59 AEST</p>
+<p>2021-09-30 13:40:57 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-30_on-blogging-reproducibly">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2021-09-30_on-blogging-reproducibly/renv.lock">R environment</a></p>
 </div>
@@ -2495,7 +2547,7 @@ checklist:
 
 </div>
 <!--------------- derived YAML ----------------->
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
