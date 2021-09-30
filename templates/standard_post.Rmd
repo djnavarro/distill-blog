@@ -67,6 +67,7 @@ refinery::insert_netlify_redirect(
 
 
 <!--------------- derived YAML ----------------->
+
 ---
 date: `r params$date`
 citation_url: `r paste0(params$site, params$slug)`
