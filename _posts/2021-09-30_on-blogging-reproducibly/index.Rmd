@@ -11,8 +11,11 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
+date: 2021-09-30
 preview: preview-image.png 
 creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/on-blogging-reproducibly
+repository_url: https://github.com/djnavarro/distill-blog/
 output:
   distill::distill_article:
     self_contained: false
@@ -41,8 +44,9 @@ knitr::opts_chunk$set(echo = TRUE)
 refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 ```
 
-
 <!--------------- post ----------------->
+
+[**NOTE:** This post is in draft. I don't normally allow draft posts to be deployed on the site, but it's useful in this case to troubleshoot the in-development `refinery` package.]
 
 I started my very first blog in the dark ages, when dialup internet was a thing and the 21st century was still shiny and new. There are very few hints that this blog ever existed, which is perhaps fortunate for me since it wasn't very good. For all its flaws though, it was a useful thing to try: rather than use one of the big blogging platforms, I hosted my own static site using the university website, and it got me started thinking about other forms of professional communication besides the tiresome process of writing academic papers. Besides, writing blog posts isn't just useful, it's fun.
 
@@ -75,7 +79,71 @@ These are useful, and taken together it's possible to run a blog that won't brea
 
 ## Escaping the Catch 22 with renv
 
-More to come... if you're reading this it's because I'm checking something with the deployment and there's a half finished live version. For now, ignore everything below here :-)
+
+### Creating the post
+
+The intended blogging workflow is as follows. It's generally helpful to create posts from templates to ensure that they adhere to a common structure. My [standard post template](https://github.com/djnavarro/distill-blog/blob/master/_templates/standard_post.Rmd) includes author information, instructions on which fields need to be updated, and so on. So the first step is to create a new post from a template:
+
+```{r, eval=FALSE}
+refinery::use_article_template(
+  template = "_templates/standard_post.Rmd",
+  slug = "fabulous-blog-post", 
+  date = "1999-12-31"
+  renv_new = TRUE 
+)
+```
+
+This function is similar in spirit `distilltools::create_post_from_template()`, with a few minor variations. The important one is the `renv_new` argument. Creating the blog post will create a post folder called
+
+```
+_posts/1999-12-31_fabulous-blog-post
+```
+
+with an `index.Rmd` file in which the post is to be written. However, when `renv_new = TRUE` (the default), it also creates the minimal infrastructure required to manage the R environment with renv. 
+
+### Initialising the R environment
+
+The effect of setting `renv_new = TRUE` is to ensure that `refinery::renv_new()` gets called at the time the post is created. This is a slightly specialised version of `renv::init()` that takes care of a few niceties that are specific to distill blogs.
+
+One of the big differences is that `refinery::renv_new()` ensures that the renv infrastructure is kept separate from the distill post. By default, `renv::init()` will create a `renv` folder inside your project directory -- which would be the distill post directory in this case -- but we don't want that to happen here. The reason for this is that the distill package searches the contents of the post folder looking for R markdown files that might correspond to posts, and occasionally the renv folder can end up with files that look like posts. The cleanest solution, to my mind, is to give renv it's own top level folder. For our hypothetical post above, the renv infrastructure would be stored in
+
+```
+_renv/_posts/1999-12-31_fabulous-blog-post
+```
+
+It's called `_renv` rather than `renv` to ensure that distill will ignore it unless you explicitly tell it otherwise. The `_renv` files won't end up being copied to your website. 
+
+### Loading the environment
+
+To ensure that the correct R environment is used when knitting the post, the R markdown file should contain a line like this:
+
+```{r, eval=FALSE}
+refinery::renv_load("1999-12-31_fabulous-blog-post")
+```
+
+Again, the refinery package isn't doing very much other than making things a little more specific to the distill context, and if you look at the source you'll see that `refinery::renv_load()` is just a very thin wrapper around `renv::load()`. 
+
+### Managing the R environment
+
+When writing the blog post, there are three functions that I use to manage the R environment. 
+
+- The `refinery::renv_snapshot()` function is a wrapper around `renv::snapshot()`: it uses renv to scan the post folder looking for package dependencies, and then writes the lockfile to the appropriate location in the renv infrastructure. 
+
+- The `refinery::renv_restore()` function is a wrapper around `renv::restore()`. It updates the state of the local package library so that it mirrors the state of the lockfile
+
+- The `refinery::renv_delete()` function deletes all the renv infrastructure associated with a particular post. It exists so that you can wipe the local library, lockfile, etc, and start over. 
+
+Etc. Expand on this, give examples, etc.
+
+## Small kindnesses
+
+Discuss the `refinery::insert_appendix()` and `refinery::insert_netlify_redirect()` functions here...
+
+
+
+
+
+<!--------------- appendix ----------------->
 
 
 ```{r, echo=FALSE}
@@ -94,15 +162,4 @@ refinery::insert_netlify_redirect(
   date = params$date
 )
 ```
-
-
-<!--------------- derived YAML ----------------->
-
----
-date: `r params$date`
-citation_url: `r paste0(params$site, params$slug)`
-repository_url: `r paste0("https://github.com/", params$repo)` 
----
-
-
 

@@ -6,14 +6,14 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Thu, 30 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 29 Sep 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>On blogging reproducibly with renv</title>
       <dc:creator>Danielle Navarro</dc:creator>
       <link>https://blog.djnavarro.net/posts/2021-09-30_on-blogging-reproducibly</link>
       <description>Some initial thoughts on how to deploy a distill blog in a reproducible fashion. It's a little harder than it looks and I am still working out all the details</description>
       <guid>https://blog.djnavarro.net/posts/2021-09-30_on-blogging-reproducibly</guid>
-      <pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 29 Sep 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-09-30_on-blogging-reproducibly/preview-image.png" medium="image" type="image/png" width="4000" height="2400"/>
     </item>
     <item>
