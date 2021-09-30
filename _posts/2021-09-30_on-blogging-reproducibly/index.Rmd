@@ -75,20 +75,7 @@ These are useful, and taken together it's possible to run a blog that won't brea
 
 ## Escaping the Catch 22 with renv
 
-More to come... if you're reading this it's because I'm checking something with the deployment and there's a half finished live version. For now, ignore everthing below here :-)
-
-```{r, message=TRUE}
-library(refinery)
-this_post <- article_named("blogging-reproducibly")
-this_post
-```
-
-The `article_sitrep()` function 
-
-```{r, message=TRUE}
-article_sitrep(this_post)
-```
-`
+More to come... if you're reading this it's because I'm checking something with the deployment and there's a half finished live version. For now, ignore everything below here :-)
 
 
 ```{r, echo=FALSE}
