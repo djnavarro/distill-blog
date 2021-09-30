@@ -81,7 +81,7 @@ More to come... if you're reading this it's because I'm checking something with 
 ```{r, echo=FALSE}
 refinery::insert_appendix(
   repo_spec = params$repo, 
-  dir = paste(params$date, params$slug, sep = "_")
+  name = paste(params$date, params$slug, sep = "_")
 )
 ```
 

@@ -51,7 +51,7 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 ```{r, echo=FALSE}
 refinery::insert_appendix(
   repo_spec = params$repo, 
-  dir = paste(params$date, params$slug, sep = "_")
+  name = paste(params$date, params$slug, sep = "_")
 )
 ```
 
