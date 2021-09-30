@@ -10,8 +10,11 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
+date: INSERT-DATE-HERE
 preview: preview-image.jpg  # <---- UPDATE ME 
 creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/INSERT-SLUG-HERE 
+repository_url: https://github.com/djnavarro/distill-blog/
 output:
   distill::distill_article:
     self_contained: false
@@ -65,14 +68,6 @@ refinery::insert_netlify_redirect(
 )
 ```
 
-
-<!--------------- derived YAML ----------------->
-
----
-date: `r params$date`
-citation_url: `r paste0(params$site, params$slug)`
-repository_url: `r paste0("https://github.com/", params$repo)` 
----
 
 
 
