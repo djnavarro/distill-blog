@@ -1,0 +1,78 @@
+---
+title: "On blogging reproducibly with renv"
+description:
+  Some initial thoughts on how to deploy a distill blog in a reproducible
+  fashion. It's a little harder than it looks and I am still working out
+  all the details
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+preview: preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+output:
+  distill::distill_article:
+    self_contained: false
+params:
+  slug: on-blogging-reproducibly
+  date: 2021-09-30
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new(long_slug)
+  - populate the lockfile with refinery::renv_snapshot(long_slug)
+  - update the _renv folder from snapshot with refinery::refresh(long_slug)
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+```
+
+
+<!--------------- post ----------------->
+
+I started my very first blog in the dark ages, when dialup internet was a thing and the 21st century was still shiny and new. There are very few hints that this blog ever existed, which is perhaps fortunate for me since it wasn't very good. For all its flaws though, it was a useful thing to try: rather than use one of the big blogging platforms, I hosted my own static site using the university website, and it got me started thinking about other forms of professional communication besides the tiresome process of writing academic papers. Besides, writing blog posts isn't just useful, it's fun.
+
+
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  dir = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+<!--------------- derived YAML ----------------->
+
+---
+date: `r params$date`
+citation_url: `r paste0(params$site, params$slug)`
+repository_url: `r paste0("https://github.com/", params$repo)` 
+---
+
+
+
