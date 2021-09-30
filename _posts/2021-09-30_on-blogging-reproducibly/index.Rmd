@@ -11,7 +11,7 @@ author:
     affiliation: UNSW Sydney
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
-preview: preview-image.jpg  # <---- UPDATE ME 
+preview: preview-image.png 
 creative_commons: CC BY
 output:
   distill::distill_article:
@@ -75,7 +75,7 @@ These are useful, and taken together it's possible to run a blog that won't brea
 
 ## Escaping the Catch 22 with renv
 
-
+More to come... if you're reading this it's because I'm checking something with the deployment and there's a half finished live version :-)
 
 
 ```{r, echo=FALSE}
