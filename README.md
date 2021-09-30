@@ -5,3 +5,8 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/a0c0bfb8-93ad-467d-af87-56ccc98d84cb/deploy-status)](https://app.netlify.com/sites/djnavarro-blog/deploys)
 <!-- badges: end -->
 
+This is the repository for my blog "Notes from a Data Witch":
+
+https://blog.djnavarro.net
+
+The site is written in R markdown using distill, and deployed on netlify
