@@ -17,7 +17,7 @@ navbar:
     - text: "RSS"
       href: index.xml
     - text: "GitHub"
-      href: https://github.com/djnavarro/distill-blog
+      href: https://github.com/djnavarro
     - text: "Twitter"
       href: https://twitter.com/djnavarro
     - text: "Homepage"
