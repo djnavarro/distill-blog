@@ -1523,7 +1523,7 @@ checklist:
 <ul>
 <li><strong>Simplicity.</strong> Try to use the simplest tools you can: hidden dependencies will hurt you later</li>
 <li><strong>Encapsulation.</strong> Isolate the blog: don’t incorporate it into your home page</li>
-<li><strong>Focus.</strong> A blog should do one thing well: if want to do many things, you can have many blogs</li>
+<li><strong>Focus.</strong> A blog should do one thing well: if you do many things, you can have many blogs</li>
 <li><strong>Reproducibility.</strong> An R blog needs to manage the R environment cleanly</li>
 </ul>
 <p>The first three are (I think) somewhat self explanatory. It’s the fourth one that I want to talk about here, because it’s a lot harder than it looks, and my initial post on this blog underestimated how tricky it can be to get this one right. I won’t be so arrogant as to claim that I’ve gotten it right now, but with the help of Kevin Ushey’s very excellent <a href="https://rstudio.github.io/renv/">renv package</a>, I’m slowly making progress!</p>
@@ -1678,7 +1678,7 @@ Figure 4: Image by Nick Fewings. Available by CC0 licence on <a href="https://un
 <li><p>The <code>refinery::renv_delete()</code> function deletes all the renv infrastructure associated with a particular post. It exists so that you can wipe the local library, lockfile, etc, and start over.</p></li>
 </ul>
 <p>The process works like this. When the renv infrastructure gets created using <code>refinery::renv_new()</code>, it includes a bare minimum of packages in the local package library: only renv, distill, refinery, and their dependencies are added. It doesn’t, for example, include dplyr.</p>
-<p>As you’re writing your blog post, you might find yourself using dplyr functions, and when you go to knit that post… it won’t work, even if you have dplyr on your machine. That’s because dplyr is not yet listed in the lockfile and it’s not stored in the local package library. We can fix this with two lines of code. First, we can use <code>refinery::renv_snapshot()</code> to scan the current post: because Kevin Ushey is very smary and renv is a very good package, the <code>renv::snapshot()</code> function that does all the real work will automatically discover that dplyr is being used, and it will update the lockfile:</p>
+<p>As you’re writing your blog post, you might find yourself using dplyr functions, and when you go to knit that post… it won’t work, even if you have dplyr on your machine. That’s because dplyr is not yet listed in the lockfile and it’s not stored in the local package library. We can fix this with two lines of code. First, we can use <code>refinery::renv_snapshot()</code> to scan the current post: because Kevin Ushey is very smart and renv is a very good package, the <code>renv::snapshot()</code> function that does all the real work will automatically discover that dplyr is being used, and it will update the lockfile:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>refinery</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/refinery/man/renv_snapshot.html'>renv_snapshot</a></span><span class='op'>(</span><span class='st'>"1999-12-31_fabulous-blog-post"</span><span class='op'>)</span>
@@ -1710,12 +1710,12 @@ Figure 5: Image by Brett Jordan Available by CC0 licence on <a href="https://uns
 </div>
 </div>
 <h2 id="so-what-next">So… what next?</h2>
-<p>One of the open questions I have is whether it’s worthwhile putting much more effort into the refinery package. As it stands I’m planning to improve the documentation a little (so that “me six months in the future” doesn’t hate “me today”), but in truth this is something I wrote for myself: I like having the refinery package around because it supports <em>this blog</em>, but that goal is now (I hope!) mostly accomplished. It may be that other folks runnng distill blogs would like to use these tools, in which case it might be valuable to do something more rigorous like, oh, write some unit tests and send it to CRAN.</p>
+<p>One of the open questions I have is whether it’s worthwhile putting much more effort into the refinery package. As it stands I’m planning to improve the documentation a little (so that “me six months in the future” doesn’t hate “me today”), but in truth this is something I wrote for myself: I like having the refinery package around because it supports <em>this blog</em>, but that goal is now (I hope!) mostly accomplished. It may be that other folks running distill blogs would like to use these tools, in which case it might be valuable to do something more rigorous like, oh, write some unit tests and send it to CRAN.</p>
 <p>For now though I’m happy where things stand. If things work as planned, this should give me the infrastructure I need to maintain this blog properly for as long as I want to, and when the world moves on and an old post is no longer accurate, it should be easy to edit the post noting that the code in the post won’t work any more, re-knit it using the <em>original</em> R environment, and continue blogging with fewer tears. At least, that’s the hope!</p>
 <!--------------- appendix ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-10-01 17:29:47 AEST</p>
+<p>2021-10-01 20:41:34 AEST</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-09-30_on-blogging-reproducibly/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2021-09-30_on-blogging-reproducibly/renv.lock">R environment</a></p>
 </div>
