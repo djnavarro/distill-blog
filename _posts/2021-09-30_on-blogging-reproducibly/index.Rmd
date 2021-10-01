@@ -4,7 +4,7 @@ description:
   Some initial thoughts on how to deploy a distill blog in a reproducible
   fashion. It's a little harder than it looks and I am still working out
   all the details. To make my life a little easier, I started writing a 
-  small package called \"refinery\". 
+  small package called "refinery". 
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -13,7 +13,7 @@ author:
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
 date: 2021-09-30
-preview: preview-image.png 
+preview: preview-image.jpg 
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/on-blogging-reproducibly
 repository_url: https://github.com/djnavarro/distill-blog/
@@ -65,6 +65,13 @@ Running a programming blog based in [R markdown](https://rmarkdown.rstudio.com/)
 
 However, there is a catch. There is *always* a catch. The catch in this cases is that managing your R environment is hard. Every time you write a new post, your R environment is likely to change. Packages will have been updated, and there is a chance that code you wrote in an old post will no longer run the same way now as it did back then. The passage of time means that eventually all your old posts break: they were written using a particular R environment that no longer exists on your computer. What's worse is that *every post has a unique environment*. If you want to ensure that old posts still knit, then every post needs to be associated with its own reproducible R environment. In effect, you're in a situation where you need to maintain many R projects (one per blog post), that are themselves contained within an encompassing R project (the blog itself). That's not easy to do.
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Patrick Tomasso. Available by CC0 licence on [unsplash](https://unsplash.com/photos/Oaqk7qqNh_c)." 
+knitr::include_graphics("img/patrick-tomasso-Oaqk7qqNh_c-unsplash.jpg")
+```
+
+
 ## Some useful tools
 
 The difficulty in managing the R environments in a blogging context is something that comes up a lot, and there are a few workarounds that make your life a little easier. For example, in a Distill blog like this one, you maintain manual control over when a post is rendered. Building the whole site with `rmarkdown::render_site()` won't trigger a rebuild of posts, so it's possible to rebuild the rest of the site without attempting to re-knit old posts. This is a very good thing, and in the early days of blogdown the fact that you *didn't* have that protection was the source of a lot of problems (happily, they fixed that now!) 
@@ -76,6 +83,14 @@ sessionInfo()
 ```
 
 These are useful, and taken together it's possible to run a blog that won't break on you, but it's still less than ideal. For example, one problem I used to encounter often is the "minor edit" headache. I would often want to revisit an old blog post -- one that no longer knits because the R environment has changed -- and add a brief not mentioning that the code doesn't work with more recent versions of certain packages! This is something I think is important to do, so that anyone reading my old posts won't try using the same code in an R environment that won't run it. At a bare minimum that seems polite, but... in order to *make* the update, I would need to modify the post, which means I'd have to re-knit the post, but... as aforementioned, the post won't knit. It's a [Catch 22](https://en.wikipedia.org/wiki/Catch-22): you can't inform people that the post won't knit unless you are able to knit the post.
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Andrew Neel. Available by CC0 licence on [unsplash](https://unsplash.com/photos/7-buK9DsYO4)." 
+knitr::include_graphics("img/andrew-neel-7-buK9DsYO4-unsplash.jpg")
+```
+
 
 ## Project environments with renv
 
@@ -116,6 +131,16 @@ However, although the lockfile contains the description of the R environment, it
 
 To learn more about renv, I strongly recommend reading the [package documentation](https://rstudio.github.io/renv/). It's very good.
 
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Nadine Marfurt. Available by CC0 licence on [unsplash](https://unsplash.com/photos/FZepNVi6f0Q)." 
+knitr::include_graphics("img/nadine-marfurt-FZepNVi6f0Q-unsplash.jpg")
+```
+
+
+
 ## Escaping the Catch 22
 
 The usual intent when using renv is to maintain one R environment per project, which is not quite perfectly aligned with the needs of a blog. For the blogging situation, we want one R environment per post, and -- importantly -- we don't want the renv infrastructure and the blog infrastructure to interfere with each other. It's not *too* difficult to do this, but I found it a little finicky to get started. So, to make my life a little easier, I started writing [refinery](https://github.com/djnavarro/refinery), a small package whose sole purpose is to make distill and renv play nicely together! 
@@ -148,6 +173,14 @@ _posts/1999-12-31_fabulous-blog-post
 ```
 
 Inside this folder will be an `index.Rmd` file that has been constructed from the post template. 
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Nick Fewings. Available by CC0 licence on [unsplash](https://unsplash.com/photos/pSxBMq3cAOk)." 
+knitr::include_graphics("img/nick-fewings-pSxBMq3cAOk-unsplash.jpg")
+```
+
 
 ### Step 2: Start using renv
 
@@ -215,6 +248,13 @@ refinery::insert_appendix(
   repo_spec = "djnavarro/distill-blog"
   name = "1999-12-31_fabulous-blog-post"
 )
+```
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Brett Jordan Available by CC0 licence on [unsplash](https://unsplash.com/photos/pKlBjhV1USY)." 
+knitr::include_graphics("img/brett-jordan-pKlBjhV1USY-unsplash.jpg")
 ```
 
 
