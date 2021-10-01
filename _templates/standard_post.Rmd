@@ -29,9 +29,9 @@ params:
 
 checklist:
   - check the "update me" messages in YAML above
-  - initialise the _renv folder with refinery::renv_new(long_slug)
-  - populate the lockfile with refinery::renv_snapshot(long_slug)
-  - update the _renv folder from snapshot with refinery::refresh(long_slug)
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
 
 ---->
 
