@@ -57,7 +57,7 @@ It is surprising, then, that I haven't managed to keep any of my many blogs runn
 
 - **Simplicity.** Try to use the simplest tools you can: hidden dependencies will hurt you later
 - **Encapsulation.** Isolate the blog: don't incorporate it into your home page
-- **Focus.** A blog should do one thing well: if want to do many things, you can have many blogs
+- **Focus.** A blog should do one thing well: if you do many things, you can have many blogs
 - **Reproducibility.** An R blog needs to manage the R environment cleanly
 
 The first three are (I think) somewhat self explanatory. It's the fourth one that I want to talk about here, because it's a lot harder than it looks, and my initial post on this blog underestimated how tricky it can be to get this one right. I won't be so arrogant as to claim that I've gotten it right now, but with the help of Kevin Ushey's very excellent [renv package](https://rstudio.github.io/renv/), I'm slowly making progress!
@@ -228,7 +228,7 @@ When writing a new blog post, there are two main functions in the refinery packa
 
 The process works like this. When the renv infrastructure gets created using `refinery::renv_new()`, it includes a bare minimum of packages in the local package library: only renv, distill, refinery, and their dependencies are added. It doesn't, for example, include dplyr.
 
-As you're writing your blog post, you might find yourself using dplyr functions, and when you go to knit that post... it won't work, even if you have dplyr on your machine. That's because dplyr is not yet listed in the lockfile and it's not stored in the local package library. We can fix this with two lines of code. First, we can use `refinery::renv_snapshot()` to scan the current post: because Kevin Ushey is very smary and renv is a very good package, the `renv::snapshot()` function that does all the real work will automatically discover that dplyr is being used, and it will update the lockfile:
+As you're writing your blog post, you might find yourself using dplyr functions, and when you go to knit that post... it won't work, even if you have dplyr on your machine. That's because dplyr is not yet listed in the lockfile and it's not stored in the local package library. We can fix this with two lines of code. First, we can use `refinery::renv_snapshot()` to scan the current post: because Kevin Ushey is very smart and renv is a very good package, the `renv::snapshot()` function that does all the real work will automatically discover that dplyr is being used, and it will update the lockfile:
 
 ```{r, eval=FALSE}
 refinery::renv_snapshot("1999-12-31_fabulous-blog-post")
