@@ -22,6 +22,7 @@ output:
     toc: true
     self_contained: false
     css: "strapless.css"
+date: 2021-09-26
 params:
   slug: setting-up-on-hic-et-nunc
   date: 2021-09-26
@@ -41,7 +42,7 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-Cryptoart can be a touchy subject for generative artists, and it's something a lot of us have messy feelings about. In my case it is no secret that I feel conflicted: I'm on record in multiple places expressing my reservations --  [here](https://essays.djnavarro.net/post/intimacy-and-art/) and [here](https://www.gofundme.com/f/data-science-art-to-support-a-womens-refuge) for example -- and I completely understand why a lot of us are uncomfortable with it. I genuinely believe there are many perfectly good reasons why a generative artist would choose not to participate. On the other hand, I also recognise that there are some very sensible reasons why a generative artist *would* want (or need) to sell NFTs: artists have to pay rent, for example. So this post isn't about passing judgment one way or the other. It's intended to be a guide to help other artists get started in this area, particularly artists in the R community, if they should decide to try it out. That's all. 
+Cryptoart can be a touchy subject for generative artists, and it's something a lot of us have messy feelings about. In my case it is no secret that I feel conflicted, and I completely understand why a lot of us are uncomfortable with it. I genuinely believe there are many perfectly good reasons why a generative artist would choose not to participate. On the other hand, I also recognise that there are some very sensible reasons why a generative artist *would* want (or need) to sell NFTs: artists have to pay rent, for example. So this post isn't about passing judgment one way or the other. It's intended to be a guide to help other artists get started in this area, particularly artists in the R community, if they should decide to try it out. That's all. 
 
 This post is also not supposed to be an introduction to blockchains or cryptocurrencies. It doesn't dive into the details on what these things are or even what an NFT is. I make art: I don't care about any of these subjects. What I'm assuming is that you're coming to this world from a similar position to me: you have a vague understanding of what blockchain is, what cryptocurrencies are about, and have a similarly vague notion that an NFT is kind of like a "digitally signed copy" of your art that you can sell to other people. That's all you need. 
 
@@ -459,7 +460,7 @@ On twitter I would not dream of referring to those parts of my world so overtly 
 ```{r, echo=FALSE}
 refinery::insert_appendix(
   repo_spec = params$repo, 
-  dir = paste(params$date, params$slug, sep = "_")
+  name = paste(params$date, params$slug, sep = "_")
 )
 ```
 

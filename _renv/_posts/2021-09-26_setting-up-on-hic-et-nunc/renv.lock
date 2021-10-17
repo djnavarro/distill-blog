@@ -51,12 +51,24 @@
       "Repository": "CRAN",
       "Hash": "f95c5818d79cba499e4fbe771ddbff45"
     },
+    "cli": {
+      "Package": "cli",
+      "Version": "3.0.1.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "cli",
+      "RemoteUsername": "r-lib",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "154f3215e458728a2155217a7f4897da5b8edea0",
+      "Hash": "3347d46b7c20b31f8d40491f57e65c38"
+    },
     "digest": {
       "Package": "digest",
-      "Version": "0.6.27",
+      "Version": "0.6.28",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "a0cbe758a531d054b537d16dff4d58a1"
+      "Hash": "49b5c6e230bfec487b8917d5a0c77cca"
     },
     "distill": {
       "Package": "distill",
@@ -151,10 +163,10 @@
     },
     "knitr": {
       "Package": "knitr",
-      "Version": "1.34",
+      "Version": "1.36",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "aa958054ac6f0360926bb952ea302f0f"
+      "Hash": "46344b93f8854714cdf476433a59ed10"
     },
     "lubridate": {
       "Package": "lubridate",
@@ -193,15 +205,15 @@
     },
     "refinery": {
       "Package": "refinery",
-      "Version": "0.0.0.9045",
+      "Version": "0.0.0.9057",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteUsername": "djnavarro",
       "RemoteRepo": "refinery",
-      "RemoteRef": "master",
-      "RemoteSha": "e98f559a78e428a23fbd0a25ba3bdde511088ace",
-      "Hash": "55b48afc79919976b64b36f128e0e828"
+      "RemoteUsername": "djnavarro",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "09c1bdb8f39159c7fb21fdd7551eba949ccc66ad",
+      "Hash": "5172b12bfb74400c2bfa9665d077a65a"
     },
     "renv": {
       "Package": "renv",
