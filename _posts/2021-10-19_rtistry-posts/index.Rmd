@@ -1,8 +1,9 @@
 ---
-title: "A resource list for aspiring generative artists in R" # <---- UPDATE ME
-description:
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit # <---- UPDATE ME
+title: "Generative art resources in R"
+description: |
+  An extremely incomplete (and probably biased) list of resources to
+  help an aspiring generative artist get started making pretty pictures
+  in R
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -11,7 +12,7 @@ author:
     affiliation_url: https://unsw.edu.au
     orcid_id: 0000-0001-7648-6578
 date: 2021-10-19
-preview: preview-image.jpg  # <---- UPDATE ME 
+preview: preview-image.png
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/rtistry-posts 
 repository_url: https://github.com/djnavarro/distill-blog/
