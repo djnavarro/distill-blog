@@ -6,7 +6,16 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Thu, 30 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>A resource list for aspiring generative artists in R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</link>
+      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</description>
+      <guid>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</guid>
+      <pubDate>Mon, 18 Oct 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts/index_files/figure-html5/flametree-1.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
     <item>
       <title>On blogging reproducibly with renv</title>
       <dc:creator>Danielle Navarro</dc:creator>

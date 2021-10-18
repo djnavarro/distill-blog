@@ -1,0 +1,99 @@
+---
+title: "A resource list for aspiring generative artists in R" # <---- UPDATE ME
+description:
+  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+  consectetur, adipisci velit # <---- UPDATE ME
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+date: 2021-10-19
+preview: preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/rtistry-posts 
+repository_url: https://github.com/djnavarro/distill-blog/
+output:
+  distill::distill_article:
+    self_contained: false
+params:
+  slug: rtistry-posts
+  date: 2021-10-19
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+- check the "update me" messages in YAML above
+- initialise the _renv folder with refinery::renv_new("name of post folder")
+- populate the lockfile with refinery::renv_snapshot("name of post folder")
+- update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+```
+
+
+<!--------------- post ----------------->
+
+People often ask me if I have any words of advice for young people. No wait, that's not right. Nobody wants to hear my words of advice for young people, largely because I have none. What they often *do* ask me is if I have any words of advice for aspiring generative artists who want to use R to make pretty pictures. To be honest, I don't have a lot of advice there either, but I'll try my best.
+
+Let's start with the big picture: there are no books or general purpose introductions out there. There are no books, no CRAN task views, no courses you can take. In fact, until quite recently generative art in R was an extremely niche topic. To my knowledge, the [#rtistry hashtag on twitter](https://twitter.com/hashtag/rtistry) is where you'll find the most art and the most posts about the topic, but that hashtag is pretty new.^[A little bit of searching on twitter suggests that I proposed the hashtag on January 20th 2021 in a now-deleted tweet.] There were resources that existed prior to that, of course: how could there not be? After all, Thomas Lin Pedersen has been building a toolkit for generative art in R for quite some time now. In his [keynote talk at celebRation2020](https://www.data-imaginist.com/slides/celebRation2020), he refers to an "art driven development" process that has led him to create several packages that are valuable to the would-be generative artist. For example:
+
+- [ambient](https://ambient.data-imaginist.com/) is amazingly useful when you want to play around with flow fields or generate interesting multidimensional noise patterns
+- [particles](https://github.com/thomasp85/particles) provides a toolkit for particle simulation in R: it's inspired by the d3-force javascript module, and is useful when you want to simulate forces acting on particles
+- [ggforce](https://ggforce.data-imaginist.com/) provides a collection of tools that add some missing functionality to ggplot2, much of which is very handy when making art
+
+These tools are great, but if you're just getting started it can be helpful to play around in a more constrained environment. If you want something extremely simple, you could play around with the [flametree](https://flametree.djnavarro.net/) package I wrote. It's not very flexible (it just draws branching things!) but it does have the advantage that you can get started with something as simple as this:
+
+```{r flametree, cache=TRUE}
+library(flametree)
+
+# pick some colours
+shades <- c("#1b2e3c", "#0c0c1e", "#74112f", "#f3e3e2")
+
+# data structure defining the trees
+dat <- flametree_grow(time = 10, trees = 10)
+
+# draw the plot
+dat %>% 
+  flametree_plot(
+    background = "white",
+    palette = shades, 
+    style = "nativeflora"
+  )
+```
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  name = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+
+
