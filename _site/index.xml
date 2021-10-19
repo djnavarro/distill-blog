@@ -6,7 +6,7 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 19 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 18 Oct 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Generative art resources in R</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -15,7 +15,7 @@
 help an aspiring generative artist get started making pretty pictures
 in R</description>
       <guid>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</guid>
-      <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 18 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts/preview-image.png" medium="image" type="image/png" width="1248" height="768"/>
     </item>
     <item>

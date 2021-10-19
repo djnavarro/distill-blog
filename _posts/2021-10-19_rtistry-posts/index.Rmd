@@ -89,6 +89,7 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - [Thinking outside the grid: A "bare bones" intro to Rtistry concepts in R using ggplot](https://www.thetidytrekker.com/post/thinking-outside-the-grid) by [Meghan Harris](https://twitter.com/meghansharris)
 
+- [Gradients](https://github.com/sharlagelfand/gradients) repository by [Sharla Gelfand](https://twitter.com/sharlagelfand)
 
 
 <!--------------- appendices ----------------->
