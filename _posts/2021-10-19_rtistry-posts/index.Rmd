@@ -83,6 +83,13 @@ My hope is that these resources will point you in the right direction to get sta
 
 In any case, I'll leave this post as it is for now but if folks would like to suggest additional resources, I can always update it if need be!
 
+## Postscript
+
+Okay, I'm going to start adding things. This is just a completely unstructured list for now, but I know how my brain works: if I don't bookmark the cool posts and resources I see pop up on my timeline I'll never find them again...
+
+- [Thinking outside the grid: A "bare bones" intro to Rtistry concepts in R using ggplot](https://www.thetidytrekker.com/post/thinking-outside-the-grid) by [Meghan Harris](https://twitter.com/meghansharris)
+
+
 
 <!--------------- appendices ----------------->
 
