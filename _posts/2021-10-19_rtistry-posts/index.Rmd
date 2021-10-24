@@ -91,6 +91,8 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - [Gradients](https://github.com/sharlagelfand/gradients) repository by [Sharla Gelfand](https://twitter.com/sharlagelfand)
 
+- Generative art [package](https://github.com/nrennie/aRt) by [Nicola Rennie](https://twitter.com/nrennie35)
+
 
 <!--------------- appendices ----------------->
 
