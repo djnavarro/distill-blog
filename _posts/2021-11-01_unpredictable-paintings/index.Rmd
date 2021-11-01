@@ -165,7 +165,7 @@ ggplot(
   scale_fill_scico(palette = "lajolla")
 ```
 
-Very pretty! But as I said, I'm bored with the "jagged little polygon" look, so what I want to do is find some way of chagning the appearance of the shapes.
+Very pretty! But as I said, I'm bored with the "jagged little polygon" look, so what I want to do is find some way of changing the appearance of the shapes.
 
 ## CRAN is a girl's best friend
 
