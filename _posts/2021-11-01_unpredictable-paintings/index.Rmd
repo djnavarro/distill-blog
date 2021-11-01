@@ -49,8 +49,9 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-*This is an older post, rescued upon request from a now-defunct blog. The original publication date was 15th January 2020*
+Almost two years (2020-01-15) ago I wrote this blog post as an introduction to generative art in R. The idea behind the post was to start making a new generative art system from scratch, and write the blog post at the same time. By doing it that way the reader can see how the process unfolds and how many false starts and discarded ideas a generative artist tends to go through, even for a simple system like this one. The post disappeared when I moved my blog to its own subdomain and its own repository, but I've now managed to rescue it! Hope it's helpful...
 
+## Introduction
 
 Over the last year or so I've taken up generative artwork as a hobby, and I am occasionally asked to write an introduction to the subject... how does one get started in generative art? When I started posting the code for my generative art to my ["rosemary"](https://github.com/djnavarro/rosemary) repository I has this to say about my subjective experience when making artwork,
 
