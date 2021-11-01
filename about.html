@@ -7,7 +7,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
   <meta name="generator" content="distill" />
-  <link rel="alternate" type="application/rss+xml" href="https://blog.djnavarro.net/index.xml" />
 
   <style type="text/css">
   /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
@@ -87,31 +86,31 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Notes from a data witch</title>
+  <title>Notes from a data witch: What's this about?</title>
 
-  <meta property="description" itemprop="description" content="A blog by Danielle Navarro, focusing mostly on R and data science"/>
+  <meta property="description" itemprop="description" content="Additional detail about the author, supplied even though no-one asked"/>
 
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Notes from a data witch"/>
+  <meta property="og:title" content="Notes from a data witch: What&#39;s this about?"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="A blog by Danielle Navarro, focusing mostly on R and data science"/>
+  <meta property="og:description" content="Additional detail about the author, supplied even though no-one asked"/>
   <meta property="og:image" content="https://blog.djnavarro.net/./image/twitter-image.jpg"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Notes from a data witch"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary_large_image"/>
-  <meta property="twitter:title" content="Notes from a data witch"/>
-  <meta property="twitter:description" content="A blog by Danielle Navarro, focusing mostly on R and data science"/>
+  <meta property="twitter:title" content="Notes from a data witch: What&#39;s this about?"/>
+  <meta property="twitter:description" content="Additional detail about the author, supplied even though no-one asked"/>
   <meta property="twitter:image" content="https://blog.djnavarro.net/./image/twitter-image.jpg"/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","site","preview","listing"]}},"value":[{"type":"character","attributes":{},"value":["Notes from a data witch"]},{"type":"character","attributes":{},"value":["A blog by Danielle Navarro, focusing mostly on R and data science\n"]},{"type":"character","attributes":{},"value":["distill::distill_website"]},{"type":"character","attributes":{},"value":["image/twitter-image.jpg"]},{"type":"character","attributes":{},"value":["posts"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","preview","description"]}},"value":[{"type":"character","attributes":{},"value":["What's this about?"]},{"type":"character","attributes":{},"value":["image/twitter-image.jpg"]},{"type":"character","attributes":{},"value":["Additional detail about the author, supplied even though no-one asked"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2406,12 +2405,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 </head>
 
-<body class="layout-listing">
+<body>
 
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Notes from a data witch","description":"A blog by Danielle Navarro, focusing mostly on R and data science","authors":[]}
+{"title":"What's this about?","description":"Additional detail about the author, supplied even though no-one asked","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2438,353 +2437,22 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
-<!--radix_placeholder_article_listing-->
-
-
-<script type="application/javascript">
-
-function init_posts_list() {
-
-  function load_image(img) {
-    var src = $(img).attr('data-src');
-    if (src) {
-      $(img).attr('src', src);
-      $(img).load(function() {
-        img.removeAttribute('data-src');
-      });
-    }
-  }
-
-  function set_posts_visible(posts, visible) {
-    if (visible) {
-
-      // show bottom border by default
-      $(posts).removeClass('post-preview-last');
-
-      // apply limits if need be
-      var max_posts = 25;
-      var apply_limits = $('.posts-container').hasClass('posts-apply-limit');
-      if (apply_limits && posts.length > max_posts) {
-        posts = $(posts).slice(0, max_posts);
-      } else {
-        $('.posts-more a').addClass('hidden');
-      }
-
-      // apply last style
-      $(posts.slice(-1)[0]).addClass('post-preview-last');
-
-      $(posts).removeClass('hidden');
-      $(posts).find('img[data-src]').each(function(i, img) {
-        load_image(img);
-      });
-    } else {
-      $(posts).addClass('hidden');
-    }
-  }
-
-  function apply_hash_filter() {
-
-    // clear active state
-    $('.categories .active').removeClass('active');
-
-    // mark all posts invisible to start
-    set_posts_visible($('.posts-list').children('a'), false);
-
-    // if we have a hash filter
-    if (window.location.hash && window.location.hash.startsWith("#category:")) {
-
-      // mark posts that match the category visible
-      var page_category = window.location.hash.replace(/^#category:/, "");
-      var posts = $('.post-metadata').map(function(idx, script) {
-        var metadata = $.parseJSON($(script).html());
-        var post = null;
-        $.each(metadata.categories, function(idx, category) {
-          category = category.replace(/ /g,"_");
-          if ((page_category || '').toLowerCase() === "articles" || category === page_category) {
-            post = $(script).parent().get();
-            return false;
-          }
-        });
-        return post;
-      });
-      set_posts_visible(posts, true);
-
-      // mark the hash active
-      $('.categories li>a[href="' + window.location.hash + '"]').addClass('active');
-
-      // update the list_caption
-      var list_caption = $('.posts-list-caption');
-      var caption = (page_category || '').toLowerCase() === "articles"
-        ? list_caption.attr('data-caption')
-        : ('Category: ' + page_category.replace(/_/g," "));
-      list_caption.text(caption);
-
-    } else {
-
-      // no hash filter, make all posts visible (subject to max display)
-      set_posts_visible($('.posts-list').children(), true);
-
-      // reset list caption
-      var list_caption = $('.posts-list-caption');
-      list_caption.text(list_caption.attr('data-caption'));
-
-
-    }
-  }
-
-  // more articles
-  function apply_post_limits(apply) {
-    if (apply) {
-      $('.posts-container').addClass('posts-apply-limit');
-      $('.posts-more a').removeClass('hidden');
-    } else {
-      $('.posts-container').removeClass('posts-apply-limit');
-      $('.posts-more a').addClass('hidden');
-    }
-  }
-
-  // click handling for tags
-  $('.dt-tag').click(function(ev) {
-    window.location.hash = '#category:' + $(this).text().replace(/ /g, "_");
-    return false;
-  })
-
-  // hash filter handling
-  apply_hash_filter();
-  $(window).on('hashchange',function() {
-    apply_post_limits(true);
-    apply_hash_filter();
-  });
-
-  // more articles link
-  $('.posts-more a').click(function(e) {
-    e.preventDefault();
-    apply_post_limits(false);
-    apply_hash_filter();
-    return false;
-  });
-
-}
-
-</script>
-
-
-
-<div class="posts-container posts-apply-limit l-page">
-<div class="posts-list">
-<h1 class="posts-list-caption" data-caption="Notes from a data witch">Notes from a data witch</h1>
-<a href="posts/2021-11-01_unpredictable-paintings/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 31, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/2021-11-01_unpredictable-paintings/featured.png"/>
-</div>
-<div class="description">
-<h2>Unpredictable paintings</h2>
-<div class="dt-tags"></div>
-<p>An example showing how to build a generative art system in R. The post walks through some of the creative and design choices that are involved, and highlights how much of a trial-and-error process generative art can be</p>
-</div>
-</a>
-<a href="posts/2021-10-19_rtistry-posts/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Oct. 19, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/2021-10-19_rtistry-posts/preview-image.png"/>
-</div>
-<div class="description">
-<h2>Generative art resources in R</h2>
-<div class="dt-tags"></div>
-<p>An extremely incomplete (and probably biased) list of resources to
-help an aspiring generative artist get started making pretty pictures
-in R</p>
-</div>
-</a>
-<a href="posts/2021-09-30_on-blogging-reproducibly/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Sept. 30, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/2021-09-30_on-blogging-reproducibly/preview-image.jpg"/>
-</div>
-<div class="description">
-<h2>On blogging reproducibly with renv</h2>
-<div class="dt-tags"></div>
-<p>Some initial thoughts on how to deploy a distill blog in a reproducible fashion. It's a little harder than it looks and I am still working out all the details. To make my life a little easier, I started writing a small package called "refinery", which uses the renv package to manage a separate R environment for every post, and aims to prevent conflicts between renv and distill. I'm not sure it's useful to anyone except me, but it makes me happy.</p>
-</div>
-</a>
-<a href="posts/2021-09-26_setting-up-on-hic-et-nunc/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Sept. 26, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/2021-09-26_setting-up-on-hic-et-nunc/preview-image.jpg"/>
-</div>
-<div class="description">
-<h2>How to mint digital art on HEN</h2>
-<div class="dt-tags"></div>
-<p>Not every artist wants to make cryptoart, and that's okay. Others do, and that's okay too. But if you want to try it out in a socially responsible way, it takes a bit of effort to get started. This post attempts to make the process a little easier by walking you through the whole thing, on the assumption that you are an artist who (like me) has very little interest in blockchain or cryptocurrency but would like to get paid and pay the rent</p>
-</div>
-</a>
-<a href="posts/2021-09-14_tidy-tuesday-billboard/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Sept. 14, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img src="posts/2021-09-14_tidy-tuesday-billboard/britney.jpg"/>
-</div>
-<div class="description">
-<h2>Visualising the hits of Queen Britney</h2>
-<div class="dt-tags"></div>
-<p>A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools</p>
-</div>
-</a>
-<a href="posts/2021-09-07_water-colours/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Sept. 7, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2021-09-07_water-colours/jasmine-recollected.png"/>
-</div>
-<div class="description">
-<h2>Art, jasmines, and the water colours</h2>
-<div class="dt-tags"></div>
-<p>An essay and tutorial covering a few useful art techniques in R</p>
-</div>
-</a>
-<a href="posts/2021-08-08_git-credential-helpers/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">Aug. 8, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2021-08-08_git-credential-helpers/credentials.jpg"/>
-</div>
-<div class="description">
-<h2>Managing GitHub credentials from R, difficulty level linux</h2>
-<div class="dt-tags"></div>
-<p>A sick sad story in which a humble R user was forced to learn something about
-how linux stores passwords and, more importantly, got R to use her GitHub
-credentials properly</p>
-</div>
-</a>
-<a href="posts/2021-07-08_generative-art-in-r/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">July 8, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2021-07-08_generative-art-in-r/turmite59-in-red.jpg"/>
-</div>
-<div class="description">
-<h2>Generative art in R</h2>
-<div class="dt-tags"></div>
-<p>Comments on an exhibit I contributed to as part of useR!2021</p>
-</div>
-</a>
-<a href="posts/2021-04-19_bs4cards-in-distill/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">April 19, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2021-04-19_bs4cards-in-distill/bs4cards-logo.png"/>
-</div>
-<div class="description">
-<h2>Bootstrap cards in distill</h2>
-<div class="dt-tags"></div>
-<p>How to enable bootstrap 4 on a distill website, even though you probably 
-don't need to. I like it though because I get to add pretty bootstrap cards</p>
-</div>
-</a>
-<a href="posts/2021-04-18_pretty-little-clis/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">April 18, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2021-04-18_pretty-little-clis/pretty-little-clis.jpg"/>
-</div>
-<div class="description">
-<h2>Pretty little CLIs</h2>
-<div class="dt-tags"></div>
-<p>How to make a gorgeous command line interface in R using the cli package.
-Somewhere along the way I accidentally learned about ANSI control codes,
-which strikes me as unfortunate</p>
-</div>
-</a>
-<a href="posts/2021-04-05_welcome/" class="post-preview">
-<script class="post-metadata" type="text/json">{"categories":[]}</script>
-<div class="metadata">
-<div class="publishedDate">April 5, 2021</div>
-<div class="dt-authors">
-<div class="dt-author">Danielle Navarro</div>
-</div>
-</div>
-<div class="thumbnail">
-<img data-src="posts/2021-04-05_welcome/welcome.jpg"/>
-</div>
-<div class="description">
-<h2>Welcome to the jungle</h2>
-<div class="dt-tags"></div>
-<p>I have reluctantly decided to create a new blog. Some thoughts on 
-what I hope to achieve, having tried my hand at blogging so very many times 
-before</p>
-</div>
-</a>
-</div>
-<div class="posts-more">
-<a href="#">More articles &raquo;</a>
-</div>
-</div>
-<!--/radix_placeholder_article_listing-->
 
 <div class="d-title">
-<h1>Notes from a data witch</h1>
+<h1>What’s this about?</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>A blog by Danielle Navarro, focusing mostly on R and data science</p></p>
+<p><p>Additional detail about the author, supplied even though no-one asked</p></p>
 </div>
 
 
 <div class="d-article">
+<p><a href="https://djnavarro.net">Danielle Navarro</a> is a computational cognitive scientist and Associate Professor at the University of New South Wales. Her research focuses on human concept learning and reasoning, and on statistical methods in the behavioural sciences. Other topics she has researched include data visualisation, decision making, language and cultural evolution, cognitive development, and forensic psychology. Danielle is a cofounder of <a href="https://rladiessydney.org">R-Ladies Sydney</a>, and holds editorial roles at <a href="https://www.sciencemag.org/">Science</a> and <a href="https://www.apa.org/pubs/journals/rev/">Psychological Review</a>. On occasions she has been known to masquerade as a <a href="https://learningstatisticswithr.com">statistician</a>, <a href="https://slides.djnavarro.net">data scientist</a>, <a href="https://github.com/djnavarro">software developer</a> and <a href="https://art.djnavarro.net">generative artist</a>. She is prone to describing herself in the third person in biographies, but is willing to admit that it’s super weird.</p>
+<p>Profile image, courtesy of Mara Averick:</p>
+<p><br></p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="image/data-witch.png" width="753" /></p>
+</div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

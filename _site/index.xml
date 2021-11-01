@@ -6,7 +6,16 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 18 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Unpredictable paintings</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-11-01_unpredictable-paintings</link>
+      <description>An example showing how to build a generative art system in R. The post walks through some of the creative and design choices that are involved, and highlights how much of a trial-and-error process generative art can be</description>
+      <guid>https://blog.djnavarro.net/posts/2021-11-01_unpredictable-paintings</guid>
+      <pubDate>Sun, 31 Oct 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-01_unpredictable-paintings/featured.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
     <item>
       <title>Generative art resources in R</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -15,7 +24,7 @@
 help an aspiring generative artist get started making pretty pictures
 in R</description>
       <guid>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</guid>
-      <pubDate>Mon, 18 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts/preview-image.png" medium="image" type="image/png" width="1248" height="768"/>
     </item>
     <item>
