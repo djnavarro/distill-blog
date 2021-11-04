@@ -1,0 +1,118 @@
+---
+title: "Learning Apache Arrow" # <---- UPDATE ME
+description:
+  Or, how I learned to stop worrying and love a standardised in-memory columnar data format
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: UNSW Sydney
+    affiliation_url: https://unsw.edu.au
+    orcid_id: 0000-0001-7648-6578
+date: 2021-11-04
+preview: preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/learning-apache-arrow 
+repository_url: https://github.com/djnavarro/distill-blog/
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+params:
+  slug: learning-apache-arrow
+  date: 2021-11-04
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+```
+
+
+<!--------------- post ----------------->
+
+If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about Parquet files, Apache Arrow, and the `arrow` package, but you're not really sure what they're about and are curious? If that's you then--
+
+*So we're just writing obvious "please hire me!" blog posts now?*
+
+Oh shush. It's fun and useful too, you know.
+
+*Okay fine, but at least be transparent about what you're doing?*
+
+Sheesh, what do you think this fake dialogue is for if not making the subtext blatant? Now could you please stop interrupting me and let me talk about Apache Arrow? It is in fact a more interesting subject than our pending unemployment. 
+
+*Yeah, see how you feel about that in December babe...*
+
+Sigh.
+
+
+## Introduction
+
+Okay, where was I? Ah yes...
+
+If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about Parquet files, Apache Arrow, and the `arrow` package, but you're not really sure what they're about and are curious? If that's you, then this blog post is designed to help you get started. 
+
+### Wait... do I actually care?
+
+Let's start at the beginning, with the most important question of all: do you actually need to care about this? For a lot of people, the answer to this is going to be "probably not -- or at least not right now". For example, if all your data sets are small and rectangular, then you're probably working with CSV files and not encountering a lot of problems. Your current workflow uses `read.csv()` or `readr::read_csv()` to import data, and everything is fine. Sure, the CSV format has some problems, but it's simple and it works. If that is you, then right now you don't need to worry about this. 
+
+But perhaps that's not you, or maybe that won't be you forever. You might be working with larger data sets, either now or in the future, and when that happens you might need to care.
+
+### Okay... so what's the problem?
+
+Thanks for a great question! Here are a few scenarios to think about.
+
+- *Scenario 1:* Let's suppose you have a big rectangular data set. An enormous table, basically, and currently it's stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I'll come back to those later). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it's not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That's awkward. R likes to store things in memory. Eek.
+
+- *Scenario 2:* Okay, maybe your data isn't that big and it fits in memory, but it's still pretty big, and you need to do something complicated with it. Maybe your analysis needs to start in R but then continue in Python. Or something like that. In your head, you're thinking okay first I have to read the whole dataset into memory in R, and then it has to be transferred to Python which will have to read its own copy, and... gosh that sounds slow and inefficient. Ugh.
+
+- *Scenario 3:* Honestly, you're just tired of having to deal with the fact that every language has its own idiosyncratic way of storing data sets in memory and it's exhausting to have to keep learning new things and you really wish there were some standardised way that programming languages represent data in memory and you'd like a single toolkit that you can use regardless of what language you're in. Sigh...
+
+In any of these scenarios, Arrow might be useful to you.
+
+### Fiiiiiine, I'll keep reading... tell me what Arrow is
+
+Yaaaaay! [Green Arrow](https://en.wikipedia.org/wiki/Green_Arrow) is a superhero in the DC Comics universe, whose real name is Oliver Queen. He was the subject of an unintentionally hilarious TV show, and--
+
+### Sigh. *Apache* Arrow please?
+
+Oh right. 
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  name = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+
+
