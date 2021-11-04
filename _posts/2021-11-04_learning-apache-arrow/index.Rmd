@@ -1,7 +1,7 @@
 ---
-title: "Learning Apache Arrow" # <---- UPDATE ME
+title: "Learning Apache Arrow (for R users)" 
 description:
-  Or, how I learned to stop worrying and love a standardised in-memory columnar data format
+  Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -46,7 +46,7 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about Parquet files, Apache Arrow, and the `arrow` package, but you're not really sure what they're about and are curious? If that's you then--
+If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about [Parquet files](https://parquet.apache.org), [Apache Arrow](https://arrow.apache.org), and the [arrow package for R](https://arrow.apache.org/docs/r/), but you're not really sure what they're about and are curious? If that's you, then--
 
 *So we're just writing obvious "please hire me!" blog posts now?*
 
@@ -65,11 +65,13 @@ Sigh.
 
 Okay, where was I? Ah yes...
 
-If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about Parquet files, Apache Arrow, and the `arrow` package, but you're not really sure what they're about and are curious? If that's you, then this blog post is designed to help you get started. 
+If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about [Parquet files](https://parquet.apache.org), [Apache Arrow](https://arrow.apache.org), and the [arrow package for R](https://arrow.apache.org/docs/r/), but you're not really sure what they're about and are curious? If that's you, then this blog post is designed to help you get started. 
 
 ### Wait... do I actually care?
 
-Let's start at the beginning, with the most important question of all: do you actually need to care about this? For a lot of people, the answer to this is going to be "probably not -- or at least not right now". For example, if all your data sets are small and rectangular, then you're probably working with CSV files and not encountering a lot of problems. Your current workflow uses `read.csv()` or `readr::read_csv()` to import data, and everything is fine. Sure, the CSV format has some problems, but it's simple and it works. If that is you, then right now you don't need to worry about this. 
+Let's start at the beginning, with the most important question of all: do you actually need to care about this? This is going to be a long post, so let's make sure you're reading it for the right reasons!
+
+For a lot of people, the answer to the "do I care?" question is going to be "probably not -- or at least not right now". For example, if all your data sets are small and rectangular, then you're probably working with CSV files and not encountering a lot of problems. Your current workflow uses `read.csv()` or `readr::read_csv()` to import data, and everything is fine. Sure, the CSV format has some problems, but it's simple and it works. If that is you, then right now you don't need to worry about this. 
 
 But perhaps that's not you, or maybe that won't be you forever. You might be working with larger data sets, either now or in the future, and when that happens you might need to care.
 
@@ -91,7 +93,60 @@ Yaaaaay! [Green Arrow](https://en.wikipedia.org/wiki/Green_Arrow) is a superhero
 
 ### Sigh. *Apache* Arrow please?
 
-Oh right. 
+Oh right. Apache Arrow is a standardised, language-independent format for storing table-like data in-memory, using a columnar format and supporting zero-copy reads without serialisation overhead.
+
+### I hate you
+
+Sorry. Let's unpack each of those terms: 
+
+- Arrow is a **standardised and language-independent format**. It's the same thing regardless of what programming language you're using: a data set accessed from R with Arrow has the same format as the a data set accessed in Python.
+- Arrow is used to store **table-like data**, very similar to a data frame or tibble.
+- Arrow refers to the **in-memory** format: it's not talking about how the data are stored on disk, and it's not talking about file formats. It's all about how a loaded data set is represented in memory.
+- Arrow (and the related Parquet file format) uses **columnar format**. Unlike a CSV file, which stores the data row-wise, it represents the data column-wise: this turns out to be a much more efficient way to represent data when you need to subset the data (e.g., by using `dplyr::filter()` in R or the `WHERE` clause in SQL). 
+- Arrow supports **zero-copy reads without serialisation overhead**, which... um...
+
+### Explain serialisation please
+
+Oh right, yeah. [Serialisation](https://en.wikipedia.org/wiki/Serialization) is one of those terms that those fancy data people know all about, but a regular R user might not be *quite* as familiar with. It's worth unpacking this a bit because it's helpful for understanding the problem that Arrow solves. 
+
+Okay, here's a data frame shown the way we typically think about it from the R user perspective:
+
+```{r read-manifest}
+art <- readr::read_csv("https://djnavarro.net/series-water-colours/manifest.csv")
+art
+```
+
+It's a rectangular data stored in memory as the `art` tibble, and like all tibbles and data frames it's basically a list that serves as a container for a collection of vectors: `path`, `resolution`, `series` and so on. If you really wanted to torture yourself you could go look at the [R Internals Manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf) to see how this data structure is implemented, but it's not important here. The key thing here is that the "thing" stored in memory is a structured object.
+
+However, notice that in the code chunk above, I had to load the data from a file. The data had to be transferred over a channel (in this case the internet) to reach R, and what gets transferred is just a series of bytes. A structured object is *serialised* into a sequence of bytes, that sequence of bytes is transmitted (or stored as a file), and that sequence of bytes is then *unserialised* at the other end and transformed back into a structured object. Base R has a `serialize()` function that you can use to convert the `art` tibble into a raw vector:
+
+```{r serialise-art}
+bytes <- serialize(art, connection = NULL)
+```
+Here's the first 100 bytes:
+
+```{r show-serialised}
+bytes[1:100]
+```
+
+Similarly, there's an `unserialize()` function that will take the raw vector as input and reconstruct the tibble for you:
+
+```{r unserialise-art}
+unserialize(bytes)
+```
+
+For a small data set like this one, it doesn't take R very long to serialise or unserialise. The "serialisation overhead" isn't a big deal. But when the data set is very large, this is not a trivial operation and you don't want to do this very often. That's a problem when a large data set needs to be passed around between multiple platforms. Loading the a CSV into R incurs a serialisation cost; transferring a copy of the data from R to Python incurs a serialisation cost. This happens because R and Python have different structured representations: an data frame in R is a different kind of thing to a panda in Python, so the data has to be serialised, transferred, and then unserialised at the other end in order to pass the data from one to another. 
+
+Wouldn't it be nice if we could avoid that? What if there was just *one* data structure representing the table in-memory, and R and Python could both agree to use it? That would remove the need to copy and transfer the data, right? And in doing so, it would eliminate those pesky serialisation costs incurred every time. If *only* there were a standardised, language-independent format for storing table-like data in-memory, using a columnar format and supporting zero-copy reads without serialisation overhead...
+
+**[APACHE ARROW ENTERS FROM STAGE LEFT, LOOKING UNREASONABLY PLEASED]**
+
+"Hi!"
+
+
+## Overview of Arrow
+
+
 
 
 <!--------------- appendices ----------------->
