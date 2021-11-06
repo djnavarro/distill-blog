@@ -139,7 +139,7 @@ For a small data set like this one, it doesn't take R very long to serialise or 
 
 Wouldn't it be nice if we could avoid that? What if there was just *one* data structure representing the table in-memory, and R and Python could both agree to use it? That would remove the need to copy and transfer the data, right? And in doing so, it would eliminate those pesky serialisation costs incurred every time. If *only* there were a standardised, language-independent format for storing table-like data in-memory, using a columnar format and supporting zero-copy reads without serialisation overhead...
 
-**[APACHE ARROW ENTERS FROM STAGE LEFT, LOOKING UNREASONABLY PLEASED]**
+**[Apache Arrow enters stage left, looking unreasonably pleased]**
 
 "Hi!"
 
