@@ -93,6 +93,7 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - Generative art [package](https://github.com/nrennie/aRt) by [Nicola Rennie](https://twitter.com/nrennie35)
 
+- Various [art posts](https://clauswilke.com/art/post/) by [Claus Wilke](https://twitter.com/ClausWilke)
 
 <!--------------- appendices ----------------->
 
