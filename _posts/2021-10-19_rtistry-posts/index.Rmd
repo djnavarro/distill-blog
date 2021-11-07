@@ -97,6 +97,8 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - [ggbenjamini package](https://urswilke.github.io/ggbenjamini/) by [Urs Wilke](https://twitter.com/UrsWilke)
 
+- [generative art examples](https://github.com/picasa/generative_examples) by [Pierre Casadebaig](https://twitter.com/pircasa)
+
 <!--------------- appendices ----------------->
 
 ```{r, echo=FALSE}
