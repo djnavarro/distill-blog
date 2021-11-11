@@ -6,7 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Mon, 01 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 10 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Data serialisation in R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-11-11_base-r-serialisation</link>
+      <description>Understanding the relationship between in-memory data structures in R and how those objects are converted to a sequence of bytes that can be saved or transmitted.</description>
+      <guid>https://blog.djnavarro.net/posts/2021-11-11_base-r-serialisation</guid>
+      <pubDate>Wed, 10 Nov 2021 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Unpredictable paintings</title>
       <dc:creator>Danielle Navarro</dc:creator>
@@ -24,7 +32,7 @@
 help an aspiring generative artist get started making pretty pictures
 in R</description>
       <guid>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</guid>
-      <pubDate>Mon, 18 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts/preview-image.png" medium="image" type="image/png" width="1248" height="768"/>
     </item>
     <item>
