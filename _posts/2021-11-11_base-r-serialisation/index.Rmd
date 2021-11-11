@@ -19,6 +19,7 @@ repository_url: https://github.com/djnavarro/distill-blog/
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
 params:
   slug: base-r-serialisation
   date: 2021-11-11
