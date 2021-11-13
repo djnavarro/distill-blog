@@ -87,6 +87,8 @@ In any case, I'll leave this post as it is for now but if folks would like to su
 
 Okay, I'm going to start adding things. This is just a completely unstructured list for now, but I know how my brain works: if I don't bookmark the cool posts and resources I see pop up on my timeline I'll never find them again...
 
+### R specific
+
 - [Thinking outside the grid](https://www.thetidytrekker.com/post/thinking-outside-the-grid) by [Meghan Harris](https://twitter.com/meghansharris)
 
 - [Gradients](https://github.com/sharlagelfand/gradients) repository by [Sharla Gelfand](https://twitter.com/sharlagelfand)
@@ -99,7 +101,14 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - [generative art examples](https://github.com/picasa/generative_examples) by [Pierre Casadebaig](https://twitter.com/pircasa)
 
-- not R based, but [thatcreativecode.page](https://thatcreativecode.page/) is a great general resource
+### More general
+
+- [thatcreativecode.page](https://thatcreativecode.page/) is a great general resource
+
+- the description of [asemi.ca](https://asemi.ca) shows a design process in detail
+
+- Tyler Hobbs [generative art essays](https://tylerxhobbs.com/essays)
+
 
 <!--------------- appendices ----------------->
 
