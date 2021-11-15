@@ -6,14 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Wed, 10 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Nov 2021 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Data serialisation in R</title>
       <dc:creator>Danielle Navarro</dc:creator>
-      <link>https://blog.djnavarro.net/posts/2021-11-11_base-r-serialisation</link>
+      <link>https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds</link>
       <description>Understanding the relationship between in-memory data structures in R and how those objects are converted to a sequence of bytes that can be saved or transmitted.</description>
-      <guid>https://blog.djnavarro.net/posts/2021-11-11_base-r-serialisation</guid>
-      <pubDate>Wed, 10 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds</guid>
+      <pubDate>Sun, 14 Nov 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/preview-image.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>
       <title>Unpredictable paintings</title>
