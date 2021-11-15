@@ -50,7 +50,7 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 Data [serialisation](https://en.wikipedia.org/wiki/Serialization) is one of those terms that comes up from time to time in data science (and on #rstats twitter!). I suspect that anyone who works with big data or has a computer science background is likely to be *painfully* aware of what serialisation is and why it matters. Those folks probably aren't in need of any post that I might write on the topic! However, a lot of people who work in R come from other backgrounds. If you're a social scientist who mostly works with small CSV files, for example, there's no particular reason why you'd have encountered this. I worked as a mathematical psychologist and computational modeller for about 20 years and until very recently I've never had never had to think about it! In fact, the issue only came up for me when I started reading about [Apache Arrow](https://arrow.apache.org) (a topic for another post, perhaps...) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it. 
 
-## What do we mean by "serialisation"?
+## What is "serialisation"?
 
 Viewed in the general sense, serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are "serialising" it according to some encoding scheme.  Suppose, for instance, I have a data frame called `art`:
 
@@ -108,7 +108,7 @@ art
 
 Thrilling stuff.
 
-## How does the RDS serialisation format work?
+## How does RDS serialisation work?
 
 Data can be serialised in different ways. The native RDS format used by R, for example, provides a method for serialising an R object in a way that -- unlike CSV -- preserves all the information about that object. When I use `readRDS()` to unserialise the `art.rds` file that I happen to have on disk, it clearly recreates the same R object
 
@@ -156,7 +156,7 @@ unserialize(bytes)
 
 Even more thrilling stuff than before. 
 
-## Serialising data to plain text RDS with UTF-8
+## Serialising to plain text RDS
 
 Okay, so what we've learned so far is that in most cases, an RDS file is just a gzipped version of whatever the hell it is that `serialize()` creates. What we don't yet know is how the `serialize()` function operates. How is it creating this sequence of bytes? What do the contents of this file actually include? In order to look at this, I'll start by serialising a much simpler object. Instead of serialising the `art` data frame, I'll serialise a numeric vector containing three elements, and I'll set `ascii = TRUE` so that R uses UTF-8 to serialise the object to plain text format
 
@@ -193,31 +193,32 @@ saveRDS(
 
 Yay! My excitement can barely be contained.
 
-## Interpreting the contents of an RDS file
+## Interpreting the RDS format
 
-All right, lets see if we can interpret the contents of an RDS file. Rather than tediously writing the file to disk using `saveRDS()` and then loading it again, I'll cheat slightly and write a `format_rds()` function that serialises an object and prints the results directly to the R console:
+All right, lets see if we can interpret the contents of an RDS file. Rather than tediously writing the file to disk using `saveRDS()` and then loading it again, I'll cheat slightly and write a `show_rds()` function that serialises an object and prints the results directly to the R console:
 
-```{r}
-format_rds <- function(object) {
+```{r, include=FALSE}
+show_rds <- function(object, header = TRUE) {
   bytes <- serialize(
     object = object,
     connection = NULL, 
     ascii = TRUE
   )
-  cat(rawToChar(bytes))
+  rds_string <- rawToChar(bytes)
+  rds_vector <- strsplit(rds_string, "\n")[[1]]
+  if(header == FALSE) rds_vector <- rds_vector[-(1:6)]
+  cat(rds_vector, sep = "\n")
 }
 ```
 
-Okay, so here's our RDS-formatted object:
-
 ```{r}
-format_rds(object = c(10.1, 2.2, 94.3))
+show_rds(object = c(10.1, 2.2, 94.3))
 ```
 
 We already know what the last 3 lines mean: they're the 3 values contained in the object. Is it a coincidence that line preceding that happens to *also* contain "3"? Let's see what happens if we try to serialise just 2 numbers. Does that line change to "2"?
 
 ```{r}
-format_rds(object = c(10.1, 2.2))
+show_rds(object = c(10.1, 2.2))
 ```
 
 Yes. Yes it does. Here's what we know so far:
@@ -262,6 +263,9 @@ UTF-8
 94.3   # third value is 94.3
 ```
 
+
+### The RDS header
+
 At this point, we've annotated every part of the RDS file that corresponds to the actual object. The lines preceding it are the RDS header. Here's what the first four lines mean:
 
 ```
@@ -300,6 +304,112 @@ UTF-8  # the file encodes UTF-8 characters not Latin-1
 ```
 
 Okay then... but what about that pesky "5"? What does that mean? I'll be honest. It took me ages to figure this one out. As far as I can tell this line isn't discussed in the R Internals Manual, but you can work it out by looking at the [source code for serialize](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408). That line reads "5" because it's telling you (or the parser) that the string that follows on the next line (i.e., "UTF-8") contains 5 characters. Presumably if I'd used Latin-1 encoding, the corresponding line would have been "7". 
+
+Now that we have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on so that we don't have to look at that same six lines of output over and over!
+
+### Logical, integer, and numeric vectors in RDS
+
+For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you'd expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:
+
+```{r}
+show_rds(
+  object = c(TRUE, TRUE, FALSE, NA), 
+  header = FALSE
+)
+```
+
+`TRUE` values are represented by `1` in the RDS file, and `FALSE` values are represented by `0`. Missing values are represented as `NA`. For an integer vector, we see something similar. The SEXPTYPE here is 13, so a vector of four integer looks like this:
+
+```{r}
+show_rds(
+  object = c(-10L, 20L, 30L, NA),
+  header = FALSE
+)
+```
+
+Numeric vectors we've already seen. They have SEXPTYPE of 14, so a numeric vector of length 3 starts with `14` on the first line, `3` on the second line, and then the numbers themselves appear over the remaining three lines. However, one thing to keep in mind is that numeric values are subject to the vagaries of floating point arithmetic when represented in-memory, so it's quite possible that something like this might happen when those values are subsequently serialised:
+
+```{r}
+show_rds(
+  object = c(10.3, 99.9, 100),
+  header = FALSE
+)
+```
+
+What about character vectors? Ah well, those are trickier...
+
+### Character vectors in RDS
+
+Let's create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so you'd expect that a character vector with three elements would start with `16` on the first line and `3` on the second line, which would then be followed by the contents of each cell. And that's... sort of true:
+
+```{r}
+show_rds(
+  object = c("text", "is", "strange"),
+  header = FALSE
+)
+```
+
+What is slightly peculiar is that every string occupies three lines. For instance, these three lines correspond to the word `"strange"`:
+
+```
+262153
+7
+strange
+```
+
+This puzzled me at first, before I remembered that the source code for R is all written in C, and C represents strings as an array. In R, the word `"strange"` is treated as a single string, but C treats this string as a vector consisting of 7 characters. So the interpretation of lines two and three are:
+
+```
+262153
+7        # the string has "length" 7
+strange  # the 7 characters in the string
+```
+
+What about the first line? Given everything we've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? Turns out that's not true, but the intuition isn't completely wrong. For now, let's pretend that 262153 encodes something "like" a SEXPTYPE, and come back to it later.
+
+### Lists in RDS
+
+What about lists? Lists are more complicated than atomic vectors, because they're just containers for other data structures that can have different lengths and types. As mentioned earlier, they have SEXPTYPE 19, so a list with three elements will of course start with `19` on the first line and `3` on the second line. Here's an example:
+
+```{r}
+show_rds(
+  object = list(
+    c(TRUE, FALSE), 
+    10.2, 
+    c("strange", "thing")
+  ),
+  header = FALSE
+)
+```
+
+The output here begins with the two lines specifying that it's a list of length three, and then is followed by the RDS representation for the logical vector `c(TRUE, FALSE)`, then the RDS representation for the numeric vector `10.2`, and finally the RDS representation for the character vector `c("strange", "thing")`. If we use some indenting and commenting to make annotate the RDS representation of the list, we might get something like this:
+
+```
+19 # it's a list
+3  # of length 3
+
+  10  # list entry 1 is logical
+   2  # of length 2
+   
+    1    # value is TRUE
+    0    # value is FALSE
+      
+  14  # list entry 2 is numeric 
+   1  # of length 1
+   
+    10.2 # value is 10.2
+    
+  16  # list entry 3 is character
+   2  # of length 2
+   
+    262153  # every string starts with this
+         7  # this string has 7 characters
+   strange  # values are: s, t, r, a, n, g, e
+   
+    262153  # every string starts with this
+         5  # this string has 5 characters
+     thing  # values are: t, h, i, n, g
+```
 
 
 <!--------------- appendices ----------------->
