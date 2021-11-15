@@ -50,7 +50,7 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 Data [serialisation](https://en.wikipedia.org/wiki/Serialization) is one of those terms that comes up from time to time in data science (and on #rstats twitter!). I suspect that anyone who works with big data or has a computer science background is likely to be *painfully* aware of what serialisation is and why it matters. Those folks probably aren't in need of any post that I might write on the topic! However, a lot of people who work in R come from other backgrounds. If you're a social scientist who mostly works with small CSV files, for example, there's no particular reason why you'd have encountered this. I worked as a mathematical psychologist and computational modeller for about 20 years and until very recently I've never had never had to think about it! In fact, the issue only came up for me when I started reading about [Apache Arrow](https://arrow.apache.org) (a topic for another post, perhaps...) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it. 
 
-## What is "serialisation"?
+## What is serialisation?
 
 Viewed in the general sense, serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are "serialising" it according to some encoding scheme.  Suppose, for instance, I have a data frame called `art`:
 
@@ -197,7 +197,7 @@ Yay! My excitement can barely be contained.
 
 All right, lets see if we can interpret the contents of an RDS file. Rather than tediously writing the file to disk using `saveRDS()` and then loading it again, I'll cheat slightly and write a `show_rds()` function that serialises an object and prints the results directly to the R console:
 
-```{r, include=FALSE}
+```{r}
 show_rds <- function(object, header = TRUE) {
   bytes <- serialize(
     object = object,
@@ -307,7 +307,7 @@ Okay then... but what about that pesky "5"? What does that mean? I'll be honest.
 
 Now that we have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on so that we don't have to look at that same six lines of output over and over!
 
-### Logical, integer, and numeric vectors in RDS
+### Logical, integer, and numeric vectors
 
 For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you'd expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:
 
@@ -338,7 +338,7 @@ show_rds(
 
 What about character vectors? Ah well, those are trickier...
 
-### Character vectors in RDS
+### Character vectors
 
 Let's create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so you'd expect that a character vector with three elements would start with `16` on the first line and `3` on the second line, which would then be followed by the contents of each cell. And that's... sort of true:
 
@@ -365,9 +365,9 @@ This puzzled me at first, before I remembered that the source code for R is all 
 strange  # the 7 characters in the string
 ```
 
-What about the first line? Given everything we've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? Turns out that's not true, but the intuition isn't completely wrong. For now, let's pretend that 262153 encodes something "like" a SEXPTYPE, and come back to it later.
+What about the first line? Given everything we've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? Turns out that's not true. The actual data structure here is called a CHARSXP -- referring to the internal representation R uses for character strings -- and it is SEXPTYPE 9. Later on I'll explain why all the strings are marked with 262153 rather than 9, but for now let's take it on faith that there's a good reason for it.
 
-### Lists in RDS
+### Lists
 
 What about lists? Lists are more complicated than atomic vectors, because they're just containers for other data structures that can have different lengths and types. As mentioned earlier, they have SEXPTYPE 19, so a list with three elements will of course start with `19` on the first line and `3` on the second line. Here's an example:
 
@@ -391,13 +391,13 @@ The output here begins with the two lines specifying that it's a list of length 
   10  # list entry 1 is logical
    2  # of length 2
    
-    1    # value is TRUE
-    0    # value is FALSE
+    1       # value is TRUE
+    0       # value is FALSE
       
   14  # list entry 2 is numeric 
    1  # of length 1
    
-    10.2 # value is 10.2
+    10.2    # value is 10.2
     
   16  # list entry 3 is character
    2  # of length 2
@@ -410,6 +410,150 @@ The output here begins with the two lines specifying that it's a list of length 
          5  # this string has 5 characters
      thing  # values are: t, h, i, n, g
 ```
+
+### Object attributes
+
+One of the key features of R is that vectors are permitted to have arbitrary metadata: names, classes, attributes. If an R object contains metadata, that metadata must be serialised too. That has some slightly surprising effects. Let's start with this very simple numeric object with two elements:
+
+```{r}
+show_rds(object = c(100, 200), header = FALSE)
+```
+
+As expected, we see that it has SEXPTYPE 14 (numeric), length 2, and the values it stores are 100 and 200. Nothing out of the ordinary here. However, when we add a name to the object, the RDS output is considerably more complicated:
+
+```{r}
+show_rds(object = c(a = 100, b = 200), header = FALSE)
+```
+
+Ooooookay, that's weird. First off, we seem to be having the same problem we had with strings. If you were to take the first line of this output at face value you might think that a named numeric vector has SEXPTYPE 526. It doesn't. In the same way that strings don't have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. 
+
+Setting those details aside, notice that the RDS output is very similar to the output we saw when converting a list to RDS. The RDS output contains the numeric vector first (the data), which is then followed by a list (well, technically it's a pairlist) that specifies the attributes. For this object, there's only one attribute:
+
+```
+526     # Numeric vector 
+2       # with two values
+
+   100     # value 1 
+   200     # value 2
+   
+1026    # Pairlist for attributes
+1       # with one pair of entries
+
+   262153  # The attribute is called "names"
+   5       # 
+   names   # 
+   
+   16      # The attribute has two values
+   2       # 
+   
+      262153   # First value is "a"
+           1   #
+           a   # 
+
+      262153   # Second value is "b"
+           1   #
+           b   #
+
+254   # end of pairlist
+```
+
+As an aside, the `254` ending the pairlist isn't completely arbitrary. That's how the RDS format encodes a `NULL` value: 
+
+```{r}
+show_rds(NULL, header=FALSE)
+```
+
+If you look at the relevant part of the R source code, you see that there are a collection of ["administrative codes"](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720) that define something "SEXPTYPE-like" for special values. `NULL` is the one you'd be most likely to encounter though.
+
+
+## Type/Flag Packing
+
+### Decoding the SEXPTYPE
+
+Throughout this post, I've given the impression that when R serialises an object to RDS format, the first thing it writes is the SEXPTYPE of that object. Technically I wasn't lying, but I was hiding something. What R actually does in that first entry is write a single integer, and [packs multiple pieces of information](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L722-L738) into the bits that comprise that integer. Only the first eight bits are used to define the SEXPTYPE. Other bits are used as flags indicating other things. Earlier on, I said that a value of 526 actually corresponds to a SEXPTYPE of 14. That becomes clearer when we take a look at the binary representation of 14 and 526. The first eight bits are identical:
+
+```{r}
+intToBits(14)
+intToBits(526)
+```
+
+To extract the SEXPTYPE, what we want to do is ignore all the later bits. I could write a function that uses `intToBits()` to unpack an integer into its binary representation, then sets all the bits except the first eight to 0, and then converts back to an integer ... but there's no need. The thing I just described is a "bitwise AND" operation:
+
+```{r}
+decode_sexptype <- function(x) bitwAnd(x, 255)
+
+decode_sexptype(14)
+decode_sexptype(526)
+```
+
+When I said that those 262153 values we encounter every time a string is serialised actually correspond to a SEXPTYPE of 9, this is exactly what I was talking about:
+
+```{r}
+decode_sexptype(262153)
+```
+
+The attributes pairlist, which gave us a value of 1026 when the RDS is prined out as text? 
+
+```{r}
+decode_sexptype(1026)
+```
+
+Those are SEXPTYPE 2, and if we check the [R internals manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf) again, we see that this is indeed the code for a pairlist.
+
+### What's in the other bits?
+
+On the off chance that anyone could be bothered reading up to this point, you might be wondering what information is stored in those other bits. There are a few different things in there. The two you'd most likely encounter are the object flag (bit 9) and the attributes flag (bit 10). For example, consider the data frame below:
+
+```{r}
+data.frame(
+  a = 1, 
+  b = 2
+)
+```
+
+has an integer code of 787. Data frames are just lists with additional metadata, so it's not surprising that when we extract the SEXPTYPE we get a value of 19:
+
+```{r}
+decode_sexptype(787)
+```
+
+But data frames are also more than lists. They have an explicit S3 class (`"data.frame"`) and they have other attributes too: `"names"` and `"row.names"`. If we unpack the integer code 787 into its constituent bits we see that bit 9 and bit 10 are both set to 1: 
+
+```{r}
+intToBits(787)
+```
+
+Bit 9 is the "object flag": it specifies whether or not the R data structure has a class attribute. Bit 10 is the more general one, and is called the "attribute flag": it specifies whether or not the object has any attributes.
+
+### Okay but what's up with 262153?
+
+Ugh. Fine. If we unpack the integer code 262153, we see that there's something encoded in bit 19:
+
+```{r}
+intToBits(262153)
+```
+
+I haven't found the part of the source code that sets this bit yet, but I'm pretty sure that the role of this bit is to flag whether or not the string should be added to the global string pool. In recent versions of R that's true for all strings, so in practice every string has an integer code of 262153 rather than 9.
+
+## Are we done yet?
+
+Depends. If you mean "have we described everything there is to know about the RDS format and how data serialisation works in base R?" then no, we're absolutely not done. I haven't said anything about how R serialises functions or expressions:
+
+```{r}
+expr <- quote(sum(a, b, c))
+fn <- function(x) x + 1 
+```
+
+These are both R objects and you can save them to RDS files. So of course there's a serialisation format for those but it's not a lot of fun. I mean, if you squint at it you can kiiiiiinnnnda see what's going on for the expression
+
+```{r}
+show_rds(expr, header = FALSE)
+```
+
+but if I were to do the same thing for the function it's just unpleasant, and frankly I already have a headache just from getting this far. So if you mean "have we reached the point where the author is sick of this topic?" then... oh my god yes we are utterly and completely *done* with this subject.
+
+Now let us never speak of this again.
+
 
 
 <!--------------- appendices ----------------->
