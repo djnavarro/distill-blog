@@ -129,7 +129,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["art.csv","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["art.csv","img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg","img/andrey-zvyagintsev-G5nl9_YEXuc-unsplash.jpg","img/andrey-zvyagintsev-kpjCk9ImBPA-unsplash.jpg","img/atharva-lele-GSXHEh-5IMI-unsplash.jpg","img/chelms-varthoumlien-j-zQJk6aaaA-unsplash.jpg","img/daniel-jensen-NMk1Vggt2hg-unsplash.jpg","img/daria-shevtsova-7mbvu0biZgg-unsplash.jpg","img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg","img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg","img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg","img/moreno-matkovic-BlbBO2L3pK4-unsplash.jpg","img/pelly-benassi-Hz1WQbHcXag-unsplash.jpg","img/roxy-aln--d3_Ez5pKss-unsplash.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2487,7 +2487,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#lists">Lists</a></li>
 <li><a href="#object-attributes">Object attributes</a></li>
 </ul></li>
-<li><a href="#typeflag-packing">Type/Flag Packing</a>
+<li><a href="#typeflag-packing">Type/flag packing</a>
 <ul>
 <li><a href="#decoding-the-sexptype">Decoding the SEXPTYPE</a></li>
 <li><a href="#whats-in-the-other-bits">What’s in the other bits?</a></li>
@@ -2509,6 +2509,14 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p>Data <a href="https://en.wikipedia.org/wiki/Serialization">serialisation</a> is one of those terms that comes up from time to time in data science (and on #rstats twitter!). I suspect that anyone who works with big data or has a computer science background is likely to be <em>painfully</em> aware of what serialisation is and why it matters. Those folks probably aren’t in need of any post that I might write on the topic! However, a lot of people who work in R come from other backgrounds. If you’re a social scientist who mostly works with small CSV files, for example, there’s no particular reason why you’d have encountered this. I worked as a mathematical psychologist and computational modeller for about 20 years and until very recently I’ve never had never had to think about it! In fact, the issue only came up for me when I started reading about <a href="https://arrow.apache.org">Apache Arrow</a> (a topic for another post, perhaps…) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<img src="img/andrey-zvyagintsev-G5nl9_YEXuc-unsplash.jpg" alt="Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/G5nl9_YEXuc)."  />
+<p class="caption">
+Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="https://unsplash.com/photos/G5nl9_YEXuc">unsplash</a>.
+</p>
+</div>
+</div>
 <h2 id="what-is-serialisation">What is serialisation?</h2>
 <p>Viewed in the general sense, serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are “serialising” it according to some encoding scheme. Suppose, for instance, I have a data frame called <code>art</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2599,6 +2607,14 @@ checklist:
 10       8000 watercolour  sys02  img34 teacup-ocean    png</code></pre>
 </div>
 <p>Thrilling stuff.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<img src="img/daniel-jensen-NMk1Vggt2hg-unsplash.jpg" alt="Image by Daniel Jensen. Available by CC0 licence on [unsplash](https://unsplash.com/photos/NMk1Vggt2hg)."  />
+<p class="caption">
+Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://unsplash.com/photos/NMk1Vggt2hg">unsplash</a>.
+</p>
+</div>
+</div>
 <h2 id="how-does-rds-serialisation-work">How does RDS serialisation work?</h2>
 <p>Data can be serialised in different ways. The native RDS format used by R, for example, provides a method for serialising an R object in a way that – unlike CSV – preserves all the information about that object. When I use <code>readRDS()</code> to unserialise the <code>art.rds</code> file that I happen to have on disk, it clearly recreates the same R object</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2688,6 +2704,14 @@ checklist:
 10       8000 watercolour  sys02  img34 teacup-ocean    png</code></pre>
 </div>
 <p>Even more thrilling stuff than before.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<img src="img/chelms-varthoumlien-j-zQJk6aaaA-unsplash.jpg" alt="Image by Chelms Varthoumlien. Available by CC0 licence on [unsplash](https://unsplash.com/photos/j-zQJk6aaaA)."  />
+<p class="caption">
+Figure 3: Image by Chelms Varthoumlien. Available by CC0 licence on <a href="https://unsplash.com/photos/j-zQJk6aaaA">unsplash</a>.
+</p>
+</div>
+</div>
 <h2 id="serialising-to-plain-text-rds">Serialising to plain text RDS</h2>
 <p>Okay, so what we’ve learned so far is that in most cases, an RDS file is just a gzipped version of whatever the hell it is that <code>serialize()</code> creates. What we don’t yet know is how the <code>serialize()</code> function operates. How is it creating this sequence of bytes? What do the contents of this file actually include? In order to look at this, I’ll start by serialising a much simpler object. Instead of serialising the <code>art</code> data frame, I’ll serialise a numeric vector containing three elements, and I’ll set <code>ascii = TRUE</code> so that R uses UTF-8 to serialise the object to plain text format</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2741,6 +2765,14 @@ UTF-8
 </div>
 </div>
 <p>Yay! My excitement can barely be contained.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<img src="img/daria-shevtsova-7mbvu0biZgg-unsplash.jpg" alt="Image by Daria Shevtsova. Available by CC0 licence on [unsplash](https://unsplash.com/photos/7mbvu0biZgg)."  />
+<p class="caption">
+Figure 4: Image by Daria Shevtsova. Available by CC0 licence on <a href="https://unsplash.com/photos/7mbvu0biZgg">unsplash</a>.
+</p>
+</div>
+</div>
 <h2 id="interpreting-the-rds-format">Interpreting the RDS format</h2>
 <p>All right, lets see if we can interpret the contents of an RDS file. Rather than tediously writing the file to disk using <code>saveRDS()</code> and then loading it again, I’ll cheat slightly and write a <code>show_rds()</code> function that serialises an object and prints the results directly to the R console:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2854,6 +2886,14 @@ UTF-8
 10.1   # first value is 10.1
 2.2    # second value is 2.2
 94.3   # third value is 94.3</code></pre>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<img src="img/roxy-aln--d3_Ez5pKss-unsplash.jpg" alt="Image by Roxy Aln Available by CC0 licence on [unsplash](https://unsplash.com/photos/-d3_Ez5pKss)."  />
+<p class="caption">
+Figure 5: Image by Roxy Aln Available by CC0 licence on <a href="https://unsplash.com/photos/-d3_Ez5pKss">unsplash</a>.
+</p>
+</div>
+</div>
 <h3 id="the-rds-header">The RDS header</h3>
 <p>At this point, we’ve annotated every part of the RDS file that corresponds to the actual object. The lines preceding it are the RDS header. Here’s what the first four lines mean:</p>
 <pre><code>A      # the file uses ASCII encoding
@@ -2890,6 +2930,14 @@ UTF-8 </code></pre>
 UTF-8  # the file encodes UTF-8 characters not Latin-1</code></pre>
 <p>Okay then… but what about that pesky “5”? What does that mean? I’ll be honest. It took me ages to figure this one out. As far as I can tell this line isn’t discussed in the R Internals Manual, but you can work it out by looking at the <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408">source code for serialize</a>. That line reads “5” because it’s telling you (or the parser) that the string that follows on the next line (i.e., “UTF-8”) contains 5 characters. Presumably if I’d used Latin-1 encoding, the corresponding line would have been “7”.</p>
 <p>Now that we have a sense of how the RDS header works, I’ll set <code>header = FALSE</code> whenever I call <code>show_rds()</code> from now on so that we don’t have to look at that same six lines of output over and over!</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<img src="img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg" alt="Image by Liza Polyanskaya. Available by CC0 licence on [unsplash](https://unsplash.com/photos/PrXN8-YG5WI)."  />
+<p class="caption">
+Figure 6: Image by Liza Polyanskaya. Available by CC0 licence on <a href="https://unsplash.com/photos/PrXN8-YG5WI">unsplash</a>.
+</p>
+</div>
+</div>
 <h3 id="logical-integer-and-numeric-vectors">Logical, integer, and numeric vectors</h3>
 <p>For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you’d expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2938,8 +2986,16 @@ NA</code></pre>
 99.90000000000001
 100</code></pre>
 </div>
-<p>What about character vectors? Ah well, those are trickier…</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
+<img src="img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg" alt="Image by Hoshino Ai. Available by CC0 licence on [unsplash](https://unsplash.com/photos/sybO0dQ8hTw)."  />
+<p class="caption">
+Figure 7: Image by Hoshino Ai. Available by CC0 licence on <a href="https://unsplash.com/photos/sybO0dQ8hTw">unsplash</a>.
+</p>
+</div>
+</div>
 <h3 id="character-vectors">Character vectors</h3>
+<p>What about character vectors? Ah well, those are trickier…</p>
 <p>Let’s create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so you’d expect that a character vector with three elements would start with <code>16</code> on the first line and <code>3</code> on the second line, which would then be followed by the contents of each cell. And that’s… sort of true:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2970,6 +3026,14 @@ strange</code></pre>
 7        # the string has &quot;length&quot; 7
 strange  # the 7 characters in the string</code></pre>
 <p>What about the first line? Given everything we’ve seen previously it’s pretty tempting to guess that it means something similar to the SEXPTYPE codes that we’ve seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there’s some sense in which a single string has a “SEXPTYPE” of 262153? Turns out that’s not true. The actual data structure here is called a CHARSXP – referring to the internal representation R uses for character strings – and it is SEXPTYPE 9. Later on I’ll explain why all the strings are marked with 262153 rather than 9, but for now let’s take it on faith that there’s a good reason for it.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<img src="img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg" alt="Image by Kelly Sikkema. Available by CC0 licence on [unsplash](https://unsplash.com/photos/D_5iQVxKkPY)."  />
+<p class="caption">
+Figure 8: Image by Kelly Sikkema. Available by CC0 licence on <a href="https://unsplash.com/photos/D_5iQVxKkPY">unsplash</a>.
+</p>
+</div>
+</div>
 <h3 id="lists">Lists</h3>
 <p>What about lists? Lists are more complicated than atomic vectors, because they’re just containers for other data structures that can have different lengths and types. As mentioned earlier, they have SEXPTYPE 19, so a list with three elements will of course start with <code>19</code> on the first line and <code>3</code> on the second line. Here’s an example:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3027,6 +3091,14 @@ thing</code></pre>
     262153  # every string starts with this
          5  # this string has 5 characters
      thing  # values are: t, h, i, n, g</code></pre>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<img src="img/moreno-matkovic-BlbBO2L3pK4-unsplash.jpg" alt="Image by Moreno Matković. Available by CC0 licence on [unsplash](https://unsplash.com/photos/BlbBO2L3pK4)."  />
+<p class="caption">
+Figure 9: Image by Moreno Matković. Available by CC0 licence on <a href="https://unsplash.com/photos/BlbBO2L3pK4">unsplash</a>.
+</p>
+</div>
+</div>
 <h3 id="object-attributes">Object attributes</h3>
 <p>One of the key features of R is that vectors are permitted to have arbitrary metadata: names, classes, attributes. If an R object contains metadata, that metadata must be serialised too. That has some slightly surprising effects. Let’s start with this very simple numeric object with two elements:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3100,7 +3172,15 @@ b
 <pre><code>254</code></pre>
 </div>
 <p>If you look at the relevant part of the R source code, you see that there are a collection of <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720">“administrative codes”</a> that define something “SEXPTYPE-like” for special values. <code>NULL</code> is the one you’d be most likely to encounter though.</p>
-<h2 id="typeflag-packing">Type/Flag Packing</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-28"></span>
+<img src="img/atharva-lele-GSXHEh-5IMI-unsplash.jpg" alt="Image by Atharva Lele. Available by CC0 licence on [unsplash](https://unsplash.com/photos/GSXHEh-5IMI)."  />
+<p class="caption">
+Figure 10: Image by Atharva Lele. Available by CC0 licence on <a href="https://unsplash.com/photos/GSXHEh-5IMI">unsplash</a>.
+</p>
+</div>
+</div>
+<h2 id="typeflag-packing">Type/flag packing</h2>
 <h3 id="decoding-the-sexptype">Decoding the SEXPTYPE</h3>
 <p>Throughout this post, I’ve given the impression that when R serialises an object to RDS format, the first thing it writes is the SEXPTYPE of that object. Technically I wasn’t lying, but I was hiding something. What R actually does in that first entry is write a single integer, and <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L722-L738">packs multiple pieces of information</a> into the bits that comprise that integer. Only the first eight bits are used to define the SEXPTYPE. Other bits are used as flags indicating other things. Earlier on, I said that a value of 526 actually corresponds to a SEXPTYPE of 14. That becomes clearer when we take a look at the binary representation of 14 and 526. The first eight bits are identical:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3149,6 +3229,14 @@ b
 <pre><code>[1] 2</code></pre>
 </div>
 <p>Those are SEXPTYPE 2, and if we check the <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf">R internals manual</a> again, we see that this is indeed the code for a pairlist.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-33"></span>
+<img src="img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg" alt="Image by Aimee Vogelsang. Available by CC0 licence on [unsplash](https://unsplash.com/photos/DbJR10fEteE)."  />
+<p class="caption">
+Figure 11: Image by Aimee Vogelsang. Available by CC0 licence on <a href="https://unsplash.com/photos/DbJR10fEteE">unsplash</a>.
+</p>
+</div>
+</div>
 <h3 id="whats-in-the-other-bits">What’s in the other bits?</h3>
 <p>On the off chance that anyone could be bothered reading up to this point, you might be wondering what information is stored in those other bits. There are a few different things in there. The two you’d most likely encounter are the object flag (bit 9) and the attributes flag (bit 10). For example, consider the data frame below:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3191,6 +3279,14 @@ b
 [23] 00 00 00 00 00 00 00 00 00 00</code></pre>
 </div>
 <p>I haven’t found the part of the source code that sets this bit yet, but I’m pretty sure that the role of this bit is to flag whether or not the string should be added to the global string pool. In recent versions of R that’s true for all strings, so in practice every string has an integer code of 262153 rather than 9.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-38"></span>
+<img src="img/pelly-benassi-Hz1WQbHcXag-unsplash.jpg" alt="Image by Pelly Benassi. Available by CC0 licence on [unsplash](https://unsplash.com/photos/Hz1WQbHcXag)."  />
+<p class="caption">
+Figure 12: Image by Pelly Benassi. Available by CC0 licence on <a href="https://unsplash.com/photos/Hz1WQbHcXag">unsplash</a>.
+</p>
+</div>
+</div>
 <h2 id="are-we-done-yet">Are we done yet?</h2>
 <p>Depends. If you mean “have we described everything there is to know about the RDS format and how data serialisation works in base R?” then no, we’re absolutely not done. I haven’t said anything about how R serialises functions or expressions:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3230,10 +3326,18 @@ c
 </div>
 <p>but if I were to do the same thing for the function it’s just unpleasant, and frankly I already have a headache just from getting this far. So if you mean “have we reached the point where the author is sick of this topic?” then… oh my god yes we are utterly and completely <em>done</em> with this subject.</p>
 <p>Now let us never speak of this again.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-41"></span>
+<img src="img/andrey-zvyagintsev-kpjCk9ImBPA-unsplash.jpg" alt="Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/kpjCk9ImBPA)."  />
+<p class="caption">
+Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="https://unsplash.com/photos/kpjCk9ImBPA">unsplash</a>.
+</p>
+</div>
+</div>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-11-15 17:13:37 AEDT</p>
+<p>2021-11-15 19:26:06 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-11-11_base-r-serialisation/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2021-11-11_base-r-serialisation/renv.lock">R environment</a></p>
 </div>

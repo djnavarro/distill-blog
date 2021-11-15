@@ -50,6 +50,12 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 Data [serialisation](https://en.wikipedia.org/wiki/Serialization) is one of those terms that comes up from time to time in data science (and on #rstats twitter!). I suspect that anyone who works with big data or has a computer science background is likely to be *painfully* aware of what serialisation is and why it matters. Those folks probably aren't in need of any post that I might write on the topic! However, a lot of people who work in R come from other backgrounds. If you're a social scientist who mostly works with small CSV files, for example, there's no particular reason why you'd have encountered this. I worked as a mathematical psychologist and computational modeller for about 20 years and until very recently I've never had never had to think about it! In fact, the issue only came up for me when I started reading about [Apache Arrow](https://arrow.apache.org) (a topic for another post, perhaps...) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it. 
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/G5nl9_YEXuc)."
+knitr::include_graphics("img/andrey-zvyagintsev-G5nl9_YEXuc-unsplash.jpg")
+```
+
 ## What is serialisation?
 
 Viewed in the general sense, serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are "serialising" it according to some encoding scheme.  Suppose, for instance, I have a data frame called `art`:
@@ -108,6 +114,13 @@ art
 
 Thrilling stuff.
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Daniel Jensen. Available by CC0 licence on [unsplash](https://unsplash.com/photos/NMk1Vggt2hg)."
+knitr::include_graphics("img/daniel-jensen-NMk1Vggt2hg-unsplash.jpg")
+```
+
+
 ## How does RDS serialisation work?
 
 Data can be serialised in different ways. The native RDS format used by R, for example, provides a method for serialising an R object in a way that -- unlike CSV -- preserves all the information about that object. When I use `readRDS()` to unserialise the `art.rds` file that I happen to have on disk, it clearly recreates the same R object
@@ -156,6 +169,13 @@ unserialize(bytes)
 
 Even more thrilling stuff than before. 
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Chelms Varthoumlien. Available by CC0 licence on [unsplash](https://unsplash.com/photos/j-zQJk6aaaA)."
+knitr::include_graphics("img/chelms-varthoumlien-j-zQJk6aaaA-unsplash.jpg")
+```
+
+
 ## Serialising to plain text RDS
 
 Okay, so what we've learned so far is that in most cases, an RDS file is just a gzipped version of whatever the hell it is that `serialize()` creates. What we don't yet know is how the `serialize()` function operates. How is it creating this sequence of bytes? What do the contents of this file actually include? In order to look at this, I'll start by serialising a much simpler object. Instead of serialising the `art` data frame, I'll serialise a numeric vector containing three elements, and I'll set `ascii = TRUE` so that R uses UTF-8 to serialise the object to plain text format
@@ -192,6 +212,13 @@ saveRDS(
 ```
 
 Yay! My excitement can barely be contained.
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Daria Shevtsova. Available by CC0 licence on [unsplash](https://unsplash.com/photos/7mbvu0biZgg)."
+knitr::include_graphics("img/daria-shevtsova-7mbvu0biZgg-unsplash.jpg")
+```
 
 ## Interpreting the RDS format
 
@@ -263,6 +290,12 @@ UTF-8
 94.3   # third value is 94.3
 ```
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Roxy Aln Available by CC0 licence on [unsplash](https://unsplash.com/photos/-d3_Ez5pKss)."
+knitr::include_graphics("img/roxy-aln--d3_Ez5pKss-unsplash.jpg")
+```
+
 
 ### The RDS header
 
@@ -307,6 +340,14 @@ Okay then... but what about that pesky "5"? What does that mean? I'll be honest.
 
 Now that we have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on so that we don't have to look at that same six lines of output over and over!
 
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Liza Polyanskaya. Available by CC0 licence on [unsplash](https://unsplash.com/photos/PrXN8-YG5WI)."
+knitr::include_graphics("img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg")
+```
+
+
 ### Logical, integer, and numeric vectors
 
 For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you'd expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:
@@ -336,9 +377,19 @@ show_rds(
 )
 ```
 
-What about character vectors? Ah well, those are trickier...
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Hoshino Ai. Available by CC0 licence on [unsplash](https://unsplash.com/photos/sybO0dQ8hTw)."
+knitr::include_graphics("img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg")
+```
+
+
 
 ### Character vectors
+
+What about character vectors? Ah well, those are trickier...
 
 Let's create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so you'd expect that a character vector with three elements would start with `16` on the first line and `3` on the second line, which would then be followed by the contents of each cell. And that's... sort of true:
 
@@ -366,6 +417,15 @@ strange  # the 7 characters in the string
 ```
 
 What about the first line? Given everything we've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? Turns out that's not true. The actual data structure here is called a CHARSXP -- referring to the internal representation R uses for character strings -- and it is SEXPTYPE 9. Later on I'll explain why all the strings are marked with 262153 rather than 9, but for now let's take it on faith that there's a good reason for it.
+
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Kelly Sikkema. Available by CC0 licence on [unsplash](https://unsplash.com/photos/D_5iQVxKkPY)."
+knitr::include_graphics("img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg")
+```
+
 
 ### Lists
 
@@ -410,6 +470,16 @@ The output here begins with the two lines specifying that it's a list of length 
          5  # this string has 5 characters
      thing  # values are: t, h, i, n, g
 ```
+
+
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Moreno Matković. Available by CC0 licence on [unsplash](https://unsplash.com/photos/BlbBO2L3pK4)."
+knitr::include_graphics("img/moreno-matkovic-BlbBO2L3pK4-unsplash.jpg")
+```
+
 
 ### Object attributes
 
@@ -466,7 +536,15 @@ show_rds(NULL, header=FALSE)
 If you look at the relevant part of the R source code, you see that there are a collection of ["administrative codes"](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720) that define something "SEXPTYPE-like" for special values. `NULL` is the one you'd be most likely to encounter though.
 
 
-## Type/Flag Packing
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Atharva Lele. Available by CC0 licence on [unsplash](https://unsplash.com/photos/GSXHEh-5IMI)."
+knitr::include_graphics("img/atharva-lele-GSXHEh-5IMI-unsplash.jpg")
+```
+
+
+## Type/flag packing
 
 ### Decoding the SEXPTYPE
 
@@ -499,6 +577,16 @@ decode_sexptype(1026)
 ```
 
 Those are SEXPTYPE 2, and if we check the [R internals manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf) again, we see that this is indeed the code for a pairlist.
+
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Aimee Vogelsang. Available by CC0 licence on [unsplash](https://unsplash.com/photos/DbJR10fEteE)."
+knitr::include_graphics("img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg")
+```
+
+
 
 ### What's in the other bits?
 
@@ -535,6 +623,15 @@ intToBits(262153)
 
 I haven't found the part of the source code that sets this bit yet, but I'm pretty sure that the role of this bit is to flag whether or not the string should be added to the global string pool. In recent versions of R that's true for all strings, so in practice every string has an integer code of 262153 rather than 9.
 
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Pelly Benassi. Available by CC0 licence on [unsplash](https://unsplash.com/photos/Hz1WQbHcXag)."
+knitr::include_graphics("img/pelly-benassi-Hz1WQbHcXag-unsplash.jpg")
+```
+
+
 ## Are we done yet?
 
 Depends. If you mean "have we described everything there is to know about the RDS format and how data serialisation works in base R?" then no, we're absolutely not done. I haven't said anything about how R serialises functions or expressions:
@@ -553,6 +650,13 @@ show_rds(expr, header = FALSE)
 but if I were to do the same thing for the function it's just unpleasant, and frankly I already have a headache just from getting this far. So if you mean "have we reached the point where the author is sick of this topic?" then... oh my god yes we are utterly and completely *done* with this subject.
 
 Now let us never speak of this again.
+
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/kpjCk9ImBPA)."
+knitr::include_graphics("img/andrey-zvyagintsev-kpjCk9ImBPA-unsplash.jpg")
+```
 
 
 
