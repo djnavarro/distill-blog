@@ -1532,10 +1532,11 @@ checklist:
 <p align="right">
 <em>I still alive, and that’s what matters. The traumatic experience of the last week is fading, leaving a pale residue of fear and the few scraps of writing that are the sole surviving documentation of these days. It is a tale of fright, a desperate agony, and like any good tragedy it starts with the hope and naive optimism of youth…</em>
 </p>
+<p><br></p>
 <p>I’ve decided the time has come for me to do a deep dive into <a href="https://en.wikipedia.org/wiki/Serialization">data serialisation</a> in R. Serialisation is one of those terms that comes up from time to time in data science, and it’s popped up so many times on my twitter feed that I feel like I need a better grasp of how serialisation works in R. It’s a topic that folks who work with big data or have a computer science background likely understand quite well, but a lot of people who use R come from other backgrounds. If you’re a social scientist who mostly works with small CSV files, for example, there’s no particular reason why you’d have encountered this. In my case, I’ve worked as a mathematical psychologist and computational modeller for about 20 years, and until very recently I’ve never had never had to think about it in any detail. The issue only came up for me when I started reading about <a href="https://arrow.apache.org">Apache Arrow</a> (a topic for another post, perhaps) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it.</p>
 <p>This post is aimed at anyone who is in a similar situation to me!</p>
 <p align="right">
-<em>Oh you sweet summer child. You really think you are prepared to walk into the dark? That’s adorable.</em>
+<br><em>Oh you sweet summer child. You really think you are prepared for the dark? That’s adorable.</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
@@ -1653,7 +1654,7 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
 </div>
 <p>Thrilling stuff.</p>
 <p align="right">
-<em>Do you feel that slow dread yet, my dear? Do you feel yourself slipping? You are on the edge of the cliff. You can still climb back to safety if you want. You don’t have to fall. The choice is still yours.</em>
+<br><em>Do you feel that slow dread yet, my dear? Do you feel yourself slipping? You are on the edge of the cliff. You can still climb back to safety if you want. You don’t have to fall. The choice is still yours.</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
@@ -1764,7 +1765,7 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
 </div>
 <p>Yay.</p>
 <p align="right">
-<em>You can sense it can’t you? It will only get worse for you, my sweet. Look upon the grim visage of those that have passed this way before. Their lifeless skulls are a warning, but you in your hubris think you will survive?</em>
+<br><em>You can sense it can’t you? It will only get worse for you, my sweet. Look upon the grim visage of those that have passed this way before. Their lifeless bones are a warning.</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
@@ -1778,7 +1779,7 @@ Figure 3: Image by Chelms Varthoumlien. Available by CC0 licence on <a href="htt
 <p>Okay, so what I’ve learned so far is that in most cases, an RDS file is just a gzipped version of … something. It’s the gzipped version of whatever the hell it is that <code>serialize()</code> creates. What I don’t yet know is how the <code>serialize()</code> function operates. What secret magic does it use? How does it construct this sequence of bytes? What do the contents of this file actually include?</p>
 <p>I’ll start simple. Trying to understand how a complicated object is serialised might be painful, so I’ll set the <code>art</code> data frame to one side. Instead, I’ll serialise a numeric vector containing three elements, and … I guess I’ll set <code>ascii = TRUE</code> so that R uses UTF-8 to serialise the object to plain text format rather than … writing a binary file?</p>
 <p align="right">
-<em>Clever girl. Yes, the default behaviour is binary serialization. Unless otherwise specified using the <code>xdr</code> argument, <code>serialize()</code> enforces a big-endian representation on the binary encoding. But you didn’t want to go there did you? It frightened you, didn’t it? The abyss stares back at you, sweetness, and you are beginning to notice its attention</em>
+<br><em>Clever girl. Yes, the default behaviour is binary serialization. Unless otherwise specified using the <code>xdr</code> argument, <code>serialize()</code> enforces a big-endian representation on the binary encoding. But you didn’t want to go there did you? It frightened you, didn’t it? The abyss stares back at you, sweetness, and you are beginning to attract its attention</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1843,7 +1844,7 @@ UTF-8
 </div>
 <p>Okay, it <a href="numbers.rds">checks out</a>. My excitement can barely be contained.</p>
 <p align="right">
-<em>Wilting already, aren’t you? Poor little flower. You’ve already been cut from the stem. You’re dead already but you don’t even know it. All that is left is to wither away under the blistering glare of knowledge.</em>
+<br><em>Wilting already, aren’t you? Poor little flower, you’ve been cut from the stem. You’re dead already but you don’t even know it. All that is left is to wither away under the blistering glare of knowledge.</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
@@ -1969,7 +1970,7 @@ UTF-8
 2.2    # second value is 2.2
 94.3   # third value is 94.3</code></pre>
 <p align="right">
-<em>Oh no dear. You have strayed so far from the light already. That <code>14</code> carries much more meaning than your fragile mind is prepared to handle. Soon you will know better. Soon you will unravel entirely. You can feel it coming, can’t you?</em>
+<br><em>Oh no dear. You have strayed so far from the light already. That <code>14</code> carries much more meaning than your fragile mind is prepared to handle. Soon you will know better. Soon you will unravel entirely. You can feel it coming, can’t you?</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
@@ -2101,8 +2102,9 @@ Figure 7: Image by Hoshino Ai. Available by CC0 licence on <a href="https://unsp
 <h3 id="character-vectors">Character vectors</h3>
 <p>What about character vectors?</p>
 <p align="right">
-<em>Adorable that you think these will be safer waters in which to swim my dear. A wiser woman would turn back now and return to the shallows. Yet there you go, drifting out to sea. Fool.</em>
+<br><em>Adorable that you think these will be safer waters in which to swim my dear. A wiser woman would turn back now and return to the shallows. Yet there you go, drifting out to sea. Fool.</em>
 </p>
+<p><br></p>
 <p>Let’s create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so I’d expect that a character vector with three elements would start with <code>16</code> on the first line and <code>3</code> on the second line, which would then be followed by the contents of each cell.</p>
 <p>And that’s… sort of true?</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2135,7 +2137,7 @@ strange</code></pre>
 strange  # the 7 characters in the string</code></pre>
 <p>What about the first line? Given everything I’ve seen previously it’s pretty tempting to guess that it means something similar to the SEXPTYPE codes that we’ve seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there’s some sense in which a single string has a “SEXPTYPE” of 262153? That can’t be right though. According to the R Internals Manual, a CHARSXP object has a SEXPTYPE code of 9, not 262153. I must be misunderstanding something? Why is it 262153?</p>
 <p align="right">
-<em>Frightened by the first wave, are you? All in good time my love. The secrets of 262153 will reveal themselves soon.</em>
+<br><em>Frightened by the first wave, are you? All in good time my love. The secrets of 262153 will reveal themselves soon.</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-25"></span>
@@ -2254,12 +2256,14 @@ b
 </div>
 <p>I … don’t know what I am looking at here. First off, I seem to be having the same problem I had with character strings. If I take the first line of this output at face value I would think that a named numeric vector has SEXPTYPE 526. That can’t be right, can it?</p>
 <p align="right">
-<em>It isn’t. In the same way that strings don’t have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. You will learn the error of your ways very soon.</em>
+<br><em>It isn’t. In the same way that strings don’t have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. You will learn the error of your ways very soon.</em>
 </p>
+<p><br></p>
 <p>Setting that mystery aside, I notice that the RDS output is similar to the output we saw when converting a list to RDS. The output contains the numeric vector first (the data), which is then followed by a list that specifies the attributes linked to that object?</p>
 <p align="right">
-<em>Not quite. You’re so close, but it’s a pairlist, not a list. The underlying data structure is different. Don’t let it worry your mind, sweet thing. Preserve your mind for the trials still to come.</em>
+<br> <em>Not quite. You’re so close, but it’s a pairlist, not a list. The underlying data structure is different. Don’t let it worry your mind, sweet thing. Preserve your mind for the trials still to come.</em>
 </p>
+<p><br></p>
 <p>For this object, there’s only one attribute that needs to be stored, corresponding to the names associated with each element of the vector. If I annotate the output again, I get this:</p>
 <pre><code>526     # Numeric vector 
 2       # with two values
@@ -2357,7 +2361,7 @@ Figure 10: Image by Kelly Sikkema. Available by CC0 licence on <a href="https://
 <p>Those are SEXPTYPE 2, and if we check the <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf">R internals manual</a> again, we see that this is indeed the code for a pairlist.</p>
 <p>I feel triumphant, but broken.</p>
 <p align="right">
-<em>Me too.</em>
+<em>Girl, same.</em>
 </p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-36"></span>
@@ -2456,21 +2460,14 @@ c
 254</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># don't evaluate this in the R markdown!!!!! do it from the global workspace</span>
-<span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>saveRDS</a></span><span class='op'>(</span>
-  object <span class='op'>=</span> <span class='va'>fn</span>, 
-  file <span class='op'>=</span> <span class='st'>"fn.rds"</span>, 
-  ascii <span class='op'>=</span> <span class='cn'>TRUE</span>, 
-  compress <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span>
-</code></pre>
-</div>
+
 </div>
 <p>…but if I do the same thing to <a href="fn.rds">serialise the function</a> it gets unpleasant. This has been quite an ordeal just getting this far, and I see no need to write about the serialisation of closures. Let someone else suffer through that, because my brain is a wreck.</p>
 <p>So no, we are not “done”. The RDS format keeps some secrets still.</p>
 <p>But if you mean “have we reached the point where the author is losing her mind and needs to rest?” then… oh my god yes I am utterly and completely <em>done</em> with this subject, and wish to spend the rest of my night sobbing quietly in darkness.</p>
-<p>Now let us never speak of this again.</p>
+<p align="right">
+<br><em>Let us never speak of this again.</em>
+</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-45"></span>
 <img src="img/andrey-zvyagintsev-kpjCk9ImBPA-unsplash.jpg" alt="Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/kpjCk9ImBPA)."  />
@@ -2482,7 +2479,7 @@ Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="htt
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-11-16 13:48:06 AEDT</p>
+<p>2021-11-16 14:02:20 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-11-15_serialisation-with-rds/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2021-11-15_serialisation-with-rds/renv.lock">R environment</a></p>
 </div>

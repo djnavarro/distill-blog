@@ -53,14 +53,14 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <p align="right">
 *I still alive, and that's what matters. The traumatic experience of the last week is fading, leaving a pale residue of fear and the few scraps of writing that are the sole surviving documentation of these days. It is a tale of fright, a desperate agony, and like any good tragedy it starts with the hope and naive optimism of youth...*
-</p>
+</p><br>
 
 I've decided the time has come for me to do a deep dive into [data serialisation](https://en.wikipedia.org/wiki/Serialization) in R. Serialisation is one of those terms that comes up from time to time in data science, and it's popped up so many times on my twitter feed that I feel like I need a better grasp of how serialisation works in R. It's a topic that folks who work with big data or have a computer science background likely understand quite well, but a lot of people who use R come from other backgrounds. If you're a social scientist who mostly works with small CSV files, for example, there's no particular reason why you'd have encountered this. In my case, I've worked as a mathematical psychologist and computational modeller for about 20 years, and until very recently I've never had never had to think about it in any detail. The issue only came up for me when I started reading about [Apache Arrow](https://arrow.apache.org) (a topic for another post, perhaps) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it. 
 
 This post is aimed at anyone who is in a similar situation to me! 
 
 <p align="right">
-*Oh you sweet summer child. You really think you are prepared to walk into the dark? That's adorable.*
+<br>*Oh you sweet summer child. You really think you are prepared for the dark? That's adorable.*
 </p>
 
 ```{r}
@@ -144,7 +144,7 @@ art
 Thrilling stuff.
 
 <p align="right">
-*Do you feel that slow dread yet, my dear? Do you feel yourself slipping? You are on the edge of the cliff. You can still climb back to safety if you want. You don't have to fall. The choice is still yours.*
+<br>*Do you feel that slow dread yet, my dear? Do you feel yourself slipping? You are on the edge of the cliff. You can still climb back to safety if you want. You don't have to fall. The choice is still yours.*
 </p>
 
 ```{r}
@@ -221,7 +221,7 @@ unserialize(bytes)
 Yay. 
 
 <p align="right">
-*You can sense it can't you? It will only get worse for you, my sweet. Look upon the grim visage of those that have passed this way before. Their lifeless skulls are a warning, but you in your hubris think you will survive?*
+<br>*You can sense it can't you? It will only get worse for you, my sweet. Look upon the grim visage of those that have passed this way before. Their lifeless bones are a warning.*
 </p>
 
 ```{r}
@@ -238,7 +238,7 @@ Okay, so what I've learned so far is that in most cases, an RDS file is just a g
 I'll start simple. Trying to understand how a complicated object is serialised might be painful, so I'll set the `art` data frame to one side. Instead, I'll serialise a numeric vector containing three elements, and ... I guess I'll set `ascii = TRUE` so that R uses UTF-8 to serialise the object to plain text format rather than ... writing a binary file? 
 
 <p align="right">
-*Clever girl. Yes, the default behaviour is binary serialization. Unless otherwise specified using the `xdr` argument, `serialize()` enforces a big-endian representation on the binary encoding. But you didn't want to go there did you? It frightened you, didn't it? The abyss stares back at you, sweetness, and you are beginning to notice its attention*
+<br>*Clever girl. Yes, the default behaviour is binary serialization. Unless otherwise specified using the `xdr` argument, `serialize()` enforces a big-endian representation on the binary encoding. But you didn't want to go there did you? It frightened you, didn't it? The abyss stares back at you, sweetness, and you are beginning to attract its attention*
 </p>
 
 ```{r}
@@ -286,7 +286,7 @@ saveRDS(
 Okay, it [checks out](numbers.rds). My excitement can barely be contained.
 
 <p align="right">
-*Wilting already, aren't you? Poor little flower. You've already been cut from the stem. You're dead already but you don't even know it. All that is left is to wither away under the blistering glare of knowledge.*
+<br>*Wilting already, aren't you? Poor little flower, you've been cut from the stem. You're dead already but you don't even know it. All that is left is to wither away under the blistering glare of knowledge.*
 </p>
 
 ```{r}
@@ -372,7 +372,7 @@ UTF-8
 ```
 
 <p align="right">
-*Oh no dear. You have strayed so far from the light already. That `14` carries much more meaning than your fragile mind is prepared to handle. Soon you will know better. Soon you will unravel entirely. You can feel it coming, can't you?*
+<br>*Oh no dear. You have strayed so far from the light already. That `14` carries much more meaning than your fragile mind is prepared to handle. Soon you will know better. Soon you will unravel entirely. You can feel it coming, can't you?*
 </p>
 
 ```{r}
@@ -505,8 +505,8 @@ knitr::include_graphics("img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg")
 What about character vectors? 
 
 <p align="right">
-*Adorable that you think these will be safer waters in which to swim my dear. A wiser woman would turn back now and return to the shallows. Yet there you go, drifting out to sea. Fool.*
-</p>
+<br>*Adorable that you think these will be safer waters in which to swim my dear. A wiser woman would turn back now and return to the shallows. Yet there you go, drifting out to sea. Fool.*
+</p><br>
 
 Let's create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so I'd expect that a character vector with three elements would start with `16` on the first line and `3` on the second line, which would then be followed by the contents of each cell.
 
@@ -538,7 +538,7 @@ strange  # the 7 characters in the string
 What about the first line? Given everything I've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? That can't be right though. According to the R Internals Manual, a CHARSXP object has a SEXPTYPE code of 9, not 262153. I must be misunderstanding something? Why is it 262153?
 
 <p align="right">
-*Frightened by the first wave, are you? All in good time my love. The secrets of 262153 will reveal themselves soon.*
+<br>*Frightened by the first wave, are you? All in good time my love. The secrets of 262153 will reveal themselves soon.*
 </p>
 
 ```{r}
@@ -625,14 +625,14 @@ show_rds(object = c(a = 100, b = 200), header = FALSE)
 I ... don't know what I am looking at here. First off, I seem to be having the same problem I had with character strings. If I take the first line of this output at face value I would think that a named numeric vector has SEXPTYPE 526. That can't be right, can it?
 
 <p align="right">
-*It isn't. In the same way that strings don't have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. You will learn the error of your ways very soon.*
-</p>
+<br>*It isn't. In the same way that strings don't have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. You will learn the error of your ways very soon.*
+</p><br>
 
 Setting that mystery aside, I notice that the RDS output is similar to the output we saw when converting a list to RDS. The output contains the numeric vector first (the data), which is then followed by a list that specifies the attributes linked to that object? 
 
-<p align="right">
+<p align="right"><br>
 *Not quite. You're so close, but it's a pairlist, not a list. The underlying data structure is different. Don't let it worry your mind, sweet thing. Preserve your mind for the trials still to come.*
-</p>
+</p><br>
 
 For this object, there's only one attribute that needs to be stored, corresponding to the names associated with each element of the vector. If I annotate the output again, I get this:
 
@@ -721,7 +721,7 @@ Those are SEXPTYPE 2, and if we check the [R internals manual](https://cran.r-pr
 I feel triumphant, but broken.
 
 <p align="right">
-*Me too.*
+*Girl, same.*
 </p>
 
 
@@ -794,7 +794,7 @@ These are both R objects and you can save them to RDS files. So of course there'
 show_rds(expr, header = FALSE)
 ```
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, echo=FALSE}
 # don't evaluate this in the R markdown!!!!! do it from the global workspace
 saveRDS(
   object = fn, 
@@ -811,7 +811,9 @@ So no, we are not "done". The RDS format keeps some secrets still.
 
 But if you mean "have we reached the point where the author is losing her mind and needs to rest?" then... oh my god yes I am utterly and completely *done* with this subject, and wish to spend the rest of my night sobbing quietly in darkness.
 
-Now let us never speak of this again.
+<p align="right">
+<br>*Let us never speak of this again.*
+</p>
 
 ```{r}
 #| echo = FALSE,
