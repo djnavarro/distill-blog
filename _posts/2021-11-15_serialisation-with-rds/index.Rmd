@@ -735,7 +735,7 @@ knitr::include_graphics("img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg")
 
 ### What's in the other bits?
 
-I fear that my mind is lost, but in case anyone uncover these notes and read this far, I should recound what I have learned about the contents of the other bits. There are a few different things in there. The two you'd most likely encounter are the object flag (bit 9) and the attributes flag (bit 10). For example, consider the data frame below:
+I fear that my mind is lost, but in case anyone uncover these notes and read this far, I should document what I have learned about the contents of the other bits. There are a few different things in there. The two you'd most likely encounter are the object flag (bit 9) and the attributes flag (bit 10). For example, consider the data frame below:
 
 ```{r}
 data.frame(
