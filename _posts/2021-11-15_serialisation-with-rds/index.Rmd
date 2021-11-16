@@ -297,7 +297,7 @@ knitr::include_graphics("img/daria-shevtsova-7mbvu0biZgg-unsplash.jpg")
 
 ## Interpreting the RDS format
 
-All right, lets see if we can interpret the contents of an RDS file. Rather than tediously writing the file to disk using `saveRDS()` and then loading it again, I'll cheat slightly and write a `show_rds()` function that serialises an object and prints the results directly to the R console:
+All right, lets see if I can interpret the contents of an RDS file. Rather than tediously writing the file to disk using `saveRDS()` and then loading it again, I'll cheat slightly and write a `show_rds()` function that serialises an object and prints the results directly to the R console:
 
 ```{r}
 show_rds <- function(object, header = TRUE) {
@@ -311,17 +311,23 @@ show_rds <- function(object, header = TRUE) {
 }
 ```
 
+Just to make sure it's doing what it's supposed to I'll make sure it gives the output I'm expecting. Probably a good idea given how many times I've been surprised so far...
+
 ```{r}
 show_rds(object = c(10.1, 2.2, 94.3))
 ```
 
-We already know what the last 3 lines mean: they're the 3 values contained in the object. Is it a coincidence that line preceding that happens to *also* contain "3"? Let's see what happens if we try to serialise just 2 numbers. Does that line change to "2"?
+Okay, phew. That looks good. 
+
+I guess my next task is to work out what all this output means. The last three lines are obvious: that's the data! What about the line above the data? That line reads `3` and is followed by three data values. I wonder if that's a coincidence? I'll see what happens if I try to serialise just 2 numbers. Does that line change to `2`?
 
 ```{r}
 show_rds(object = c(10.1, 2.2))
 ```
 
-Yes. Yes it does. Here's what we know so far:
+Yes. Yes it does. I am learning things. 
+
+Here's what I know so far:
 
 ```
 A
@@ -337,7 +343,9 @@ UTF-8
 94.3   # third value is 94.3
 ```
 
-Okay, so what's next? The "14" in the preceding line. What does that mean? Well, if you happen to be the kind of person who has the [R Internals Manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf)] open at all times (and who doesn't amirite?), you would *obviously* that 14 is the internal `SEXPTYPE` code that R uses to specify that an object is a numeric vector. But just case you happen to be a human being with a life and doesn't have the R Internals Manual memorised, here's a few of the more common codes:
+Okay, so what's next? The `14` in the preceding line. What does that mean? 
+
+I puzzled over this for a while, and ended up needing to consult an occult tome of dangerous lore -- the [R Internals Manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf) -- to find a partial answer. On the very first page of the Infernals Manual there is a table listing the SEXPTYPE codes that R uses internally to specify what kind of entity is encoded by an R object. Here are a few of these SEXPTYPE codes:
 
 | Value | SEXPTYPE | Variable type   |
 | ----- | -------- | --------------- | 
@@ -347,7 +355,7 @@ Okay, so what's next? The "14" in the preceding line. What does that mean? Well,
 | 16    | STRSXP   | character       |
 | 19    | VECSXP   | list            |
 
-So we can update our annotated description:
+So... when I serialise a plain numeric vector, the RDS file writes the number 14 to the file. In that case I will tentatively update my beliefs about the RDS file
 
 ```
 A
@@ -363,6 +371,10 @@ UTF-8
 94.3   # third value is 94.3
 ```
 
+<p align="right">
+*Oh no dear. You have strayed so far from the light already. That `14` carries much more meaning than your fragile mind is prepared to handle. Soon you will know better. Soon you will unravel entirely. You can feel it coming, can't you?*
+</p>
+
 ```{r}
 #| echo = FALSE,
 #| fig.cap = "Image by Roxy Aln Available by CC0 licence on [unsplash](https://unsplash.com/photos/-d3_Ez5pKss)."
@@ -372,18 +384,22 @@ knitr::include_graphics("img/roxy-aln--d3_Ez5pKss-unsplash.jpg")
 
 ### The RDS header
 
-At this point, we've annotated every part of the RDS file that corresponds to the actual object. The lines preceding it are the RDS header. Here's what the first four lines mean:
+At this point, I have annotated every part of the RDS file that corresponds to the actual object. Consulting the section of the Infernal Manual devoted to serialisation, I learn that the six lines at the beginning of the file are known as the RDS header. Reading further I learn that the first line specifies the encoding scheme (`A` for ASCII, `X` for binary big-endian). The second line specifies which version of the RDS file format is used. The third line indicates the version of R that wrote the file. Finally, the fourth line is the minimum version of R required to read the file.
+
+If I annotate my RDS header to reflect this knowledge, I get this:
 
 ```
-A      # the file uses ASCII encoding
-3      # the file uses version 3 of the RDS format
-262402 # the file was written in R version 4.1.2
-197888 # the minimum R version that can read it is 3.5
+A       # use ASCII encoding
+3       # use version 3 of the RDS format
+262402  # written with R version 4.1.2
+197888  # minimum R version that can read it is 3.5
 5
 UTF-8 
 ```
 
-At this point any sane person is probably wondering how the R versions are encoded. Why does version 4.1.2 correspond to the number 262402, and why does 3.5 get encoded as 197888? It was a complete mystery to me until I took a look at the internal [source code](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/tools/GETVERSION#L11) which revealed the formula:
+I am confused. Where did those numbers come from? Why does version 4.1.2 correspond to the number `262402`, and why does 3.5 get encoded as `197888`? The Manual is silent, and my thoughts become bleak. Am I losing my mind? Is the answer obvious??? What mess have I gotten myself into? 
+
+In desperation, I look at the [R source code](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/tools/GETVERSION#L11) which reveals unto me the magic formula:
 
 ```{r}
 encode_r_version <- function(major, minor, patch) {
@@ -391,14 +407,22 @@ encode_r_version <- function(major, minor, patch) {
 }
 ```
 
-Just to check:
+Yessss. This all makes sense now... 
 
 ```{r, results='hold'}
 encode_r_version(4, 1, 2)
 encode_r_version(3, 5, 0)
 ```
 
-Okay, that all makes sense. What about the other two lines in the header? Prior to RDS version 3 (which was released in R version 3.5) those two lines didn't exist. Those are now used to specify the "native encoding" of the file. The "A" at the beginning of the RDS file is a little misleading: the RDS file format isn't restricted to ASCII characters. In the usual case, the RDS file can encode any [UTF-8 character](https://en.wikipedia.org/wiki/UTF-8). In some cases, however, the file may be restricted to the [Latin-1 alphabet](https://en.wikipedia.org/wiki/ISO/IEC_8859-1). Because of this, there is some ambiguity that needs to be resolved: the RDS file needs to indicate which character set is used for the encoding. So our annotated header now looks like this:
+...so much sense. 
+
+What about the other two lines in the header? Prior to RDS version 3 -- which was released in R version 3.5 -- those two lines didn't exist in the header. Those are now used to specify the "native encoding" of the file, according to the Manual. 
+
+"But isn't that ASCII????", whispers a voice in my head. "Is that not what the `A` is for?" 
+
+Not quite. The RDS file format isn't restricted to ASCII characters. In the usual case, the RDS file can encode any [UTF-8 character](https://en.wikipedia.org/wiki/UTF-8) and the native encoding line reads `UTF-8`. There is another possibility though: the file may use the [Latin-1 alphabet](https://en.wikipedia.org/wiki/ISO/IEC_8859-1). Because of this, there is some ambiguity that needs to be resolved. The RDS file needs to indicate which character set is used for the encoding.
+
+My annotated header now looks like this:
 
 ```
 A      # the file uses ASCII encoding
@@ -409,8 +433,15 @@ A      # the file uses ASCII encoding
 UTF-8  # the file encodes UTF-8 characters not Latin-1
 ```
 
-Okay then... but what about that pesky "5"? What does that mean? I'll be honest. It took me ages to figure this one out. As far as I can tell this line isn't discussed in the R Internals Manual, but you can work it out by looking at the [source code for serialize](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408). That line reads "5" because it's telling you (or the parser) that the string that follows on the next line (i.e., "UTF-8") contains 5 characters. Presumably if I'd used Latin-1 encoding, the corresponding line would have been "7". 
+Okay, that makes a certain kind of sense, but what's the story behind that `5`? What does that mean? What dark secret does it hide?
 
+It took me so very long to figure this one out. As far as I can tell this line isn't discussed in the R Internals Manual, but I worked it out by looking at the [source code for serialize](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408). That line reads `5` because it's telling the parser that the string that follows on the next line (i.e., `UTF-8`) contains five characters. Presumably if I'd used Latin-1 encoding, the corresponding line would have been `7`. 
+
+This is doing my head in, but I think I'm okay?
+
+<p align="right">
+*Are you sure? Really? You don't sound too certain*
+</p>
 
 ```{r}
 #| echo = FALSE,
@@ -421,13 +452,13 @@ knitr::include_graphics("img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg")
 
 ### Logical, integer, and numeric vectors
 
-Now that I have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on. That way I won't have to look at that same six lines of output over and over.
+Now that I have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on. That way I won't have to look at that same six lines of output over and over and they will no longer haunt my dreams. 
 
 <p align="right">
-*Oh no my dear. Hiding from it won't save you.*
+*Oh no my dear. Hiding won't save you.*
 </p>
 
-For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you'd expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:
+I think the time has come to look at how RDS encodes other kinds of data. For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as I expected given what I learned earlier. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:
 
 ```{r}
 show_rds(
@@ -436,7 +467,9 @@ show_rds(
 )
 ```
 
-`TRUE` values are represented by `1` in the RDS file, and `FALSE` values are represented by `0`. Missing values are represented as `NA`. For an integer vector, we see something similar. The SEXPTYPE here is 13, so a vector of four integer looks like this:
+`TRUE` values are represented by `1` in the RDS file, and `FALSE` values are represented by `0`. Missing values are represented as `NA`. 
+
+For an integer vector, the output is again familiar. The SEXPTYPE here is 13, so a vector of four integer looks like this:
 
 ```{r}
 show_rds(
@@ -445,7 +478,7 @@ show_rds(
 )
 ```
 
-Numeric vectors we've already seen. They have SEXPTYPE of 14, so a numeric vector of length 3 starts with `14` on the first line, `3` on the second line, and then the numbers themselves appear over the remaining three lines. However, one thing to keep in mind is that numeric values are subject to the vagaries of floating point arithmetic when represented in-memory, so it's quite possible that something like this might happen when those values are subsequently serialised:
+Numeric vectors I've already seen. They have SEXPTYPE of 14, so a numeric vector of length 3 starts with `14` on the first line, `3` on the second line, and then the numbers themselves appear over the remaining three lines. However, there is a catch. There always is when dealing with real numbers. Numeric values are subject to the vagaries of [floating point arithmetic](https://en.wikipedia.org/wiki/Floating-point_arithmetic) when represented in memory, and the encoding is not exact. As a consequence, it is entirely possible that something like this happens:
 
 ```{r}
 show_rds(
@@ -454,7 +487,11 @@ show_rds(
 )
 ```
 
+Floating point numbers always make my head hurt. It is best not to dwell too long upon them lest my grip on sanity loosen. 
 
+<p align="right">
+*Too late. Far, far too late.*
+</p>
 
 ```{r}
 #| echo = FALSE,
@@ -463,12 +500,17 @@ knitr::include_graphics("img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg")
 ```
 
 
-
 ### Character vectors
 
-What about character vectors? Ah well, those are trickier...
+What about character vectors? 
 
-Let's create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so you'd expect that a character vector with three elements would start with `16` on the first line and `3` on the second line, which would then be followed by the contents of each cell. And that's... sort of true:
+<p align="right">
+*Adorable that you think these will be safer waters in which to swim my dear. A wiser woman would turn back now and return to the shallows. Yet there you go, drifting out to sea. Fool.*
+</p>
+
+Let's create a simple character vector. According to the table above, character vectors have SEXPTYPE 16, so I'd expect that a character vector with three elements would start with `16` on the first line and `3` on the second line, which would then be followed by the contents of each cell.
+
+And that's... sort of true?
 
 ```{r}
 show_rds(
@@ -477,7 +519,7 @@ show_rds(
 )
 ```
 
-What is slightly peculiar is that every string occupies three lines. For instance, these three lines correspond to the word `"strange"`:
+The format of this output *is* roughly what I was expecting, except for the fact that each string occupies three lines. For instance, these three lines correspond to the word `"strange"`:
 
 ```
 262153
@@ -485,7 +527,7 @@ What is slightly peculiar is that every string occupies three lines. For instanc
 strange
 ```
 
-This puzzled me at first, before I remembered that the source code for R is all written in C, and C represents strings as an array. In R, the word `"strange"` is treated as a single string, but C treats this string as a vector consisting of 7 characters. So the interpretation of lines two and three are:
+This puzzled me at first. Eventually, I remembered that the source code for R is written in C, and C represents strings as an array. So where R treats the word `"strange"` a *single* object with length 1, C treats it as a string array containing 7 characters. In the R source code, the object encoding a string is called a CHARSXP. So lines two and three begin to make sense: 
 
 ```
 262153
@@ -493,14 +535,16 @@ This puzzled me at first, before I remembered that the source code for R is all 
 strange  # the 7 characters in the string
 ```
 
-What about the first line? Given everything we've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? Turns out that's not true. The actual data structure here is called a CHARSXP -- referring to the internal representation R uses for character strings -- and it is SEXPTYPE 9. Later on I'll explain why all the strings are marked with 262153 rather than 9, but for now let's take it on faith that there's a good reason for it.
+What about the first line? Given everything I've seen previously it's pretty tempting to guess that it means something similar to the SEXPTYPE codes that we've seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there's some sense in which a single string has a "SEXPTYPE" of 262153? That can't be right though. According to the R Internals Manual, a CHARSXP object has a SEXPTYPE code of 9, not 262153. I must be misunderstanding something? Why is it 262153?
 
-
+<p align="right">
+*Frightened by the first wave, are you? All in good time my love. The secrets of 262153 will reveal themselves soon.*
+</p>
 
 ```{r}
 #| echo = FALSE,
-#| fig.cap = "Image by Kelly Sikkema. Available by CC0 licence on [unsplash](https://unsplash.com/photos/D_5iQVxKkPY)."
-knitr::include_graphics("img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg")
+#| fig.cap = "Image by Tim Marshall Available by CC0 licence on [unsplash](https://unsplash.com/photos/qKlD2QlK-CY)."
+knitr::include_graphics("img/tim-marshall-qKlD2QlK-CY-unsplash.jpg")
 ```
 
 
@@ -519,7 +563,9 @@ show_rds(
 )
 ```
 
-The output here begins with the two lines specifying that it's a list of length three, and then is followed by the RDS representation for the logical vector `c(TRUE, FALSE)`, then the RDS representation for the numeric vector `10.2`, and finally the RDS representation for the character vector `c("strange", "thing")`. If we use some indenting and commenting to make annotate the RDS representation of the list, we might get something like this:
+This output makes my brain hurt, but it does make sense if I stare at it long enough. It begins with the two lines specifying that it's a list of length three. This is then followed by the RDS representation for the logical vector `c(TRUE, FALSE)`, the RDS representation for the numeric vector `10.2`, and finally the RDS representation for the character vector `c("strange", "thing")`. 
+
+I have started using annotations and whitespace to make it clearer:
 
 ```
 19 # it's a list
@@ -548,7 +594,11 @@ The output here begins with the two lines specifying that it's a list of length 
      thing  # values are: t, h, i, n, g
 ```
 
+I feel so powerful! My mind is now afire with knowledge! All the secrets of RDS will be mine...
 
+<p align="right">
+*...and the madness strikes at last. Pride comes before the fall, always.*
+</p>
 
 
 ```{r}
@@ -566,15 +616,25 @@ One of the key features of R is that vectors are permitted to have arbitrary met
 show_rds(object = c(100, 200), header = FALSE)
 ```
 
-As expected, we see that it has SEXPTYPE 14 (numeric), length 2, and the values it stores are 100 and 200. Nothing out of the ordinary here. However, when we add a name to the object, the RDS output is considerably more complicated:
+As expected it has SEXPTYPE 14 (numeric), length 2, and the values it stores are 100 and 200. Nothing out of the ordinary here. But when I add a name to the object, the output is ... complicated.
 
 ```{r}
 show_rds(object = c(a = 100, b = 200), header = FALSE)
 ```
 
-Ooooookay, that's weird. First off, we seem to be having the same problem we had with strings. If you were to take the first line of this output at face value you might think that a named numeric vector has SEXPTYPE 526. It doesn't. In the same way that strings don't have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. 
+I ... don't know what I am looking at here. First off, I seem to be having the same problem I had with character strings. If I take the first line of this output at face value I would think that a named numeric vector has SEXPTYPE 526. That can't be right, can it?
 
-Setting those details aside, notice that the RDS output is very similar to the output we saw when converting a list to RDS. The RDS output contains the numeric vector first (the data), which is then followed by a list (well, technically it's a pairlist) that specifies the attributes. For this object, there's only one attribute:
+<p align="right">
+*It isn't. In the same way that strings don't have a SEXPTYPE of 262153 (the actual number is 9), the 526 here is a little misleading. This is a numeric vector and like all numeric vectors it is SEXPTYPE 14. You will learn the error of your ways very soon.*
+</p>
+
+Setting that mystery aside, I notice that the RDS output is similar to the output we saw when converting a list to RDS. The output contains the numeric vector first (the data), which is then followed by a list that specifies the attributes linked to that object? 
+
+<p align="right">
+*Not quite. You're so close, but it's a pairlist, not a list. The underlying data structure is different. Don't let it worry your mind, sweet thing. Preserve your mind for the trials still to come.*
+</p>
+
+For this object, there's only one attribute that needs to be stored, corresponding to the names associated with each element of the vector. If I annotate the output again, I get this:
 
 ```
 526     # Numeric vector 
@@ -604,35 +664,38 @@ Setting those details aside, notice that the RDS output is very similar to the o
 254   # end of pairlist
 ```
 
-As an aside, the `254` ending the pairlist isn't completely arbitrary. That's how the RDS format encodes a `NULL` value: 
+The `254` marking the end of the pairlist confused me for a little while, but it isn't arbitrary. It represents a `NULL` value in the RDS format:
 
 ```{r}
 show_rds(NULL, header=FALSE)
 ```
 
-If you look at the relevant part of the R source code, you see that there are a collection of ["administrative codes"](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720) that define something "SEXPTYPE-like" for special values. `NULL` is the one you'd be most likely to encounter though.
-
+<p align="right">
+*Yes, my dear. If you look at the relevant part of the R source code, you see that there are a collection of ["administrative codes"](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720) that are used to denote special values in a SEXPTYPE-like fashion. `NULL` is the one you'd be most likely to encounter though. Perhaps best not to travel down that road tonight though? Wait until day. You're getting tired.*
+</p>
 
 
 ```{r}
 #| echo = FALSE,
-#| fig.cap = "Image by Atharva Lele. Available by CC0 licence on [unsplash](https://unsplash.com/photos/GSXHEh-5IMI)."
-knitr::include_graphics("img/atharva-lele-GSXHEh-5IMI-unsplash.jpg")
+#| fig.cap = "Image by Kelly Sikkema. Available by CC0 licence on [unsplash](https://unsplash.com/photos/D_5iQVxKkPY)."
+knitr::include_graphics("img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg")
 ```
 
 
 ## Type/flag packing
 
+Throughout this post, I've given the impression that when R serialises an object to RDS format, the first thing it writes is the SEXPTYPE of that object. Technically I wasn't *lying*, but this is an oversimplificiation that hides something important. It's time to unpack this, and to do that I'll have to dive into the R source code...
+
 ### Decoding the SEXPTYPE
 
-Throughout this post, I've given the impression that when R serialises an object to RDS format, the first thing it writes is the SEXPTYPE of that object. Technically I wasn't lying, but I was hiding something. What R actually does in that first entry is write a single integer, and [packs multiple pieces of information](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L722-L738) into the bits that comprise that integer. Only the first eight bits are used to define the SEXPTYPE. Other bits are used as flags indicating other things. Earlier on, I said that a value of 526 actually corresponds to a SEXPTYPE of 14. That becomes clearer when we take a look at the binary representation of 14 and 526. The first eight bits are identical:
+After digging around in the source code I found the answer. What R actually does in that first entry is write a single integer, and [packs multiple pieces of information](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L722-L738) into the bits that comprise that integer. Only the first eight bits are used to define the SEXPTYPE. Other bits are used as flags indicating other things. Earlier on, I said that a value of 526 actually corresponds to a SEXPTYPE of 14. That becomes clearer when we take a look at the binary representation of 14 and 526. The first eight bits are identical:
 
 ```{r}
 intToBits(14)
 intToBits(526)
 ```
 
-To extract the SEXPTYPE, what we want to do is ignore all the later bits. I could write a function that uses `intToBits()` to unpack an integer into its binary representation, then sets all the bits except the first eight to 0, and then converts back to an integer ... but there's no need. The thing I just described is a "bitwise AND" operation:
+To extract the SEXPTYPE, what we want to do is ignore all the later bits. I could write a function that uses `intToBits()` to unpack an integer into its binary representation, then sets all the bits except the first eight to 0, and then converts back to an integer ...but there's no need. The thing I just described is a "bitwise AND" operation:
 
 ```{r}
 decode_sexptype <- function(x) bitwAnd(x, 255)
@@ -653,8 +716,13 @@ The attributes pairlist, which gave us a value of 1026 when the RDS is prined ou
 decode_sexptype(1026)
 ```
 
-Those are SEXPTYPE 2, and if we check the [R internals manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf) again, we see that this is indeed the code for a pairlist.
+Those are SEXPTYPE 2, and if we check the [R internals manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf) again, we see that this is indeed the code for a pairlist. 
 
+I feel triumphant, but broken.
+
+<p align="right">
+*Me too.*
+</p>
 
 
 ```{r}
@@ -667,7 +735,7 @@ knitr::include_graphics("img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg")
 
 ### What's in the other bits?
 
-On the off chance that anyone could be bothered reading up to this point, you might be wondering what information is stored in those other bits. There are a few different things in there. The two you'd most likely encounter are the object flag (bit 9) and the attributes flag (bit 10). For example, consider the data frame below:
+I fear that my mind is lost, but in case anyone uncover these notes and read this far, I should recound what I have learned about the contents of the other bits. There are a few different things in there. The two you'd most likely encounter are the object flag (bit 9) and the attributes flag (bit 10). For example, consider the data frame below:
 
 ```{r}
 data.frame(
@@ -692,7 +760,9 @@ Bit 9 is the "object flag": it specifies whether or not the R data structure has
 
 ### Okay but what's up with 262153?
 
-Ugh. Fine. If we unpack the integer code 262153, we see that there's something encoded in bit 19:
+Who is asking me all these questions anyway? 
+
+It worries me that I'm now listening to the voices in my head, but okay fine. If we unpack the integer code 262153, we see that there's something encoded in bit 19:
 
 ```{r}
 intToBits(262153)
@@ -711,23 +781,37 @@ knitr::include_graphics("img/pelly-benassi-Hz1WQbHcXag-unsplash.jpg")
 
 ## Are we done yet?
 
-Depends. If you mean "have we described everything there is to know about the RDS format and how data serialisation works in base R?" then no, we're absolutely not done. I haven't said anything about how R serialises functions or expressions:
+Well that depends on what you mean by asking the question. If you mean "have we described everything there is to know about the RDS format and how data serialisation works in base R?" then no, we're absolutely not done. I haven't said anything about how R serialises functions or expressions:
 
 ```{r}
 expr <- quote(sum(a, b, c))
 fn <- function(x) x + 1 
 ```
 
-These are both R objects and you can save them to RDS files. So of course there's a serialisation format for those but it's not a lot of fun. I mean, if you squint at it you can kiiiiiinnnnda see what's going on for the expression
+These are both R objects and you can save them to RDS files. So of course there's a serialisation format for those but it's not a lot of fun. I mean, if you squint at it you can kiiiiiinnnnda see what's going on with the expression...
 
 ```{r}
 show_rds(expr, header = FALSE)
 ```
 
-but if I were to do the same thing for the function it's just unpleasant, and frankly I already have a headache just from getting this far. So if you mean "have we reached the point where the author is sick of this topic?" then... oh my god yes we are utterly and completely *done* with this subject.
+```{r, eval=FALSE}
+# don't evaluate this in the R markdown!!!!! do it from the global workspace
+saveRDS(
+  object = fn, 
+  file = "fn.rds", 
+  ascii = TRUE, 
+  compress = FALSE
+)
+```
+
+
+...but if I do the same thing to [serialise the function](fn.rds) it gets unpleasant. This has been quite an ordeal just getting this far, and I see no need to write about the serialisation of closures. Let someone else suffer through that, because my brain is a wreck.
+
+So no, we are not "done". The RDS format keeps some secrets still. 
+
+But if you mean "have we reached the point where the author is losing her mind and needs to rest?" then... oh my god yes I am utterly and completely *done* with this subject, and wish to spend the rest of my night sobbing quietly in darkness.
 
 Now let us never speak of this again.
-
 
 ```{r}
 #| echo = FALSE,
