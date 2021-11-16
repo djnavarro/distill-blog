@@ -2479,7 +2479,12 @@ d-appendix d-footnote-list a.footnote-backlink {
 <h3>Contents</h3>
 <ul>
 <li><a href="#what-is-serialisation">What is serialisation?</a></li>
-<li><a href="#how-does-rds-serialisation-work">How does RDS serialisation work?</a></li>
+<li><a href="#how-does-rds-serialisation-work">How does RDS serialisation work?</a>
+<ul>
+<li><a href="#the-serialize-function">The <code>serialize()</code> function</a></li>
+<li><a href="#rds-uses-gzip-compression">RDS uses gzip compression</a></li>
+<li><a href="#the-unserialize-function">The <code>unserialize()</code> function</a></li>
+</ul></li>
 <li><a href="#serialising-to-plain-text-rds">Serialising to plain text RDS</a></li>
 <li><a href="#interpreting-the-rds-format">Interpreting the RDS format</a>
 <ul>
@@ -2510,7 +2515,14 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
-<p>Data <a href="https://en.wikipedia.org/wiki/Serialization">serialisation</a> is one of those terms that comes up from time to time in data science (and on #rstats twitter!). I suspect that anyone who works with big data or has a computer science background is likely to be <em>painfully</em> aware of what serialisation is and why it matters. Those folks probably aren’t in need of any post that I might write on the topic! However, a lot of people who work in R come from other backgrounds. If you’re a social scientist who mostly works with small CSV files, for example, there’s no particular reason why you’d have encountered this. I worked as a mathematical psychologist and computational modeller for about 20 years and until very recently I’ve never had never had to think about it! In fact, the issue only came up for me when I started reading about <a href="https://arrow.apache.org">Apache Arrow</a> (a topic for another post, perhaps…) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it.</p>
+<p align="right">
+<em>I still alive, and that’s what matters. The traumatic experience of the last week is fading, leaving a pale residue of fear and the few scraps of writing that are the sole surviving documentation of these days. It is a tale of fright, a desperate agony, and like any good tragedy it starts with the hope and naive optimism of youth…</em>
+</p>
+<p>I’ve decided the time has come for me to do a deep dive into <a href="https://en.wikipedia.org/wiki/Serialization">data serialisation</a> in R. Serialisation is one of those terms that comes up from time to time in data science, and it’s popped up so many times on my twitter feed that I feel like I need a better grasp of how serialisation works in R. It’s a topic that folks who work with big data or have a computer science background likely understand quite well, but a lot of people who use R come from other backgrounds. If you’re a social scientist who mostly works with small CSV files, for example, there’s no particular reason why you’d have encountered this. In my case, I’ve worked as a mathematical psychologist and computational modeller for about 20 years, and until very recently I’ve never had never had to think about it in any detail. The issue only came up for me when I started reading about <a href="https://arrow.apache.org">Apache Arrow</a> (a topic for another post, perhaps) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it.</p>
+<p>This post is aimed at anyone who is in a similar situation to me!</p>
+<p align="right">
+<em>Oh you sweet summer child. You really think you are prepared to walk into the dark? That’s adorable.</em>
+</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
 <img src="img/andrey-zvyagintsev-G5nl9_YEXuc-unsplash.jpg" alt="Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/G5nl9_YEXuc)."  />
@@ -2520,7 +2532,7 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
 </div>
 </div>
 <h2 id="what-is-serialisation">What is serialisation?</h2>
-<p>Viewed in the general sense, serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are “serialising” it according to some encoding scheme. Suppose, for instance, I have a data frame called <code>art</code>:</p>
+<p>In general serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are “serialising” it according to some encoding scheme. Suppose, for instance, I have a data frame called <code>art</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -2541,14 +2553,15 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
 9        8000 watercolour  sys02  img34 teacup-ocean    jpg
 10       8000 watercolour  sys02  img34 teacup-ocean    png</code></pre>
 </div>
-<p>This data frame is currently stored in memory on my machine, and it has structure: R represents it as a list of length 6, where each element of the list points to an atomic vector (e.g., numeric, character, logical), accompanied by some additional metadata that tells R that this particular list is a data frame. The details of how this is accomplished don’t matter for this post<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>: all that matters is that the in-memory structure for <code>art</code> is a little more complicated than a stream of bytes. If I want to save it to a data file, however, it needs to be converted into a stream of bytes: it needs to be <strong>serialised</strong>. Serialisation doesn’t have to be fancy. The humble CSV file is a form of serialisation:</p>
+<p>This data frame is currently stored in memory on my machine, and it has structure. R represents this data frame as a list of length 6. Each element of this list is a pointer to another data structure, namely an atomic vector (e.g., numeric vector). The list is accompanied by additional metadata that tells R that this particular list is a data frame. The details of how this is accomplished don’t matter for this post. All that matters for now is that the in-memory representation of <code>art</code> is a structured object. It’s little more complicated than a stream of data, but if I want to save this data to a file it needs to be converted into one. The process of taking an in-memory structure and converting it to a sequence of bytes is called <strong>serialisation</strong>.</p>
+<p>Serialisation doesn’t have to be fancy. The humble CSV file can be viewed as a form of serialisation for a data frame, albeit one that does not store all the metadata associated with the data frame. Viewed this way, <code>write.csv()</code> can be viewed as a serialisation function for tabular data:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/write.table.html'>write.csv</a></span><span class='op'>(</span><span class='va'>art</span>, file <span class='op'>=</span> <span class='st'>"art.csv"</span>, row.names <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>By doing this, the <code>art</code> object is written as UTF-8 encoded text onto the disk, as the file “art.csv”. If we were to open this file in a text editor, we’d see this:</p>
+<p>When I call this function R uses the <code>art</code> object to write text onto the disk, saved as the file “art.csv”. If I were to open this file in a text editor, I’d see this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre><code>&quot;resolution&quot;,&quot;series&quot;,&quot;sys_id&quot;,&quot;img_id&quot;,&quot;short_name&quot;,&quot;format&quot;
 1000,&quot;watercolour&quot;,&quot;sys02&quot;,&quot;img34&quot;,&quot;teacup-ocean&quot;,&quot;jpg&quot;
@@ -2562,7 +2575,7 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
 8000,&quot;watercolour&quot;,&quot;sys02&quot;,&quot;img34&quot;,&quot;teacup-ocean&quot;,&quot;jpg&quot;
 8000,&quot;watercolour&quot;,&quot;sys02&quot;,&quot;img34&quot;,&quot;teacup-ocean&quot;,&quot;png&quot;</code></pre>
 </div>
-<p>What you see in the text editor, however, isn’t literally the raw sequence of bytes: you’re looking at it as UTF-8 plain text. The file has already been unserialised and decoded. To get a sense of what the serialised data look like, note that the first few characters of the file are <code>"resolu"</code>, and we can use <code>charToRaw()</code> to convert these characters into a series of bytes:</p>
+<p>Although this view is human-readable, it is slightly misleading. The text in shown above isn’t the literal sequence of bytes. It’s how those bytes are displayed when the have been <strong>unserialised</strong> and displayed on screen as UTF-8 plain text. To get a sense of what serialised text actually looks like we can use the <code>charToRaw()</code> function. The first few characters of the text file are <code>"resolu"</code> which looks like this when series of bytes:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>charToRaw</a></span><span class='op'>(</span><span class='st'>'"resolu'</span><span class='op'>)</span>
@@ -2570,7 +2583,18 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
 </div>
 <pre><code>[1] 22 72 65 73 6f 6c 75</code></pre>
 </div>
-<p>To see what the file looks like in serialised form, we can define a simple helper function that opens a binary connection to the file, reads in the first 100 bytes, closes the file, and then returns those bytes as a raw vector:</p>
+<p>The raw vector shown in the output above uses one byte to represent each character. For instance, the character <code>"l"</code> is represented with the byte <code>6c</code> in the usual hexadecimal representation. We can unpack that byte into its consituent 8-bit representation using <code>rawToBits()</code></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='st'>"u"</span> |&gt;
+  <span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>charToRaw</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;
+  <span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToBits</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 01 00 01 00 01 01 01 00</code></pre>
+</div>
+<p>(Note that the base pipe <code>|&gt;</code> is rendered as a triangle-shaped ligature in <a href="https://github.com/tonsky/FiraCode">Fira Code</a>)</p>
+<p>Returning to the “art.csv” data file, I can use <code>file()</code> and <code>readBin()</code> to define a simple helper function that opens a binary connection to the file, reads in the first 100 bytes (or whatever), closes the file, and then returns those bytes as a raw vector:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>read_bytes</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>path</span>, <span class='va'>max_bytes</span> <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2579,8 +2603,13 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
   <span class='fu'><a href='https://rdrr.io/r/base/connections.html'>close</a></span><span class='op'>(</span><span class='va'>con</span><span class='op'>)</span>
   <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>bytes</span><span class='op'>)</span>
 <span class='op'>}</span>
-
-<span class='fu'>read_bytes</span><span class='op'>(</span><span class='st'>"art.csv"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Here are the first 100 bytes of the “art.csv” file:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>read_bytes</span><span class='op'>(</span><span class='st'>"art.csv"</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>  [1] 22 72 65 73 6f 6c 75 74 69 6f 6e 22 2c 22 73 65 72 69 65 73 22
@@ -2589,7 +2618,7 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
  [64] 30 30 30 2c 22 77 61 74 65 72 63 6f 6c 6f 75 72 22 2c 22 73 79
  [85] 73 30 32 22 2c 22 69 6d 67 33 34 22 2c 22 74 65</code></pre>
 </div>
-<p>The <code>read.csv()</code> function is similar to <code>read_bytes()</code> in spirit: when I call <code>read.csv("art.csv")</code> R R opens a connection to the “art.csv” file and reads that sequence of bytes into memory, and then closes the file. However, unlike my simple <code>read_bytes()</code> function, it actually does something useful. The sequence of bytes gets decoded, or <strong>deserialised</strong>, and the result is that R reconstructs the original <code>art</code> data frame in memory:</p>
+<p>The <code>read.csv()</code> function is similar to <code>read_bytes()</code> in spirit: when I call <code>read.csv("art.csv")</code>, R opens a connection to the “art.csv” file. It then reads that sequence of bytes into memory, and then closes the file. However, unlike my simple <code>read_bytes()</code> function, it does something useful with that information. The sequence of bytes gets decoded (unserialised), and the result is that R reconstructs the original <code>art</code> data frame:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>art</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a></span><span class='op'>(</span><span class='st'>"art.csv"</span><span class='op'>)</span>
@@ -2609,8 +2638,11 @@ Figure 1: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="http
 10       8000 watercolour  sys02  img34 teacup-ocean    png</code></pre>
 </div>
 <p>Thrilling stuff.</p>
+<p align="right">
+<em>Do you feel that slow dread yet, my dear? Do you feel yourself slipping? You are on the edge of the cliff. You can still climb back to safety if you want. You don’t have to fall. The choice is still yours.</em>
+</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
 <img src="img/daniel-jensen-NMk1Vggt2hg-unsplash.jpg" alt="Image by Daniel Jensen. Available by CC0 licence on [unsplash](https://unsplash.com/photos/NMk1Vggt2hg)."  />
 <p class="caption">
 Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://unsplash.com/photos/NMk1Vggt2hg">unsplash</a>.
@@ -2618,7 +2650,7 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
 </div>
 </div>
 <h2 id="how-does-rds-serialisation-work">How does RDS serialisation work?</h2>
-<p>Data can be serialised in different ways. The native RDS format used by R, for example, provides a method for serialising an R object in a way that – unlike CSV – preserves all the information about that object. When I use <code>readRDS()</code> to unserialise the <code>art.rds</code> file that I happen to have on disk, it clearly recreates the same R object</p>
+<p>Data can be serialised in different ways. The CSV format works reasonably well for rectangular data structures like data frames, but doesn’t work well if you need to serialise something complicated like a nested list. The <a href="https://www.json.org/json-en.html">JSON format</a> is a better choice for those cases, but it too has some limitations when it comes to storing R objects. To serialise an R object we need to store the metadata (classes, names, and other attributes) associated with the object, and if the object is a function there is a lot of other information relevant to its execution besides the source code (e.g., enclosing environment). Because R needs this information, it relies on the native RDS format to do the work. As it happens I have an “art.rds” file on disk that stores the same data frame in the RDS format. When I use <code>readRDS()</code> to unserialise the file, it recreates the same data frame:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>readRDS</a></span><span class='op'>(</span><span class='st'>"art.rds"</span><span class='op'>)</span>
@@ -2636,7 +2668,7 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
 9        8000 watercolour  sys02  img34 teacup-ocean    jpg
 10       8000 watercolour  sys02  img34 teacup-ocean    png</code></pre>
 </div>
-<p>but when I read this file using <code>read_bytes()</code> it’s equally clear that the file itself contains a very different sequence of bytes:</p>
+<p>However, when I read this file using <code>read_bytes()</code> it’s also clear that “art.rds” contains a very different sequence of bytes to “art.csv”:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>read_bytes</span><span class='op'>(</span><span class='st'>"art.rds"</span><span class='op'>)</span>
@@ -2648,6 +2680,11 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
  [64] 00 58 3d 0b 03 27 90 e6 2e 4f 2c 49 2d 4a ce cf c9 2f 2d 1a 4a
  [85] 42 a8 be 60 2d ae 2c 36 30 1a 18 0e 9a 4b 32 73</code></pre>
 </div>
+<p>This is hardly surprising since RDS and CSV are different file formats. But while I have a pretty good mental model of what the contents of a CSV file look like, I don’t have a very solid grasp of what the format of an RDS file is. I’m curious.</p>
+<p align="right">
+<em>Oh sweetie, I tried to warn you…</em>
+</p>
+<h3 id="the-serialize-function">The <code>serialize()</code> function</h3>
 <p>To get a sense of how the RDS format works, it’s helpful to note that R has a <code>serialize()</code> function and an <code>unserialize()</code> function that provide low-level access to the same mechanisms that underpin <code>saveRDS()</code> and <code>readRDS()</code>.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2667,15 +2704,16 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
  [64] 00 00 01 f4 00 00 01 f4 00 00 1f 40 00 00 1f 40 00 00 00 10 00
  [85] 00 00 0a 00 04 00 09 00 00 00 0b 77 61 74 65 72</code></pre>
 </div>
-<p>…oh wait, not it’s not. The “art.rds” file begins with <code>1f 8b 08 00</code>, whereas <code>serialize()</code> returns a sequence of bytes that begins with <code>58 0a 00 00</code>. These are clearly not the same!</p>
-<p>The reason this happens is that the default behaviour of <code>saveRDS()</code> is to write a compressed RDS file using gzip compression. The <code>art.rds</code> file that I have stored on disk is that gzipped version. That’s a very sensible default, but it’s easy enough to save an uncompressed RDS file, simply by setting <code>compress = FALSE</code>:</p>
+<p>…oh wait, no it’s not. What gives???? The “art.rds” file begins with <code>1f 8b 08 00</code>, whereas <code>serialize()</code> returns a sequence of bytes that begins with <code>58 0a 00 00</code>. These are not the same at all! Why is this happening???</p>
+<h3 id="rds-uses-gzip-compression">RDS uses gzip compression</h3>
+<p>After digging a little into the help documentation, I realised that this happens because the default behaviour of <code>saveRDS()</code> is to write a compressed RDS file using gzip compression. In contrast, <code>serialize()</code> does not employ any form of compression. The <code>art.rds</code> file that I have stored on disk is that gzipped version, but it’s easy enough to save an uncompressed RDS file, simply by setting <code>compress = FALSE</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>saveRDS</a></span><span class='op'>(</span><span class='va'>art</span>, file <span class='op'>=</span> <span class='st'>"art_nozip.rds"</span>, compress <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>When I inspect the uncompressed version of the RDS file using <code>read_bytes()</code>, the output is the same one I obtained when I called <code>serialize(art)</code> earlier:</p>
+<p>So now when I inspect the uncompressed file using <code>read_bytes()</code>, the output is the same one I obtained when I called <code>serialize(art)</code> earlier:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>read_bytes</span><span class='op'>(</span><span class='st'>"art_nozip.rds"</span><span class='op'>)</span>
@@ -2687,7 +2725,12 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
  [64] 00 00 01 f4 00 00 01 f4 00 00 1f 40 00 00 1f 40 00 00 00 10 00
  [85] 00 00 0a 00 04 00 09 00 00 00 0b 77 61 74 65 72</code></pre>
 </div>
-<p>The <code>unserialize()</code> function is very similar to <code>readRDS()</code>, and you can apply it to a raw vector like <code>bytes</code> and once again we reconstruct the data frame:</p>
+<p>That’s a relief. I was getting very anxious there, but I feel a little better now. My sanity is restored.</p>
+<p align="right">
+<em>…for now.</em>
+</p>
+<h3 id="the-unserialize-function">The <code>unserialize()</code> function</h3>
+<p>That was frustrating. Anyway getting back to the main thread, the inverse of the <code>serialize()</code> function is <code>unserialize()</code>. It’s very similar to the <code>readRDS()</code> function that you’d normally use to read an RDS file, but you can apply it to a raw vector like <code>bytes</code>. Once again we reconstruct the original data frame:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/serialize.html'>unserialize</a></span><span class='op'>(</span><span class='va'>bytes</span><span class='op'>)</span>
@@ -2705,9 +2748,12 @@ Figure 2: Image by Daniel Jensen. Available by CC0 licence on <a href="https://u
 9        8000 watercolour  sys02  img34 teacup-ocean    jpg
 10       8000 watercolour  sys02  img34 teacup-ocean    png</code></pre>
 </div>
-<p>Even more thrilling stuff than before.</p>
+<p>Yay.</p>
+<p align="right">
+<em>You can sense it can’t you? It will only get worse for you, my sweet. Look upon the grim visage of those that have passed this way before. Their lifeless skulls are a warning, but you in your hubris think you will survive?</em>
+</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
 <img src="img/chelms-varthoumlien-j-zQJk6aaaA-unsplash.jpg" alt="Image by Chelms Varthoumlien. Available by CC0 licence on [unsplash](https://unsplash.com/photos/j-zQJk6aaaA)."  />
 <p class="caption">
 Figure 3: Image by Chelms Varthoumlien. Available by CC0 licence on <a href="https://unsplash.com/photos/j-zQJk6aaaA">unsplash</a>.
@@ -2768,7 +2814,7 @@ UTF-8
 </div>
 <p>Yay! My excitement can barely be contained.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
 <img src="img/daria-shevtsova-7mbvu0biZgg-unsplash.jpg" alt="Image by Daria Shevtsova. Available by CC0 licence on [unsplash](https://unsplash.com/photos/7mbvu0biZgg)."  />
 <p class="caption">
 Figure 4: Image by Daria Shevtsova. Available by CC0 licence on <a href="https://unsplash.com/photos/7mbvu0biZgg">unsplash</a>.
@@ -2889,7 +2935,7 @@ UTF-8
 2.2    # second value is 2.2
 94.3   # third value is 94.3</code></pre>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
 <img src="img/roxy-aln--d3_Ez5pKss-unsplash.jpg" alt="Image by Roxy Aln Available by CC0 licence on [unsplash](https://unsplash.com/photos/-d3_Ez5pKss)."  />
 <p class="caption">
 Figure 5: Image by Roxy Aln Available by CC0 licence on <a href="https://unsplash.com/photos/-d3_Ez5pKss">unsplash</a>.
@@ -2933,7 +2979,7 @@ UTF-8  # the file encodes UTF-8 characters not Latin-1</code></pre>
 <p>Okay then… but what about that pesky “5”? What does that mean? I’ll be honest. It took me ages to figure this one out. As far as I can tell this line isn’t discussed in the R Internals Manual, but you can work it out by looking at the <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408">source code for serialize</a>. That line reads “5” because it’s telling you (or the parser) that the string that follows on the next line (i.e., “UTF-8”) contains 5 characters. Presumably if I’d used Latin-1 encoding, the corresponding line would have been “7”.</p>
 <p>Now that we have a sense of how the RDS header works, I’ll set <code>header = FALSE</code> whenever I call <code>show_rds()</code> from now on so that we don’t have to look at that same six lines of output over and over!</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
 <img src="img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg" alt="Image by Liza Polyanskaya. Available by CC0 licence on [unsplash](https://unsplash.com/photos/PrXN8-YG5WI)."  />
 <p class="caption">
 Figure 6: Image by Liza Polyanskaya. Available by CC0 licence on <a href="https://unsplash.com/photos/PrXN8-YG5WI">unsplash</a>.
@@ -2989,7 +3035,7 @@ NA</code></pre>
 100</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
 <img src="img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg" alt="Image by Hoshino Ai. Available by CC0 licence on [unsplash](https://unsplash.com/photos/sybO0dQ8hTw)."  />
 <p class="caption">
 Figure 7: Image by Hoshino Ai. Available by CC0 licence on <a href="https://unsplash.com/photos/sybO0dQ8hTw">unsplash</a>.
@@ -3029,7 +3075,7 @@ strange</code></pre>
 strange  # the 7 characters in the string</code></pre>
 <p>What about the first line? Given everything we’ve seen previously it’s pretty tempting to guess that it means something similar to the SEXPTYPE codes that we’ve seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there’s some sense in which a single string has a “SEXPTYPE” of 262153? Turns out that’s not true. The actual data structure here is called a CHARSXP – referring to the internal representation R uses for character strings – and it is SEXPTYPE 9. Later on I’ll explain why all the strings are marked with 262153 rather than 9, but for now let’s take it on faith that there’s a good reason for it.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
 <img src="img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg" alt="Image by Kelly Sikkema. Available by CC0 licence on [unsplash](https://unsplash.com/photos/D_5iQVxKkPY)."  />
 <p class="caption">
 Figure 8: Image by Kelly Sikkema. Available by CC0 licence on <a href="https://unsplash.com/photos/D_5iQVxKkPY">unsplash</a>.
@@ -3094,7 +3140,7 @@ thing</code></pre>
          5  # this string has 5 characters
      thing  # values are: t, h, i, n, g</code></pre>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
 <img src="img/moreno-matkovic-BlbBO2L3pK4-unsplash.jpg" alt="Image by Moreno Matković. Available by CC0 licence on [unsplash](https://unsplash.com/photos/BlbBO2L3pK4)."  />
 <p class="caption">
 Figure 9: Image by Moreno Matković. Available by CC0 licence on <a href="https://unsplash.com/photos/BlbBO2L3pK4">unsplash</a>.
@@ -3175,7 +3221,7 @@ b
 </div>
 <p>If you look at the relevant part of the R source code, you see that there are a collection of <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720">“administrative codes”</a> that define something “SEXPTYPE-like” for special values. <code>NULL</code> is the one you’d be most likely to encounter though.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-28"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-30"></span>
 <img src="img/atharva-lele-GSXHEh-5IMI-unsplash.jpg" alt="Image by Atharva Lele. Available by CC0 licence on [unsplash](https://unsplash.com/photos/GSXHEh-5IMI)."  />
 <p class="caption">
 Figure 10: Image by Atharva Lele. Available by CC0 licence on <a href="https://unsplash.com/photos/GSXHEh-5IMI">unsplash</a>.
@@ -3232,7 +3278,7 @@ Figure 10: Image by Atharva Lele. Available by CC0 licence on <a href="https://u
 </div>
 <p>Those are SEXPTYPE 2, and if we check the <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf">R internals manual</a> again, we see that this is indeed the code for a pairlist.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-33"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-35"></span>
 <img src="img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg" alt="Image by Aimee Vogelsang. Available by CC0 licence on [unsplash](https://unsplash.com/photos/DbJR10fEteE)."  />
 <p class="caption">
 Figure 11: Image by Aimee Vogelsang. Available by CC0 licence on <a href="https://unsplash.com/photos/DbJR10fEteE">unsplash</a>.
@@ -3282,7 +3328,7 @@ Figure 11: Image by Aimee Vogelsang. Available by CC0 licence on <a href="https:
 </div>
 <p>I haven’t found the part of the source code that sets this bit yet, but I’m pretty sure that the role of this bit is to flag whether or not the string should be added to the global string pool. In recent versions of R that’s true for all strings, so in practice every string has an integer code of 262153 rather than 9.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-38"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-40"></span>
 <img src="img/pelly-benassi-Hz1WQbHcXag-unsplash.jpg" alt="Image by Pelly Benassi. Available by CC0 licence on [unsplash](https://unsplash.com/photos/Hz1WQbHcXag)."  />
 <p class="caption">
 Figure 12: Image by Pelly Benassi. Available by CC0 licence on <a href="https://unsplash.com/photos/Hz1WQbHcXag">unsplash</a>.
@@ -3329,7 +3375,7 @@ c
 <p>but if I were to do the same thing for the function it’s just unpleasant, and frankly I already have a headache just from getting this far. So if you mean “have we reached the point where the author is sick of this topic?” then… oh my god yes we are utterly and completely <em>done</em> with this subject.</p>
 <p>Now let us never speak of this again.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-41"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-43"></span>
 <img src="img/andrey-zvyagintsev-kpjCk9ImBPA-unsplash.jpg" alt="Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/kpjCk9ImBPA)."  />
 <p class="caption">
 Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="https://unsplash.com/photos/kpjCk9ImBPA">unsplash</a>.
@@ -3339,7 +3385,7 @@ Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="htt
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-11-15 20:08:29 AEDT</p>
+<p>2021-11-16 11:02:16 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-11-15_serialisation-with-rds/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2021-11-15_serialisation-with-rds/renv.lock">R environment</a></p>
 </div>
@@ -3347,13 +3393,7 @@ Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="htt
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<section class="footnotes" role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn1" role="doc-endnote"><p>If you really want to torture yourself you can go look at the <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf">R Internals Manual</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

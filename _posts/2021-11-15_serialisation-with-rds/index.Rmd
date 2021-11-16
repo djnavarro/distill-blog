@@ -51,7 +51,17 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-Data [serialisation](https://en.wikipedia.org/wiki/Serialization) is one of those terms that comes up from time to time in data science (and on #rstats twitter!). I suspect that anyone who works with big data or has a computer science background is likely to be *painfully* aware of what serialisation is and why it matters. Those folks probably aren't in need of any post that I might write on the topic! However, a lot of people who work in R come from other backgrounds. If you're a social scientist who mostly works with small CSV files, for example, there's no particular reason why you'd have encountered this. I worked as a mathematical psychologist and computational modeller for about 20 years and until very recently I've never had never had to think about it! In fact, the issue only came up for me when I started reading about [Apache Arrow](https://arrow.apache.org) (a topic for another post, perhaps...) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it. 
+<p align="right">
+*I still alive, and that's what matters. The traumatic experience of the last week is fading, leaving a pale residue of fear and the few scraps of writing that are the sole surviving documentation of these days. It is a tale of fright, a desperate agony, and like any good tragedy it starts with the hope and naive optimism of youth...*
+</p>
+
+I've decided the time has come for me to do a deep dive into [data serialisation](https://en.wikipedia.org/wiki/Serialization) in R. Serialisation is one of those terms that comes up from time to time in data science, and it's popped up so many times on my twitter feed that I feel like I need a better grasp of how serialisation works in R. It's a topic that folks who work with big data or have a computer science background likely understand quite well, but a lot of people who use R come from other backgrounds. If you're a social scientist who mostly works with small CSV files, for example, there's no particular reason why you'd have encountered this. In my case, I've worked as a mathematical psychologist and computational modeller for about 20 years, and until very recently I've never had never had to think about it in any detail. The issue only came up for me when I started reading about [Apache Arrow](https://arrow.apache.org) (a topic for another post, perhaps) and realised that I needed to have a better understanding of what all this data serialisation business is about, and how R handles it. 
+
+This post is aimed at anyone who is in a similar situation to me! 
+
+<p align="right">
+*Oh you sweet summer child. You really think you are prepared to walk into the dark? That's adorable.*
+</p>
 
 ```{r}
 #| echo = FALSE,
@@ -59,9 +69,10 @@ Data [serialisation](https://en.wikipedia.org/wiki/Serialization) is one of thos
 knitr::include_graphics("img/andrey-zvyagintsev-G5nl9_YEXuc-unsplash.jpg")
 ```
 
+
 ## What is serialisation?
 
-Viewed in the general sense, serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are "serialising" it according to some encoding scheme.  Suppose, for instance, I have a data frame called `art`:
+In general serialisation refers to any process that takes an object stored in memory and converts into a stream of bytes that can be written to a file or transmitted elsewhere. Any time we write data to a file, we are "serialising" it according to some encoding scheme.  Suppose, for instance, I have a data frame called `art`:
 
 ```{r read-csv-hidden, echo=FALSE}
 art <- read.csv("art.csv")
@@ -70,14 +81,15 @@ art <- read.csv("art.csv")
 art
 ```
 
-This data frame is currently stored in memory on my machine, and it has structure: R represents it as a list of length 6, where each element of the list points to an atomic vector (e.g., numeric, character, logical), accompanied by some additional metadata that tells R that this particular list is a data frame. The details of how this is accomplished don't matter for this post^[If you really want to torture yourself you can go look at the [R Internals Manual](https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf)]: all that matters is that the in-memory structure for `art` is a little more complicated than a stream of bytes. If I want to save it to a data file, however, it needs to be converted into a stream of bytes: it needs to be **serialised**. Serialisation doesn't have to be fancy. The humble CSV file is a form of serialisation:
+This data frame is currently stored in memory on my machine, and it has structure. R represents this data frame as a list of length 6. Each element of this list is a pointer to another data structure, namely an atomic vector (e.g., numeric vector). The list is accompanied by additional metadata that tells R that this particular list is a data frame. The details of how this is accomplished don't matter for this post. All that matters for now is that the in-memory representation of `art` is a structured object. It's little more complicated than a stream of data, but if I want to save this data to a file it needs to be converted into one. The process of taking an in-memory structure and converting it to a sequence of bytes is called **serialisation**. 
+
+Serialisation doesn't have to be fancy. The humble CSV file can be viewed as a form of serialisation for a data frame, albeit one that does not store all the metadata associated with the data frame. Viewed this way, `write.csv()` can be viewed as a serialisation function for tabular data:
 
 ```{r write-csv}
 write.csv(art, file = "art.csv", row.names = FALSE)
 ```
 
-By doing this, the `art` object is written as UTF-8 encoded text onto the disk, as the file "art.csv". If we were to open this file in a text editor, we'd see this:
-
+When I call this function R uses the `art` object to write text onto the disk, saved as the file "art.csv". If I were to open this file in a text editor, I'd see this:
 
 ```{r print-text-csv, echo=FALSE}
 print_text_csv <- function(file, nchars = 1000) {
@@ -89,13 +101,23 @@ print_text_csv <- function(file, nchars = 1000) {
 cat(print_text_csv("art.csv"))
 ```
 
-What you see in the text editor, however, isn't literally the raw sequence of bytes: you're looking at it as UTF-8 plain text. The file has already been unserialised and decoded. To get a sense of what the serialised data look like, note that the first few characters of the file are `"resolu"`, and we can use `charToRaw()` to convert these characters into a series of bytes:
+Although this view is human-readable, it is slightly misleading. The text in shown above isn't the literal sequence of bytes. It's how those bytes are displayed when the have been **unserialised** and displayed on screen as UTF-8 plain text. To get a sense of what serialised text actually looks like we can use the `charToRaw()` function. The first few characters of the text file are `"resolu"` which looks like this when series of bytes:
 
 ```{r}
 charToRaw('"resolu')
 ```
 
-To see what the file looks like in serialised form, we can define a simple helper function that opens a binary connection to the file, reads in the first 100 bytes, closes the file, and then returns those bytes as a raw vector: 
+The raw vector shown in the output above uses one byte to represent each character. For instance, the character `"l"` is represented with the byte `6c` in the usual hexadecimal representation. We can unpack that byte into its consituent 8-bit representation using `rawToBits()` 
+
+```{r}
+"u" |>
+  charToRaw() |>
+  rawToBits()
+```
+
+(Note that the base pipe `|>` is rendered as a triangle-shaped ligature in [Fira Code](https://github.com/tonsky/FiraCode))
+
+Returning to the "art.csv" data file, I can use `file()` and `readBin()` to define a simple helper function that opens a binary connection to the file, reads in the first 100 bytes (or whatever), closes the file, and then returns those bytes as a raw vector: 
 
 ```{r print-bytes-csv}
 read_bytes <- function(path, max_bytes = 100) {
@@ -104,11 +126,15 @@ read_bytes <- function(path, max_bytes = 100) {
   close(con)
   return(bytes)
 }
+```
 
+Here are the first 100 bytes of the "art.csv" file:
+
+```{r}
 read_bytes("art.csv")
 ```
 
-The `read.csv()` function is similar to `read_bytes()` in spirit: when I call `read.csv("art.csv")` R R opens a connection to the "art.csv" file and reads that sequence of bytes into memory, and then closes the file. However, unlike my simple `read_bytes()` function, it actually does something useful. The sequence of bytes gets decoded, or **deserialised**, and the result is that R reconstructs the original `art` data frame in memory:
+The `read.csv()` function is similar to `read_bytes()` in spirit: when I call `read.csv("art.csv")`, R opens a connection to the "art.csv" file. It then reads that sequence of bytes into memory, and then closes the file. However, unlike my simple `read_bytes()` function, it does something useful with that information. The sequence of bytes gets decoded (unserialised), and the result is that R reconstructs the original `art` data frame:
 
 ```{r read-csv}
 art <- read.csv("art.csv")
@@ -116,6 +142,10 @@ art
 ```
 
 Thrilling stuff.
+
+<p align="right">
+*Do you feel that slow dread yet, my dear? Do you feel yourself slipping? You are on the edge of the cliff. You can still climb back to safety if you want. You don't have to fall. The choice is still yours.*
+</p>
 
 ```{r}
 #| echo = FALSE,
@@ -126,17 +156,25 @@ knitr::include_graphics("img/daniel-jensen-NMk1Vggt2hg-unsplash.jpg")
 
 ## How does RDS serialisation work?
 
-Data can be serialised in different ways. The native RDS format used by R, for example, provides a method for serialising an R object in a way that -- unlike CSV -- preserves all the information about that object. When I use `readRDS()` to unserialise the `art.rds` file that I happen to have on disk, it clearly recreates the same R object
+Data can be serialised in different ways. The CSV format works reasonably well for rectangular data structures like data frames, but doesn't work well if you need to serialise something complicated like a nested list. The [JSON format](https://www.json.org/json-en.html) is a better choice for those cases, but it too has some limitations when it comes to storing R objects. To serialise an R object we need to store the metadata (classes, names, and other attributes) associated with the object, and if the object is a function there is a lot of other information relevant to its execution besides the source code (e.g., enclosing environment). Because R needs this information, it relies on the native RDS format to do the work. As it happens I have an "art.rds" file on disk that stores the same data frame in the RDS format. When I use `readRDS()` to unserialise the file, it recreates the same data frame:
 
 ```{r read-rds}
 readRDS("art.rds")
 ```
 
-but when I read this file using `read_bytes()` it's equally clear that the file itself contains a very different sequence of bytes:
+However, when I read this file using `read_bytes()` it's also clear that "art.rds" contains a very different sequence of bytes to "art.csv":
 
 ```{r read-rds-bytes}
 read_bytes("art.rds")
 ```
+
+This is hardly surprising since RDS and CSV are different file formats. But while I have a pretty good mental model of what the contents of a CSV file look like, I don't have a very solid grasp of what the format of an RDS file is. I'm curious.
+
+<p align="right">
+*Oh sweetie, I tried to warn you...*
+</p>
+
+### The `serialize()` function
 
 To get a sense of how the RDS format works, it's helpful to note that R has a `serialize()` function and an `unserialize()` function that provide low-level access to the same mechanisms that underpin `saveRDS()` and `readRDS()`. 
 
@@ -150,27 +188,41 @@ As you can see, this is the same sequence of bytes returned by `read_bytes()`...
 bytes[1:100]
 ```
 
-...oh wait, not it's not. The "art.rds" file begins with `1f 8b 08 00`, whereas `serialize()` returns a sequence of bytes that begins with `58 0a 00 00`. These are clearly not the same!
+...oh wait, no it's not. What gives???? The "art.rds" file begins with `1f 8b 08 00`, whereas `serialize()` returns a sequence of bytes that begins with `58 0a 00 00`. These are not the same at all! Why is this happening???
 
-The reason this happens is that the default behaviour of `saveRDS()` is to write a compressed RDS file using gzip compression. The `art.rds` file that I have stored on disk is that gzipped version. That's a very sensible default, but it's easy enough to save an uncompressed RDS file, simply by setting `compress = FALSE`:
+### RDS uses gzip compression
+
+After digging a little into the help documentation, I realised that this happens because the default behaviour of `saveRDS()` is to write a compressed RDS file using gzip compression. In contrast, `serialize()` does not employ any form of compression. The `art.rds` file that I have stored on disk is that gzipped version, but it's easy enough to save an uncompressed RDS file, simply by setting `compress = FALSE`:
 
 ```{r save-uncompressed}
 saveRDS(art, file = "art_nozip.rds", compress = FALSE)
 ```
 
-When I inspect the uncompressed version of the RDS file using `read_bytes()`, the output is the same one I obtained when I called `serialize(art)` earlier:
+So now when I inspect the uncompressed file using `read_bytes()`, the output is the same one I obtained when I called `serialize(art)` earlier:
 
 ```{r read-uncompressed}
 read_bytes("art_nozip.rds")
 ```
 
-The `unserialize()` function is very similar to `readRDS()`, and you can apply it to a raw vector like `bytes` and once again we reconstruct the data frame:
+That's a relief. I was getting very anxious there, but I feel a little better now. My sanity is restored.
+
+<p align="right">
+*...for now.*
+</p>
+
+### The `unserialize()` function
+
+That was frustrating. Anyway getting back to the main thread, the inverse of the `serialize()` function is `unserialize()`. It's very similar to the `readRDS()` function that you'd normally use to read an RDS file, but you can apply it to a raw vector like `bytes`. Once again we reconstruct the original data frame:
 
 ```{r unserialise-art}
 unserialize(bytes)
 ```
 
-Even more thrilling stuff than before. 
+Yay. 
+
+<p align="right">
+*You can sense it can't you? It will only get worse for you, my sweet. Look upon the grim visage of those that have passed this way before. Their lifeless skulls are a warning, but you in your hubris think you will survive?*
+</p>
 
 ```{r}
 #| echo = FALSE,
