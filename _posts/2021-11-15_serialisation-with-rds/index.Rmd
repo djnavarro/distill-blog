@@ -710,7 +710,7 @@ When I said that those 262153 values we encounter every time a string is seriali
 decode_sexptype(262153)
 ```
 
-The attributes pairlist, which gave us a value of 1026 when the RDS is prined out as text? 
+The attributes pairlist, which gave us a value of 1026 when the RDS is printed out as text? 
 
 ```{r}
 decode_sexptype(1026)
