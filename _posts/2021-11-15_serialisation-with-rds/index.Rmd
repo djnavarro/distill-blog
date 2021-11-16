@@ -233,7 +233,13 @@ knitr::include_graphics("img/chelms-varthoumlien-j-zQJk6aaaA-unsplash.jpg")
 
 ## Serialising to plain text RDS
 
-Okay, so what we've learned so far is that in most cases, an RDS file is just a gzipped version of whatever the hell it is that `serialize()` creates. What we don't yet know is how the `serialize()` function operates. How is it creating this sequence of bytes? What do the contents of this file actually include? In order to look at this, I'll start by serialising a much simpler object. Instead of serialising the `art` data frame, I'll serialise a numeric vector containing three elements, and I'll set `ascii = TRUE` so that R uses UTF-8 to serialise the object to plain text format
+Okay, so what I've learned so far is that in most cases, an RDS file is just a gzipped version of ... something. It's the gzipped version of whatever the hell it is that `serialize()` creates. What I don't yet know is how the `serialize()` function operates. What secret magic does it use? How does it construct this sequence of bytes? What do the contents of this file actually include? 
+
+I'll start simple. Trying to understand how a complicated object is serialised might be painful, so I'll set the `art` data frame to one side. Instead, I'll serialise a numeric vector containing three elements, and ... I guess I'll set `ascii = TRUE` so that R uses UTF-8 to serialise the object to plain text format rather than ... writing a binary file? 
+
+<p align="right">
+*Clever girl. Yes, the default behaviour is binary serialization. Unless otherwise specified using the `xdr` argument, `serialize()` enforces a big-endian representation on the binary encoding. But you didn't want to go there did you? It frightened you, didn't it? The abyss stares back at you, sweetness, and you are beginning to notice its attention*
+</p>
 
 ```{r}
 bytes <- serialize(
@@ -243,19 +249,30 @@ bytes <- serialize(
 )
 ```
 
-When I print out the UTF-8 vector I still don't get text though, I get the sequence of bytes that corresponds to that text:
+When I print out the `bytes` vector I still don't get text though? 
 
 ```{r}
 bytes
 ```
 
-However, it's easy enough to use `rawToChar()` to convert the raw vector into a text that I can then print out using `cat()`:
+I was expecting text. Where is my text??? I dig a little deeper and realise my mistake. What I'm looking at here is the sequence of bytes that correspond to the UTF-8 encoded text. If I want to see that text using actual letters, I need to use 
+`rawToChar()`. When I do that I see something that looks vaguely like data:
 
 ```{r}
-cat(rawToChar(bytes))
+rawToChar(bytes)
 ```
 
-It's not immediately obvious how this output should be interpreted, but it's clear that the last three lines correspond to the three values stored in the numeric vector. In fact, what you're looking at is exactly the same text that you'd see if you created an RDS using the following command and then opened that file in a text editor:
+It is a little easier to read if I use `cat()` to print the output:
+
+```{r}
+bytes |>
+  rawToChar() |>
+  cat()
+```
+
+It's... not immediately obvious how this output should be interpreted? I don't know what all these lines mean, but I recognise the last three lines: those are the three values stored in the vector I serialised. Now I just need to work out what the rest of it is all about.
+
+But before I do, I'll check that this is exactly the same text that I see if I create an RDS file using the following command and then open that file in a text editor:
 
 ```{r}
 saveRDS(
@@ -266,8 +283,11 @@ saveRDS(
 )
 ```
 
-Yay! My excitement can barely be contained.
+Okay, it [checks out](numbers.rds). My excitement can barely be contained.
 
+<p align="right">
+*Wilting already, aren't you? Poor little flower. You've already been cut from the stem. You're dead already but you don't even know it. All that is left is to wither away under the blistering glare of knowledge.*
+</p>
 
 ```{r}
 #| echo = FALSE,
@@ -281,15 +301,13 @@ All right, lets see if we can interpret the contents of an RDS file. Rather than
 
 ```{r}
 show_rds <- function(object, header = TRUE) {
-  bytes <- serialize(
-    object = object,
-    connection = NULL, 
-    ascii = TRUE
-  )
-  rds_string <- rawToChar(bytes)
-  rds_vector <- strsplit(rds_string, "\n")[[1]]
-  if(header == FALSE) rds_vector <- rds_vector[-(1:6)]
-  cat(rds_vector, sep = "\n")
+  rds <- object |>
+    serialize(connection = NULL, ascii = TRUE) |>
+    rawToChar() |>
+    strsplit(split = "\n") |>
+    unlist()
+  if(header == FALSE) rds <- rds[-(1:6)]
+  cat(rds, sep = "\n")
 }
 ```
 
@@ -393,8 +411,6 @@ UTF-8  # the file encodes UTF-8 characters not Latin-1
 
 Okay then... but what about that pesky "5"? What does that mean? I'll be honest. It took me ages to figure this one out. As far as I can tell this line isn't discussed in the R Internals Manual, but you can work it out by looking at the [source code for serialize](https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408). That line reads "5" because it's telling you (or the parser) that the string that follows on the next line (i.e., "UTF-8") contains 5 characters. Presumably if I'd used Latin-1 encoding, the corresponding line would have been "7". 
 
-Now that we have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on so that we don't have to look at that same six lines of output over and over!
-
 
 ```{r}
 #| echo = FALSE,
@@ -404,6 +420,12 @@ knitr::include_graphics("img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg")
 
 
 ### Logical, integer, and numeric vectors
+
+Now that I have a sense of how the RDS header works, I'll set `header = FALSE` whenever I call `show_rds()` from now on. That way I won't have to look at that same six lines of output over and over.
+
+<p align="right">
+*Oh no my dear. Hiding from it won't save you.*
+</p>
 
 For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you'd expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:
 

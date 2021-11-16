@@ -2761,7 +2761,11 @@ Figure 3: Image by Chelms Varthoumlien. Available by CC0 licence on <a href="htt
 </div>
 </div>
 <h2 id="serialising-to-plain-text-rds">Serialising to plain text RDS</h2>
-<p>Okay, so what we’ve learned so far is that in most cases, an RDS file is just a gzipped version of whatever the hell it is that <code>serialize()</code> creates. What we don’t yet know is how the <code>serialize()</code> function operates. How is it creating this sequence of bytes? What do the contents of this file actually include? In order to look at this, I’ll start by serialising a much simpler object. Instead of serialising the <code>art</code> data frame, I’ll serialise a numeric vector containing three elements, and I’ll set <code>ascii = TRUE</code> so that R uses UTF-8 to serialise the object to plain text format</p>
+<p>Okay, so what I’ve learned so far is that in most cases, an RDS file is just a gzipped version of … something. It’s the gzipped version of whatever the hell it is that <code>serialize()</code> creates. What I don’t yet know is how the <code>serialize()</code> function operates. What secret magic does it use? How does it construct this sequence of bytes? What do the contents of this file actually include?</p>
+<p>I’ll start simple. Trying to understand how a complicated object is serialised might be painful, so I’ll set the <code>art</code> data frame to one side. Instead, I’ll serialise a numeric vector containing three elements, and … I guess I’ll set <code>ascii = TRUE</code> so that R uses UTF-8 to serialise the object to plain text format rather than … writing a binary file?</p>
+<p align="right">
+<em>Clever girl. Yes, the default behaviour is binary serialization. Unless otherwise specified using the <code>xdr</code> argument, <code>serialize()</code> enforces a big-endian representation on the binary encoding. But you didn’t want to go there did you? It frightened you, didn’t it? The abyss stares back at you, sweetness, and you are beginning to notice its attention</em>
+</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>bytes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/serialize.html'>serialize</a></span><span class='op'>(</span>
@@ -2772,7 +2776,7 @@ Figure 3: Image by Chelms Varthoumlien. Available by CC0 licence on <a href="htt
 </code></pre>
 </div>
 </div>
-<p>When I print out the UTF-8 vector I still don’t get text though, I get the sequence of bytes that corresponds to that text:</p>
+<p>When I print out the <code>bytes</code> vector I still don’t get text though?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>bytes</span>
@@ -2782,10 +2786,20 @@ Figure 3: Image by Chelms Varthoumlien. Available by CC0 licence on <a href="htt
 [23] 46 2d 38 0a 31 34 0a 33 0a 31 30 2e 31 0a 32 2e 32 0a 39 34 2e 33
 [45] 0a</code></pre>
 </div>
-<p>However, it’s easy enough to use <code>rawToChar()</code> to convert the raw vector into a text that I can then print out using <code>cat()</code>:</p>
+<p>I was expecting text. Where is my text??? I dig a little deeper and realise my mistake. What I’m looking at here is the sequence of bytes that correspond to the UTF-8 encoded text. If I want to see that text using actual letters, I need to use <code>rawToChar()</code>. When I do that I see something that looks vaguely like data:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>bytes</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>bytes</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;A\n3\n262402\n197888\n5\nUTF-8\n14\n3\n10.1\n2.2\n94.3\n&quot;</code></pre>
+</div>
+<p>It is a little easier to read if I use <code>cat()</code> to print the output:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>bytes</span> |&gt;
+  <span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>A
@@ -2800,7 +2814,8 @@ UTF-8
 2.2
 94.3</code></pre>
 </div>
-<p>It’s not immediately obvious how this output should be interpreted, but it’s clear that the last three lines correspond to the three values stored in the numeric vector. In fact, what you’re looking at is exactly the same text that you’d see if you created an RDS using the following command and then opened that file in a text editor:</p>
+<p>It’s… not immediately obvious how this output should be interpreted? I don’t know what all these lines mean, but I recognise the last three lines: those are the three values stored in the vector I serialised. Now I just need to work out what the rest of it is all about.</p>
+<p>But before I do, I’ll check that this is exactly the same text that I see if I create an RDS file using the following command and then open that file in a text editor:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/readRDS.html'>saveRDS</a></span><span class='op'>(</span>
@@ -2812,9 +2827,12 @@ UTF-8
 </code></pre>
 </div>
 </div>
-<p>Yay! My excitement can barely be contained.</p>
+<p>Okay, it <a href="numbers.rds">checks out</a>. My excitement can barely be contained.</p>
+<p align="right">
+<em>Wilting already, aren’t you? Poor little flower. You’ve already been cut from the stem. You’re dead already but you don’t even know it. All that is left is to wither away under the blistering glare of knowledge.</em>
+</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
 <img src="img/daria-shevtsova-7mbvu0biZgg-unsplash.jpg" alt="Image by Daria Shevtsova. Available by CC0 licence on [unsplash](https://unsplash.com/photos/7mbvu0biZgg)."  />
 <p class="caption">
 Figure 4: Image by Daria Shevtsova. Available by CC0 licence on <a href="https://unsplash.com/photos/7mbvu0biZgg">unsplash</a>.
@@ -2826,15 +2844,13 @@ Figure 4: Image by Daria Shevtsova. Available by CC0 licence on <a href="https:/
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>show_rds</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>header</span> <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>bytes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/serialize.html'>serialize</a></span><span class='op'>(</span>
-    object <span class='op'>=</span> <span class='va'>object</span>,
-    connection <span class='op'>=</span> <span class='cn'>NULL</span>, 
-    ascii <span class='op'>=</span> <span class='cn'>TRUE</span>
-  <span class='op'>)</span>
-  <span class='va'>rds_string</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='va'>bytes</span><span class='op'>)</span>
-  <span class='va'>rds_vector</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span><span class='op'>(</span><span class='va'>rds_string</span>, <span class='st'>"\n"</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span>
-  <span class='kw'>if</span><span class='op'>(</span><span class='va'>header</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='va'>rds_vector</span> <span class='op'>&lt;-</span> <span class='va'>rds_vector</span><span class='op'>[</span><span class='op'>-</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>]</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>rds_vector</span>, sep <span class='op'>=</span> <span class='st'>"\n"</span><span class='op'>)</span>
+  <span class='va'>rds</span> <span class='op'>&lt;-</span> <span class='va'>object</span> |&gt;
+    <span class='fu'><a href='https://rdrr.io/r/base/serialize.html'>serialize</a></span><span class='op'>(</span>connection <span class='op'>=</span> <span class='cn'>NULL</span>, ascii <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> |&gt;
+    <span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>rawToChar</a></span><span class='op'>(</span><span class='op'>)</span> |&gt;
+    <span class='fu'><a href='https://rdrr.io/r/base/strsplit.html'>strsplit</a></span><span class='op'>(</span>split <span class='op'>=</span> <span class='st'>"\n"</span><span class='op'>)</span> |&gt;
+    <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='op'>)</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='va'>header</span> <span class='op'>==</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='va'>rds</span> <span class='op'>&lt;-</span> <span class='va'>rds</span><span class='op'>[</span><span class='op'>-</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>]</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>rds</span>, sep <span class='op'>=</span> <span class='st'>"\n"</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
 </div>
@@ -2935,7 +2951,7 @@ UTF-8
 2.2    # second value is 2.2
 94.3   # third value is 94.3</code></pre>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
 <img src="img/roxy-aln--d3_Ez5pKss-unsplash.jpg" alt="Image by Roxy Aln Available by CC0 licence on [unsplash](https://unsplash.com/photos/-d3_Ez5pKss)."  />
 <p class="caption">
 Figure 5: Image by Roxy Aln Available by CC0 licence on <a href="https://unsplash.com/photos/-d3_Ez5pKss">unsplash</a>.
@@ -2977,9 +2993,8 @@ UTF-8 </code></pre>
 5
 UTF-8  # the file encodes UTF-8 characters not Latin-1</code></pre>
 <p>Okay then… but what about that pesky “5”? What does that mean? I’ll be honest. It took me ages to figure this one out. As far as I can tell this line isn’t discussed in the R Internals Manual, but you can work it out by looking at the <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L1405-L1408">source code for serialize</a>. That line reads “5” because it’s telling you (or the parser) that the string that follows on the next line (i.e., “UTF-8”) contains 5 characters. Presumably if I’d used Latin-1 encoding, the corresponding line would have been “7”.</p>
-<p>Now that we have a sense of how the RDS header works, I’ll set <code>header = FALSE</code> whenever I call <code>show_rds()</code> from now on so that we don’t have to look at that same six lines of output over and over!</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
 <img src="img/liza-polyanskaya-PrXN8-YG5WI-unsplash.jpg" alt="Image by Liza Polyanskaya. Available by CC0 licence on [unsplash](https://unsplash.com/photos/PrXN8-YG5WI)."  />
 <p class="caption">
 Figure 6: Image by Liza Polyanskaya. Available by CC0 licence on <a href="https://unsplash.com/photos/PrXN8-YG5WI">unsplash</a>.
@@ -2987,6 +3002,10 @@ Figure 6: Image by Liza Polyanskaya. Available by CC0 licence on <a href="https:
 </div>
 </div>
 <h3 id="logical-integer-and-numeric-vectors">Logical, integer, and numeric vectors</h3>
+<p>Now that I have a sense of how the RDS header works, I’ll set <code>header = FALSE</code> whenever I call <code>show_rds()</code> from now on. That way I won’t have to look at that same six lines of output over and over.</p>
+<p align="right">
+<em>Oh no my dear. Hiding from it won’t save you.</em>
+</p>
 <p>For three of the four commonly used atomic vector types (logical, integer, and numeric), the RDS format looks exactly as you’d expect from the previous discussion. As shown in the table above, the SEXPTYPE code for a logical vector is 10, so a logical vector with four elements looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3035,7 +3054,7 @@ NA</code></pre>
 100</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-23"></span>
 <img src="img/hoshino-ai-sybO0dQ8hTw-unsplash.jpg" alt="Image by Hoshino Ai. Available by CC0 licence on [unsplash](https://unsplash.com/photos/sybO0dQ8hTw)."  />
 <p class="caption">
 Figure 7: Image by Hoshino Ai. Available by CC0 licence on <a href="https://unsplash.com/photos/sybO0dQ8hTw">unsplash</a>.
@@ -3075,7 +3094,7 @@ strange</code></pre>
 strange  # the 7 characters in the string</code></pre>
 <p>What about the first line? Given everything we’ve seen previously it’s pretty tempting to guess that it means something similar to the SEXPTYPE codes that we’ve seen earlier. Perhaps in the same way that numeric is SEXPTYPE 14 and logical is SEXPTYPE 10, maybe there’s some sense in which a single string has a “SEXPTYPE” of 262153? Turns out that’s not true. The actual data structure here is called a CHARSXP – referring to the internal representation R uses for character strings – and it is SEXPTYPE 9. Later on I’ll explain why all the strings are marked with 262153 rather than 9, but for now let’s take it on faith that there’s a good reason for it.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-25"></span>
 <img src="img/kelly-sikkema-D_5iQVxKkPY-unsplash.jpg" alt="Image by Kelly Sikkema. Available by CC0 licence on [unsplash](https://unsplash.com/photos/D_5iQVxKkPY)."  />
 <p class="caption">
 Figure 8: Image by Kelly Sikkema. Available by CC0 licence on <a href="https://unsplash.com/photos/D_5iQVxKkPY">unsplash</a>.
@@ -3140,7 +3159,7 @@ thing</code></pre>
          5  # this string has 5 characters
      thing  # values are: t, h, i, n, g</code></pre>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
 <img src="img/moreno-matkovic-BlbBO2L3pK4-unsplash.jpg" alt="Image by Moreno Matković. Available by CC0 licence on [unsplash](https://unsplash.com/photos/BlbBO2L3pK4)."  />
 <p class="caption">
 Figure 9: Image by Moreno Matković. Available by CC0 licence on <a href="https://unsplash.com/photos/BlbBO2L3pK4">unsplash</a>.
@@ -3221,7 +3240,7 @@ b
 </div>
 <p>If you look at the relevant part of the R source code, you see that there are a collection of <a href="https://github.com/wch/r-source/blob/79298c499218846d14500255efd622b5021c10ec/src/main/serialize.c#L680-L720">“administrative codes”</a> that define something “SEXPTYPE-like” for special values. <code>NULL</code> is the one you’d be most likely to encounter though.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-30"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
 <img src="img/atharva-lele-GSXHEh-5IMI-unsplash.jpg" alt="Image by Atharva Lele. Available by CC0 licence on [unsplash](https://unsplash.com/photos/GSXHEh-5IMI)."  />
 <p class="caption">
 Figure 10: Image by Atharva Lele. Available by CC0 licence on <a href="https://unsplash.com/photos/GSXHEh-5IMI">unsplash</a>.
@@ -3278,7 +3297,7 @@ Figure 10: Image by Atharva Lele. Available by CC0 licence on <a href="https://u
 </div>
 <p>Those are SEXPTYPE 2, and if we check the <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf">R internals manual</a> again, we see that this is indeed the code for a pairlist.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-35"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-36"></span>
 <img src="img/aimee-vogelsang-DbJR10fEteE-unsplash.jpg" alt="Image by Aimee Vogelsang. Available by CC0 licence on [unsplash](https://unsplash.com/photos/DbJR10fEteE)."  />
 <p class="caption">
 Figure 11: Image by Aimee Vogelsang. Available by CC0 licence on <a href="https://unsplash.com/photos/DbJR10fEteE">unsplash</a>.
@@ -3328,7 +3347,7 @@ Figure 11: Image by Aimee Vogelsang. Available by CC0 licence on <a href="https:
 </div>
 <p>I haven’t found the part of the source code that sets this bit yet, but I’m pretty sure that the role of this bit is to flag whether or not the string should be added to the global string pool. In recent versions of R that’s true for all strings, so in practice every string has an integer code of 262153 rather than 9.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-40"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-41"></span>
 <img src="img/pelly-benassi-Hz1WQbHcXag-unsplash.jpg" alt="Image by Pelly Benassi. Available by CC0 licence on [unsplash](https://unsplash.com/photos/Hz1WQbHcXag)."  />
 <p class="caption">
 Figure 12: Image by Pelly Benassi. Available by CC0 licence on <a href="https://unsplash.com/photos/Hz1WQbHcXag">unsplash</a>.
@@ -3375,7 +3394,7 @@ c
 <p>but if I were to do the same thing for the function it’s just unpleasant, and frankly I already have a headache just from getting this far. So if you mean “have we reached the point where the author is sick of this topic?” then… oh my god yes we are utterly and completely <em>done</em> with this subject.</p>
 <p>Now let us never speak of this again.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-43"></span>
+<div class="figure"><span style="display:block;" id="fig:unnamed-chunk-44"></span>
 <img src="img/andrey-zvyagintsev-kpjCk9ImBPA-unsplash.jpg" alt="Image by Andrey Zvyagintsev. Available by CC0 licence on [unsplash](https://unsplash.com/photos/kpjCk9ImBPA)."  />
 <p class="caption">
 Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="https://unsplash.com/photos/kpjCk9ImBPA">unsplash</a>.
@@ -3385,7 +3404,7 @@ Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="htt
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2021-11-16 11:02:16 AEDT</p>
+<p>2021-11-16 12:09:29 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2021-11-15_serialisation-with-rds/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2021-11-15_serialisation-with-rds/renv.lock">R environment</a></p>
 </div>
@@ -3393,7 +3412,7 @@ Figure 13: Image by Andrey Zvyagintsev. Available by CC0 licence on <a href="htt
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
