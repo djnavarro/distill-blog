@@ -112,7 +112,7 @@ Sorry. Let's unpack each of those terms:
 - Arrow is a **standardised and language-independent format**. It's the same thing regardless of what programming language you're using: a data set accessed from R with Arrow has the same format as the a data set accessed in Python.
 - Arrow is used to store **table-like data**, very similar to a data frame or tibble.
 - Arrow refers to the **in-memory** format: it's not talking about how the data are stored on disk, and it's not talking about file formats. It's all about how a loaded data set is represented in memory.
-- Arrow (and the related Parquet file format) uses **columnar format**. Unlike a CSV file, which stores the data row-wise, it represents the data column-wise: this turns out to be a much more efficient way to represent data when you need to subset the data (e.g., by using `dplyr::filter()` in R or the `WHERE` clause in SQL). 
+- Arrow uses **columnar format**. Unlike a CSV file, which stores the data row-wise, it represents the data column-wise: this turns out to be a much more efficient way to represent data when you need to subset the data (e.g., by using `dplyr::filter()` in R or the `WHERE` clause in SQL). 
 - Arrow supports **zero-copy reads without serialisation overhead**, which... um... yeah, what the heck does that mean?
 
 So yeah. [Serialisation](https://en.wikipedia.org/wiki/Serialization) is one of those terms that those fancy data people know all about, but a regular R user might not be *quite* as familiar with. It's worth unpacking this a bit because it's helpful for understanding the problem that Arrow solves... 
