@@ -87,11 +87,27 @@ In any case, I'll leave this post as it is for now but if folks would like to su
 
 Okay, I'm going to start adding things. This is just a completely unstructured list for now, but I know how my brain works: if I don't bookmark the cool posts and resources I see pop up on my timeline I'll never find them again...
 
-- [Thinking outside the grid: A "bare bones" intro to Rtistry concepts in R using ggplot](https://www.thetidytrekker.com/post/thinking-outside-the-grid) by [Meghan Harris](https://twitter.com/meghansharris)
+### R specific
+
+- [Thinking outside the grid](https://www.thetidytrekker.com/post/thinking-outside-the-grid) by [Meghan Harris](https://twitter.com/meghansharris)
 
 - [Gradients](https://github.com/sharlagelfand/gradients) repository by [Sharla Gelfand](https://twitter.com/sharlagelfand)
 
 - Generative art [package](https://github.com/nrennie/aRt) by [Nicola Rennie](https://twitter.com/nrennie35)
+
+- Various [art posts](https://clauswilke.com/art/post/) by [Claus Wilke](https://twitter.com/ClausWilke)
+
+- [ggbenjamini package](https://urswilke.github.io/ggbenjamini/) by [Urs Wilke](https://twitter.com/UrsWilke)
+
+- [generative art examples](https://github.com/picasa/generative_examples) by [Pierre Casadebaig](https://twitter.com/pircasa)
+
+### More general
+
+- [thatcreativecode.page](https://thatcreativecode.page/) is a great general resource
+
+- the description of [asemi.ca](https://asemi.ca) shows a design process in detail
+
+- Tyler Hobbs [generative art essays](https://tylerxhobbs.com/essays)
 
 
 <!--------------- appendices ----------------->
