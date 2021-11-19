@@ -86,46 +86,46 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Learning Apache Arrow (for R users)</title>
+  <title>Getting started with Apache Arrow in R</title>
 
-  <meta property="description" itemprop="description" content="Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format"/>
+  <meta property="description" itemprop="description" content="Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format"/>
 
   <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 
   <!--  https://schema.org/Article -->
-  <meta property="article:published" itemprop="datePublished" content="2021-11-04"/>
-  <meta property="article:created" itemprop="dateCreated" content="2021-11-04"/>
+  <meta property="article:published" itemprop="datePublished" content="2021-11-19"/>
+  <meta property="article:created" itemprop="dateCreated" content="2021-11-19"/>
   <meta name="article:author" content="Danielle Navarro"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Learning Apache Arrow (for R users)"/>
+  <meta property="og:title" content="Getting started with Apache Arrow in R"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format"/>
+  <meta property="og:description" content="Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format"/>
   <meta property="og:locale" content="en_US"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Learning Apache Arrow (for R users)"/>
-  <meta property="twitter:description" content="Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format"/>
+  <meta property="twitter:title" content="Getting started with Apache Arrow in R"/>
+  <meta property="twitter:description" content="Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format"/>
 
   <!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
-  <meta name="citation_title" content="Learning Apache Arrow (for R users)"/>
-  <meta name="citation_fulltext_html_url" content="https://blog.djnavarro.net/learning-apache-arrow"/>
+  <meta name="citation_title" content="Getting started with Apache Arrow in R"/>
+  <meta name="citation_fulltext_html_url" content="https://blog.djnavarro.net/starting-apache-arrow-in-R"/>
   <meta name="citation_fulltext_world_readable" content=""/>
-  <meta name="citation_online_date" content="2021/11/04"/>
-  <meta name="citation_publication_date" content="2021/11/04"/>
+  <meta name="citation_online_date" content="2021/11/19"/>
+  <meta name="citation_publication_date" content="2021/11/19"/>
   <meta name="citation_author" content="Danielle Navarro"/>
   <meta name="citation_author_institution" content="UNSW Sydney"/>
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params"]}},"value":[{"type":"character","attributes":{},"value":["Learning Apache Arrow (for R users)"]},{"type":"character","attributes":{},"value":["Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["2021-11-04"]},{"type":"character","attributes":{},"value":["preview-image.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/learning-apache-arrow"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["learning-apache-arrow"]},{"type":"character","attributes":{},"value":["2021-11-04"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params"]}},"value":[{"type":"character","attributes":{},"value":["Getting started with Apache Arrow in R"]},{"type":"character","attributes":{},"value":["Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["2021-11-19"]},{"type":"character","attributes":{},"value":["preview-image.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/starting-apache-arrow-in-R"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["starting-apache-arrow-in-R"]},{"type":"character","attributes":{},"value":["2021-11-19"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["diamonds.parquet","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","with_arrow.jpg","without_arrow.jpg"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1464,7 +1464,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Learning Apache Arrow (for R users)","description":"Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"UNSW Sydney","affiliationURL":"https://unsw.edu.au","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2021-11-04T00:00:00.000+11:00","citationText":"Navarro, 2021"}
+{"title":"Getting started with Apache Arrow in R","description":"Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"UNSW Sydney","affiliationURL":"https://unsw.edu.au","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2021-11-19T00:00:00.000+11:00","citationText":"Navarro, 2021"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1474,17 +1474,17 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Learning Apache Arrow (for R users)</h1>
+<h1>Getting started with Apache Arrow in R</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p>Or, how this R user learned to stop worrying and love a standardised in-memory columnar data format</p>
+<p>Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format</p>
 </div>
 
 <div class="d-byline">
   
   true
   
-<br/>2021-11-04
+<br/>2021-11-19
 </div>
 
 <div class="d-article">
@@ -1499,10 +1499,14 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#fiiiiiine-ill-keep-reading-tell-me-what-arrow-is">Fiiiiiine, I’ll keep reading… tell me what Arrow is</a></li>
 <li><a href="#sigh.-apache-arrow-please">Sigh. <em>Apache</em> Arrow please?</a></li>
 <li><a href="#i-hate-you">I hate you</a></li>
-<li><a href="#explain-serialisation-please">Explain serialisation please</a></li>
 </ul></li>
 <li><a href="#overview-of-arrow">Overview of Arrow</a></li>
 <li><a href="#installing-arrow">Installing Arrow</a></li>
+<li><a href="#does-it-work">Does it work?</a>
+<ul>
+<li><a href="#the-data-arent-stored-in-r-memory">The data aren’t stored in R memory</a></li>
+<li><a href="#the-arrow-package-supplies-a-dplyr-backend">The arrow package supplies a dplyr backend</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -1534,9 +1538,9 @@ checklist:
 <h3 id="okay-so-whats-the-problem">Okay… so what’s the problem?</h3>
 <p>Thanks for a great question! Here are a few scenarios to think about.</p>
 <ul>
-<li><p><em>Scenario 1:</em> Let’s suppose you have a big rectangular data set. An enormous table, basically, and currently it’s stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I’ll come back to those later). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it’s not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That’s awkward. R likes to store things in memory. Eek.</p></li>
-<li><p><em>Scenario 2:</em> Okay, maybe your data isn’t that big and it fits in memory, but it’s still pretty big, and you need to do something complicated with it. Maybe your analysis needs to start in R but then continue in Python. Or something like that. In your head, you’re thinking okay first I have to read the whole dataset into memory in R, and then it has to be transferred to Python which will have to read its own copy, and… gosh that sounds slow and inefficient. Ugh.</p></li>
-<li><p><em>Scenario 3:</em> Honestly, you’re just tired of having to deal with the fact that every language has its own idiosyncratic way of storing data sets in memory and it’s exhausting to have to keep learning new things and you really wish there were some standardised way that programming languages represent data in memory and you’d like a single toolkit that you can use regardless of what language you’re in. Sigh…</p></li>
+<li><p><strong>Scenario 1:</strong> Let’s suppose you have a big rectangular data set. An enormous table, basically, and currently it’s stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I’ll come back to those later). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it’s not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That’s awkward. R likes to store things in memory. Eek.</p></li>
+<li><p><strong>Scenario 2:</strong> Okay, maybe your data isn’t that big and it fits in memory, but it’s still pretty big, and you need to do something complicated with it. Maybe your analysis needs to start in R but then continue in Python. Or something like that. In your head, you’re thinking okay first I have to read the whole dataset into memory in R, and then it has to be transferred to Python which will have to read its own copy, and… gosh that sounds slow and inefficient. Ugh.</p></li>
+<li><p><strong>Scenario 3:</strong> Honestly, you’re just tired of having to deal with the fact that every language has its own idiosyncratic way of storing data sets in memory and it’s exhausting to have to keep learning new things and you really wish there were some standardised way that programming languages represent data in memory and you’d like a single toolkit that you can use regardless of what language you’re in. Sigh…</p></li>
 </ul>
 <p>In any of these scenarios, Arrow might be useful to you.</p>
 <h3 id="fiiiiiine-ill-keep-reading-tell-me-what-arrow-is">Fiiiiiine, I’ll keep reading… tell me what Arrow is</h3>
@@ -1550,80 +1554,27 @@ checklist:
 <li>Arrow is used to store <strong>table-like data</strong>, very similar to a data frame or tibble.</li>
 <li>Arrow refers to the <strong>in-memory</strong> format: it’s not talking about how the data are stored on disk, and it’s not talking about file formats. It’s all about how a loaded data set is represented in memory.</li>
 <li>Arrow (and the related Parquet file format) uses <strong>columnar format</strong>. Unlike a CSV file, which stores the data row-wise, it represents the data column-wise: this turns out to be a much more efficient way to represent data when you need to subset the data (e.g., by using <code>dplyr::filter()</code> in R or the <code>WHERE</code> clause in SQL).</li>
-<li>Arrow supports <strong>zero-copy reads without serialisation overhead</strong>, which… um…</li>
+<li>Arrow supports <strong>zero-copy reads without serialisation overhead</strong>, which… um… yeah, what the heck does that mean?</li>
 </ul>
-<h3 id="explain-serialisation-please">Explain serialisation please</h3>
-<p>Oh right, yeah. <a href="https://en.wikipedia.org/wiki/Serialization">Serialisation</a> is one of those terms that those fancy data people know all about, but a regular R user might not be <em>quite</em> as familiar with. It’s worth unpacking this a bit because it’s helpful for understanding the problem that Arrow solves.</p>
-<p>Okay, here’s a data frame shown the way we typically think about it from the R user perspective:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>art</span> <span class='op'>&lt;-</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"https://djnavarro.net/series-water-colours/manifest.csv"</span><span class='op'>)</span>
-<span class='va'>art</span>
-</code></pre>
-</div>
-<pre><code># A tibble: 200 × 9
-   path    resolution series sys_id img_id short_name format long_name
-   &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt;    
- 1 1000/w…       1000 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 2 1000/w…       1000 water… sys02  img34  teacup-oc… png    Ocean in…
- 3 2000/w…       2000 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 4 2000/w…       2000 water… sys02  img34  teacup-oc… png    Ocean in…
- 5 4000/w…       4000 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 6 4000/w…       4000 water… sys02  img34  teacup-oc… png    Ocean in…
- 7 500/wa…        500 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 8 500/wa…        500 water… sys02  img34  teacup-oc… png    Ocean in…
- 9 8000/w…       8000 water… sys02  img34  teacup-oc… jpg    Ocean in…
-10 8000/w…       8000 water… sys02  img34  teacup-oc… png    Ocean in…
-# … with 190 more rows, and 1 more variable: date &lt;date&gt;</code></pre>
-</div>
-<p>It’s a rectangular data stored in memory as the <code>art</code> tibble, and like all tibbles and data frames it’s basically a list that serves as a container for a collection of vectors: <code>path</code>, <code>resolution</code>, <code>series</code> and so on. If you really wanted to torture yourself you could go look at the <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.pdf">R Internals Manual</a> to see how this data structure is implemented, but it’s not important here. The key thing here is that the “thing” stored in memory is a structured object.</p>
-<p>However, notice that in the code chunk above, I had to load the data from a file. The data had to be transferred over a channel (in this case the internet) to reach R, and what gets transferred is just a series of bytes. A structured object is <em>serialised</em> into a sequence of bytes, that sequence of bytes is transmitted (or stored as a file), and that sequence of bytes is then <em>unserialised</em> at the other end and transformed back into a structured object. Base R has a <code>serialize()</code> function that you can use to convert the <code>art</code> tibble into a raw vector:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>bytes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/serialize.html'>serialize</a></span><span class='op'>(</span><span class='va'>art</span>, connection <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
-<p>Here’s the first 100 bytes:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>bytes</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>100</span><span class='op'>]</span>
-</code></pre>
-</div>
-<pre><code>  [1] 58 0a 00 00 00 03 00 04 01 01 00 03 05 00 00 00 00 05 55 54 46
- [22] 2d 38 00 00 03 13 00 00 00 09 00 00 00 10 00 00 00 c8 00 04 00
- [43] 09 00 00 00 2d 31 30 30 30 2f 77 61 74 65 72 63 6f 6c 6f 75 72
- [64] 5f 73 79 73 30 32 5f 69 6d 67 33 34 5f 74 65 61 63 75 70 2d 6f
- [85] 63 65 61 6e 2e 6a 70 67 00 04 00 09 00 00 00 2d</code></pre>
-</div>
-<p>Similarly, there’s an <code>unserialize()</code> function that will take the raw vector as input and reconstruct the tibble for you:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/serialize.html'>unserialize</a></span><span class='op'>(</span><span class='va'>bytes</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code># A tibble: 200 × 9
-   path    resolution series sys_id img_id short_name format long_name
-   &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;  &lt;chr&gt;    
- 1 1000/w…       1000 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 2 1000/w…       1000 water… sys02  img34  teacup-oc… png    Ocean in…
- 3 2000/w…       2000 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 4 2000/w…       2000 water… sys02  img34  teacup-oc… png    Ocean in…
- 5 4000/w…       4000 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 6 4000/w…       4000 water… sys02  img34  teacup-oc… png    Ocean in…
- 7 500/wa…        500 water… sys02  img34  teacup-oc… jpg    Ocean in…
- 8 500/wa…        500 water… sys02  img34  teacup-oc… png    Ocean in…
- 9 8000/w…       8000 water… sys02  img34  teacup-oc… jpg    Ocean in…
-10 8000/w…       8000 water… sys02  img34  teacup-oc… png    Ocean in…
-# … with 190 more rows, and 1 more variable: date &lt;date&gt;</code></pre>
-</div>
-<p>For a small data set like this one, it doesn’t take R very long to serialise or unserialise. The “serialisation overhead” isn’t a big deal. But when the data set is very large, this is not a trivial operation and you don’t want to do this very often. That’s a problem when a large data set needs to be passed around between multiple platforms. Loading the a CSV into R incurs a serialisation cost; transferring a copy of the data from R to Python incurs a serialisation cost. This happens because R and Python have different structured representations: an data frame in R is a different kind of thing to a panda in Python, so the data has to be serialised, transferred, and then unserialised at the other end in order to pass the data from one to another.</p>
-<p>Wouldn’t it be nice if we could avoid that? What if there was just <em>one</em> data structure representing the table in-memory, and R and Python could both agree to use it? That would remove the need to copy and transfer the data, right? And in doing so, it would eliminate those pesky serialisation costs incurred every time. If <em>only</em> there were a standardised, language-independent format for storing table-like data in-memory, using a columnar format and supporting zero-copy reads without serialisation overhead…</p>
-<p><strong>[Apache Arrow enters stage left, looking unreasonably pleased]</strong></p>
-<p>“Hi!”</p>
+<p>So yeah. <a href="https://en.wikipedia.org/wiki/Serialization">Serialisation</a> is one of those terms that those fancy data people know all about, but a regular R user might not be <em>quite</em> as familiar with. It’s worth unpacking this a bit because it’s helpful for understanding the problem that Arrow solves…</p>
+<p>…Hey!</p>
+<p>Wait a second, I already wrote a <a href="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/">blog post about serialisation</a>! I don’t need to write another one. The TL;DR, for folks who quite reasonably don’t want to do a deep dive into how R objects are written to RDS files, is that serialisation is the process of taking an in-memory data structure (like a data frame), and converting it into a sequence of bytes. Those bytes can either be written to disk (when you’re saving a file) or they can be transmitted over some other channel. Regardless of what you want to <em>do</em> with the serialised data, this conversion takes time and resources, and at some point the data will need to be unserialised later. The resources expended in doing so are referred to as the “serialisation overhead”.</p>
+<p>For small data sets, it doesn’t take R very long to serialise or unserialise. The “serialisation overhead” isn’t a big deal. But when the data set is very large, this is not a trivial operation and you don’t want to do this very often. That’s a problem when a large data set needs to be passed around between multiple platforms. Loading the a CSV into R incurs a serialisation cost; transferring a copy of the data from R to Python incurs a serialisation cost. This happens because R and Python have different structured representations: an data frame in R is a different kind of thing to a panda in Python, so the data has to be serialised, transferred, and then unserialised at the other end in order to pass the data from one to another.</p>
+<p>Wouldn’t it be nice if we could avoid that? What if there was just <em>one</em> data structure representing the table in-memory, and R and Python could both agree to use it? That would remove the need to copy and transfer the data, right? And in doing so, it would eliminate those pesky serialisation costs incurred every time. It would be a “zero-copy” mechanism.</p>
+<p>If <em>only</em> there were a standardised, language-independent format for storing table-like data in-memory, using a columnar format and supporting zero-copy reads without serialisation overhead…</p>
 <h2 id="overview-of-arrow">Overview of Arrow</h2>
+<p>Here’s one of the two big ideas: standardisation saves. The current situation that most of us are working in looks something like this. Every application and programming language defines its own format for storing data in memory (and often on disk too), and so any time multiple applications require access to the same data, there’s a serialisation cost. The bigger the data, the higher that cost will be. The more applications you connect to the same data, the more times you incur the cost:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="without_arrow.jpg" width="2016" /></p>
+</div>
+<p>Arrow solves this problem by allocating its own memory to store the data, and providing tools that allow you to access this from any language you like. The goal is to make those tools feel “natural” in whatever language you’re using. For example, if you’re an R user, you may already be familiar with the dplyr grammar for data manipulation and you’d like to be able to manipulate an Arrow Table using dplyr, in exactly the same way you would manipulate a data frame. The arrow R package allows you to do precisely this, and there’s a similar story that applies on the Python side. This allows you to write code that feels natural for the language you’re working in.</p>
+<p>In this approach, every language has a toolkit that plays nicely with Arrow <em>and</em> feels native to that language. Applications written in R and applications written in Python can both work with the same underlying data (because it’s in Arrow), so you don’t have to serialise the data in order for them to talk to each other:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="with_arrow.jpg" width="2016" /></p>
+</div>
+<p>Oh, and the other reason is that the Apache Arrow standard itself is good. It organises data column-wise in memory and as consequence it can support cool <a href="https://en.wikipedia.org/wiki/SIMD">single instruction multiple data</a> (or SIMD) operations that you can do with modern CPUs. For my own curiosity I went out and did a little bit of reading to wrap my head around this, but for most of us all we really care about is that it means that manipulating data with Arrow can be very fast. There’s a very brief discussion of this on the <a href="https://arrow.apache.org/overview/">Arrow overview page</a>.</p>
 <h2 id="installing-arrow">Installing Arrow</h2>
-<p>Installing Apache Arrow on your local machine as an R user is either extremely easy or very tiresome, depending almost entirely on whether you’re on Linux. If you’re using Windows or Mac OS, you shouldn’t need to do anything except install the arrow package in the usual way.</p>
+<p>Installing Apache Arrow on your local machine as an R user is either extremely easy or mildly tiresome, depending almost entirely on whether you’re on Linux. If you’re using Windows or Mac OS, you shouldn’t need to do anything except install the arrow package in the usual way. It just works:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='st'>"arrow"</span><span class='op'>)</span>
@@ -1701,6 +1652,137 @@ C++ Library Version  6.0.0
 C++ Compiler           GNU
 C++ Compiler Version 9.3.0</code></pre>
 </div>
+<p>Yaaas queen! We are ready to go.</p>
+<h2 id="does-it-work">Does it work?</h2>
+<p>My goal in this post is fairly modest. I wanted to understand why everyone I talk to seems so excited about Arrow, and try to get it configured to work on my machine. Assuming I can be bothered continuing this series, the next step would be to start playing with Arrow and do a proper exploration. For now though, I’ll try something simple, using the <code>diamonds</code> data from the ggplot2 package</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://ggplot2.tidyverse.org'>ggplot2</a></span><span class='op'>)</span>
+<span class='va'>diamonds</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 53,940 × 10
+   carat cut       color clarity depth table price     x     y     z
+   &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43
+ 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31
+ 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31
+ 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63
+ 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75
+ 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48
+ 7  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47
+ 8  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53
+ 9  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49
+10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
+# … with 53,930 more rows</code></pre>
+</div>
+<h3 id="the-data-arent-stored-in-r-memory">The data aren’t stored in R memory</h3>
+<p>Okay, so the first thing I want to investigate is this idea that Arrow holds the data in its own memory, not in the memory allocated to R. As things currently stand the <code>diamonds</code> tibble has 53940 rows stored in R memory, and that occupies about 3.3MB of memory:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>lobstr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lobstr/man/obj_size.html'>obj_size</a></span><span class='op'>(</span><span class='va'>diamonds</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>3,456,344 B</code></pre>
+</div>
+<p>What happens when we move the data into Arrow? To do this we would construct a “Table” object using the <code>arrow_table()</code> function, like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>diamonds2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>diamonds</span><span class='op'>)</span>
+<span class='va'>diamonds2</span>
+</code></pre>
+</div>
+<pre><code>Table
+53940 rows x 10 columns
+$carat &lt;double&gt;
+$cut &lt;dictionary&lt;values=string, indices=int8, ordered&gt;&gt;
+$color &lt;dictionary&lt;values=string, indices=int8, ordered&gt;&gt;
+$clarity &lt;dictionary&lt;values=string, indices=int8, ordered&gt;&gt;
+$depth &lt;double&gt;
+$table &lt;double&gt;
+$price &lt;int32&gt;
+$x &lt;double&gt;
+$y &lt;double&gt;
+$z &lt;double&gt;</code></pre>
+</div>
+<p>It’s printed a little differently, but it’s the same tabular data structure consisting of 53940 rows and 10 columns. So how much R memory does <code>diamonds2</code> occupy?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>lobstr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lobstr/man/obj_size.html'>obj_size</a></span><span class='op'>(</span><span class='va'>diamonds2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>285,696 B</code></pre>
+</div>
+<p>Only 279KB. The reason why it occupies so little memory is that <code>diamonds2</code> doesn’t contain all the data. The data are stored elsewhere, using memory allocated to Arrow. If a Python program wanted to access the <code>diamonds2</code> data, it could do so without having to serialise the data again. It can link to the same data structure in Arrow memory that I just created. Neat!</p>
+<h3 id="the-arrow-package-supplies-a-dplyr-backend">The arrow package supplies a dplyr backend</h3>
+<p>One neat thing about dplyr is that it cleanly separates the API from the backend. So you can use the dbplyr package to work with databases using dplyr code, or the dtplyr package to use a data.table backend, and so on. The arrow package does the same thing for Apache Arrow.</p>
+<p>Here’s an example. If I were working with the original <code>diamonds</code> tibble, I might write a simple dplyr pipe to tabulate the clarity of premium-cut diamonds:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>diamonds</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>cut</span> <span class='op'>==</span> <span class='st'>"Premium"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>clarity</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 8 × 2
+  clarity     n
+  &lt;ord&gt;   &lt;int&gt;
+1 I1        205
+2 SI2      2949
+3 SI1      3575
+4 VS2      3357
+5 VS1      1989
+6 VVS2      870
+7 VVS1      616
+8 IF        230</code></pre>
+</div>
+<p>Can I do the same thing using the <code>diamonds2</code> Table? Let’s try:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>diamonds2</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>cut</span> <span class='op'>==</span> <span class='st'>"Premium"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>clarity</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>InMemoryDataset (query)
+clarity: dictionary&lt;values=string, indices=int8, ordered&gt;
+n: int32
+
+See $.data for the source Arrow object</code></pre>
+</div>
+<p>Okay, perhaps not what we were expecting. In order to optimise performance, the query doesn’t get evaluated immediately (more on this in a later post perhaps) You have to tell it either to <code>compute()</code> the result, which will return another Table, or to <code>collect()</code> the result into a data frame</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>diamonds2</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>cut</span> <span class='op'>==</span> <span class='st'>"Premium"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>clarity</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 8 × 2
+  clarity     n
+  &lt;ord&gt;   &lt;int&gt;
+1 SI1      3575
+2 VS2      3357
+3 SI2      2949
+4 I1        205
+5 VS1      1989
+6 VVS1      616
+7 VVS2      870
+8 IF        230</code></pre>
+</div>
+<p>At no point has the full data set been loaded into R memory. The <code>diamonds2</code> object doesn’t contain any new information. It’s still the same size:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>lobstr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lobstr/man/obj_size.html'>obj_size</a></span><span class='op'>(</span><span class='va'>diamonds2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>285,696 B</code></pre>
+</div>
+<p>My example is trivial, of course, because the diamonds data set isn’t very big. But if you start reading the Arrow documentation, they give an <a href="https://arrow.apache.org/docs/r/articles/dataset.html">example using the NYC taxi data</a> which is about 37GB in size. That’s… a teeensy bit bigger than I’d want to try loading into memory on my laptop, so I wouldn’t be able to load it into R at all much less use dplyr. However, because Arrow supplies a dplyr back end, it is possible to write dplyr code for the NYC taxi data.</p>
+<p>Old and jaded though I may be, I have to admit that’s pretty cool.</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 
@@ -1709,7 +1791,7 @@ C++ Compiler Version 9.3.0</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -1728,12 +1810,12 @@ C++ Compiler Version 9.3.0</code></pre>
 <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/djnavarro/distill-blog/">https://github.com/djnavarro/distill-blog/</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
 <h3 id="citation">Citation</h3>
 <p>For attribution, please cite this work as</p>
-<pre class="citation-appendix short">Navarro (2021, Nov. 4). Learning Apache Arrow (for R users). Retrieved from https://blog.djnavarro.net/learning-apache-arrow</pre>
+<pre class="citation-appendix short">Navarro (2021, Nov. 19). Getting started with Apache Arrow in R. Retrieved from https://blog.djnavarro.net/starting-apache-arrow-in-R</pre>
 <p>BibTeX citation</p>
-<pre class="citation-appendix long">@misc{navarro2021learning,
+<pre class="citation-appendix long">@misc{navarro2021getting,
   author = {Navarro, Danielle},
-  title = {Learning Apache Arrow (for R users)},
-  url = {https://blog.djnavarro.net/learning-apache-arrow},
+  title = {Getting started with Apache Arrow in R},
+  url = {https://blog.djnavarro.net/starting-apache-arrow-in-R},
   year = {2021}
 }</pre>
 </div>
