@@ -1,7 +1,7 @@
 ---
-title: "Getting started with Apache Arrow in R" 
-description:
-  Or, how an R user learned to stop worrying and love a standardised in-memory columnar data format
+title: "Getting started with Apache Arrow" 
+description: |
+  I've been wanting to learn the basics of Apache Arrow a while: this is the story of how an R user learned to stop worrying and love a standardised in-memory columnar data format
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -48,7 +48,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <!--------------- post ----------------->
 
-If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about [Parquet files](https://parquet.apache.org), [Apache Arrow](https://arrow.apache.org), and the [arrow package for R](https://arrow.apache.org/docs/r/), but you're not really sure what they're about and are curious? If that's you, then--
+If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R. Perhaps you hear people talking about [Parquet files](https://parquet.apache.org), [Apache Arrow](https://arrow.apache.org), and the [arrow package for R](https://arrow.apache.org/docs/r/), but you're not really sure what they're about and are curious? If that's you, then--
 
 *So we're just writing obvious "I want a job in tech, please hire me!" blog posts now?*
 
@@ -121,7 +121,7 @@ If *only* there were a standardised, language-independent format for storing tab
 
 ## Overview of Arrow
 
-Here's one of the two big ideas: standardisation saves. The current situation that most of us are working in looks something like this. Every application and programming language defines its own format for storing data in memory (and often on disk too), and so any time multiple applications require access to the same data, there's a serialisation cost. The bigger the data, the higher that cost will be. The more applications you connect to the same data, the more times you incur the cost:
+Here's one of the two big ideas: **standardisation prevents wasteful copying**. The current situation that most of us are working in looks something like this. Every application and programming language defines its own format for storing data in memory (and often on disk too), and so any time multiple applications require access to the same data, there's a serialisation cost. The bigger the data, the higher that cost will be. The more applications you connect to the same data, the more times you incur the cost:
 
 ```{r, echo=FALSE}
 knitr::include_graphics("without_arrow.jpg")
@@ -129,14 +129,15 @@ knitr::include_graphics("without_arrow.jpg")
 
 Arrow solves this problem by allocating its own memory to store the data, and providing tools that allow you to access this from any language you like. The goal is to make those tools feel "natural" in whatever language you're using. For example, if you're an R user, you may already be familiar with the dplyr grammar for data manipulation and you'd like to be able to manipulate an Arrow Table using dplyr, in exactly the same way you would manipulate a data frame. The arrow R package allows you to do precisely this, and there's a similar story that applies on the Python side. This allows you to write code that feels natural for the language you're working in.
 
-In this approach, every language has a toolkit that plays nicely with Arrow *and* feels native to that language. Applications written in R and applications written in Python can both work with the same underlying data (because it's in Arrow), so you don't have to serialise the data in order for them to talk to each other:
+In this approach, **R and Python both have a toolkit that plays nicely with Arrow and feels native to that language**. Applications written in R and applications written in Python can both work with the same underlying data (because it's in Arrow), so you don't have to serialise the data in order for them to talk to each other:
 
 ```{r, echo=FALSE}
 knitr::include_graphics("with_arrow.jpg")
 ```
 
+So that's the first big idea. 
 
-Oh, and the other reason is that the Apache Arrow standard itself is good. It organises data column-wise in memory and as consequence it can support cool [single instruction multiple data](https://en.wikipedia.org/wiki/SIMD) (or SIMD) operations that you can do with modern CPUs. For my own curiosity I went out and did a little bit of reading to wrap my head around this, but for most of us all we really care about is that it means that manipulating data with Arrow can be very fast. There's a very brief discussion of this on the [Arrow overview page](https://arrow.apache.org/overview/).
+The second big idea is that Arrow organises data column-wise in memory and as consequence it can support cool [single instruction multiple data](https://en.wikipedia.org/wiki/SIMD) (or SIMD) operations that you can do with modern CPUs, which I totally understand 100% and am not just paraphrasing Wikipedia. Anyway, it doesn't really matter at the user level. All we care about there is that manipulating data with Arrow can be very fast. There's a very brief discussion of this on the [Arrow overview page](https://arrow.apache.org/overview/). (It also has prettier versions of my crappy handwritten diagrams)
 
 ## Installing Arrow
 
@@ -190,7 +191,7 @@ library(ggplot2)
 diamonds
 ```
 
-### The data aren't stored in R memory
+### Example 1: the data aren't stored in R memory
 
 Okay, so the first thing I want to investigate is this idea that Arrow holds the data in its own memory, not in the memory allocated to R. As things currently stand the `diamonds` tibble has 53940 rows stored in R memory, and that occupies about 3.3MB of memory:
 
@@ -213,7 +214,7 @@ lobstr::obj_size(diamonds2)
 
 Only 279KB. The reason why it occupies so little memory is that `diamonds2` doesn't contain all the data. The data are stored elsewhere, using memory allocated to Arrow. If a Python program wanted to access the `diamonds2` data, it could do so without having to serialise the data again. It can link to the same data structure in Arrow memory that I just created. Neat!
 
-### The arrow package supplies a dplyr backend
+### Example 2: arrow supplies a dplyr backend
 
 One neat thing about dplyr is that it cleanly separates the API from the backend. So you can use the dbplyr package to work with databases using dplyr code, or the dtplyr package to use a data.table backend, and so on. The arrow package does the same thing for Apache Arrow. 
 
