@@ -2508,9 +2508,9 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p>If you’re like me and spend far too much time on <a href="https://twitter.com/home?hashtag=rstats">#rstats</a> twitter you may have come across people talking about how to work with large data sets in R. Perhaps you hear people talking about <a href="https://parquet.apache.org">Parquet files</a>, <a href="https://arrow.apache.org">Apache Arrow</a>, and the <a href="https://arrow.apache.org/docs/r/">arrow package for R</a>, but you’re not really sure what they’re about and are curious? If that’s you, then–</p>
-<p><em>So we’re just writing obvious “I want a job in tech, please hire me!” blog posts now?</em></p>
+<p><em>So we’re just writing obvious “I want a job in tech, please hire me!” blog posts pitched at potential employers now?</em></p>
 <p>Oh shush. It’s fun and useful too, you know.</p>
-<p><em>Okay fine, but at least be transparent about what you’re doing?</em></p>
+<p><em>Okay fine, but could you at least be transparent about what you’re doing? Because it’s sort of obnoxious otherwise</em></p>
 <p>Sheesh, what do you think this fake dialogue is for if not making the subtext blatant? Now could you please stop interrupting me and let me talk about Apache Arrow? It is in fact a more interesting subject than our pending unemployment.</p>
 <p><em>Yeah, see how you feel about that in December babe…</em></p>
 <p>Sigh.</p>
@@ -2518,7 +2518,7 @@ checklist:
 <p>Okay, where was I? Ah yes…</p>
 <p>If you’re like me and spend far too much time on <a href="https://twitter.com/home?hashtag=rstats">#rstats</a> twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about <a href="https://parquet.apache.org">Parquet files</a>, <a href="https://arrow.apache.org">Apache Arrow</a>, and the <a href="https://arrow.apache.org/docs/r/">arrow package for R</a>, but you’re not really sure what they’re about and are curious? If that’s you, then this blog post is designed to help you get started.</p>
 <h3 id="wait-do-i-actually-care">Wait… do I actually care?</h3>
-<p>Let’s start at the beginning, with the most important question of all: do you actually need to care about this? This is going to be a long post, so let’s make sure you’re reading it for the right reasons!</p>
+<p>Let’s start at the beginning, with the most important question of all: do you actually need to care about this? This might be a long post, so let’s make sure you’re reading it for the right reasons!</p>
 <p>For a lot of people, the answer to the “do I care?” question is going to be “probably not – or at least not right now”. For example, if all your data sets are small and rectangular, then you’re probably working with CSV files and not encountering a lot of problems. Your current workflow uses <code>read.csv()</code> or <code>readr::read_csv()</code> to import data, and everything is fine. Sure, the CSV format has some problems, but it’s simple and it works. If that is you, then right now you don’t need to worry about this.</p>
 <p>But perhaps that’s not you, or maybe that won’t be you forever. You might be working with larger data sets, either now or in the future, and when that happens you might need to care.</p>
 <h3 id="okay-so-whats-the-problem">Okay… so what’s the problem?</h3>
