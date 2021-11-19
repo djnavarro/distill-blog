@@ -6,14 +6,23 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Sun, 14 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 18 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Getting started with Apache Arrow</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r</link>
+      <description>I've been wanting to learn the basics of Apache Arrow a while: this is the story of how an R user learned to stop worrying and love a standardised in-memory columnar data format</description>
+      <guid>https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r</guid>
+      <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/img/frank-busch-LpYcecGTifI-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
     <item>
       <title>Data serialisation in R</title>
       <dc:creator>Danielle Navarro</dc:creator>
       <link>https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds</link>
       <description>A terrifying descent into madness, or, an explanation of how R serialises an in-memory data structure to summon a sequence of bytes that can be saved or transmitted. Eldritch horrors are unleashed by reading occult texts such as the R internals manual, SEXPTYPE codes are extracted from RDS with bitwise logic, and in the dark conclusion the R source code is consulted</description>
       <guid>https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds</guid>
-      <pubDate>Sun, 14 Nov 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 15 Nov 2021 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/preview-image.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>
