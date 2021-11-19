@@ -14,7 +14,7 @@
       <description>I've been wanting to learn the basics of Apache Arrow a while: this is the story of how an R user learned to stop worrying and love a standardised in-memory columnar data format</description>
       <guid>https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r</guid>
       <pubDate>Thu, 18 Nov 2021 00:00:00 +0000</pubDate>
-      <media:content url="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/without_arrow.jpg" medium="image" type="image/jpeg"/>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/img/frank-busch-LpYcecGTifI-unsplash.jpg" medium="image" type="image/jpeg"/>
     </item>
     <item>
       <title>Data serialisation in R</title>
