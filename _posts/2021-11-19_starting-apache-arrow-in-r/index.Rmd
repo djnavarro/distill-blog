@@ -12,14 +12,14 @@ author:
 date: 2021-11-19
 preview: img/frank-busch-LpYcecGTifI-unsplash.jpg
 creative_commons: CC BY
-citation_url: https://blog.djnavarro.net/starting-apache-arrow-in-R 
+citation_url: https://blog.djnavarro.net/starting-apache-arrow-in-r 
 repository_url: https://github.com/djnavarro/distill-blog/
 output:
   distill::distill_article:
     self_contained: false
     toc: true
 params:
-  slug: starting-apache-arrow-in-R
+  slug: starting-apache-arrow-in-r
   date: 2021-11-19
   repo: djnavarro/distill-blog
   site: https://blog.djnavarro.net/
