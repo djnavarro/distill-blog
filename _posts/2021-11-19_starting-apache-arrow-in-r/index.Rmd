@@ -75,11 +75,11 @@ knitr::include_graphics("img/tim-mossholder-ClIqpOqxZlc-unsplash.jpg")
 
 Okay, where was I? Ah yes...
 
-If you're like me and spend far too much time on [#rstats](https://twitter.com/home?hashtag=rstats) twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about [Parquet files](https://parquet.apache.org), [Apache Arrow](https://arrow.apache.org), and the [arrow package for R](https://arrow.apache.org/docs/r/), but you're not really sure what they're about and are curious? If that's you, then this blog post is designed to help you get started. 
+If you're like me and spend far too much time talking about R on Twitter you may have come across people talking about how to work with large data sets in R. Perhaps you hear people talking about [Parquet files](https://parquet.apache.org), [Apache Arrow](https://arrow.apache.org), and the [arrow package for R](https://arrow.apache.org/docs/r/), but you're not really sure what they're about and are curious? If that's you, then then this blog post is designed to help you get started. 
 
 ### Wait... do I actually care?
 
-Let's start at the beginning, with the most important question of all: do you actually need to care about this? This might be a long post, so let's make sure you're reading it for the right reasons!
+Let's start at the beginning, with the most important question of all: do you actually need to care about this? This might be a long post (or possibly the first post in a long series), so let's make sure you're reading for the right reasons!
 
 For a lot of people, the answer to the "do I care?" question is going to be "probably not -- or at least not right now". For example, if all your data sets are small and rectangular, then you're probably working with CSV files and not encountering a lot of problems. Your current workflow uses `read.csv()` or `readr::read_csv()` to import data, and everything is fine. Sure, the CSV format has some problems, but it's simple and it works. If that is you, then right now you don't need to worry about this. 
 
@@ -89,7 +89,7 @@ But perhaps that's not you, or maybe that won't be you forever. You might be wor
 
 Thanks for a great question! Here are a few scenarios to think about.
 
-- **Scenario 1:** Let's suppose you have a big rectangular data set. An enormous table, basically, and currently it's stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I'll come back to those later). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it's not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That's awkward. R likes to store things in memory. Eek.
+- **Scenario 1:** Let's suppose you have a big rectangular data set. An enormous table, basically, and currently it's stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I'll come back to those in a later post, I suspect). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it's not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That's awkward. R likes to store things in memory. Eek.
 
 - **Scenario 2:** Okay, maybe your data isn't that big and it fits in memory, but it's still pretty big, and you need to do something complicated with it. Maybe your analysis needs to start in R but then continue in Python. Or something like that. In your head, you're thinking okay first I have to read the whole dataset into memory in R, and then it has to be transferred to Python which will have to read its own copy, and... gosh that sounds slow and inefficient. Ugh.
 
@@ -111,7 +111,7 @@ Sorry. Let's unpack each of those terms:
 
 - Arrow is a **standardised and language-independent format**. It's the same thing regardless of what programming language you're using: a data set accessed from R with Arrow has the same format as the a data set accessed in Python.
 - Arrow is used to store **table-like data**, very similar to a data frame or tibble.
-- Arrow refers to the **in-memory** format: it's not talking about how the data are stored on disk, and it's not talking about file formats. It's all about how a loaded data set is represented in memory.
+- Arrow refers to the **in-memory** format: it's not talking about how the data are stored on disk, and it's not talking about file formats. It's all about how a loaded data set is represented in memory.^[Technically speaking, there's a little ambiguity here. Usually when we're talking about Arrow we're talking about the in memory specification, but the term is also used to refer to the software implementing it, which includes a lot of compute functionality that goes beyond what the specification states. Similarly, the Arrow in-memory format doesn't *have* to imply any particular serialisation format, but in practice it's tightly connected to the IPC ("interprocess communication") streaming and file format, and to the parquet file format. As a consequence, the term "Arrow" is sometimes used to refer to that broader suite of tools.]
 - Arrow uses **columnar format**. Unlike a CSV file, which stores the data row-wise, it represents the data column-wise: this turns out to be a much more efficient way to represent data when you need to subset the data (e.g., by using `dplyr::filter()` in R or the `WHERE` clause in SQL). 
 - Arrow supports **zero-copy reads without serialisation overhead**, which... um... yeah, what the heck does that mean?
 
@@ -119,7 +119,7 @@ So yeah. [Serialisation](https://en.wikipedia.org/wiki/Serialization) is one of 
 
 ...Hey! 
 
-Wait a second, I already wrote a [blog post about serialisation](https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/)! I don't need to write another one. The TL;DR, for folks who quite reasonably don't want to do a deep dive into how R objects are written to RDS files, is that serialisation is the process of taking an in-memory data structure (like a data frame), and converting it into a sequence of bytes. Those bytes can either be written to disk (when you're saving a file) or they can be transmitted over some other channel. Regardless of what you want to *do* with the serialised data, this conversion takes time and resources, and at some point the data will need to be unserialised later. The resources expended in doing so are referred to as the "serialisation overhead".
+Wait a second, I already wrote a [blog post about serialisation](https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/)! I don't need to write another one.^[Okay, I'll be honest, the RDS serialisation post came about because I was thinking about Arrow and serialisation costs, and got slightly distracted!] The TL;DR, for folks who quite reasonably don't want to do a deep dive into how R objects are written to RDS files, is that serialisation is the process of taking an in-memory data structure (like a data frame), and converting it into a sequence of bytes. Those bytes can either be written to disk (when you're saving a file) or they can be transmitted over some other channel. Regardless of what you want to *do* with the serialised data, this conversion takes time and resources, and at some point the data will need to be unserialised later. The resources expended in doing so are referred to as the "serialisation overhead".
 
 For small data sets, it doesn't take R very long to serialise or unserialise. The "serialisation overhead" isn't a big deal. But when the data set is very large, this is not a trivial operation and you don't want to do this very often. That's a problem when a large data set needs to be passed around between multiple platforms. Loading the a CSV into R incurs a serialisation cost; transferring a copy of the data from R to Python incurs a serialisation cost. This happens because R and Python have different structured representations: an data frame in R is a different kind of thing to a panda in Python, so the data has to be serialised, transferred, and then unserialised at the other end in order to pass the data from one to another. 
 
@@ -142,7 +142,7 @@ Here's one of the two big ideas: **standardisation prevents wasteful copying**. 
 knitr::include_graphics("img/without_arrow.jpg")
 ```
 
-Arrow solves this problem by allocating its own memory to store the data, and providing tools that allow you to access this from any language you like. The goal is to make those tools feel "natural" in whatever language you're using. For example, if you're an R user, you may already be familiar with the dplyr grammar for data manipulation and you'd like to be able to manipulate an Arrow Table using dplyr, in exactly the same way you would manipulate a data frame. The arrow R package allows you to do precisely this, and there's a similar story that applies on the Python side. This allows you to write code that feels natural for the language you're working in.
+Arrow solves this problem by allocating its own memory to store the data, and providing tools that allow you to access this from any language you like. The goal is to make those tools feel "natural" in whatever language you're using. For example, if you're an R user, you may already be familiar with the [dplyr](https://dplyr.tidyverse.org/) grammar for data manipulation and you'd like to be able to manipulate an Arrow Table using dplyr, in exactly the same way you would manipulate a data frame. The [arrow R package](https://arrow.apache.org/docs/r/) allows you to do precisely this, and there's a similar story that applies on the [Python side](https://arrow.apache.org/docs/python/_. This allows you to write code that feels natural for the language you're working in.
 
 In this approach, **R and Python both have a toolkit that plays nicely with Arrow and feels native to that language**. Applications written in R and applications written in Python can both work with the same underlying data (because it's in Arrow), so you don't have to serialise the data in order for them to talk to each other:
 
@@ -222,7 +222,7 @@ library(ggplot2)
 diamonds
 ```
 
-### Example 1: the data aren't stored in R memory
+### Example 1: Arrow data sets aren't stored in R memory
 
 Okay, so the first thing I want to investigate is this idea that Arrow holds the data in its own memory, not in the memory allocated to R. As things currently stand the `diamonds` tibble has 53940 rows stored in R memory, and that occupies about 3.3MB of memory:
 
@@ -245,9 +245,9 @@ lobstr::obj_size(diamonds2)
 
 Only 279KB. The reason why it occupies so little memory is that `diamonds2` doesn't contain all the data. The data are stored elsewhere, using memory allocated to Arrow. If a Python program wanted to access the `diamonds2` data, it could do so without having to serialise the data again. It can link to the same data structure in Arrow memory that I just created. Neat!
 
-### Example 2: arrow supplies a dplyr backend
+### Example 2: Arrow plays nicely with dplyr
 
-One neat thing about dplyr is that it cleanly separates the API from the backend. So you can use the dbplyr package to work with databases using dplyr code, or the dtplyr package to use a data.table backend, and so on. The arrow package does the same thing for Apache Arrow. 
+One neat thing about dplyr is that it cleanly separates the API from the backend. So you can use the [dbplyr](https://dbplyr.tidyverse.org/) package to work with databases using dplyr code, or the [dtplyr](https://dtplyr.tidyverse.org/) package to use a data.table backend, and so on. The arrow package does the same thing for Apache Arrow. 
 
 Here's an example. If I were working with the original `diamonds` tibble, I might write a simple dplyr pipe to tabulate the clarity of premium-cut diamonds:
 

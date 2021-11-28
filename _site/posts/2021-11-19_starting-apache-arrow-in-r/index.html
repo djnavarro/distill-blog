@@ -131,7 +131,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["diamonds.parquet","img/apache_arrow.png","img/denise-johnson-siRbJlln-xA-unsplash.jpg","img/frank-busch-LpYcecGTifI-unsplash.jpg","img/possessed-photography-_E1PQXKUkMw-unsplash.jpg","img/tim-mossholder-ClIqpOqxZlc-unsplash.jpg","img/with_arrow.jpg","img/without_arrow.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["diamonds.parquet","img/apache_arrow.png","img/denise-johnson-siRbJlln-xA-unsplash.jpg","img/frank-busch-LpYcecGTifI-unsplash.jpg","img/helping.png","img/possessed-photography-_E1PQXKUkMw-unsplash.jpg","img/tim-mossholder-ClIqpOqxZlc-unsplash.jpg","img/with_arrow.jpg","img/without_arrow.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2490,8 +2490,8 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#installing-arrow">Installing Arrow</a></li>
 <li><a href="#does-it-work">Does it work?</a>
 <ul>
-<li><a href="#example-1-the-data-arent-stored-in-r-memory">Example 1: the data aren’t stored in R memory</a></li>
-<li><a href="#example-2-arrow-supplies-a-dplyr-backend">Example 2: arrow supplies a dplyr backend</a></li>
+<li><a href="#example-1-arrow-data-sets-arent-stored-in-r-memory">Example 1: Arrow data sets aren’t stored in R memory</a></li>
+<li><a href="#example-2-arrow-plays-nicely-with-dplyr">Example 2: Arrow plays nicely with dplyr</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2524,15 +2524,15 @@ Figure 1: Arrow image by Tim Mossholder. It has nothing whatsoever to do with th
 </div>
 <h2 id="introduction">Introduction</h2>
 <p>Okay, where was I? Ah yes…</p>
-<p>If you’re like me and spend far too much time on <a href="https://twitter.com/home?hashtag=rstats">#rstats</a> twitter you may have come across people talking about how to work with large data sets in R, and in particular how to solve the issues associated with data serialisation, analysing columnar data stored in memory, and so on. Perhaps you hear people talking about <a href="https://parquet.apache.org">Parquet files</a>, <a href="https://arrow.apache.org">Apache Arrow</a>, and the <a href="https://arrow.apache.org/docs/r/">arrow package for R</a>, but you’re not really sure what they’re about and are curious? If that’s you, then this blog post is designed to help you get started.</p>
+<p>If you’re like me and spend far too much time talking about R on Twitter you may have come across people talking about how to work with large data sets in R. Perhaps you hear people talking about <a href="https://parquet.apache.org">Parquet files</a>, <a href="https://arrow.apache.org">Apache Arrow</a>, and the <a href="https://arrow.apache.org/docs/r/">arrow package for R</a>, but you’re not really sure what they’re about and are curious? If that’s you, then then this blog post is designed to help you get started.</p>
 <h3 id="wait-do-i-actually-care">Wait… do I actually care?</h3>
-<p>Let’s start at the beginning, with the most important question of all: do you actually need to care about this? This might be a long post, so let’s make sure you’re reading it for the right reasons!</p>
+<p>Let’s start at the beginning, with the most important question of all: do you actually need to care about this? This might be a long post (or possibly the first post in a long series), so let’s make sure you’re reading for the right reasons!</p>
 <p>For a lot of people, the answer to the “do I care?” question is going to be “probably not – or at least not right now”. For example, if all your data sets are small and rectangular, then you’re probably working with CSV files and not encountering a lot of problems. Your current workflow uses <code>read.csv()</code> or <code>readr::read_csv()</code> to import data, and everything is fine. Sure, the CSV format has some problems, but it’s simple and it works. If that is you, then right now you don’t need to worry about this.</p>
 <p>But perhaps that’s not you, or maybe that won’t be you forever. You might be working with larger data sets, either now or in the future, and when that happens you might need to care.</p>
 <h3 id="okay-so-whats-the-problem">Okay… so what’s the problem?</h3>
 <p>Thanks for a great question! Here are a few scenarios to think about.</p>
 <ul>
-<li><p><strong>Scenario 1:</strong> Let’s suppose you have a big rectangular data set. An enormous table, basically, and currently it’s stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I’ll come back to those later). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it’s not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That’s awkward. R likes to store things in memory. Eek.</p></li>
+<li><p><strong>Scenario 1:</strong> Let’s suppose you have a big rectangular data set. An enormous table, basically, and currently it’s stored as a file on your disk. The format of that file could be a plain CSV, a compressed CSV, or it could be something fancier like a Parquet file (I’ll come back to those in a later post, I suspect). It might be a couple of billion rows or so, the kind of thing that you can store on disk but is too big to fit into memory, so it’s not going to be very easy to read this thing into R as a data frame! But your boss wants you to analyse it in R anyway. That’s awkward. R likes to store things in memory. Eek.</p></li>
 <li><p><strong>Scenario 2:</strong> Okay, maybe your data isn’t that big and it fits in memory, but it’s still pretty big, and you need to do something complicated with it. Maybe your analysis needs to start in R but then continue in Python. Or something like that. In your head, you’re thinking okay first I have to read the whole dataset into memory in R, and then it has to be transferred to Python which will have to read its own copy, and… gosh that sounds slow and inefficient. Ugh.</p></li>
 <li><p><strong>Scenario 3:</strong> Honestly, you’re just tired of having to deal with the fact that every language has its own idiosyncratic way of storing data sets in memory and it’s exhausting to have to keep learning new things and you really wish there were some standardised way that programming languages represent data in memory and you’d like a single toolkit that you can use regardless of what language you’re in. Sigh…</p></li>
 </ul>
@@ -2546,13 +2546,13 @@ Figure 1: Arrow image by Tim Mossholder. It has nothing whatsoever to do with th
 <ul>
 <li>Arrow is a <strong>standardised and language-independent format</strong>. It’s the same thing regardless of what programming language you’re using: a data set accessed from R with Arrow has the same format as the a data set accessed in Python.</li>
 <li>Arrow is used to store <strong>table-like data</strong>, very similar to a data frame or tibble.</li>
-<li>Arrow refers to the <strong>in-memory</strong> format: it’s not talking about how the data are stored on disk, and it’s not talking about file formats. It’s all about how a loaded data set is represented in memory.</li>
+<li>Arrow refers to the <strong>in-memory</strong> format: it’s not talking about how the data are stored on disk, and it’s not talking about file formats. It’s all about how a loaded data set is represented in memory.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></li>
 <li>Arrow uses <strong>columnar format</strong>. Unlike a CSV file, which stores the data row-wise, it represents the data column-wise: this turns out to be a much more efficient way to represent data when you need to subset the data (e.g., by using <code>dplyr::filter()</code> in R or the <code>WHERE</code> clause in SQL).</li>
 <li>Arrow supports <strong>zero-copy reads without serialisation overhead</strong>, which… um… yeah, what the heck does that mean?</li>
 </ul>
 <p>So yeah. <a href="https://en.wikipedia.org/wiki/Serialization">Serialisation</a> is one of those terms that those fancy data people know all about, but a regular R user might not be <em>quite</em> as familiar with. It’s worth unpacking this a bit because it’s helpful for understanding the problem that Arrow solves…</p>
 <p>…Hey!</p>
-<p>Wait a second, I already wrote a <a href="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/">blog post about serialisation</a>! I don’t need to write another one. The TL;DR, for folks who quite reasonably don’t want to do a deep dive into how R objects are written to RDS files, is that serialisation is the process of taking an in-memory data structure (like a data frame), and converting it into a sequence of bytes. Those bytes can either be written to disk (when you’re saving a file) or they can be transmitted over some other channel. Regardless of what you want to <em>do</em> with the serialised data, this conversion takes time and resources, and at some point the data will need to be unserialised later. The resources expended in doing so are referred to as the “serialisation overhead”.</p>
+<p>Wait a second, I already wrote a <a href="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/">blog post about serialisation</a>! I don’t need to write another one.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> The TL;DR, for folks who quite reasonably don’t want to do a deep dive into how R objects are written to RDS files, is that serialisation is the process of taking an in-memory data structure (like a data frame), and converting it into a sequence of bytes. Those bytes can either be written to disk (when you’re saving a file) or they can be transmitted over some other channel. Regardless of what you want to <em>do</em> with the serialised data, this conversion takes time and resources, and at some point the data will need to be unserialised later. The resources expended in doing so are referred to as the “serialisation overhead”.</p>
 <p>For small data sets, it doesn’t take R very long to serialise or unserialise. The “serialisation overhead” isn’t a big deal. But when the data set is very large, this is not a trivial operation and you don’t want to do this very often. That’s a problem when a large data set needs to be passed around between multiple platforms. Loading the a CSV into R incurs a serialisation cost; transferring a copy of the data from R to Python incurs a serialisation cost. This happens because R and Python have different structured representations: an data frame in R is a different kind of thing to a panda in Python, so the data has to be serialised, transferred, and then unserialised at the other end in order to pass the data from one to another.</p>
 <p>Wouldn’t it be nice if we could avoid that? What if there was just <em>one</em> data structure representing the table in-memory, and R and Python could both agree to use it? That would remove the need to copy and transfer the data, right? And in doing so, it would eliminate those pesky serialisation costs incurred every time. It would be a “zero-copy” mechanism.</p>
 <p>If <em>only</em> there were a standardised, language-independent format for storing table-like data in-memory, using a columnar format and supporting zero-copy reads without serialisation overhead…</p>
@@ -2569,7 +2569,7 @@ Figure 2: Arrow image by Possessed Photography. It also has nothing whatsoever t
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/without_arrow.jpg" width="2016" /></p>
 </div>
-<p>Arrow solves this problem by allocating its own memory to store the data, and providing tools that allow you to access this from any language you like. The goal is to make those tools feel “natural” in whatever language you’re using. For example, if you’re an R user, you may already be familiar with the dplyr grammar for data manipulation and you’d like to be able to manipulate an Arrow Table using dplyr, in exactly the same way you would manipulate a data frame. The arrow R package allows you to do precisely this, and there’s a similar story that applies on the Python side. This allows you to write code that feels natural for the language you’re working in.</p>
+<p>Arrow solves this problem by allocating its own memory to store the data, and providing tools that allow you to access this from any language you like. The goal is to make those tools feel “natural” in whatever language you’re using. For example, if you’re an R user, you may already be familiar with the <a href="https://dplyr.tidyverse.org/">dplyr</a> grammar for data manipulation and you’d like to be able to manipulate an Arrow Table using dplyr, in exactly the same way you would manipulate a data frame. The <a href="https://arrow.apache.org/docs/r/">arrow R package</a> allows you to do precisely this, and there’s a similar story that applies on the [Python side](<a href="https://arrow.apache.org/docs/python/_" class="uri">https://arrow.apache.org/docs/python/_</a>. This allows you to write code that feels natural for the language you’re working in.</p>
 <p>In this approach, <strong>R and Python both have a toolkit that plays nicely with Arrow and feels native to that language</strong>. Applications written in R and applications written in Python can both work with the same underlying data (because it’s in Arrow), so you don’t have to serialise the data in order for them to talk to each other:</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/with_arrow.jpg" width="2016" /></p>
@@ -2697,7 +2697,7 @@ Figure 4: Arrow image by Frank Busch. Now there are two! There are two arrows. A
 10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39
 # … with 53,930 more rows</code></pre>
 </div>
-<h3 id="example-1-the-data-arent-stored-in-r-memory">Example 1: the data aren’t stored in R memory</h3>
+<h3 id="example-1-arrow-data-sets-arent-stored-in-r-memory">Example 1: Arrow data sets aren’t stored in R memory</h3>
 <p>Okay, so the first thing I want to investigate is this idea that Arrow holds the data in its own memory, not in the memory allocated to R. As things currently stand the <code>diamonds</code> tibble has 53940 rows stored in R memory, and that occupies about 3.3MB of memory:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2735,8 +2735,8 @@ $z &lt;double&gt;</code></pre>
 <pre><code>285,696 B</code></pre>
 </div>
 <p>Only 279KB. The reason why it occupies so little memory is that <code>diamonds2</code> doesn’t contain all the data. The data are stored elsewhere, using memory allocated to Arrow. If a Python program wanted to access the <code>diamonds2</code> data, it could do so without having to serialise the data again. It can link to the same data structure in Arrow memory that I just created. Neat!</p>
-<h3 id="example-2-arrow-supplies-a-dplyr-backend">Example 2: arrow supplies a dplyr backend</h3>
-<p>One neat thing about dplyr is that it cleanly separates the API from the backend. So you can use the dbplyr package to work with databases using dplyr code, or the dtplyr package to use a data.table backend, and so on. The arrow package does the same thing for Apache Arrow.</p>
+<h3 id="example-2-arrow-plays-nicely-with-dplyr">Example 2: Arrow plays nicely with dplyr</h3>
+<p>One neat thing about dplyr is that it cleanly separates the API from the backend. So you can use the <a href="https://dbplyr.tidyverse.org/">dbplyr</a> package to work with databases using dplyr code, or the <a href="https://dtplyr.tidyverse.org/">dtplyr</a> package to use a data.table backend, and so on. The arrow package does the same thing for Apache Arrow.</p>
 <p>Here’s an example. If I were working with the original <code>diamonds</code> tibble, I might write a simple dplyr pipe to tabulate the clarity of premium-cut diamonds:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2819,6 +2819,13 @@ Figure 5: Okay yeah, this one actually does have something to do with the Apache
 
 </div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Technically speaking, there’s a little ambiguity here. Usually when we’re talking about Arrow we’re talking about the in memory specification, but the term is also used to refer to the software implementing it, which includes a lot of compute functionality that goes beyond what the specification states. Similarly, the Arrow in-memory format doesn’t <em>have</em> to imply any particular serialisation format, but in practice it’s tightly connected to the IPC (“interprocess communication”) streaming and file format, and to the parquet file format. As a consequence, the term “Arrow” is sometimes used to refer to that broader suite of tools.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>Okay, I’ll be honest, the RDS serialisation post came about because I was thinking about Arrow and serialisation costs, and got slightly distracted!<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
