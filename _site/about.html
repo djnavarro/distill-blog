@@ -56,7 +56,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { color: #20794d; } /* Attribute */
+code span.at { } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
 code span.cf { color: #007ba5; } /* ControlFlow */
@@ -77,13 +77,14 @@ code span.kw { color: #007ba5; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
 code span.ot { color: #007ba5; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
-code span.sc { color: #20794d; } /* SpecialChar */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
 code span.st { color: #20794d; } /* String */
 code span.va { color: #111111; } /* Variable */
 code span.vs { color: #20794d; } /* VerbatimString */
 code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
+
 
   <!--radix_placeholder_meta_tags-->
   <title>Notes from a data witch: What's this about?</title>
@@ -457,7 +458,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
   </style>
 
-  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
   <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
   <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
   <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
@@ -1864,7 +1865,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
-        var refHtml = $('#ref-' + $(this).attr('data-cites')).html();
+        var refs = $(this).attr('data-cites').split(" ");
+        var refHtml = refs.map(function(ref) {
+          return "<p>" + $('#ref-' + ref).html() + "</p>";
+        }).join("\n");
         window.tippy(this, {
           allowHTML: true,
           content: refHtml,
@@ -2387,7 +2391,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.10/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2447,7 +2451,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
 <div class="d-article">
-<p><a href="https://djnavarro.net">Danielle Navarro</a> is a computational cognitive scientist and Associate Professor at the University of New South Wales. Her research focuses on human concept learning and reasoning, and on statistical methods in the behavioural sciences. Other topics she has researched include data visualisation, decision making, language and cultural evolution, cognitive development, and forensic psychology. Danielle is a cofounder of <a href="https://rladiessydney.org">R-Ladies Sydney</a>, and holds editorial roles at <a href="https://www.sciencemag.org/">Science</a> and <a href="https://www.apa.org/pubs/journals/rev/">Psychological Review</a>. On occasions she has been known to masquerade as a <a href="https://learningstatisticswithr.com">statistician</a>, <a href="https://slides.djnavarro.net">data scientist</a>, <a href="https://github.com/djnavarro">software developer</a> and <a href="https://art.djnavarro.net">generative artist</a>. She is prone to describing herself in the third person in biographies, but is willing to admit that it’s super weird.</p>
+<p><a href="https://djnavarro.net">Danielle Navarro</a> is a data scientist, an R developer, and a generative artist. She currently works as a Developer Relations Engineer at <a href="https://voltrondata.com/">Voltron Data</a>, helping other data scientists use Apache Arrow to accelerate their data analysis pipelines. In a previous life she was an academic, working as a computational cognitive scientist at <a href="https://www.unsw.edu.au/">UNSW Sydney</a>. Danielle is a cofounder of <a href="https://rladiessydney.org">R-Ladies Sydney</a>, and in her better moments she <a href="https://art.djnavarro.net">makes art from code</a>. She is prone to describing herself in the third person in biographies, but is willing to admit that it’s super weird.</p>
 <p>Profile image, courtesy of Mara Averick:</p>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
