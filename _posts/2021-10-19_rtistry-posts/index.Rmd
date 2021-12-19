@@ -99,7 +99,9 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - [ggbenjamini package](https://urswilke.github.io/ggbenjamini/) by [Urs Wilke](https://twitter.com/UrsWilke)
 
-- [generative art examples](https://github.com/picasa/generative_examples) by [Pierre Casadebaig](https://twitter.com/pircasa)
+- [Generative art examples](https://github.com/picasa/generative_examples) by [Pierre Casadebaig](https://twitter.com/pircasa)
+
+- [The art in randomness](https://medium.com/@dorit.geifman_38625/the-art-in-randomness-f236a3663cb) by [Dorit Geifman](https://twitter.com/GenerativeaRt4)
 
 ### More general
 
