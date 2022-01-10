@@ -2485,7 +2485,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#rstudio-package-manager">RStudio package manager</a></li>
 <li><a href="#method-1-rstudio-settings">Method 1: RStudio settings</a></li>
 <li><a href="#method-2-edit-your-r-profile">Method 2: Edit your R profile</a></li>
-<li><a href="#epilogue-painless-arrow-installation">Epilogue: Painless arrow installation</a></li>
+<li><a href="#epilogue">Epilogue</a></li>
 </ul>
 </nav>
 </div>
@@ -2528,7 +2528,7 @@ checklist:
 <p><br></p>
 <p>If it says “RStudio Global CDN” next to “Primary CRAN repo”, then you’re using <code>cloud.r-project.org</code> as your CRAN repository. To switch to RStudio PPM, click on the “change” button. It will bring up a list of CRAN mirrors, and if you want you can choose one of those. However the RStudio PPM isn’t technically a CRAN mirror, so it’s not listed there. If you want to switch to using the RStudio PPM, you have to enter the URL manually.</p>
 <p>So what URL do you want? Well, it depends on whether you want to install packages from binaries or from source, and on what operating system you’re using. I’m on Ubuntu 20.04, “Focal Fossa”, and the URL that serves binaries for my operating system is:</p>
-<p><a href="https://packagemanager.rstudio.com/all/__linux__/focal/latest" class="uri">https://packagemanager.rstudio.com/all/__linux__/focal/latest</a></p>
+<pre><code>https://packagemanager.rstudio.com/all/__linux__/focal/latest</code></pre>
 <p>Here’s me in the process of entering the URL:</p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="img/options2.png" width="880" /></p>
@@ -2550,7 +2550,7 @@ checklist:
 </div>
 </div>
 <p>You’ll need to restart your R session for this change to take effect.</p>
-<p>If you want to be fancy, you can list multiple URLs. If the package you want to install is not found at the first link, R will try the second link, and so on. That can be useful. For instance, this is the line I use in my R profile:</p>
+<p>If you want to be fancy, you can list multiple URLs. If the package you want to install is not found at the first link, R will try the second link, and so on. That can be useful. For instance, this is what I use in my R profile:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>repos <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
@@ -2562,20 +2562,20 @@ checklist:
 </code></pre>
 </div>
 </div>
-<p>Using this configuration, R will look for a suitable binary version of the package on RStudio PPM. If that fails it will try to install from RStudio PPM by building the package from the source code. If that fails, it checks CRAN in the usual way. Finally, if that fails, it looks to see if the package I’m requesting is one of the packages I listed at <a href="https://djnavarro.r-universe.dev">djnavarro.r-universe.dev</a>, my very onw tiny corner of the <a href="https://ropensci.org/r-universe/">R-universe</a>.</p>
-<h2 id="epilogue-painless-arrow-installation">Epilogue: Painless arrow installation</h2>
-<p>If you’re a Windows or Mac user, you might not be aware of how much of a game changer this is for linux users. For example, in my <a href="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/">previous blog post</a> I wrote about my experiences getting started using Apache Arrow. I’m a big fan of Arrow, but if you’re installing the arrow R package on linux, it’s extremely time consuming to build all the C++ libraries from source. It was a little cumbersome, but after switching to RStudio PPM, I can install arrow on my Ubuntu machine using the exact same command I’d use on Windows…</p>
+<p>Using this configuration, R will look for a suitable binary version of the package on RStudio PPM. If that fails it will try to install from RStudio PPM by building the package from the source code. If that fails, it checks CRAN in the usual way. Finally, if that fails, it looks to see if the package I’m requesting is one of the packages I listed at <a href="https://djnavarro.r-universe.dev">djnavarro.r-universe.dev</a>, my very own tiny corner of the <a href="https://ropensci.org/r-universe/">R-universe</a>. Obviously, you’re very unlikely to want to use my R-universe repository since it only consists of a handful of my own packages: but it’s quite handy for me since they aren’t all on CRAN!</p>
+<h2 id="epilogue">Epilogue</h2>
+<p>If you’re a Windows or Mac user, you might not be aware of how much of a game changer this is for linux users. For example, in my <a href="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/">previous blog post</a> I wrote about my experiences getting started using Apache Arrow. I’m a big fan of Arrow — which should come as no surprise as I’ve recently started work at <a href="https://voltrondata.com/">Voltron Data</a> — but if you’re installing the arrow R package on linux, it’s extremely time consuming to build all the C++ libraries from source. It was a little cumbersome, but after switching to RStudio PPM, I can install arrow on my Ubuntu machine using the exact same command I’d use on Windows…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='op'>(</span><span class='st'>"arrow"</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>… and everything works. Yay! 🎉</p>
+<p>…and everything works. As easy on linux as it is on other operating systems! Yay! 🎉</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-10 21:33:07 AEDT</p>
+<p>2022-01-10 21:45:12 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-10_setting-cran-repositories/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-10_setting-cran-repositories/renv.lock">R environment</a></p>
 </div>
@@ -2583,7 +2583,7 @@ checklist:
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

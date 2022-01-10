@@ -100,7 +100,9 @@ If it says "RStudio Global CDN" next to "Primary CRAN repo", then you're using `
 
 So what URL do you want? Well, it depends on whether you want to install packages from binaries or from source, and on what operating system you're using. I'm on Ubuntu 20.04, "Focal Fossa", and the URL that serves binaries for my operating system is:
 
+```
 https://packagemanager.rstudio.com/all/__linux__/focal/latest
+```
 
 Here's me in the process of entering the URL:
 
@@ -131,7 +133,7 @@ options(repos = "https://packagemanager.rstudio.com/all/__linux__/focal/latest")
 
 You'll need to restart your R session for this change to take effect. 
 
-If you want to be fancy, you can list multiple URLs. If the package you want to install is not found at the first link, R will try the second link, and so on. That can be useful. For instance, this is the line I use in my R profile: 
+If you want to be fancy, you can list multiple URLs. If the package you want to install is not found at the first link, R will try the second link, and so on. That can be useful. For instance, this is what I use in my R profile: 
 
 ```{r}
 options(repos = c(
@@ -142,18 +144,18 @@ options(repos = c(
 ))
 ```
 
-Using this configuration, R will look for a suitable binary version of the package on RStudio PPM. If that fails it will try to install from RStudio PPM by building the package from the source code. If that fails, it checks CRAN in the usual way. Finally, if that fails, it looks to see if the package I'm requesting is one of the packages I listed at [djnavarro.r-universe.dev](https://djnavarro.r-universe.dev), my very onw tiny corner of the [R-universe](https://ropensci.org/r-universe/). 
+Using this configuration, R will look for a suitable binary version of the package on RStudio PPM. If that fails it will try to install from RStudio PPM by building the package from the source code. If that fails, it checks CRAN in the usual way. Finally, if that fails, it looks to see if the package I'm requesting is one of the packages I listed at [djnavarro.r-universe.dev](https://djnavarro.r-universe.dev), my very own tiny corner of the [R-universe](https://ropensci.org/r-universe/). Obviously, you're very unlikely to want to use my R-universe repository since it only consists of a handful of my own packages: but it's quite handy for me since they aren't all on CRAN!
 
 
-## Epilogue: Painless arrow installation
+## Epilogue
 
-If you're a Windows or Mac user, you might not be aware of how much of a game changer this is for linux users. For example, in my [previous blog post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/) I wrote about my experiences getting started using Apache Arrow. I'm a big fan of Arrow, but if you're installing the arrow R package on linux, it's extremely time consuming to build all the C++ libraries from source. It was a little cumbersome, but after switching to RStudio PPM, I can install arrow on my Ubuntu machine using the exact same command I'd use on Windows...
+If you're a Windows or Mac user, you might not be aware of how much of a game changer this is for linux users. For example, in my [previous blog post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/) I wrote about my experiences getting started using Apache Arrow. I'm a big fan of Arrow --- which should come as no surprise as I've recently started work at [Voltron Data](https://voltrondata.com/) --- but if you're installing the arrow R package on linux, it's extremely time consuming to build all the C++ libraries from source. It was a little cumbersome, but after switching to RStudio PPM, I can install arrow on my Ubuntu machine using the exact same command I'd use on Windows...
 
 ```{r, eval=FALSE}
 install.packages("arrow")
 ```
 
-... and everything works. Yay! 🎉
+...and everything works. As easy on linux as it is on other operating systems! Yay! 🎉
 
 
 
