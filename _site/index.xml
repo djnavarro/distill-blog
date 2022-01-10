@@ -6,7 +6,16 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Fri, 19 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 10 Jan 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Setting CRAN repository options</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-01-10_setting-cran-repositories</link>
+      <description>A quick post on how to use RStudio public package manager instead of a standard CRAN mirror, and an example of why that can be useful sometimes.</description>
+      <guid>https://blog.djnavarro.net/posts/2022-01-10_setting-cran-repositories</guid>
+      <pubDate>Mon, 10 Jan 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-01-10_setting-cran-repositories/img/rasa-kasparaviciene-0TFxOkhFt14-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
     <item>
       <title>Getting started with Apache Arrow</title>
       <dc:creator>Danielle Navarro</dc:creator>
