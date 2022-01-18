@@ -1,5 +1,5 @@
 ---
-title: "How to write dplyr bindings for Apache Arrow without crying (much)" # <---- UPDATE ME
+title: "How to write dplyr bindings for Apache Arrow without crying (much)"
 description:
   Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
   consectetur, adipisci velit # <---- UPDATE ME
@@ -47,15 +47,28 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
-> The danger of sublimated trauma is a major theme in our story <br>
-> &nbsp; &nbsp; -- The Great God Ember (The Magicians: Season 2, Episode 3)
-
 So I have a new job. 
 
-In my previous job as an academic, a large part of my work -- my favourite part, if I'm honest -- involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um ... *[checks job description]* ... creating open access resources to help people use modern open source tools for data analysis. Well okay then? I'd better get on that, I suppose.
+In my previous job as an academic, a large part of my work -- my favourite part, if I'm honest -- involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um ... *[checks job description]* ... creating open access resources to help people use modern open source tools for data analysis. Well okay then? 
 
+I'd better get on that, I suppose.
 
+## My first contribution to Arrow
 
+Moving out of academia and into software development is interesting. I've been in the role for about a week, and a lot of that time has been spent orienting myself. Apache Arrow is a large project, so there's quite a lot for me to learn. But today my [first contribution](https://github.com/apache/arrow/pull/12173/) was merged, so I'm taking a moment to celebrate by, um ... writing a blog post, I guess? Yes, I am celebrating by blogging. I am exactly that cool. 
+
+The code I wrote today was a very small contribution to a large project. It's really just these few lines of code, plus some unit tests I wrote to make sure it actually works: 
+
+```{r, eval=FALSE}
+register_binding("leap_year", function(date) {
+  year <- Expression$create("year", date)
+  (year %% 4 == 0) & ((year %% 100 != 0) | (year %% 400 == 0))
+})
+```
+
+The job of this code is to mimic the behaviour of  the **lubridate** function `leap_year()` in Arrow, so that anyone using Arrow from R can seamlessly use `leap_year()` when working with an Arrow Table, exactly as if the data were organised as a regular data frame. 
+
+It is a small piece of Arrow magic, and this post is the story of how I learned this sorcery.
 
 ```{r}
 #| echo = FALSE,
@@ -64,14 +77,86 @@ In my previous job as an academic, a large part of my work -- my favourite part,
 knitr::include_graphics("https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif")
 ```
 
-## Background: Arrow in R and C++
+
+## Background: Why write this?
+
+> The danger of sublimated trauma is a major theme in our story <br>
+> &nbsp; &nbsp; -- The Great God Ember (The Magicians: Season 2, Episode 3)
+
+The snippet I posted is not very *complicated* piece of code. All it does is determine if a particular year was a leap year, which can be accomplished with a single line of code.^[The leap year rules in the Gregorian calendar are as follows: Years divisible by 4 are leap years (1996 was a leap year), unless they also happen to be divisible by 100 (so 1900 was not a leap year). However, there's an exception to the exception: if they're also divisible by 400 then they are a leap year (2000 was a leap year).] However, although the code is not complicated it is *opaque*. It's opaque in the sense that you have to understand quite a bit about Arrow in order to read it properly. 
+
+It took me quite a bit of digging around before I could get myself into a position where I could contribute to the project. Because I work in an organisation that contributes a lot of code to Apache Arrow, I had a huge advantage: I have a lot of very lovely Voltron Data colleagues I could ask for help! One of my goals in this post is to summarise what I've learned from those conversations and make that knowledge more widely accessible. Not everyone has the same level of access to experts that I have, and without that support I'm not sure I'd have been brave enough to try. 
+
+Before diving in, I should say something about the "assumed knowledge" for this post. I'm assuming that the reader is comfortable in R, knows how to use dplyr for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you don't have the last one, do not fear: I wrote a post on [Getting started with Apache Arrow](/starting-apache-arrow-in-r) that covers the assumed knowledge about Arrow! 
 
 
-## Calling Arrow compute functions
+## The Arrow C++ compute kernel
 
-- make sure you get a sense of how to call arrow compute functions. you may need to write some c++ code if you want to expose the options
+A really fundamental thing to understand about the **arrow** package in R is that it doesn't implement Apache Arrow directly. There's a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called **libarrow**. Throughout this post I'll use "Arrow" to refer to the broader Apache Arrow project, "**arrow**" to refer to the R package, and "**libarrow**" to refer to the C++ library. The long term goal is to make all this completely seamless so that **arrow** users don't really need to understand **libarrow** in order to be productive, but in my experience most people like to know a little bit about what is happening under the hood. It's unsettling to be programming with tools you don't quite understand, so I'll dig a little deeper in this post. 
 
-## Writing your own functions
+Let's start with the C++ library. The role of **libarrow** is to do all the heavy lifting. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache "Inter-Process Communication" (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a *compute kernel* that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.
+
+What about the R package? The role of **arrow** is to expose the functionality of **libarrow** to the R user, to make that functionality feel "natural" in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python). 
+
+```{r}
+library(tibble)
+library(dplyr)
+library(lubridate)
+library(arrow)
+
+# import the economics data from ggplot2
+data(economics, package = "ggplot2")
+economics
+
+# create an analogous arrow Table
+arrownomics <- arrow_table(economics)
+arrownomics
+```
+
+
+
+
+### Using the **dplyr** bindings in **arrow** 
+
+The **arrow** package provides you with multiple ways to take advantage of **libarrow**. My favourite way to do this is by writing **dplyr** code. 
+
+```{r}
+economics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(uempmed = mean(uempmed))
+```
+
+Seamless integration:
+
+```{r}
+arrownomics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(uempmed = mean(uempmed)) %>% 
+  collect()
+```
+
+To see that this is all happening inside Arrow:
+
+```{r}
+arrownomics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(uempmed = mean(uempmed)) %>% 
+  compute()
+```
+
+The nice thing for R users is that *absolutely nowhere do you have to interact with* **libarrow** *directly*. Under the hood **libarrow** is doing all the computation -- none of the real work is being done within R -- but the user really doesn't need to worry too much about that. It all happens seamlessly and invisibly. 
+
+That's the ideal.
+
+But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the **libarrow** functionality directly. If that's you, read on!
+
+
+### Calling **libarrow** functions directly
+
+
 
 ## Preparing to contribute
 

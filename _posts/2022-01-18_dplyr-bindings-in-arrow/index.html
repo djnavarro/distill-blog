@@ -1496,9 +1496,13 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#background-arrow-in-r-and-c">Background: Arrow in R and C++</a></li>
-<li><a href="#calling-arrow-compute-functions">Calling Arrow compute functions</a></li>
-<li><a href="#writing-your-own-functions">Writing your own functions</a></li>
+<li><a href="#my-first-contribution-to-arrow">My first contribution to Arrow</a></li>
+<li><a href="#background-why-write-this">Background: Why write this?</a></li>
+<li><a href="#the-arrow-c-compute-kernel">The Arrow C++ compute kernel</a>
+<ul>
+<li><a href="#using-the-dplyr-bindings-in-arrow">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></a></li>
+<li><a href="#calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</a></li>
+</ul></li>
 <li><a href="#preparing-to-contribute">Preparing to contribute</a></li>
 <li><a href="#writing-the-dplyr-bindings">Writing the dplyr bindings</a></li>
 </ul>
@@ -1515,25 +1519,156 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
-<blockquote>
-<p>The danger of sublimated trauma is a major theme in our story <br>     – The Great God Ember (The Magicians: Season 2, Episode 3)</p>
-</blockquote>
 <p>So I have a new job.</p>
-<p>In my previous job as an academic, a large part of my work – my favourite part, if I’m honest – involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um … <em>[checks job description]</em> … creating open access resources to help people use modern open source tools for data analysis. Well okay then? I’d better get on that, I suppose.</p>
+<p>In my previous job as an academic, a large part of my work – my favourite part, if I’m honest – involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um … <em>[checks job description]</em> … creating open access resources to help people use modern open source tools for data analysis. Well okay then?</p>
+<p>I’d better get on that, I suppose.</p>
+<h2 id="my-first-contribution-to-arrow">My first contribution to Arrow</h2>
+<p>Moving out of academia and into software development is interesting. I’ve been in the role for about a week, and a lot of that time has been spent orienting myself. Apache Arrow is a large project, so there’s quite a lot for me to learn. But today my <a href="https://github.com/apache/arrow/pull/12173/">first contribution</a> was merged, so I’m taking a moment to celebrate by, um … writing a blog post, I guess? Yes, I am celebrating by blogging. I am exactly that cool.</p>
+<p>The code I wrote today was a very small contribution to a large project. It’s really just these few lines of code, plus some unit tests I wrote to make sure it actually works:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>register_binding</span><span class='op'>(</span><span class='st'>"leap_year"</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>year</span> <span class='op'>&lt;-</span> <span class='va'>Expression</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"year"</span>, <span class='va'>date</span><span class='op'>)</span>
+  <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>4</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>100</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>400</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>The job of this code is to mimic the behaviour of the <strong>lubridate</strong> function <code>leap_year()</code> in Arrow, so that anyone using Arrow from R can seamlessly use <code>leap_year()</code> when working with an Arrow Table, exactly as if the data were organised as a regular data frame.</p>
+<p>It is a small piece of Arrow magic, and this post is the story of how I learned this sorcery.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
 <img src="https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif" alt="Julia and Quentin. Image via [giphy](https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 1: Julia and Quentin. Image via <a href="https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
-<h2 id="background-arrow-in-r-and-c">Background: Arrow in R and C++</h2>
-<h2 id="calling-arrow-compute-functions">Calling Arrow compute functions</h2>
-<ul>
-<li>make sure you get a sense of how to call arrow compute functions. you may need to write some c++ code if you want to expose the options</li>
-</ul>
-<h2 id="writing-your-own-functions">Writing your own functions</h2>
+<h2 id="background-why-write-this">Background: Why write this?</h2>
+<blockquote>
+<p>The danger of sublimated trauma is a major theme in our story <br>     – The Great God Ember (The Magicians: Season 2, Episode 3)</p>
+</blockquote>
+<p>The snippet I posted is not very <em>complicated</em> piece of code. All it does is determine if a particular year was a leap year, which can be accomplished with a single line of code.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> However, although the code is not complicated it is <em>opaque</em>. It’s opaque in the sense that you have to understand quite a bit about Arrow in order to read it properly.</p>
+<p>It took me quite a bit of digging around before I could get myself into a position where I could contribute to the project. Because I work in an organisation that contributes a lot of code to Apache Arrow, I had a huge advantage: I have a lot of very lovely Voltron Data colleagues I could ask for help! One of my goals in this post is to summarise what I’ve learned from those conversations and make that knowledge more widely accessible. Not everyone has the same level of access to experts that I have, and without that support I’m not sure I’d have been brave enough to try.</p>
+<p>Before diving in, I should say something about the “assumed knowledge” for this post. I’m assuming that the reader is comfortable in R, knows how to use dplyr for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you don’t have the last one, do not fear: I wrote a post on <a href="/starting-apache-arrow-in-r">Getting started with Apache Arrow</a> that covers the assumed knowledge about Arrow!</p>
+<h2 id="the-arrow-c-compute-kernel">The Arrow C++ compute kernel</h2>
+<p>A really fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement Apache Arrow directly. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Throughout this post I’ll use “Arrow” to refer to the broader Apache Arrow project, “<strong>arrow</strong>” to refer to the R package, and “<strong>libarrow</strong>” to refer to the C++ library. The long term goal is to make all this completely seamless so that <strong>arrow</strong> users don’t really need to understand <strong>libarrow</strong> in order to be productive, but in my experience most people like to know a little bit about what is happening under the hood. It’s unsettling to be programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
+<p>Let’s start with the C++ library. The role of <strong>libarrow</strong> is to do all the heavy lifting. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache “Inter-Process Communication” (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a <em>compute kernel</em> that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.</p>
+<p>What about the R package? The role of <strong>arrow</strong> is to expose the functionality of <strong>libarrow</strong> to the R user, to make that functionality feel “natural” in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python).</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lubridate.tidyverse.org'>lubridate</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
+
+<span class='co'># import the economics data from ggplot2</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>economics</span>, package <span class='op'>=</span> <span class='st'>"ggplot2"</span><span class='op'>)</span>
+<span class='va'>economics</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 574 × 6
+   date         pce    pop psavert uempmed unemploy
+   &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+ 1 1967-07-01  507. 198712    12.6     4.5     2944
+ 2 1967-08-01  510. 198911    12.6     4.7     2945
+ 3 1967-09-01  516. 199113    11.9     4.6     2958
+ 4 1967-10-01  512. 199311    12.9     4.9     3143
+ 5 1967-11-01  517. 199498    12.8     4.7     3066
+ 6 1967-12-01  525. 199657    11.8     4.8     3018
+ 7 1968-01-01  531. 199808    11.7     5.1     2878
+ 8 1968-02-01  534. 199920    12.3     4.5     3001
+ 9 1968-03-01  544. 200056    11.7     4.1     2877
+10 1968-04-01  544  200208    12.3     4.6     2709
+# … with 564 more rows</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># create an analogous arrow Table</span>
+<span class='va'>arrownomics</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>economics</span><span class='op'>)</span>
+<span class='va'>arrownomics</span>
+</code></pre>
+</div>
+<pre><code>Table
+574 rows x 6 columns
+$date &lt;date32[day]&gt;
+$pce &lt;double&gt;
+$pop &lt;double&gt;
+$psavert &lt;double&gt;
+$uempmed &lt;double&gt;
+$unemploy &lt;double&gt;
+
+See $metadata for additional Schema metadata</code></pre>
+</div>
+<h3 id="using-the-dplyr-bindings-in-arrow">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></h3>
+<p>The <strong>arrow</strong> package provides you with multiple ways to take advantage of <strong>libarrow</strong>. My favourite way to do this is by writing <strong>dplyr</strong> code.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>economics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>uempmed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>uempmed</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 49 × 2
+    year uempmed
+   &lt;dbl&gt;   &lt;dbl&gt;
+ 1  1967    4.7 
+ 2  1968    4.5 
+ 3  1969    4.44
+ 4  1970    4.98
+ 5  1971    6.28
+ 6  1972    6.11
+ 7  1973    5.18
+ 8  1974    5.18
+ 9  1975    8.47
+10  1976    8.14
+# … with 39 more rows</code></pre>
+</div>
+<p>Seamless integration:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>uempmed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>uempmed</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 49 × 2
+    year uempmed
+   &lt;int&gt;   &lt;dbl&gt;
+ 1  1967    4.7 
+ 2  1968    4.5 
+ 3  1969    4.44
+ 4  1970    4.98
+ 5  1971    6.28
+ 6  1972    6.11
+ 7  1973    5.18
+ 8  1974    5.18
+ 9  1975    8.47
+10  1976    8.14
+# … with 39 more rows</code></pre>
+</div>
+<p>To see that this is all happening inside Arrow:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>uempmed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>uempmed</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>compute</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Table
+49 rows x 2 columns
+$year &lt;int64&gt;
+$uempmed &lt;double&gt;
+
+See $metadata for additional Schema metadata</code></pre>
+</div>
+<p>The nice thing for R users is that <em>absolutely nowhere do you have to interact with</em> <strong>libarrow</strong> <em>directly</em>. Under the hood <strong>libarrow</strong> is doing all the computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. It all happens seamlessly and invisibly.</p>
+<p>That’s the ideal.</p>
+<p>But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the <strong>libarrow</strong> functionality directly. If that’s you, read on!</p>
+<h3 id="calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</h3>
 <h2 id="preparing-to-contribute">Preparing to contribute</h2>
 <ul>
 <li>you need an Apache Jira account. (process for being assigned is actually unclear to me?)</li>
@@ -1553,7 +1688,7 @@ Figure 1: Julia and Quentin. Image via <a href="https://media.giphy.com/media/xU
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-18 15:14:09 AEDT</p>
+<p>2022-01-19 08:51:23 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_dplyr-bindings-in-arrow/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_dplyr-bindings-in-arrow/renv.lock">R environment</a></p>
 </div>
@@ -1561,7 +1696,13 @@ Figure 1: Julia and Quentin. Image via <a href="https://media.giphy.com/media/xU
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>The leap year rules in the Gregorian calendar are as follows: Years divisible by 4 are leap years (1996 was a leap year), unless they also happen to be divisible by 100 (so 1900 was not a leap year). However, there’s an exception to the exception: if they’re also divisible by 400 then they are a leap year (2000 was a leap year).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
