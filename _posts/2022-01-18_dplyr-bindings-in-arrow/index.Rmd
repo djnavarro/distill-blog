@@ -1,0 +1,114 @@
+---
+title: "How to write dplyr bindings for Apache Arrow without crying (much)" # <---- UPDATE ME
+description:
+  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+  consectetur, adipisci velit # <---- UPDATE ME
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: Voltron Data
+    affiliation_url: https://voltrondata.com
+    orcid_id: 0000-0001-7648-6578
+date: 2022-01-18
+preview: preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/dplyr-bindings-in-arrow 
+repository_url: https://github.com/djnavarro/distill-blog/
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+params:
+  slug: dplyr-bindings-in-arrow
+  date: 2022-01-18
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+```
+
+
+<!--------------- post ----------------->
+
+> The danger of sublimated trauma is a major theme in our story <br>
+> &nbsp; &nbsp; -- The Great God Ember (The Magicians: Season 2, Episode 3)
+
+So I have a new job. 
+
+In my previous job as an academic, a large part of my work -- my favourite part, if I'm honest -- involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um ... *[checks job description]* ... creating open access resources to help people use modern open source tools for data analysis. Well okay then? I'd better get on that, I suppose.
+
+
+
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Julia and Quentin. Image via [giphy](https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif")
+```
+
+## Background: Arrow in R and C++
+
+
+## Calling Arrow compute functions
+
+- make sure you get a sense of how to call arrow compute functions. you may need to write some c++ code if you want to expose the options
+
+## Writing your own functions
+
+## Preparing to contribute
+
+- you need an Apache Jira account. (process for being assigned is actually unclear to me?)
+- fork the apache/arrow repo. browse for a while. read. don’t feel pressured to do anything or understand the whole thing
+- browse pull requests from people who you already know and like
+- pr_init(). name your branch ARROW-14281 (or whatever your issue number is)
+- make sure your developer environment is set up properly, see: [https://ursalabs.org/arrow-r-nightly/articles/developers/setup.html](https://ursalabs.org/arrow-r-nightly/articles/developers/setup.html) and devtools::test() works. also check “install and restart” (ctrl shift B). be warned: check (ctrl shift E) takes ages
+- handy thing to do regularly as you work on the PR: `install_arrow(nightly = TRUE, verbose = TRUE)`
+[https://arrow.apache.org/docs/dev/developers/guide/index.html](https://arrow.apache.org/docs/dev/developers/guide/index.html)
+
+## Writing the dplyr bindings
+
+- dplyr bindings can be used to mask other stuff... that’s the usual way we handle this
+- `register_bindings()` is tricky: remember you’re creating an Expression to be evaluated later
+- new contributors guide: 
+- dplyr bindings: [https://github.com/apache/arrow/blob/master/r/vignettes/developers/bindings.Rmd](https://github.com/apache/arrow/blob/master/r/vignettes/developers/bindings.Rmd)
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  name = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+
+
