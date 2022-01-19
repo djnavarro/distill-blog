@@ -1,0 +1,308 @@
+---
+title: "Binding Apache Arrow to R"
+description:
+  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+  consectetur, adipisci velit # <---- UPDATE ME
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: Voltron Data
+    affiliation_url: https://voltrondata.com
+    orcid_id: 0000-0001-7648-6578
+date: 2022-01-18
+preview: img/muhammad-haikal-sjukri--RMBf_xSf2U-unsplash.jpg
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/binding-arrow-to-r
+repository_url: https://github.com/djnavarro/distill-blog/
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+params:
+  slug: binding-arrow-to-r
+  date: 2022-01-18
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+
+# save the built-in output hook
+hook_output <- knitr::knit_hooks$get("output")
+
+# set a new output hook to truncate text output
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(n <- options$out.lines)) {
+    x <- xfun::split_lines(x)
+    if (length(x) > n) {
+      # truncate the output
+      x <- c(head(x, n), "....\n")
+    }
+    x <- paste(x, collapse = "\n")
+  }
+  hook_output(x, options)
+})
+
+# ensure that renv detects ggplot2 dependency
+ggplot2::element_blank()
+```
+
+
+<!--------------- post ----------------->
+
+So I have a new job. 
+
+In my previous job as an academic, a large part of my work -- my favourite part, if I'm honest -- involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um ... *[checks job description]* ... creating open access resources to help people use modern open source tools for data analysis. Well okay then? 
+
+I'd better get on that, I suppose.
+
+## Prologue: My first contribution to Arrow
+
+Moving out of academia and into software development is interesting. I've been in the role for about a week, and a lot of that time has been spent orienting myself. Apache Arrow is a large project, so there's quite a lot for me to learn. But today my [first contribution](https://github.com/apache/arrow/pull/12173/) was merged, so I'm taking a moment to celebrate by, um ... writing a blog post, I guess? Yes, I am celebrating by blogging. I am exactly that cool. 
+
+The code I wrote today was a very small contribution to a large project. It's really just these few lines of code, plus some unit tests I wrote to make sure it actually works: 
+
+```{r, eval=FALSE}
+register_binding("leap_year", function(date) {
+  year <- Expression$create("year", date)
+  (year %% 4 == 0) & ((year %% 100 != 0) | (year %% 400 == 0))
+})
+```
+
+The job of this code is to mimic the behaviour of  the **lubridate** function `leap_year()` in Arrow, so that anyone using Arrow from R can seamlessly use `leap_year()` when working with an Arrow Table, exactly as if the data were organised as a regular data frame. 
+
+It is a small piece of Arrow magic, and this post is the story of how I learned this sorcery.
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Julia and Quentin. Image via [giphy](https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif")
+```
+
+
+## Why write this?
+
+> The danger of sublimated trauma is a major theme in our story <br>
+> &nbsp; &nbsp; -- The Great God Ember (The Magicians: Season 2, Episode 3)
+
+The snippet I posted above has a simple goal: it determines if a particular year was a leap year. In most cases this it's pretty straightforward, because years that are divisible by 4 are almost always leap years. To capture the exceptions, the actual code looks like this:
+
+```{r, eval=FALSE}
+(year %% 4 == 0) & ((year %% 100 != 0) | (year %% 400 == 0))
+```
+
+This line of code is a logical expression corresponding to the following rules: years divisible by 4 are leap years (e.g., 1996 was a leap year), unless they also happen to be divisible by 100 (e.g., 1900 was not a leap year), but there's an exception to the exception where years that are divisible by 400 are a leap year (e.g., 2000 was a leap year). 
+
+The rest of the code, unfortunately, is a little opaque. 
+
+In order to understand what the `register_binding()` and `Expression$create()` parts of the code are all about, you need to know quite a bit more about what Arrow is all about, and it took me quite a bit of digging around to get myself into the position where I understood these things. This was (comparatively!) easy for me because I work at an organisation that contributes a lot of code to the Apache Arrow project. In my day to day work I have a access to my lovely Voltron Data colleagues who I can ask for help. Without their support I'm not sure I'd have been brave enough to try to contribute my own code to the project. With that in mind, one of my goals is to help "pay it forward". I'd like to take what I've learned from those conversations and make that knowledge more widely accessible. 
+
+Before diving in, I should say something about the "assumed knowledge" for this post. I'm assuming that the reader is comfortable in R, are comfortable with git and GitHub, knows how to use dplyr for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you don't have the last one, do not fear: I wrote a post on ["Getting started with Apache Arrow"](https://blog.djnavarro.net/starting-apache-arrow-in-r) that covers the assumed knowledge about Arrow! 
+
+
+## The Arrow C++ compute kernel
+
+A really fundamental thing to understand about the **arrow** package in R is that it doesn't implement Apache Arrow directly. There's a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called **libarrow**. Throughout this post I'll use "Arrow" to refer to the broader Apache Arrow project, "**arrow**" to refer to the R package, and "**libarrow**" to refer to the C++ library. The long term goal is to make all this completely seamless so that **arrow** users don't really need to understand **libarrow** in order to be productive, but in my experience most people like to know a little bit about what is happening under the hood. It's unsettling to be programming with tools you don't quite understand, so I'll dig a little deeper in this post. 
+
+Let's start with the C++ library. The role of **libarrow** is to do all the heavy lifting. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache "Inter-Process Communication" (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a *compute kernel* that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.
+
+What about the R package? The role of **arrow** is to expose the functionality of **libarrow** to the R user, to make that functionality feel "natural" in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python). 
+
+```{r}
+library(tibble)
+library(dplyr)
+library(lubridate)
+library(arrow)
+
+# import the economics data from ggplot2
+data(economics, package = "ggplot2")
+economics
+
+# create an analogous arrow Table
+arrownomics <- arrow_table(economics)
+arrownomics
+```
+
+
+
+
+### Using the **dplyr** bindings in **arrow** 
+
+The **arrow** package provides you with multiple ways to take advantage of **libarrow**. My favourite way to do this is by writing **dplyr** code. 
+
+```{r}
+economics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(uempmed = mean(uempmed))
+```
+
+Seamless integration:
+
+```{r}
+arrownomics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(uempmed = mean(uempmed)) %>% 
+  collect()
+```
+
+To see that this is all happening inside Arrow:
+
+```{r}
+arrownomics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(uempmed = mean(uempmed)) %>% 
+  compute()
+```
+
+The nice thing for R users is that *absolutely nowhere do you have to interact with* **libarrow** *directly*. Under the hood **libarrow** is doing all the computation -- none of the real work is being done within R -- but the user really doesn't need to worry too much about that. It all happens seamlessly and invisibly. 
+
+That's the ideal.
+
+But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the **libarrow** functionality directly. If that's you, read on!
+
+### Calling **libarrow** functions in **dplyr** code
+
+The **dplyr** back end is the way users would typically use **arrow**, but there's nothing stopping you from calling the C++ compute functions directly. The `list_compute_functions()` function tells you what they are:
+
+```{r, out.lines = 10}
+list_compute_functions()
+```
+
+I've truncated the output in this post. The real output continues for quite a while: there are currently `r length(list_compute_functions())` **libarrow** compute functions that **arrow** exposes to the R user, most of which low level functions that the R package relies upon.
+
+There are two different ways that an R user can call the **libarrow** compute functions. First, imagine you're writing **dplyr** code to work with datetime data in a Table object. When working with native R objects, you can do this:
+
+```{r}
+economics %>% 
+  mutate(days = date - as.Date("1967-01-01"))
+```
+
+Unfortunately, this won't work in **arrow** right now. I chose this example deliberately because temporal arithmetic is a work in progress right now. In the not-too-distant future this will work seamlessly, but right now it doesn't. If you try it right now, you get this error:
+
+```{r, error=TRUE}
+arrownomics %>% 
+  mutate(days = date - as.Date("1967-01-01")) %>% 
+  collect()
+```
+
+This is very sad, but as it happens **libarrow** does have a `days_between()` function:
+
+```{r}
+arrownomics %>% 
+  mutate(days = arrow_days_between(as.Date("1967-01-01"), date)) %>% 
+  collect()
+```
+Notice there's no warning message here? That's because the computations were done in Arrow, using the **libarrow** `days_between()` function.
+
+
+### Calling **libarrow** functions directly
+
+Okay, here's a puzzle:
+
+```{r, error=TRUE}
+date1 <- as.Date("1967-01-01")
+date2 <- as.Date("2022-01-18")
+
+arrow_days_between(date1, date2)
+```
+
+There is no R function called `arrow_days_between()`, yet I was somehow able to "call" it in the previous example? The answer here is that the **arrow** package is doing a bit of metaprogramming magic. What's actually happening here is that when you use it in the **dplyr** context, **arrow** will intercepts the call to `arrow_days_between()` and quietly pass it to **libarrow** for you. 
+
+If you *really* want to do it directly, you can use `call_function()` from the **arrow** package. This provides you with direct access to a **libarrow** function. It won't take care of the low-level communication between R and Arrow though: the **libarrow** functions expect to receive Arrow-native data structures as input. That's the price you pay for low-level access: you have to do all the low-level work!
+
+```{r}
+arrow_date1 <- Scalar$create(date1)
+arrow_date2 <- Scalar$create(date2)
+
+arrow_date1
+```
+
+
+Now you can do this:
+
+```{r}
+call_function("days_between", arrow_date1, arrow_date2)
+```
+
+
+## Writing functions that play nicely with arrow pipes
+
+```{r}
+arrowish_leap_year <- function(date) {
+   year <- Expression$create("year", date)
+  (year %% 4 == 0) & ((year %% 100 != 0) | (year %% 400 == 0))
+}
+```
+
+Trying to use lubridate fails:
+
+```{r}
+arrownomics %>% 
+  mutate(leap = leap_year(date)) %>% 
+  collect()
+```
+
+Using our function works:
+
+```{r}
+arrownomics %>% 
+  mutate(leap = arrowish_leap_year(date)) %>% 
+  collect()
+```
+
+
+
+## Epilogue: What dplyr bindings are
+
+The code in my pull request is basically this
+
+```{r, eval=FALSE}
+register_binding("leap_year", arrowish_leap_year)
+```
+
+You won't find `register_binding()` when looking through the **arrow** functions. It's only used internally. However, when you look at this simplified expression, it is hopefully not too difficult to work out what it does. The `register_binding()` function indicates that whenever the user calls `leap_year()` inside a **dplyr** pipeline, **arrow** will make sure that `arrowish_leap_year()` is the function that actually gets called. 
+
+Want to know more about the *process* of getting this code incorporated into to the Arrow repository? Read the follow up to this post on ["My first contribution to Apache Arrow"](https://blog.djnavarro.net/contributing-to-arrow).
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  name = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+
+
