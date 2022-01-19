@@ -1504,8 +1504,16 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#calling-libarrow-functions-in-dplyr-code">Calling <strong>libarrow</strong> functions in <strong>dplyr</strong> code</a></li>
 <li><a href="#calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</a></li>
 </ul></li>
-<li><a href="#preparing-to-contribute">Preparing to contribute</a></li>
-<li><a href="#writing-the-dplyr-bindings">Writing the dplyr bindings</a></li>
+<li><a href="#preparing-to-contribute">Preparing to contribute</a>
+<ul>
+<li><a href="#step-1-sign-up-for-apache-jira">Step 1: Sign up for Apache Jira</a></li>
+<li><a href="#step-2-create-your-own-fork">Step 2: Create your own fork</a></li>
+<li><a href="#step-3-configure-your-dev-build">Step 3: Configure your dev build</a></li>
+<li><a href="#step-4-get-started">Step 4: Get started</a></li>
+<li><a href="#step-5-writing-stuff">Step 5: Writing stuff</a></li>
+<li><a href="#step-6-making-the-pull-request">Step 6: Making the pull request</a></li>
+</ul></li>
+<li><a href="#the-magic-of-dplyr-bindings">The magic of dplyr bindings</a></li>
 </ul>
 </nav>
 </div>
@@ -1549,8 +1557,16 @@ Figure 1: Julia and Quentin. Image via <a href="https://media.giphy.com/media/xU
 <blockquote>
 <p>The danger of sublimated trauma is a major theme in our story <br>     – The Great God Ember (The Magicians: Season 2, Episode 3)</p>
 </blockquote>
-<p>The snippet I posted is not very <em>complicated</em> piece of code. All it does is determine if a particular year was a leap year, which can be accomplished with a single line of code.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> However, although the code is not complicated it is <em>opaque</em>. It’s opaque in the sense that you have to understand quite a bit about Arrow in order to read it properly.</p>
-<p>It took me quite a bit of digging around before I could get myself into a position where I could contribute to the project. Because I work in an organisation that contributes a lot of code to Apache Arrow, I had a huge advantage: I have a lot of very lovely Voltron Data colleagues I could ask for help! One of my goals in this post is to summarise what I’ve learned from those conversations and make that knowledge more widely accessible. Not everyone has the same level of access to experts that I have, and without that support I’m not sure I’d have been brave enough to try.</p>
+<p>The snippet I posted above has a simple goal: it determines if a particular year was a leap year. In most cases this it’s pretty straightforward, because years that are divisible by 4 are almost always leap years. To capture the exceptions, the actual code looks like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>4</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>100</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>400</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>This line of code is a logical expression corresponding to the following rules: years divisible by 4 are leap years (e.g., 1996 was a leap year), unless they also happen to be divisible by 100 (e.g., 1900 was not a leap year), but there’s an exception to the exception where years that are divisible by 400 are a leap year (e.g., 2000 was a leap year).</p>
+<p>The rest of the code, unfortunately, is a little opaque.</p>
+<p>In order to understand what the <code>register_binding()</code> and <code>Expression$create()</code> parts of the code are all about, you need to know quite a bit more about what Arrow is all about, and it took me quite a bit of digging around to get myself into the position where I understood these things. This was (comparatively!) easy for me because I work at an organisation that contributes a lot of code to the Apache Arrow project. In my day to day work I have a access to my lovely Voltron Data colleagues who I can ask for help. Without their support I’m not sure I’d have been brave enough to try to contribute my own code to the project. With that in mind, one of my goals is to help “pay it forward”. I’d like to take what I’ve learned from those conversations and make that knowledge more widely accessible.</p>
 <p>Before diving in, I should say something about the “assumed knowledge” for this post. I’m assuming that the reader is comfortable in R, knows how to use dplyr for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you don’t have the last one, do not fear: I wrote a post on <a href="/starting-apache-arrow-in-r">Getting started with Apache Arrow</a> that covers the assumed knowledge about Arrow!</p>
 <h2 id="the-arrow-c-compute-kernel">The Arrow C++ compute kernel</h2>
 <p>A really fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement Apache Arrow directly. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Throughout this post I’ll use “Arrow” to refer to the broader Apache Arrow project, “<strong>arrow</strong>” to refer to the R package, and “<strong>libarrow</strong>” to refer to the C++ library. The long term goal is to make all this completely seamless so that <strong>arrow</strong> users don’t really need to understand <strong>libarrow</strong> in order to be productive, but in my experience most people like to know a little bit about what is happening under the hood. It’s unsettling to be programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
@@ -1780,15 +1796,41 @@ See $metadata for additional Schema metadata</code></pre>
 20106</code></pre>
 </div>
 <h2 id="preparing-to-contribute">Preparing to contribute</h2>
+<p>If you’ve read my previous blog post and followed this one up to here, you’re probably at the same level of knowledge that I was at when I started work on my first Arrow contribution. So what happens next?</p>
+<h3 id="step-1-sign-up-for-apache-jira">Step 1: Sign up for Apache Jira</h3>
 <ul>
-<li>you need an Apache Jira account. (process for being assigned is actually unclear to me?)</li>
+<li>you need an Apache Jira account</li>
+<li>confusingly this is distinct from Atlassian</li>
+<li>generally a good idea to use the same handle on Apache Jira as on GitHub</li>
+</ul>
+<h3 id="step-2-create-your-own-fork">Step 2: Create your own fork</h3>
+<ul>
 <li>fork the apache/arrow repo. browse for a while. read. don’t feel pressured to do anything or understand the whole thing</li>
 <li>browse pull requests from people who you already know and like</li>
-<li>pr_init(). name your branch ARROW-14281 (or whatever your issue number is)</li>
+<li>get allocated an open issue (you can start whenever you like)</li>
+</ul>
+<h3 id="step-3-configure-your-dev-build">Step 3: Configure your dev build</h3>
+<ul>
 <li>make sure your developer environment is set up properly, see: <a href="https://ursalabs.org/arrow-r-nightly/articles/developers/setup.html">https://ursalabs.org/arrow-r-nightly/articles/developers/setup.html</a> and devtools::test() works. also check “install and restart” (ctrl shift B). be warned: check (ctrl shift E) takes ages</li>
 <li>handy thing to do regularly as you work on the PR: <code>install_arrow(nightly = TRUE, verbose = TRUE)</code> <a href="https://arrow.apache.org/docs/dev/developers/guide/index.html">https://arrow.apache.org/docs/dev/developers/guide/index.html</a></li>
 </ul>
-<h2 id="writing-the-dplyr-bindings">Writing the dplyr bindings</h2>
+<h3 id="step-4-get-started">Step 4: Get started</h3>
+<ul>
+<li>pr_init(). name your branch ARROW-14281 (or whatever your issue number is)</li>
+</ul>
+<h3 id="step-5-writing-stuff">Step 5: Writing stuff</h3>
+<ul>
+<li>I’ll expand on that in a moment</li>
+</ul>
+<h3 id="step-6-making-the-pull-request">Step 6: Making the pull request</h3>
+<ul>
+<li>Name it to match the Jira issue exactly</li>
+<li>It’s a bit of a pain the first time: maintainers need to approve every run</li>
+<li>Usual back and forth during the PR… be nice etc.</li>
+<li>After a while it will be approved: the maintainer will merge it, and then you’re done</li>
+<li>Eventually ends up in a later release of <strong>arrow</strong></li>
+</ul>
+<h2 id="the-magic-of-dplyr-bindings">The magic of dplyr bindings</h2>
 <ul>
 <li>dplyr bindings can be used to mask other stuff… that’s the usual way we handle this</li>
 <li><code>register_bindings()</code> is tricky: remember you’re creating an Expression to be evaluated later</li>
@@ -1798,7 +1840,7 @@ See $metadata for additional Schema metadata</code></pre>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-19 11:12:23 AEDT</p>
+<p>2022-01-19 12:51:42 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_dplyr-bindings-in-arrow/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_dplyr-bindings-in-arrow/renv.lock">R environment</a></p>
 </div>
@@ -1807,12 +1849,6 @@ See $metadata for additional Schema metadata</code></pre>
 
 </div>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
-<section class="footnotes" role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn1" role="doc-endnote"><p>The leap year rules in the Gregorian calendar are as follows: Years divisible by 4 are leap years (1996 was a leap year), unless they also happen to be divisible by 100 (so 1900 was not a leap year). However, there’s an exception to the exception: if they’re also divisible by 400 then they are a leap year (2000 was a leap year).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
