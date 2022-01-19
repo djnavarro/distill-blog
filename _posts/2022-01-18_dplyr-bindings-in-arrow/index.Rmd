@@ -40,8 +40,27 @@ checklist:
 <!--------------- setup post ----------------->
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = TRUE)
 refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+
+# save the built-in output hook
+hook_output <- knitr::knit_hooks$get("output")
+
+# set a new output hook to truncate text output
+knitr::knit_hooks$set(output = function(x, options) {
+  if (!is.null(n <- options$out.lines)) {
+    x <- xfun::split_lines(x)
+    if (length(x) > n) {
+      # truncate the output
+      x <- c(head(x, n), "....\n")
+    }
+    x <- paste(x, collapse = "\n")
+  }
+  hook_output(x, options)
+})
+
+# ensure that renv detects ggplot2 dependency
+ggplot2::element_blank()
 ```
 
 
@@ -153,8 +172,69 @@ That's the ideal.
 
 But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the **libarrow** functionality directly. If that's you, read on!
 
+### Calling **libarrow** functions in **dplyr** code
+
+The **dplyr** back end is the way users would typically use **arrow**, but there's nothing stopping you from calling the C++ compute functions directly. The `list_compute_functions()` function tells you what they are:
+
+```{r, out.lines = 10}
+list_compute_functions()
+```
+
+I've truncated the output in this post. The real output continues for quite a while: there are currently `r length(list_compute_functions())` **libarrow** compute functions that **arrow** exposes to the R user, most of which low level functions that the R package relies upon.
+
+There are two different ways that an R user can call the **libarrow** compute functions. First, imagine you're writing **dplyr** code to work with datetime data in a Table object. When working with native R objects, you can do this:
+
+```{r}
+economics %>% 
+  mutate(days = date - as.Date("1967-01-01"))
+```
+
+Unfortunately, this won't work in **arrow** right now. I chose this example deliberately because temporal arithmetic is a work in progress right now. In the not-too-distant future this will work seamlessly, but right now it doesn't. If you try it right now, you get this error:
+
+```{r, error=TRUE}
+arrownomics %>% 
+  mutate(days = date - as.Date("1967-01-01")) %>% 
+  collect()
+```
+
+This is very sad, but as it happens **libarrow** does have a `days_between()` function:
+
+```{r}
+arrownomics %>% 
+  mutate(days = arrow_days_between(as.Date("1967-01-01"), date)) %>% 
+  collect()
+```
+Notice there's no warning message here? That's because the computations were done in Arrow, using the **libarrow** `days_between()` function.
+
 
 ### Calling **libarrow** functions directly
+
+Okay, here's a puzzle:
+
+```{r, error=TRUE}
+date1 <- as.Date("1967-01-01")
+date2 <- as.Date("2022-01-18")
+
+arrow_days_between(date1, date2)
+```
+
+There is no R function called `arrow_days_between()`, yet I was somehow able to "call" it in the previous example? The answer here is that the **arrow** package is doing a bit of metaprogramming magic. What's actually happening here is that when you use it in the **dplyr** context, **arrow** will intercepts the call to `arrow_days_between()` and quietly pass it to **libarrow** for you. 
+
+If you *really* want to do it directly, you can use `call_function()` from the **arrow** package. This provides you with direct access to a **libarrow** function. It won't take care of the low-level communication between R and Arrow though: the **libarrow** functions expect to receive Arrow-native data structures as input. That's the price you pay for low-level access: you have to do all the low-level work!
+
+```{r}
+arrow_date1 <- Scalar$create(date1)
+arrow_date2 <- Scalar$create(date2)
+
+arrow_date1
+```
+
+
+Now you can do this:
+
+```{r}
+call_function("days_between", arrow_date1, arrow_date2)
+```
 
 
 

@@ -1501,6 +1501,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#the-arrow-c-compute-kernel">The Arrow C++ compute kernel</a>
 <ul>
 <li><a href="#using-the-dplyr-bindings-in-arrow">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></a></li>
+<li><a href="#calling-libarrow-functions-in-dplyr-code">Calling <strong>libarrow</strong> functions in <strong>dplyr</strong> code</a></li>
 <li><a href="#calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</a></li>
 </ul></li>
 <li><a href="#preparing-to-contribute">Preparing to contribute</a></li>
@@ -1668,7 +1669,116 @@ See $metadata for additional Schema metadata</code></pre>
 <p>The nice thing for R users is that <em>absolutely nowhere do you have to interact with</em> <strong>libarrow</strong> <em>directly</em>. Under the hood <strong>libarrow</strong> is doing all the computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. It all happens seamlessly and invisibly.</p>
 <p>That’s the ideal.</p>
 <p>But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the <strong>libarrow</strong> functionality directly. If that’s you, read on!</p>
+<h3 id="calling-libarrow-functions-in-dplyr-code">Calling <strong>libarrow</strong> functions in <strong>dplyr</strong> code</h3>
+<p>The <strong>dplyr</strong> back end is the way users would typically use <strong>arrow</strong>, but there’s nothing stopping you from calling the C++ compute functions directly. The <code>list_compute_functions()</code> function tells you what they are:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/list_compute_functions.html'>list_compute_functions</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>  [1] &quot;abs&quot;                            
+  [2] &quot;abs_checked&quot;                    
+  [3] &quot;acos&quot;                           
+  [4] &quot;acos_checked&quot;                   
+  [5] &quot;add&quot;                            
+  [6] &quot;add_checked&quot;                    
+  [7] &quot;all&quot;                            
+  [8] &quot;and&quot;                            
+  [9] &quot;and_kleene&quot;                     
+ [10] &quot;and_not&quot;                        
+....</code></pre>
+</div>
+<p>I’ve truncated the output in this post. The real output continues for quite a while: there are currently 221 <strong>libarrow</strong> compute functions that <strong>arrow</strong> exposes to the R user, most of which low level functions that the R package relies upon.</p>
+<p>There are two different ways that an R user can call the <strong>libarrow</strong> compute functions. First, imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object. When working with native R objects, you can do this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>economics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>date</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 574 × 7
+   date         pce    pop psavert uempmed unemploy days    
+   &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;drtn&gt;  
+ 1 1967-07-01  507. 198712    12.6     4.5     2944 181 days
+ 2 1967-08-01  510. 198911    12.6     4.7     2945 212 days
+ 3 1967-09-01  516. 199113    11.9     4.6     2958 243 days
+ 4 1967-10-01  512. 199311    12.9     4.9     3143 273 days
+ 5 1967-11-01  517. 199498    12.8     4.7     3066 304 days
+ 6 1967-12-01  525. 199657    11.8     4.8     3018 334 days
+ 7 1968-01-01  531. 199808    11.7     5.1     2878 365 days
+ 8 1968-02-01  534. 199920    12.3     4.5     3001 396 days
+ 9 1968-03-01  544. 200056    11.7     4.1     2877 425 days
+10 1968-04-01  544  200208    12.3     4.6     2709 456 days
+# … with 564 more rows</code></pre>
+</div>
+<p>Unfortunately, this won’t work in <strong>arrow</strong> right now. I chose this example deliberately because temporal arithmetic is a work in progress right now. In the not-too-distant future this will work seamlessly, but right now it doesn’t. If you try it right now, you get this error:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>date</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error: NotImplemented: Function subtract_checked has no kernel matching input types (array[date32[day]], scalar[date32[day]])</code></pre>
+</div>
+<p>This is very sad, but as it happens <strong>libarrow</strong> does have a <code>days_between()</code> function:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span>, <span class='va'>date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 574 × 7
+   date         pce    pop psavert uempmed unemploy  days
+ * &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;
+ 1 1967-07-01  507. 198712    12.6     4.5     2944   181
+ 2 1967-08-01  510. 198911    12.6     4.7     2945   212
+ 3 1967-09-01  516. 199113    11.9     4.6     2958   243
+ 4 1967-10-01  512. 199311    12.9     4.9     3143   273
+ 5 1967-11-01  517. 199498    12.8     4.7     3066   304
+ 6 1967-12-01  525. 199657    11.8     4.8     3018   334
+ 7 1968-01-01  531. 199808    11.7     5.1     2878   365
+ 8 1968-02-01  534. 199920    12.3     4.5     3001   396
+ 9 1968-03-01  544. 200056    11.7     4.1     2877   425
+10 1968-04-01  544  200208    12.3     4.6     2709   456
+# … with 564 more rows</code></pre>
+</div>
+<p>Notice there’s no warning message here? That’s because the computations were done in Arrow, using the <strong>libarrow</strong> <code>days_between()</code> function.</p>
 <h3 id="calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</h3>
+<p>Okay, here’s a puzzle:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>date1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span>
+<span class='va'>date2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2022-01-18"</span><span class='op'>)</span>
+
+<span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='va'>date1</span>, <span class='va'>date2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error in arrow_days_between(date1, date2): could not find function &quot;arrow_days_between&quot;</code></pre>
+</div>
+<p>There is no R function called <code>arrow_days_between()</code>, yet I was somehow able to “call” it in the previous example? The answer here is that the <strong>arrow</strong> package is doing a bit of metaprogramming magic. What’s actually happening here is that when you use it in the <strong>dplyr</strong> context, <strong>arrow</strong> will intercepts the call to <code>arrow_days_between()</code> and quietly pass it to <strong>libarrow</strong> for you.</p>
+<p>If you <em>really</em> want to do it directly, you can use <code>call_function()</code> from the <strong>arrow</strong> package. This provides you with direct access to a <strong>libarrow</strong> function. It won’t take care of the low-level communication between R and Arrow though: the <strong>libarrow</strong> functions expect to receive Arrow-native data structures as input. That’s the price you pay for low-level access: you have to do all the low-level work!</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrow_date1</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>date1</span><span class='op'>)</span>
+<span class='va'>arrow_date2</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>date2</span><span class='op'>)</span>
+
+<span class='va'>arrow_date1</span>
+</code></pre>
+</div>
+<pre><code>Scalar
+1967-01-01</code></pre>
+</div>
+<p>Now you can do this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>arrow_date1</span>, <span class='va'>arrow_date2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Scalar
+20106</code></pre>
+</div>
 <h2 id="preparing-to-contribute">Preparing to contribute</h2>
 <ul>
 <li>you need an Apache Jira account. (process for being assigned is actually unclear to me?)</li>
@@ -1688,7 +1798,7 @@ See $metadata for additional Schema metadata</code></pre>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-19 08:51:23 AEDT</p>
+<p>2022-01-19 11:12:23 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_dplyr-bindings-in-arrow/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_dplyr-bindings-in-arrow/renv.lock">R environment</a></p>
 </div>
@@ -1696,7 +1806,7 @@ See $metadata for additional Schema metadata</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
