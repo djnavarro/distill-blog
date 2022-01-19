@@ -1496,16 +1496,13 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#prologue-my-first-contribution-to-arrow">Prologue: My first contribution to Arrow</a></li>
 <li><a href="#why-write-this">Why write this?</a></li>
-<li><a href="#the-arrow-c-compute-kernel">The Arrow C++ compute kernel</a>
-<ul>
+<li><a href="#the-arrow-c-compute-kernel">The Arrow C++ compute kernel</a></li>
 <li><a href="#using-the-dplyr-bindings-in-arrow">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></a></li>
 <li><a href="#calling-libarrow-functions-in-dplyr-code">Calling <strong>libarrow</strong> functions in <strong>dplyr</strong> code</a></li>
 <li><a href="#calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</a></li>
-</ul></li>
 <li><a href="#writing-functions-that-play-nicely-with-arrow-pipes">Writing functions that play nicely with arrow pipes</a></li>
-<li><a href="#epilogue-what-dplyr-bindings-are">Epilogue: What dplyr bindings are</a></li>
+<li><a href="#epilogue-the-rest-of-the-owl">Epilogue: The rest of the owl</a></li>
 </ul>
 </nav>
 </div>
@@ -1521,47 +1518,37 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p>So I have a new job.</p>
-<p>In my previous job as an academic, a large part of my work – my favourite part, if I’m honest – involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um … <em>[checks job description]</em> … creating open access resources to help people use modern open source tools for data analysis. Well okay then?</p>
-<p>I’d better get on that, I suppose.</p>
-<h2 id="prologue-my-first-contribution-to-arrow">Prologue: My first contribution to Arrow</h2>
-<p>Moving out of academia and into software development is interesting. I’ve been in the role for about a week, and a lot of that time has been spent orienting myself. Apache Arrow is a large project, so there’s quite a lot for me to learn. But today my <a href="https://github.com/apache/arrow/pull/12173/">first contribution</a> was merged, so I’m taking a moment to celebrate by, um … writing a blog post, I guess? Yes, I am celebrating by blogging. I am exactly that cool.</p>
-<p>The code I wrote today was a very small contribution to a large project. It’s really just these few lines of code, plus some unit tests I wrote to make sure it actually works:</p>
+<p>In my previous job as an academic, a large part of my work – my favourite part, if I’m honest – involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um … <em>[checks job description]</em> … creating open access resources to help people use modern open source tools for data analysis. Well okay then!</p>
+<p>I’d better get on that, I suppose?</p>
+<p>I’ve been in my current role for a little over a week, and today my <a href="https://github.com/apache/arrow/pull/12173/">first contribution</a> to Apache Arrow was merged. My contribution was very modest: I wrote some code that determines whether any given year is a leap year. It exactly mirrors the behaviour of the <code>leap_year()</code> function in the <strong>lubridate</strong> package, except that it can be applied to Arrow data. The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago. This post is the story of how I learned this sorcery.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>register_binding</span><span class='op'>(</span><span class='st'>"leap_year"</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>year</span> <span class='op'>&lt;-</span> <span class='va'>Expression</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"year"</span>, <span class='va'>date</span><span class='op'>)</span>
-  <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>4</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>100</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>400</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
-<span class='op'>}</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
-<p>The job of this code is to mimic the behaviour of the <strong>lubridate</strong> function <code>leap_year()</code> in Arrow, so that anyone using Arrow from R can seamlessly use <code>leap_year()</code> when working with an Arrow Table, exactly as if the data were organised as a regular data frame.</p>
-<p>It is a small piece of Arrow magic, and this post is the story of how I learned this sorcery.</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
 <img src="https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif" alt="Julia and Quentin. Image via [giphy](https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 1: Julia and Quentin. Image via <a href="https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
+<aside>
+Yes I have been binge watching <em>The Magicians</em> lately. My preemptive apologies to everyone for all the GIFs.
+</aside>
 <h2 id="why-write-this">Why write this?</h2>
 <blockquote>
 <p>The danger of sublimated trauma is a major theme in our story <br>     – The Great God Ember (The Magicians: Season 2, Episode 3)</p>
 </blockquote>
-<p>The snippet I posted above has a simple goal: it determines if a particular year was a leap year. In most cases this it’s pretty straightforward, because years that are divisible by 4 are almost always leap years. To capture the exceptions, the actual code looks like this:</p>
+<p>It might seem peculiar that I’m writing such a long post. After all, you only need one line of code to detect leap years:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>4</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>100</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>400</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>This line of code is a logical expression corresponding to the following rules: years divisible by 4 are leap years (e.g., 1996 was a leap year), unless they also happen to be divisible by 100 (e.g., 1900 was not a leap year), but there’s an exception to the exception where years that are divisible by 400 are a leap year (e.g., 2000 was a leap year).</p>
-<p>The rest of the code, unfortunately, is a little opaque.</p>
-<p>In order to understand what the <code>register_binding()</code> and <code>Expression$create()</code> parts of the code are all about, you need to know quite a bit more about what Arrow is all about, and it took me quite a bit of digging around to get myself into the position where I understood these things. This was (comparatively!) easy for me because I work at an organisation that contributes a lot of code to the Apache Arrow project. In my day to day work I have a access to my lovely Voltron Data colleagues who I can ask for help. Without their support I’m not sure I’d have been brave enough to try to contribute my own code to the project. With that in mind, one of my goals is to help “pay it forward”. I’d like to take what I’ve learned from those conversations and make that knowledge more widely accessible.</p>
+<p>This is a logical expression corresponding to the following rules. If the <code>year</code> is divisible by 4 then it is a leap year (e.g., 1996 was a leap year). But there’s an exception: if <code>year</code> is divisible by 100 then it isn’t a leap year (e.g., 1900 wasn’t a leap year). But there’s also an exception to the exception: if <code>year</code> is divisible by 400 then it is a leap year (e.g., 2000 was a leap year). Sure, it’s mildly annoying trying to work out the logical expression that maps onto these rules, but there’s no “special” magic here.</p>
+<p>The magic part comes in when we want to write R code that allows the user to specify this calculation in R using standard function and returning the results in R … while the data are never loaded into R and the computation is done by Apache Arrow. That part feels like deep magic!</p>
+<p>It took me quite a bit of digging around to get myself into the position where I understood these things. This was (comparatively!) easy for me because I work at an organisation that contributes a lot of code to the Apache Arrow project. In my day to day work I can ask my lovely Voltron Data colleagues for help. Without their support I’m not sure I’d have been brave enough to try to contribute my own code to the project. With that in mind, one of my goals is to help “pay it forward”. I’d like to take what I’ve learned from those conversations and make that knowledge more widely accessible.</p>
 <p>Before diving in, I should say something about the “assumed knowledge” for this post. I’m assuming that the reader is comfortable in R, are comfortable with git and GitHub, knows how to use dplyr for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you don’t have the last one, do not fear: I wrote a post on <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">“Getting started with Apache Arrow”</a> that covers the assumed knowledge about Arrow!</p>
 <h2 id="the-arrow-c-compute-kernel">The Arrow C++ compute kernel</h2>
-<p>A really fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement Apache Arrow directly. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Throughout this post I’ll use “Arrow” to refer to the broader Apache Arrow project, “<strong>arrow</strong>” to refer to the R package, and “<strong>libarrow</strong>” to refer to the C++ library. The long term goal is to make all this completely seamless so that <strong>arrow</strong> users don’t really need to understand <strong>libarrow</strong> in order to be productive, but in my experience most people like to know a little bit about what is happening under the hood. It’s unsettling to be programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
+<p>A fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement Apache Arrow directly. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Although the long term goal is to make the integration so seamless that you can use the <strong>arrow</strong> R package without ever <em>needing</em> to understand the C++ library, my experience has been that most people <em>want</em> to know something about what’s happening under the hood. It can be unsettling to find yourself programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
 <p>Let’s start with the C++ library. The role of <strong>libarrow</strong> is to do all the heavy lifting. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache “Inter-Process Communication” (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a <em>compute kernel</em> that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.</p>
 <p>What about the R package? The role of <strong>arrow</strong> is to expose the functionality of <strong>libarrow</strong> to the R user, to make that functionality feel “natural” in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python).</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1607,7 +1594,7 @@ $unemploy &lt;double&gt;
 
 See $metadata for additional Schema metadata</code></pre>
 </div>
-<h3 id="using-the-dplyr-bindings-in-arrow">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></h3>
+<h2 id="using-the-dplyr-bindings-in-arrow">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></h2>
 <p>The <strong>arrow</strong> package provides you with multiple ways to take advantage of <strong>libarrow</strong>. My favourite way to do this is by writing <strong>dplyr</strong> code.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1677,7 +1664,7 @@ See $metadata for additional Schema metadata</code></pre>
 <p>The nice thing for R users is that <em>absolutely nowhere do you have to interact with</em> <strong>libarrow</strong> <em>directly</em>. Under the hood <strong>libarrow</strong> is doing all the computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. It all happens seamlessly and invisibly.</p>
 <p>That’s the ideal.</p>
 <p>But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the <strong>libarrow</strong> functionality directly. If that’s you, read on!</p>
-<h3 id="calling-libarrow-functions-in-dplyr-code">Calling <strong>libarrow</strong> functions in <strong>dplyr</strong> code</h3>
+<h2 id="calling-libarrow-functions-in-dplyr-code">Calling <strong>libarrow</strong> functions in <strong>dplyr</strong> code</h2>
 <p>The <strong>dplyr</strong> back end is the way users would typically use <strong>arrow</strong>, but there’s nothing stopping you from calling the C++ compute functions directly. The <code>list_compute_functions()</code> function tells you what they are:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1753,7 +1740,7 @@ See $metadata for additional Schema metadata</code></pre>
 # … with 564 more rows</code></pre>
 </div>
 <p>Notice there’s no warning message here? That’s because the computations were done in Arrow, using the <strong>libarrow</strong> <code>days_between()</code> function.</p>
-<h3 id="calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</h3>
+<h2 id="calling-libarrow-functions-directly">Calling <strong>libarrow</strong> functions directly</h2>
 <p>Okay, here’s a puzzle:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1845,20 +1832,20 @@ data into R</code></pre>
 10 1968-04-01  544  200208    12.3     4.6     2709 TRUE 
 # … with 564 more rows</code></pre>
 </div>
-<h2 id="epilogue-what-dplyr-bindings-are">Epilogue: What dplyr bindings are</h2>
-<p>The code in my pull request is basically this</p>
+<h2 id="epilogue-the-rest-of-the-owl">Epilogue: The rest of the owl</h2>
+<p>The story I’ve told in this post is a little incomplete. I’ve shown you how to write a function like <code>arrowish_leap_year()</code> that can slot into a <strong>dplyr</strong> pipeline and operate on an Arrow data structure. What I haven’t explained is how the <strong>arrow</strong> package knows to use <code>arrowish_leap_year()</code> instead of <code>lubridate::leap_year()</code>. Internal to the <strong>arrow</strong> package is a line of code that is (essentially) equivalent to this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>register_binding</span><span class='op'>(</span><span class='st'>"leap_year"</span>, <span class='va'>arrowish_leap_year</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>You won’t find <code>register_binding()</code> when looking through the <strong>arrow</strong> functions. It’s only used internally. However, when you look at this simplified expression, it is hopefully not too difficult to work out what it does. The <code>register_binding()</code> function indicates that whenever the user calls <code>leap_year()</code> inside a <strong>dplyr</strong> pipeline, <strong>arrow</strong> will make sure that <code>arrowish_leap_year()</code> is the function that actually gets called.</p>
-<p>Want to know more about the <em>process</em> of getting this code incorporated into to the Arrow repository? Read the follow up to this post on <a href="https://blog.djnavarro.net/contributing-to-arrow">“My first contribution to Apache Arrow”</a>.</p>
+<p>I haven’t said anything about the precise workings of <code>register_binding()</code>, in part because that’s one of the mysteries I’m currently unpacking while I dig into the code base.</p>
+<p>But that’s not the only thing I’ve left unsaid. There’s a lot of practical details I’ve not mentioned. I haven’t talked about unit tests, for example. I haven’t talked about the process of getting my code merged into the Arrow repository. I’ll talk more about some of these in the follow up post on <a href="https://blog.djnavarro.net/contributing-to-arrow">“My first contribution to Apache Arrow”</a>.</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-19 14:50:52 AEDT</p>
+<p>2022-01-19 17:34:55 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
