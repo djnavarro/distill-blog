@@ -11,7 +11,7 @@
       <title>Binding Apache Arrow to R</title>
       <dc:creator>Danielle Navarro</dc:creator>
       <link>https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r</link>
-      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</description>
+      <description>I've been learning how to program with Apache Arrow inside R, and also I have been watching "The Magicians" obsessively. For no sensible reason I wrote a blog post that combines these two fixations</description>
       <guid>https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r</guid>
       <pubDate>Tue, 18 Jan 2022 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/img/muhammad-haikal-sjukri--RMBf_xSf2U-unsplash.jpg" medium="image" type="image/jpeg"/>

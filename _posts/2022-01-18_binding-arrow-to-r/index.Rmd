@@ -1,8 +1,9 @@
 ---
 title: "Binding Apache Arrow to R"
 description:
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit # <---- UPDATE ME
+  I've been learning how to program with Apache Arrow inside R, and also I
+  have been watching "The Magicians" obsessively. For no sensible reason I
+  wrote a blog post that combines these two fixations
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -68,34 +69,27 @@ ggplot2::element_blank()
 
 
 
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Eliot. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-3o7ZePnuDJ1EiNsK3u), copyright [syfy](https://www.syfy.com)"
-knitr::include_graphics("https://media.giphy.com/media/3o7ZePnuDJ1EiNsK3u/giphy.gif")
-```
-
-
 So I have a new job. 
 
 In my previous job as an academic, a large part of my work -- my favourite part, if I'm honest -- involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um ... *[checks job description]* ... creating open access resources to help people use modern open source tools for data analysis. Well okay then! 
 
 I'd better get on that, I suppose?
 
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Eliot Waugh. All I can say at this point is that thanks to his magnificent performance I have developed a terribly awkward crush on Hale Appleman.  Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-3o7ZePnuDJ1EiNsK3u), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/3o7ZePnuDJ1EiNsK3u/giphy.gif")
+```
+
+<aside><br>Yes I have been binge watching [*The Magicians*](https://en.wikipedia.org/wiki/The_Magicians_(American_TV_series)) lately. My preemptive apologies to everyone for the gif spam.</aside>
+
+
 I've been in my current role for a little over a week, and today my [first contribution](https://github.com/apache/arrow/pull/12173/) to Apache Arrow was merged. It was very modest contribution: I wrote some code that determines whether any given year is a leap year. It precisely mirrors the behaviour of the `leap_year()` function in the **lubridate** package, except that it can be applied to Arrow data and it will behave itself when used in the context of a **dplyr** pipeline (more on that later). The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago.  
 
 <aside>Throughout this post I'll use boldface to refer to specific R packages like **dplyr** or C++ libraries like **libarrow**</aside>
 
 This post is the story of how I learned this sorcery.
-
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Two key moments in \"The Magicians\" when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via [giphy](https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532), copyright [syfy](https://www.syfy.com)"
-knitr::include_graphics("https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif")
-```
-
-<aside><br>Yes I have been binge watching [*The Magicians*](https://en.wikipedia.org/wiki/The_Magicians_(American_TV_series)) lately. My preemptive apologies to everyone for the gif spam.</aside>
 
 ## Why am I writing this?
 
@@ -114,6 +108,15 @@ This is a logical expression corresponding to the following rules. If the `year`
 
 The magic comes in when you start thinking about what the **arrow** package actually does. It lets you write perfectly ordinary R code for data manipulation that returns perfectly ordinary R data structures, even though the data have never been loaded into R and all the computation is performed externally using Apache Arrow. The code you write with **arrow** looks and feels like regular R code, but almost none of the work is being done by R. This *is* deep magic, and it is this magic that needs to be demystified.
 
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Two key moments in \"The Magicians\" when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via [giphy](https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif")
+```
+
+
 I have three reasons for wanting to unpack and explain this magic. 
 
 The first reason is personal: I've been a professional educator for over 15 years and it has become habit. The moment I learn a new thing my first impulse is to work out how to explain it to someone else. The second reasons is professional: I work for Voltron Data now, and part of my job is to make an educational contribution to the open source Apache Arrow project. Arrow is a pretty cool project, but there's very little value in magnificent software if you don't help people learn how to take advantage of it! The third reason is ethical: a readable tutorial/explanation lowers barriers to entry. I mean, let's be honest: the only reason I was able to work up the courage to contribute to Apache Arrow is that I work for a company that is deeply invested in open source software and in the Arrow project specifically. I had colleagues and friends I could ask for advice. If I failed I knew they would be there to help me. I had a safety net. 
@@ -124,7 +127,7 @@ The last of these is important from an equity and inclusion point of view. Not e
 
 So yeah. I'm not usually a person prone to earnestness but this is something that matters to me. It's time for me to pay it forward, so to speak. I'd like to take what I've learned and make that knowledge more widely accessible. 
 
-Before diving in, I should say something about the "assumed knowledge" for this post. I'm assuming that the reader is comfortable in R, knows how to use **dplyr** for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you need a refresher on R and **dplyr**, ["R for data science"](https://r4ds.had.co.nz/) is always a fabulous resource! On the Arrow side, I'll try my best to provide all the context you need in this post, but if you want a little more background on Arrow I wrote a post on ["Getting started with Apache Arrow"](https://blog.djnavarro.net/starting-apache-arrow-in-r) that starts at the very beginning and discusses a lot of the basics. 
+Before diving in, I should say something about the "assumed knowledge" for this post. I'm assuming that the reader is comfortable in R, knows how to use **dplyr** for data manipulation, and has some vague familiarity with what Apache Arrow is all about. I will do a little excursion into object oriented programming and metaprogramming in R, but it's not essential to understand the main ideas. If you need a refresher on R and **dplyr**, ["R for data science"](https://r4ds.had.co.nz/) is always a fabulous resource! On the Arrow side, I'll try my best to provide all the context you need in this post, but if you want a little more background on Arrow I wrote a post on ["Getting started with Apache Arrow"](https://blog.djnavarro.net/starting-apache-arrow-in-r) that starts at the very beginning and discusses a lot of the basics. 
 
 
 ```{r}
@@ -142,7 +145,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gswa3eMvprpfjSE/giphy.g
 
 
 
-## Computing with Arrow from R
+## Using Arrow within R
 
 A fundamental thing to understand about the **arrow** package in R is that it doesn't implement the Apache Arrow standard directly. In fact, it tries very hard not to do any of the heavy lifting itself. There's a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called **libarrow**. Although the long term goal is to make the integration so seamless that you can use the **arrow** R package without ever *needing* to understand the C++ library, my experience has been that most people *want* to know something about what's happening under the hood. It can be unsettling to find yourself programming with tools you don't quite understand, so I'll dig a little deeper in this post.
 
@@ -166,12 +169,16 @@ library(arrow)
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Penny Adiyodi in the Neitherlands, diving head first into a fountain taking him to a new and magical world. Image via [giphy](https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK), copyright [syfy](https://www.syfy.com)"
+#| fig.cap = "Penny Adiyodi in the Neitherlands, diving head first into a fountain that transports him to a new and magical world. I cannot stress enough that Penny does not, by and large, make good choices. Impulse control is a virtue, but not one that he possesses in abundance. Image via [giphy](https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK), copyright [syfy](https://www.syfy.com)"
 knitr::include_graphics("https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.gif")
 ```
 
 
 ### Using the **dplyr** bindings in **arrow** {#using-dplyr-bindings}
+
+> I think I have some special fish magicks.<br>
+> &nbsp; &nbsp; -- Josh Hoberman (The Magicians: Season 4, Episode 13)
+
 
 When I wrote my [Getting started with Apache Arrow](https://blog.djnavarro.net/starting-apache-arrow-in-r) post, I concluded with an illustration of how you can write **dplyr** code that will work smoothly in R even when the data themselves are stored in Arrow. Here's a little recap of how that works, using a tiny daya set I pulled from [The Magicians Wikipedia page](https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)). Here's what that data set looks like:
 
@@ -193,17 +200,20 @@ magicians %>%
   )
 ```
 
-All of these computations take place within R. The `magicians` data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I'll create an `arrowmagics` variable using the `arrow_read_csv()` function:
+All of these computations take place within R. The `magicians` data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I'll create an `arrowmagicks` variable using the `arrow_read_csv()` function:
 
 ```{r}
-arrowmagics <- read_csv_arrow("magicians.csv", as_data_frame = FALSE)
-arrowmagics
+arrowmagicks <- read_csv_arrow("magicians.csv", as_data_frame = FALSE)
+arrowmagicks
 ```
 
-When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrowmagics` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The **arrow** package allows you to design **dplyr** pipelines using only this pointer object:
+<aside>The "arrowmagicks" variable name is a reference to the Josh Hoberman quote at the start of the section. For a while Josh was completely convinced he had been gifted with special magic because he was a fish for a while. It made sense at the time, I guess? It's a weird show</aside>
+
+
+When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrowmagicks` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The **arrow** package allows you to design **dplyr** pipelines using only this pointer object:
 
 ```{r}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
@@ -213,12 +223,17 @@ arrowmagics %>%
   )
 ```
 
-When the input is `arrowmagics`, the effect of the **dplyr** code is construct a query that can be passed to **libarrow** to be evaluated. This works because the **arrow** package supplies methods for `mutate()`, `group_by()`, and `summarise()` that are called whenever the input data is and Arrow Table. 
+When the input is `arrowmagicks`, the effect of the **dplyr** code is construct a query that can be passed to **libarrow** to be evaluated. This works because the **arrow** package supplies methods for `mutate()`, `group_by()`, and `summarise()` that are called whenever the input data is and Arrow Table. 
 
-It's important to realise that at this point, no actual computations have been performed on the Arrow data. If you want the query to be evaluated using the data, you need to use the `compute()` or `collect()` functions at the end of the pipeline. These two functions behave slightly differently. The `compute()` function runs the query, but leaves the resulting data inside Arrow. 
+It's important to realise that at this point, all we have done is define the quety. No actual computations have been performed on the Arrow data. This is a deliberate choice for efficiency purposes: on the C++ side there are a lot of performance optimisations that are only possible because the compute kernel has access to the entire query before any computations are performed. As a consequence of this, you need to explicitly tell Arrow when you want to pull the trigger and execute the query. 
+
+<aside>Later in the post I'll talk about Arrow Expressions, the tool that powers this trickery</aside>
+
+There are two ways to trigger query execution, one using the `compute()` function and the other using `collect()`. These two functions behave slightly differently and are useful for different purposes. The `compute()` function runs the query, but leaves the resulting data inside Arrow:
+
 
 ```{r}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
@@ -229,10 +244,10 @@ arrowmagics %>%
   compute()
 ```
 
-This can be useful when you're creating an intermediate data set that you want to reuse in Arrow later. If, on the other hand, you want the output to be pulled into R so that you can do R computation with it, use the `collect()` function:
+This is useful whenever you're creating an intermediate data set that you want to reuse in Arrow later, but don't need to use this intermediate data structure inside R. If, however, you want the output to be pulled into R so that you can do R computation with it, use the `collect()` function:
 
 ```{r}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
@@ -250,7 +265,7 @@ In our ideal world, the **dplyr** interface is all you would ever need to use. I
 Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and the **arrow** package is no exception. The current version of the package (v6.0.1) doesn't mirror all the functionality of **dplyr** and the support for other tidyverse packages like **lubridate** and **stringr** is very much a work in progress! For example, the current release doesn't support the `leap_year()` function in **lubridate** -- not surprising, since that's exactly the thing I was trying to fix in my first contribution -- and whenever it encounters a function it doesn't know how to handle, **arrow** will throw a warning, pull the data into R and try to complete the query using native R code. Here's what that looks like:
 
 ```{r}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(
     year = year(air_date), 
     leap = leap_year(air_date)
@@ -282,7 +297,7 @@ The actual output continues for quite a while: there are currently `r length(lis
 
 There are two different ways you can call these compute functions yourself, one that provides a little [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar) to make your life a little easier, and another that calls the functions pretty directly. I'll talk about the first of these in this section.  
 
-Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrowmagics`. If you were working with native R data like `magicians`, you can do something like this:
+Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrowmagicks`. If you were working with native R data like `magicians`, you can do something like this:
 
 ```{r}
 magicians %>% 
@@ -292,7 +307,7 @@ magicians %>%
 Here I've created a new `days` column that counts the number of days that have elapsed between the `date` variable and January 1st, 1967. There are a lot of data analysis situations in which you might want to do exactly this, but right now you can't actually do this using the **arrow** dplyr bindings because temporal arithmetic is a work in progress (I'm making small contributions to that myself, actually!). In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn't. If you try it right now, you get this error:
 
 ```{r, error=TRUE}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(days = air_date - as.Date("2015-12-16")) %>% 
   collect()
 ```
@@ -300,7 +315,7 @@ arrowmagics %>%
 Right now, there are no general purpose arithmetic operations in **arrow** that allow you to subtract one date from another. However, because I chose this example rather carefully to find an edge case where the R package is missing some **libarrow** functionality, it turns out there is actually a `days_between()` function in **libarrow** that we could use to solve this problem, and it's not too hard to use it. If you want to call one of the **libarrow** functions inside your **dplyr** pipeline, all you have to do is add an `arrow_` prefix to the function name. For example, the C++ `days_between()` function becomes `arrow_days_between()` when called within the **arrow** **dplyr** pipeline:
 
 ```{r}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(days = arrow_days_between(as.Date("2015-12-16"), air_date)) %>% 
   collect()
 ```
@@ -396,9 +411,8 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.
 ```
 
 
-## Putting it together
 
-### Using Arrow expressions
+## Writing Arrow expressions
 
 
 
@@ -410,7 +424,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.
 ```
 
 
-### Writing custom functions for Arrow pipelines {#arrowish-functions}
+## Writing functions for Arrow pipelines {#arrowish-functions}
 
 ```{r}
 arrowish_leap_year <- function(date) {
@@ -422,7 +436,7 @@ arrowish_leap_year <- function(date) {
 Trying to use lubridate fails:
 
 ```{r, error=TRUE}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(
     year = year(air_date), 
     leap = leap_year(air_date)
@@ -433,7 +447,7 @@ arrowmagics %>%
 Using our function works:
 
 ```{r}
-arrowmagics %>% 
+arrowmagicks %>% 
   mutate(
     year = year(air_date),
     leap = arrowish_leap_year(air_date)
