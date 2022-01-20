@@ -2483,18 +2483,18 @@ d-appendix d-footnote-list a.footnote-backlink {
 <h3>Contents</h3>
 <ul>
 <li><a href="#why-am-i-writing-this">Why am I writing this?</a></li>
-<li><a href="#primer-what-is-arrow">Primer: What is Arrow?</a></li>
-<li><a href="#using-arrow-within-r">Using Arrow within R</a></li>
-<li><a href="#using-dplyr-bindings">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></a></li>
-<li><a href="#using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</a></li>
-<li><a href="#a-weird-digression">A weird digression</a>
+<li><a href="#what-is-arrow">What is Arrow?</a></li>
+<li><a href="#using-arrow-in-r">Using Arrow in R</a></li>
+<li><a href="#using-dplyr-bindings">Using the <strong>dplyr</strong> bindings</a></li>
+<li><a href="#using-arrow-functions">Calling arrow-prefix functions</a></li>
+<li><a href="#a-digression">A digression</a>
 <ul>
 <li><a href="#part-one-object-oriented-programming">Part one: Object oriented programming</a></li>
 <li><a href="#part-two-metaprogramming">Part two: Metaprogramming</a></li>
 <li><a href="#cooperative-magic">Cooperative magic</a></li>
 </ul></li>
-<li><a href="#using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></a></li>
-<li><a href="#writing-arrow-expressions">Writing Arrow expressions</a></li>
+<li><a href="#using-call-function">Calling libarrow directly</a></li>
+<li><a href="#arrow-expressions">Arrow expressions</a></li>
 <li><a href="#arrowish-functions">Writing functions for Arrow pipelines</a></li>
 <li><a href="#epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</a></li>
 </ul>
@@ -2525,12 +2525,14 @@ Figure 1: Eliot Waugh. All I can say at this point is that thanks to his magnifi
 <aside>
 <br>Yes I have been binge watching <a href="https://en.wikipedia.org/wiki/The_Magicians_(American_TV_series)"><em>The Magicians</em></a> lately. My preemptive apologies to everyone for the gif spam.
 </aside>
-<p>I’ve been in my current role for a little over a week, and today my <a href="https://github.com/apache/arrow/pull/12173/">first contribution</a> to Apache Arrow was merged. It was very modest contribution: I wrote some code that determines whether any given year is a leap year. It precisely mirrors the behaviour of the <code>leap_year()</code> function in the <strong>lubridate</strong> package, except that it can be applied to Arrow data and it will behave itself when used in the context of a <strong>dplyr</strong> pipeline (more on that later). The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago.</p>
+<p>I’ve been in my current role for a little over a week (or had been when I started writing this post!), and today my <a href="https://github.com/apache/arrow/pull/12173/">first contribution</a> to Apache Arrow was merged. It was very modest contribution: I wrote some code that determines whether any given year is a leap year. It precisely mirrors the behaviour of the <code>leap_year()</code> function in the <strong>lubridate</strong> package, except that it can be applied to Arrow data and it will behave itself when used in the context of a <strong>dplyr</strong> pipeline (more on that later). The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago.</p>
 <aside>
 Throughout this post I’ll use boldface to refer to specific R packages like <strong>dplyr</strong> or C++ libraries like <strong>libarrow</strong>
 </aside>
 <p>This post is the story of how I learned this sorcery.</p>
+<!----------------------------------------------------------------------------->
 <h2 id="why-am-i-writing-this">Why am I writing this?</h2>
+<!----------------------------------------------------------------------------->
 <blockquote>
 <p>The danger of sublimated trauma is a major theme in our story <br>     – The Great God Ember (The Magicians: Season 2, Episode 3)</p>
 </blockquote>
@@ -2555,13 +2557,22 @@ Figure 2: Two key moments in “The Magicians” when Julia Wicker discovers she
 </div>
 </div>
 <p>I have three reasons for wanting to unpack and explain this magic.</p>
-<p>The first reason is personal: I’ve been a professional educator for over 15 years and it has become habit. The moment I learn a new thing my first impulse is to work out how to explain it to someone else. The second reasons is professional: I work for Voltron Data now, and part of my job is to make an educational contribution to the open source Apache Arrow project. Arrow is a pretty cool project, but there’s very little value in magnificent software if you don’t help people learn how to take advantage of it! The third reason is ethical: a readable tutorial/explanation lowers barriers to entry. I mean, let’s be honest: the only reason I was able to work up the courage to contribute to Apache Arrow is that I work for a company that is deeply invested in open source software and in the Arrow project specifically. I had colleagues and friends I could ask for advice. If I failed I knew they would be there to help me. I had a safety net.</p>
+<ul>
+<li>The first reason is personal: I’ve been a professional educator for over 15 years and it has become habit. The moment I learn a new thing my first impulse is to work out how to explain it to someone else.</li>
+<li>The second reasons is professional: I work for Voltron Data now, and part of my job is to make an educational contribution to the open source Apache Arrow project. Arrow is a pretty cool project, but there’s very little value in magnificent software if you don’t help people learn how to take advantage of it!</li>
+<li>The third reason is ethical: a readable tutorial/explanation lowers barriers to entry. I mean, let’s be honest: the only reason I was able to work up the courage to contribute to Apache Arrow is that I work for a company that is deeply invested in open source software and in the Arrow project specifically. I had colleagues and friends I could ask for advice. If I failed I knew they would be there to help me. I had a safety net.</li>
+</ul>
 <p>The last of these is important from an equity and inclusion point of view. Not everyone has the safety net that I have, and in a former lifetime I’ve been on the other side. I’ve been the person with no support, nobody to ask for help, and I’ve run afoul of capricious gatekeeping in the open source world. It is a deeply unpleasant experience, and one I would not wish upon anyone else. The quote from Ember about the danger of sublimated trauma is relevant here: if we want healthy user communities it is our <em>obligation</em> on the inside to provide safe environments and delightful experiences. Our job is to find and remove barriers to entry. We want to provide that “safety net” that ensures that even if you fall (because we all fall sometimes), you don’t get hurt. Failing at something is often a learning experience; trauma, on the other hand, is not.</p>
 <aside>
 Everyone deserves a <a href="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/code_hero_rstats.png">safety net</a> when first learning to walk the tightropes. It’s not a luxury, it’s a necessity
 </aside>
 <p>So yeah. I’m not usually a person prone to earnestness but this is something that matters to me. It’s time for me to pay it forward, so to speak. I’d like to take what I’ve learned and make that knowledge more widely accessible.</p>
-<p>Before diving in, I should say something about the “assumed knowledge” for this post. I’m assuming that the reader is comfortable in R, knows how to use <strong>dplyr</strong> for data manipulation, and has some vague familiarity with what Apache Arrow is all about. I will do a little excursion into object oriented programming and metaprogramming in R, but it’s not essential to understand the main ideas. If you need a refresher on R and <strong>dplyr</strong>, <a href="https://r4ds.had.co.nz/">“R for data science”</a> is always a fabulous resource! On the Arrow side, I’ll try my best to provide all the context you need in this post, but if you want a little more background on Arrow I wrote a post on <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">“Getting started with Apache Arrow”</a> that starts at the very beginning and discusses a lot of the basics.</p>
+<p>Before diving in, I should say something about the “assumed knowledge” for this post.</p>
+<ul>
+<li>I’ll do my best to explain R concepts as I go, but the post does assume that the reader is comfortable in R and knows how to use <strong>dplyr</strong> for data manipulation. If you need a refresher on these topics, I cannot recommend <a href="https://r4ds.had.co.nz/">“R for data science”</a> highly enough. It’s a fabulous resource!</li>
+<li>On the Arrow side it would help a little if you have some vague idea of what Arrow is about. I will of course explain as I go, but if you’re looking for a post that starts at the very beginning, I wrote a post on <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">“Getting started with Apache Arrow”</a> that does exactly this and discusses a lot of the basics.</li>
+<li>Finally, a tiny R warning: later in the post I will do a little excursion into object oriented programming and metaprogramming in R, which will be familiar to some but not all readers. If you’re not comfortable with these topics, you should still be okay to skim those sections and still get the important parts of this post. It’s not essential to understand the main ideas.</li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
 <img src="https://media.giphy.com/media/26gswa3eMvprpfjSE/giphy.gif" alt="The Great God Ember. Capricious, chaotic, and utterly unreliable unless what you're looking for is a whimsical death. Pretty much the opposite of what we'd hope for in a healthy open source community really! He is, however, a very entertaining character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-fillory-26gswa3eMvprpfjSE), copyright [syfy](https://www.syfy.com)"  />
@@ -2570,8 +2581,13 @@ Figure 3: The Great God Ember. Capricious, chaotic, and utterly unreliable unles
 </p>
 </div>
 </div>
-<h2 id="primer-what-is-arrow">Primer: What is Arrow?</h2>
-<h2 id="using-arrow-within-r">Using Arrow within R</h2>
+<!----------------------------------------------------------------------------->
+<h2 id="what-is-arrow">What is Arrow?</h2>
+<!----------------------------------------------------------------------------->
+<p>TBA.</p>
+<!----------------------------------------------------------------------------->
+<h2 id="using-arrow-in-r">Using Arrow in R</h2>
+<!----------------------------------------------------------------------------->
 <p>A fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement the Apache Arrow standard directly. In fact, it tries very hard not to do any of the heavy lifting itself. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Although the long term goal is to make the integration so seamless that you can use the <strong>arrow</strong> R package without ever <em>needing</em> to understand the C++ library, my experience has been that most people <em>want</em> to know something about what’s happening under the hood. It can be unsettling to find yourself programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
 <p>Let’s start with the C++ library. The role of <strong>libarrow</strong> is to do all the heavy computational work. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache “Inter-Process Communication” (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a <em>compute kernel</em> that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.</p>
 <p>What about the R package? The role of <strong>arrow</strong> is to expose the functionality of <strong>libarrow</strong> to the R user, to make that functionality feel “natural” in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python). In order to give you the flexibility you need, the <strong>arrow</strong> package allows you to interact with <strong>libarrow</strong> at three different levels of abstraction:</p>
@@ -2598,7 +2614,9 @@ Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain t
 </p>
 </div>
 </div>
-<h2 id="using-dplyr-bindings">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></h2>
+<!----------------------------------------------------------------------------->
+<h2 id="using-dplyr-bindings">Using the <strong>dplyr</strong> bindings</h2>
+<!----------------------------------------------------------------------------->
 <blockquote>
 <p>I think I have some special fish magicks.<br>     – Josh Hoberman (The Magicians: Season 4, Episode 13)</p>
 </blockquote>
@@ -2774,7 +2792,9 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </p>
 </div>
 </div>
-<h2 id="using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</h2>
+<!----------------------------------------------------------------------------->
+<h2 id="using-arrow-functions">Calling arrow-prefix functions</h2>
+<!----------------------------------------------------------------------------->
 <p>Okay, let’s dig a little deeper.</p>
 <p>In the last section I talked about the <strong>dplyr</strong> bindings that <strong>arrow</strong> provides, which are designed to mimic their native R equivalents as seamlessly as possible. These bindings work by rewriting the R functions that they mimic using only the C++ compute functions supplied by <strong>libarrow</strong>. That’s the way you’d usually interact with Arrow in R, but you can access those compute functions more directly. To see what compute functions are exposed by the C++ <strong>libarrow</strong> library, you can call <code>list_compute_functions()</code> from R:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2865,7 +2885,9 @@ Figure 6: Okay fine, there’s no connection between slightly-evil-Julia burning
 </p>
 </div>
 </div>
-<h2 id="a-weird-digression">A weird digression</h2>
+<!----------------------------------------------------------------------------->
+<h2 id="a-digression">A digression</h2>
+<!----------------------------------------------------------------------------->
 <p>Okay, here’s a puzzle. In the previous section I used the <code>arrow_days_between()</code> function in the middle of a <strong>dplyr</strong> pipe to work around a current limitation in <strong>arrow</strong>. What happens if I try to call this function in another context?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2899,7 +2921,9 @@ Figure 7: Metaprogramming is about as irritating as Imagine Dragons. Image via <
 </p>
 </div>
 </div>
-<h2 id="using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></h2>
+<!----------------------------------------------------------------------------->
+<h2 id="using-call-function">Calling libarrow directly</h2>
+<!----------------------------------------------------------------------------->
 <p>Yeah okay, that’s nice and all, but what if you want to access one of the <strong>libarrow</strong> functions directly, without relying on the metaprogramming magic that <strong>arrow</strong> uses? In everyday data analysis you probably wouldn’t need to do this, but it’s a use case that arises fairly often when you want to write your own functions that can interact with Arrow.</p>
 <p>So let’s strip back another level of abstraction!</p>
 <p>Should you ever find yourself wanting to call <strong>libarrow</strong> compute functions directly from R, <code>call_function()</code> is your best friend. It exposes the <strong>libarrow</strong> functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That’s the price you pay for low-level access: you have to do all the low-level work! Here’s what I mean: this code doesn’t work because <code>start_date</code> and <code>today</code> are R-native Date objects:</p>
@@ -2939,7 +2963,9 @@ Figure 8: Kady was an under-used character. Image via <a href="https://giphy.com
 </p>
 </div>
 </div>
-<h2 id="writing-arrow-expressions">Writing Arrow expressions</h2>
+<!----------------------------------------------------------------------------->
+<h2 id="arrow-expressions">Arrow expressions</h2>
+<!----------------------------------------------------------------------------->
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
 <img src="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif" alt="Okay look, I'll level with you. There is absolutely no connection between this gif and Arrow Expressions. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"  />
@@ -3020,7 +3046,9 @@ Figure 10: Eliot and Margo applaud your success. They are the best characters, a
 </p>
 </div>
 </div>
+<!----------------------------------------------------------------------------->
 <h2 id="epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</h2>
+<!----------------------------------------------------------------------------->
 <aside>
 In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/how-to-draw-an-owl">how to draw an owl</a>
 </aside>
@@ -3035,7 +3063,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-21 10:07:28 AEDT</p>
+<p>2022-01-21 10:26:02 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
