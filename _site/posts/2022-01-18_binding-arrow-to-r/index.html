@@ -3006,13 +3006,12 @@ Figure 10: Eliot and Margo applaud your success. They are the best characters, a
 <aside>
 In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/how-to-draw-an-owl">how to draw an owl</a>
 </aside>
-<p>The story I’ve told in this post is a little incomplete. I’ve shown you how to write a function like <code>arrowish_leap_year()</code> that can slot into a <strong>dplyr</strong> pipeline and operate on an Arrow data structure. What I haven’t explained is how the <strong>arrow</strong> package knows to use <code>arrowish_leap_year()</code> instead of <code>lubridate::leap_year()</code>. Internal to the <strong>arrow</strong> package is a line of code that is (essentially) equivalent to this:</p>
-<p>I haven’t said anything about the precise workings of <code>register_binding()</code>, in part because that’s one of the mysteries I’m currently unpacking while I dig into the code base.</p>
-<p>But that’s not the only thing I’ve left unsaid. There’s a lot of practical details I’ve not mentioned. I haven’t talked about unit tests, for example. I haven’t talked about the process of getting my code merged into the Arrow repository. I’ll talk more about some of these in the follow up post on <a href="https://blog.djnavarro.net/contributing-to-arrow">“My first contribution to Apache Arrow”</a>.</p>
+<p>The story I’ve told in this post is a little incomplete. I’ve shown you how to write a function like <code>arrowish_leap_year()</code> that can slot into a <strong>dplyr</strong> pipeline and operate on an Arrow data structure. But I haven’t said anything about the precise workings of how <code>register_binding()</code> works, in part because the details of the metaprogramming magic is one of the mysteries I’m currently unpacking while I dig into the code base.</p>
+<p>But that’s not the only thing I’ve left unsaid. I haven’t talked about unit tests, for example. I haven’t talked about the social/technical process of getting code merged into the Arrow repository. If you’ve made it to the end of this post and are curious about joining the Arrow developer community, these are things you need to know about. I’ll talk more about some of these in the follow up post on <a href="https://blog.djnavarro.net/contributing-to-arrow">“My first contribution to Apache Arrow”</a>.</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-20 14:46:36 AEDT</p>
+<p>2022-01-20 14:51:29 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
