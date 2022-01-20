@@ -1498,13 +1498,18 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <ul>
 <li><a href="#why-am-i-writing-this">Why am I writing this?</a></li>
 <li><a href="#primer-what-is-arrow">Primer: What is Arrow?</a></li>
-<li><a href="#the-arrow-c-compute-kernel">The Arrow C++ compute kernel</a>
+<li><a href="#computing-with-arrow-from-r">Computing with Arrow from R</a>
 <ul>
 <li><a href="#using-dplyr-bindings">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></a></li>
 <li><a href="#using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</a></li>
+<li><a href="#a-weird-digression">A weird digression</a></li>
 <li><a href="#using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></a></li>
 </ul></li>
-<li><a href="#writing-functions-that-play-nicely-with-arrow-pipes">Writing functions that play nicely with arrow pipes</a></li>
+<li><a href="#putting-it-together">Putting it together</a>
+<ul>
+<li><a href="#using-arrow-expressions">Using Arrow expressions</a></li>
+<li><a href="#arrowish-functions">Writing custom functions for Arrow pipelines</a></li>
+</ul></li>
 <li><a href="#epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</a></li>
 </ul>
 </nav>
@@ -1520,6 +1525,14 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<img src="https://media.giphy.com/media/3o7ZePnuDJ1EiNsK3u/giphy.gif" alt="Eliot. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-3o7ZePnuDJ1EiNsK3u), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 1: Eliot. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-3o7ZePnuDJ1EiNsK3u">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
 <p>So I have a new job.</p>
 <p>In my previous job as an academic, a large part of my work – my favourite part, if I’m honest – involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um … <em>[checks job description]</em> … creating open access resources to help people use modern open source tools for data analysis. Well okay then!</p>
 <p>I’d better get on that, I suppose?</p>
@@ -1529,10 +1542,10 @@ Throughout this post I’ll use boldface to refer to specific R packages like <s
 </aside>
 <p>This post is the story of how I learned this sorcery.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
 <img src="https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif" alt="Two key moments in &quot;The Magicians&quot; when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via [giphy](https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 1: Two key moments in “The Magicians” when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via <a href="https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 2: Two key moments in “The Magicians” when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via <a href="https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
@@ -1564,15 +1577,15 @@ Everyone deserves a <a href="https://raw.githubusercontent.com/allisonhorst/stat
 <p>So yeah. I’m not usually a person prone to earnestness but this is something that matters to me. It’s time for me to pay it forward, so to speak. I’d like to take what I’ve learned and make that knowledge more widely accessible.</p>
 <p>Before diving in, I should say something about the “assumed knowledge” for this post. I’m assuming that the reader is comfortable in R, knows how to use <strong>dplyr</strong> for data manipulation, and has some vague familiarity with what Apache Arrow is all about. If you need a refresher on R and <strong>dplyr</strong>, <a href="https://r4ds.had.co.nz/">“R for data science”</a> is always a fabulous resource! On the Arrow side, I’ll try my best to provide all the context you need in this post, but if you want a little more background on Arrow I wrote a post on <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">“Getting started with Apache Arrow”</a> that starts at the very beginning and discusses a lot of the basics.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
 <img src="https://media.giphy.com/media/26gswa3eMvprpfjSE/giphy.gif" alt="The Great God Ember. Capricious, chaotic, and utterly unreliable unless what you're looking for is a whimsical death. Pretty much the opposite of what we'd hope for in a healthy open source community really! He is, however, a very entertaining character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-fillory-26gswa3eMvprpfjSE), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 2: The Great God Ember. Capricious, chaotic, and utterly unreliable unless what you’re looking for is a whimsical death. Pretty much the opposite of what we’d hope for in a healthy open source community really! He is, however, a very entertaining character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-fillory-26gswa3eMvprpfjSE">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 3: The Great God Ember. Capricious, chaotic, and utterly unreliable unless what you’re looking for is a whimsical death. Pretty much the opposite of what we’d hope for in a healthy open source community really! He is, however, a very entertaining character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-fillory-26gswa3eMvprpfjSE">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
 <h2 id="primer-what-is-arrow">Primer: What is Arrow?</h2>
-<h2 id="the-arrow-c-compute-kernel">The Arrow C++ compute kernel</h2>
+<h2 id="computing-with-arrow-from-r">Computing with Arrow from R</h2>
 <p>A fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement the Apache Arrow standard directly. In fact, it tries very hard not to do any of the heavy lifting itself. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Although the long term goal is to make the integration so seamless that you can use the <strong>arrow</strong> R package without ever <em>needing</em> to understand the C++ library, my experience has been that most people <em>want</em> to know something about what’s happening under the hood. It can be unsettling to find yourself programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
 <p>Let’s start with the C++ library. The role of <strong>libarrow</strong> is to do all the heavy computational work. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache “Inter-Process Communication” (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a <em>compute kernel</em> that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.</p>
 <p>What about the R package? The role of <strong>arrow</strong> is to expose the functionality of <strong>libarrow</strong> to the R user, to make that functionality feel “natural” in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python). In order to give you the flexibility you need, the <strong>arrow</strong> package allows you to interact with <strong>libarrow</strong> at three different levels of abstraction:</p>
@@ -1592,10 +1605,10 @@ Figure 2: The Great God Ember. Capricious, chaotic, and utterly unreliable unles
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
 <img src="https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.gif" alt="Penny Adiyodi in the Neitherlands, diving head first into a fountain taking him to a new and magical world. Image via [giphy](https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 3: Penny Adiyodi in the Neitherlands, diving head first into a fountain taking him to a new and magical world. Image via <a href="https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain taking him to a new and magical world. Image via <a href="https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
@@ -1757,10 +1770,10 @@ pulling data into R</code></pre>
 </div>
 <p>In this case, the warning is telling you that the computations weren’t actually performed in Arrow: realising that it doesn’t know how to interpret <code>leap_year()</code>, the <strong>arrow</strong> package has tried to “fail gracefully” and pulled everything back into R where the <code>leap_year()</code> function <em>is</em> defined.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
 <img src="https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.gif" alt="Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via [giphy](https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via <a href="https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via <a href="https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
@@ -1841,17 +1854,17 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 10 1968-04-01  544  200208    12.3     4.6     2709   456
 # … with 564 more rows</code></pre>
 </div>
-<p>Notice there’s no warning message here. That’s because the computations were done in Arrow and the data have not been pulled into R.</p>
+<p>Notice there’s no warning message here? That’s because the computations were done in Arrow and the data have not been pulled into R.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
 <img src="https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif" alt="Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 5: Okay fine, there’s no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via <a href="https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 6: Okay fine, there’s no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via <a href="https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
-<h3 id="using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></h3>
-<p>Okay, here’s a puzzle:</p>
+<h3 id="a-weird-digression">A weird digression</h3>
+<p>Okay, here’s a puzzle. In the previous section I used the <code>arrow_days_between()</code> function in the middle of a <strong>dplyr</strong> pipe to work around a current limitation in <strong>arrow</strong>. What happens if I try to call this function in another context?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>date1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span>
@@ -1862,8 +1875,43 @@ Figure 5: Okay fine, there’s no connection between slightly-evil-Julia burning
 </div>
 <pre><code>Error in arrow_days_between(date1, date2): could not find function &quot;arrow_days_between&quot;</code></pre>
 </div>
-<p>There is no R function called <code>arrow_days_between()</code>, yet I was somehow able to “call” it in the previous example? The answer here is that the <strong>arrow</strong> package is doing a bit of metaprogramming magic. What’s actually happening here is that when you use it in the <strong>dplyr</strong> context, <strong>arrow</strong> will intercepts the call to <code>arrow_days_between()</code> and quietly pass it to <strong>libarrow</strong> for you.</p>
-<p>If you <em>really</em> want to do it directly, you can use <code>call_function()</code> from the <strong>arrow</strong> package. This provides you with direct access to a <strong>libarrow</strong> function. It won’t take care of the low-level communication between R and Arrow though: the <strong>libarrow</strong> functions expect to receive Arrow-native data structures as input. That’s the price you pay for low-level access: you have to do all the low-level work!</p>
+<p>It turns out there is no R function called <code>arrow_days_between()</code>. This is … surprising, to say the least. I mean, it really does look like I used this function in the last section, doesn’t it? How does this work?</p>
+<p>The answer to this requires a slightly deeper understanding of what the <strong>dplyr</strong> bindings in <strong>arrow</strong> do, and it’s kind of a two part answer.</p>
+<p>Part one:</p>
+<p>Let’s consider the <code>mutate()</code> function. <strong>dplyr</strong> defines <code>mutate()</code> as an S3 generic function, which allows it to display “polymorphism”: it behaves differently depending on what kind of object is passed to to the generic. When you pass a data frame to <code>mutate()</code>, the call is “dispatched” to the <code>mutate.arrow_dplyr_query()</code> methods supplied by (but not exported by) <strong>dplyr</strong>. The <strong>arrow</strong> package builds on this by supplying methods that apply for Arrow objects. Specifically, there are internal functions <code>mutate.ArrowTabular()</code>, <code>mutate.Dataset()</code>, and <code>mutate.arrow_dplyr_query()</code> that are used to provide <code>mutate()</code> functionality for Arrow data sets. In other words, the “top level” <strong>dplyr</strong> functions in <strong>arrow</strong> are S3 methods, and method dispatch is the mechanism that does the work.</p>
+<p>Part two:</p>
+<p>Now let’s consider the <code>leap_year()</code> function that my contribution focused on. Not only is this not a generic function, it’s not even a <strong>dplyr</strong> function. It’s a regular function in the <strong>lubridate</strong> package. So how is it possible for <strong>arrow</strong> to mimic the behaviour of <code>lubridate::leap_year()</code> without messing up <strong>lubridate</strong>? This is where the <em>dplyr</em> binding part comes in. Let’s imagine that I’d written an actual function called <code>arrowish_leap_year()</code> (I’ll show you how to write your own <a href="#arrowish-functions">“arrowish” functions</a> later in the post) that performs leap year calculations for Arrow data. If I’d done this inside the <strong>arrow</strong> package<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> then I’d include a line like this to register a binding:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>register_binding</span><span class='op'>(</span><span class='st'>"leap_year"</span>, <span class='va'>arrowish_leap_year</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Once the binding has been registered, whenever <code>leap_year()</code> is encountered within one of the <strong>arrow</strong>-supplied <strong>dplyr</strong> functions, R will substitute my <code>arrowish_leap_year()</code> function in place of the <code>lubridate::leap_year()</code> function that would normally be called. This is only possible because R has extremely sophisticated <a href="https://adv-r.hadley.nz/metaprogramming.html">metaprogramming</a> tools: you (the developer) can write functions that “capture” the code that the user input, and if necessary modify that code before R evaluates it. This is a very powerful tool for constructing domain-specific languages within R. The tidyverse uses it extensively, and the <strong>arrow</strong> package does too. The <strong>dplyr</strong> bindings inside <strong>arrow</strong> use metaprogramming tricks to modify the user input in such a way that – in this example – the user input is interpreted as if the user had called <code>arrowish_leap_year()</code> rather than <code>leap_year()</code>.</p>
+<p>Taken together, these two pieces give us the answer to our puzzle. The call to <code>arrow_days_between()</code> works in my original example <em>because it exists in the context of an</em> <strong>arrow</strong> <em>supplied <code>mutate()</code> function</em>. Internally, <strong>arrow</strong> uses metaprogramming magic to ensure that <code>arrow_days_between()</code> is reinterpreted as a call to the <strong>libarrow</strong> <code>days_between()</code> function. But that metaprogramming magic doesn’t exist anywhere else: if you try to call <code>arrow_days_between()</code> from the R console, you get an error.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<img src="https://media.giphy.com/media/3o7btOKJ72mkcrsCNW/giphy.gif" alt="Metaprogramming is about as irritating as Imagine Dragons. Image via [giphy](https://giphy.com/gifs/syfy-3o7btOKJ72mkcrsCNW), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 7: Metaprogramming is about as irritating as Imagine Dragons. Image via <a href="https://giphy.com/gifs/syfy-3o7btOKJ72mkcrsCNW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<h3 id="using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></h3>
+<p>Yeah okay, that’s nice and all, but what if you want to access one of the <strong>libarrow</strong> functions directly, without relying on the metaprogramming magic that <strong>arrow</strong> uses? In everyday data analysis you probably wouldn’t need to do this, but it’s a use case that arises fairly often when you want to write your own functions that can interact with Arrow.</p>
+<p>So let’s strip back another level of abstraction!</p>
+<p>Should you ever find yourself wanting to call <strong>libarrow</strong> compute functions directly from R, <code>call_function()</code> is your best friend. It exposes the <strong>libarrow</strong> functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That’s the price you pay for low-level access: you have to do all the low-level work! Here’s what I mean: this code doesn’t work because <code>date1</code> and <code>date2</code> are R-native Date objects:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>date1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span>
+<span class='va'>date2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2022-01-18"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>date1</span>, <span class='va'>date2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error: Argument 1 is of class Date but it must be one of &quot;Array&quot;, &quot;ChunkedArray&quot;, &quot;RecordBatch&quot;, &quot;Table&quot;, or &quot;Scalar&quot;</code></pre>
+</div>
+<p>In order for the <strong>libarrow</strong> functions to work, you have to make sure that the input values exist in Arrow. In this case it’s pretty easy: all we need to do is create Arrow Scalars for each date. Here’s how we do that:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrow_date1</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>date1</span><span class='op'>)</span>
@@ -1875,7 +1923,7 @@ Figure 5: Okay fine, there’s no connection between slightly-evil-Julia burning
 <pre><code>Scalar
 1967-01-01</code></pre>
 </div>
-<p>Now you can do this:</p>
+<p>The <code>arrow_date1</code> and <code>arrow_date2</code> variables are now pointers to data structures in Arrow, and are suitable for passing to the <strong>libarrow</strong> <code>days_between()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>arrow_date1</span>, <span class='va'>arrow_date2</span><span class='op'>)</span>
@@ -1885,14 +1933,24 @@ Figure 5: Okay fine, there’s no connection between slightly-evil-Julia burning
 20106</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
 <img src="https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.gif" alt="Kady was an under-used character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 6: Kady was an under-used character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 8: Kady was an under-used character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
-<h2 id="writing-functions-that-play-nicely-with-arrow-pipes">Writing functions that play nicely with arrow pipes</h2>
+<h2 id="putting-it-together">Putting it together</h2>
+<h3 id="using-arrow-expressions">Using Arrow expressions</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
+<img src="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif" alt="Okay look, I'll level with you. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 9: Okay look, I’ll level with you. This post is getting very long and I don’t know about you but I need a short break to appreciate the beautiful people. Image via <a href="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<h3 id="arrowish-functions">Writing custom functions for Arrow pipelines</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowish_leap_year</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span> <span class='op'>{</span>
@@ -1951,27 +2009,24 @@ data into R</code></pre>
 # … with 564 more rows</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
 <img src="https://media.giphy.com/media/l2Sq18e02qsxjKfBK/giphy.gif" alt="Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via [giphy](https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 7: Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via <a href="https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 10: Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via <a href="https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
 <h2 id="epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</h2>
+<aside>
+In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/how-to-draw-an-owl">how to draw an owl</a>
+</aside>
 <p>The story I’ve told in this post is a little incomplete. I’ve shown you how to write a function like <code>arrowish_leap_year()</code> that can slot into a <strong>dplyr</strong> pipeline and operate on an Arrow data structure. What I haven’t explained is how the <strong>arrow</strong> package knows to use <code>arrowish_leap_year()</code> instead of <code>lubridate::leap_year()</code>. Internal to the <strong>arrow</strong> package is a line of code that is (essentially) equivalent to this:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>register_binding</span><span class='op'>(</span><span class='st'>"leap_year"</span>, <span class='va'>arrowish_leap_year</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
 <p>I haven’t said anything about the precise workings of <code>register_binding()</code>, in part because that’s one of the mysteries I’m currently unpacking while I dig into the code base.</p>
 <p>But that’s not the only thing I’ve left unsaid. There’s a lot of practical details I’ve not mentioned. I haven’t talked about unit tests, for example. I haven’t talked about the process of getting my code merged into the Arrow repository. I’ll talk more about some of these in the follow up post on <a href="https://blog.djnavarro.net/contributing-to-arrow">“My first contribution to Apache Arrow”</a>.</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-20 12:49:07 AEDT</p>
+<p>2022-01-20 14:46:36 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
@@ -1979,7 +2034,13 @@ Figure 7: Eliot and Margo applaud your success. They are the best characters, an
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>My actual code didn’t bother to name my function. It’s just an anonymous function passed to <code>register_binding()</code>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
