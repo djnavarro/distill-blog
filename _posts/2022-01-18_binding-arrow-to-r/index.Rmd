@@ -221,8 +221,20 @@ The nice thing for R users is that all of this feels like regular R code. Althou
 
 In our ideal world, the **dplyr** interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
 
-Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and the **arrow** package is no exception. The current version of the package (v6.0.1) doesn't mirror all the functionality of **dplyr** and the support for other tidyverse packages like **lubridate** and **stringr** is very much a work in progress!
+Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and the **arrow** package is no exception. The current version of the package (v6.0.1) doesn't mirror all the functionality of **dplyr** and the support for other tidyverse packages like **lubridate** and **stringr** is very much a work in progress! For example, the current release doesn't support the `leap_year()` function in **lubridate** -- not surprising, since that's exactly the thing I was trying to fix in my first contribution -- and whenever it encounters a function it doesn't know how to handle, **arrow** will throw a warning, pull the data into R and try to complete the query using native R code. Here's what that looks like:
 
+```{r}
+arrownomics %>% 
+  mutate(year = year(date)) %>% 
+  group_by(year) %>% 
+  summarise(
+    uempmed = mean(uempmed),
+    leap = leap_year(year)
+  ) %>% 
+  collect()
+```
+
+In this case, the warning is telling you that the computations weren't actually performed in Arrow: realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R where the `leap_year()` function *is* defined.
 
 ```{r}
 #| echo = FALSE,
@@ -234,26 +246,26 @@ knitr::include_graphics("https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.
 
 ### Using the `arrow_*()` functions in **dplyr** code {#using-arrow-functions}
 
-Okay, so let's dig a little deeper. 
+Okay, let's dig a little deeper. 
 
-But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the **libarrow** functionality directly. If that's you, read on!
-
-The **dplyr** back end is the way users would typically use **arrow**, but there's nothing stopping you from calling the C++ compute functions directly. The `list_compute_functions()` function tells you what they are:
+In the last section I talked about the **dplyr** bindings that **arrow** provides, which are designed to mimic their native R equivalents as seamlessly as possible. These bindings work by rewriting the R functions that they mimic using only the C++ compute functions supplied by **libarrow**. That's the way you'd usually interact with Arrow in R, but you can access those compute functions more directly. To see what compute functions are exposed by the C++ **libarrow** library, you can call `list_compute_functions()` from R:
 
 ```{r, out.lines = 10}
 list_compute_functions()
 ```
 
-I've truncated the output in this post. The real output continues for quite a while: there are currently `r length(list_compute_functions())` **libarrow** compute functions that **arrow** exposes to the R user, most of which low level functions that the R package relies upon.
+The actual output continues for quite a while: there are currently `r length(list_compute_functions())` compute functions, most of which are low level functions needed to perform basic computational operations. 
 
-There are two different ways that an R user can call the **libarrow** compute functions. First, imagine you're writing **dplyr** code to work with datetime data in a Table object. When working with native R objects, you can do this:
+There are two different ways you can call these compute functions yourself, one that provides a little [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar) to make your life a little easier, and another that calls the functions pretty directly. I'll talk about the first of these in this section.  
+
+Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrownomics`. If you were working with native R data like `economics`, you can do something like this:
 
 ```{r}
 economics %>% 
   mutate(days = date - as.Date("1967-01-01"))
 ```
 
-Unfortunately, this won't work in **arrow** right now. I chose this example deliberately because temporal arithmetic is a work in progress right now. In the not-too-distant future this will work seamlessly, but right now it doesn't. If you try it right now, you get this error:
+Here I've created a new `days` column that counts the number of days that have elapsed between the `date` variable and January 1st, 1967. There are a lot of data analysis situations in which you might want to do exactly this, but right now you can't actually do this using the **arrow** dplyr bindings because temporal arithmetic is a work in progress (I'm making small contributions to that myself, actually!). In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn't. If you try it right now, you get this error:
 
 ```{r, error=TRUE}
 arrownomics %>% 
@@ -261,14 +273,23 @@ arrownomics %>%
   collect()
 ```
 
-This is very sad, but as it happens **libarrow** does have a `days_between()` function:
+Right now, there are no general purpose arithmetic operations in **arrow** that allow you to subtract one date from another. However, because I chose this example rather carefully to find an edge case where the R package is missing some **libarrow** functionality, it turns out there is actually a `days_between()` function in **libarrow** that we could use to solve this problem, and it's not too hard to use it. If you want to call one of the **libarrow** functions inside your **dplyr** pipeline, all you have to do is add an `arrow_` prefix to the function name. For example, the C++ `days_between()` function becomes `arrow_days_between()` when called within the **arrow** **dplyr** pipeline:
 
 ```{r}
 arrownomics %>% 
   mutate(days = arrow_days_between(as.Date("1967-01-01"), date)) %>% 
   collect()
 ```
-Notice there's no warning message here? That's because the computations were done in Arrow, using the **libarrow** `days_between()` function.
+
+Notice there's no warning message here. That's because the computations were done in Arrow and the data have not been pulled into R. 
+
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif")
+```
 
 
 ### Accessing **libarrow** with `call_function()` {#using-call-function}
@@ -301,6 +322,14 @@ call_function("days_between", arrow_date1, arrow_date2)
 ```
 
 
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Kady was an under-used character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.gif")
+```
+
+
 ## Writing functions that play nicely with arrow pipes
 
 ```{r}
@@ -324,6 +353,15 @@ Using our function works:
 arrownomics %>% 
   mutate(leap = arrowish_leap_year(date)) %>% 
   collect()
+```
+
+
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via [giphy](https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/l2Sq18e02qsxjKfBK/giphy.gif")
 ```
 
 

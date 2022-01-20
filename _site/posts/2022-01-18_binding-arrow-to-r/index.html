@@ -2710,9 +2710,40 @@ See $metadata for additional Schema metadata</code></pre>
 </div>
 <p>The nice thing for R users is that all of this feels like regular R code. Although <strong>libarrow</strong> is doing all the serious computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. The <strong>dplyr</strong> interface provided by the <strong>arrow</strong> package works seamlessly and invisibly.</p>
 <p>In our ideal world, the <strong>dplyr</strong> interface is all you would ever need to use. Internally, the <strong>arrow</strong> package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using <strong>libarrow</strong>. You the user would never need to think about what’s happening under the hood.</p>
-<p>Real life, however, is filled with <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">leaky abstractions</a>, and the <strong>arrow</strong> package is no exception. The current version of the package (v6.0.1) doesn’t mirror all the functionality of <strong>dplyr</strong> and the support for other tidyverse packages like <strong>lubridate</strong> and <strong>stringr</strong> is very much a work in progress!</p>
+<p>Real life, however, is filled with <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">leaky abstractions</a>, and the <strong>arrow</strong> package is no exception. The current version of the package (v6.0.1) doesn’t mirror all the functionality of <strong>dplyr</strong> and the support for other tidyverse packages like <strong>lubridate</strong> and <strong>stringr</strong> is very much a work in progress! For example, the current release doesn’t support the <code>leap_year()</code> function in <strong>lubridate</strong> – not surprising, since that’s exactly the thing I was trying to fix in my first contribution – and whenever it encounters a function it doesn’t know how to handle, <strong>arrow</strong> will throw a warning, pull the data into R and try to complete the query using native R code. Here’s what that looks like:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
+    uempmed <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>uempmed</span><span class='op'>)</span>,
+    leap <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/leap_year.html'>leap_year</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Warning: Error : Expression leap_year(year) not supported in Arrow;
+pulling data into R</code></pre>
+<pre><code># A tibble: 574 × 3
+# Groups:   year [49]
+    year uempmed leap 
+   &lt;int&gt;   &lt;dbl&gt; &lt;lgl&gt;
+ 1  1967     4.7 FALSE
+ 2  1967     4.7 FALSE
+ 3  1967     4.7 FALSE
+ 4  1967     4.7 FALSE
+ 5  1967     4.7 FALSE
+ 6  1967     4.7 FALSE
+ 7  1968     4.5 TRUE 
+ 8  1968     4.5 TRUE 
+ 9  1968     4.5 TRUE 
+10  1968     4.5 TRUE 
+# … with 564 more rows</code></pre>
+</div>
+<p>In this case, the warning is telling you that the computations weren’t actually performed in Arrow: realising that it doesn’t know how to interpret <code>leap_year()</code>, the <strong>arrow</strong> package has tried to “fail gracefully” and pulled everything back into R where the <code>leap_year()</code> function <em>is</em> defined.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
 <img src="https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.gif" alt="Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via [giphy](https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via <a href="https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -2720,9 +2751,8 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </div>
 </div>
 <h3 id="using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</h3>
-<p>Okay, so let’s dig a little deeper.</p>
-<p>But maybe you want to know more about what is going on. Maybe you hope to make a contribution to Arrow yourself. Maybe you need to access some of the <strong>libarrow</strong> functionality directly. If that’s you, read on!</p>
-<p>The <strong>dplyr</strong> back end is the way users would typically use <strong>arrow</strong>, but there’s nothing stopping you from calling the C++ compute functions directly. The <code>list_compute_functions()</code> function tells you what they are:</p>
+<p>Okay, let’s dig a little deeper.</p>
+<p>In the last section I talked about the <strong>dplyr</strong> bindings that <strong>arrow</strong> provides, which are designed to mimic their native R equivalents as seamlessly as possible. These bindings work by rewriting the R functions that they mimic using only the C++ compute functions supplied by <strong>libarrow</strong>. That’s the way you’d usually interact with Arrow in R, but you can access those compute functions more directly. To see what compute functions are exposed by the C++ <strong>libarrow</strong> library, you can call <code>list_compute_functions()</code> from R:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/list_compute_functions.html'>list_compute_functions</a></span><span class='op'>(</span><span class='op'>)</span>
@@ -2740,8 +2770,9 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
  [10] &quot;and_not&quot;                        
 ....</code></pre>
 </div>
-<p>I’ve truncated the output in this post. The real output continues for quite a while: there are currently 221 <strong>libarrow</strong> compute functions that <strong>arrow</strong> exposes to the R user, most of which low level functions that the R package relies upon.</p>
-<p>There are two different ways that an R user can call the <strong>libarrow</strong> compute functions. First, imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object. When working with native R objects, you can do this:</p>
+<p>The actual output continues for quite a while: there are currently 221 compute functions, most of which are low level functions needed to perform basic computational operations.</p>
+<p>There are two different ways you can call these compute functions yourself, one that provides a little <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a> to make your life a little easier, and another that calls the functions pretty directly. I’ll talk about the first of these in this section.</p>
+<p>Let’s imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object like <code>arrownomics</code>. If you were working with native R data like <code>economics</code>, you can do something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>economics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2763,7 +2794,7 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 10 1968-04-01  544  200208    12.3     4.6     2709 456 days
 # … with 564 more rows</code></pre>
 </div>
-<p>Unfortunately, this won’t work in <strong>arrow</strong> right now. I chose this example deliberately because temporal arithmetic is a work in progress right now. In the not-too-distant future this will work seamlessly, but right now it doesn’t. If you try it right now, you get this error:</p>
+<p>Here I’ve created a new <code>days</code> column that counts the number of days that have elapsed between the <code>date</code> variable and January 1st, 1967. There are a lot of data analysis situations in which you might want to do exactly this, but right now you can’t actually do this using the <strong>arrow</strong> dplyr bindings because temporal arithmetic is a work in progress (I’m making small contributions to that myself, actually!). In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn’t. If you try it right now, you get this error:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2773,7 +2804,7 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </div>
 <pre><code>Error: NotImplemented: Function subtract_checked has no kernel matching input types (array[date32[day]], scalar[date32[day]])</code></pre>
 </div>
-<p>This is very sad, but as it happens <strong>libarrow</strong> does have a <code>days_between()</code> function:</p>
+<p>Right now, there are no general purpose arithmetic operations in <strong>arrow</strong> that allow you to subtract one date from another. However, because I chose this example rather carefully to find an edge case where the R package is missing some <strong>libarrow</strong> functionality, it turns out there is actually a <code>days_between()</code> function in <strong>libarrow</strong> that we could use to solve this problem, and it’s not too hard to use it. If you want to call one of the <strong>libarrow</strong> functions inside your <strong>dplyr</strong> pipeline, all you have to do is add an <code>arrow_</code> prefix to the function name. For example, the C++ <code>days_between()</code> function becomes <code>arrow_days_between()</code> when called within the <strong>arrow</strong> <strong>dplyr</strong> pipeline:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrownomics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2796,7 +2827,15 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 10 1968-04-01  544  200208    12.3     4.6     2709   456
 # … with 564 more rows</code></pre>
 </div>
-<p>Notice there’s no warning message here? That’s because the computations were done in Arrow, using the <strong>libarrow</strong> <code>days_between()</code> function.</p>
+<p>Notice there’s no warning message here. That’s because the computations were done in Arrow and the data have not been pulled into R.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<img src="https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif" alt="Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 5: Okay fine, there’s no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via <a href="https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
 <h3 id="using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></h3>
 <p>Okay, here’s a puzzle:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2830,6 +2869,14 @@ Figure 4: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </div>
 <pre><code>Scalar
 20106</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<img src="https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.gif" alt="Kady was an under-used character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 6: Kady was an under-used character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
 </div>
 <h2 id="writing-functions-that-play-nicely-with-arrow-pipes">Writing functions that play nicely with arrow pipes</h2>
 <div class="layout-chunk" data-layout="l-body">
@@ -2889,6 +2936,14 @@ data into R</code></pre>
 10 1968-04-01  544  200208    12.3     4.6     2709 TRUE 
 # … with 564 more rows</code></pre>
 </div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
+<img src="https://media.giphy.com/media/l2Sq18e02qsxjKfBK/giphy.gif" alt="Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via [giphy](https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 7: Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via <a href="https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
 <h2 id="epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</h2>
 <p>The story I’ve told in this post is a little incomplete. I’ve shown you how to write a function like <code>arrowish_leap_year()</code> that can slot into a <strong>dplyr</strong> pipeline and operate on an Arrow data structure. What I haven’t explained is how the <strong>arrow</strong> package knows to use <code>arrowish_leap_year()</code> instead of <code>lubridate::leap_year()</code>. Internal to the <strong>arrow</strong> package is a line of code that is (essentially) equivalent to this:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2902,7 +2957,7 @@ data into R</code></pre>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-20 11:40:49 AEDT</p>
+<p>2022-01-20 12:49:07 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
@@ -2910,7 +2965,7 @@ data into R</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
