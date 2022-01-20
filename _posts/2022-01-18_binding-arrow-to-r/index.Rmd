@@ -160,7 +160,6 @@ In the rest of this section I'll talk about these three levels of abstraction. L
 library(tibble)
 library(dplyr)
 library(lubridate)
-library(readr)
 library(arrow)
 ```
 
@@ -177,13 +176,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.g
 When I wrote my [Getting started with Apache Arrow](https://blog.djnavarro.net/starting-apache-arrow-in-r) post, I concluded with an illustration of how you can write **dplyr** code that will work smoothly in R even when the data themselves are stored in Arrow. Here's a little recap of how that works, using a tiny daya set I pulled from [The Magicians Wikipedia page](https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)). Here's what that data set looks like:
 
 ```{r}
-economics <- ggplot2::economics
-arrownomics <- arrow_table(economics)
-
-```
-
-```{r}
-magicians <- read_csv("magicians.csv")
+magicians <- read_csv_arrow("magicians.csv", as_data_frame = TRUE)
 magicians
 ```
 
@@ -191,41 +184,47 @@ Let's suppose I wanted to calculate the average unemployment rate for every year
 
 ```{r}
 magicians %>% 
+  mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
     viewers = mean(viewers),
-    rating = mean(rating)
+    rating = mean(rating), 
+    year = max(year)
   )
 ```
 
-All of these computations take place within R. The `economics` data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I'll create an `arrowmagics` variable using the `arrow_read_csv()` function:
+All of these computations take place within R. The `magicians` data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I'll create an `arrowmagics` variable using the `arrow_read_csv()` function:
 
 ```{r}
 arrowmagics <- read_csv_arrow("magicians.csv", as_data_frame = FALSE)
 arrowmagics
 ```
 
-When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrownomics` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The **arrow** package allows you to design **dplyr** pipelines using only this pointer object:
+When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrowmagics` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The **arrow** package allows you to design **dplyr** pipelines using only this pointer object:
 
 ```{r}
 arrowmagics %>% 
+  mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
     viewers = mean(viewers),
-    rating = mean(rating)
+    rating = mean(rating), 
+    year = max(year)
   )
 ```
 
-When the input is `arrownomics`, the effect of the **dplyr** code is construct a query that can be passed to **libarrow** to be evaluated. This works because the **arrow** package supplies methods for `mutate()`, `group_by()`, and `summarise()` that are called whenever the input data is and Arrow Table. 
+When the input is `arrowmagics`, the effect of the **dplyr** code is construct a query that can be passed to **libarrow** to be evaluated. This works because the **arrow** package supplies methods for `mutate()`, `group_by()`, and `summarise()` that are called whenever the input data is and Arrow Table. 
 
 It's important to realise that at this point, no actual computations have been performed on the Arrow data. If you want the query to be evaluated using the data, you need to use the `compute()` or `collect()` functions at the end of the pipeline. These two functions behave slightly differently. The `compute()` function runs the query, but leaves the resulting data inside Arrow. 
 
 ```{r}
 arrowmagics %>% 
+  mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
     viewers = mean(viewers),
-    rating = mean(rating)
+    rating = mean(rating), 
+    year = max(year)
   ) %>% 
   compute()
 ```
@@ -234,10 +233,12 @@ This can be useful when you're creating an intermediate data set that you want t
 
 ```{r}
 arrowmagics %>% 
+  mutate(year = year(air_date)) %>% 
   group_by(season) %>% 
   summarise(
     viewers = mean(viewers),
-    rating = mean(rating)
+    rating = mean(rating), 
+    year = max(year)
   ) %>% 
   collect()
 ```
@@ -250,27 +251,12 @@ Real life, however, is filled with [leaky abstractions](https://www.joelonsoftwa
 
 ```{r}
 arrowmagics %>% 
-  mutate(year = year(air_date)) %>% 
-  group_by(season) %>% 
-  summarise(
-    year = max(year)
+  mutate(
+    year = year(air_date), 
+    leap = leap_year(air_date)
   ) %>% 
   collect()
 ```
-
-That works fine, but this doesn't!
-
-```{r}
-arrowmagics %>% 
-  mutate(year = year(air_date)) %>% 
-  group_by(season) %>% 
-  summarise(
-    year = max(year),
-    leap = leap_year(year)
-  ) %>% 
-  collect()
-```
-
 
 In this case, the warning is telling you that the computations weren't actually performed in Arrow: realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R where the `leap_year()` function *is* defined.
 
@@ -296,7 +282,7 @@ The actual output continues for quite a while: there are currently `r length(lis
 
 There are two different ways you can call these compute functions yourself, one that provides a little [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar) to make your life a little easier, and another that calls the functions pretty directly. I'll talk about the first of these in this section.  
 
-Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrownomics`. If you were working with native R data like `economics`, you can do something like this:
+Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrowmagics`. If you were working with native R data like `magicians`, you can do something like this:
 
 ```{r}
 magicians %>% 

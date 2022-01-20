@@ -1600,7 +1600,6 @@ Figure 3: The Great God Ember. Capricious, chaotic, and utterly unreliable unles
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lubridate.tidyverse.org'>lubridate</a></span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readr.tidyverse.org'>readr</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
 </code></pre>
 </div>
@@ -1617,20 +1616,13 @@ Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain t
 <p>When I wrote my <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">Getting started with Apache Arrow</a> post, I concluded with an illustration of how you can write <strong>dplyr</strong> code that will work smoothly in R even when the data themselves are stored in Arrow. Here’s a little recap of how that works, using a tiny daya set I pulled from <a href="https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)">The Magicians Wikipedia page</a>. Here’s what that data set looks like:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>economics</span> <span class='op'>&lt;-</span> <span class='fu'>ggplot2</span><span class='fu'>::</span><span class='va'><a href='https://ggplot2.tidyverse.org/reference/economics.html'>economics</a></span>
-<span class='va'>arrownomics</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>economics</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span>, as_data_frame <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='va'>magicians</span>
 </code></pre>
 </div>
 <pre><code># A tibble: 65 × 6
    season episode title                      air_date   rating viewers
-    &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                      &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                      &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt;
  1      1       1 Unauthorized Magic         2015-12-16    0.2    0.92
  2      1       2 The Source of Magic        2016-01-25    0.4    1.11
  3      1       3 Consequences of Advanced … 2016-02-01    0.4    0.9 
@@ -1647,23 +1639,25 @@ Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain t
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
     viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
-    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
   <span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code># A tibble: 5 × 3
-  season viewers rating
-   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-1      1   0.776  0.308
-2      2   0.788  0.323
-3      3   0.696  0.269
-4      4   0.541  0.2  
-5      5   0.353  0.111</code></pre>
+<pre><code># A tibble: 5 × 4
+  season viewers rating  year
+   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1      1   0.776  0.308  2016
+2      2   0.788  0.323  2017
+3      3   0.696  0.269  2018
+4      4   0.541  0.2    2019
+5      5   0.353  0.111  2020</code></pre>
 </div>
-<p>All of these computations take place within R. The <code>economics</code> data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I’ll create an <code>arrowmagics</code> variable using the <code>arrow_read_csv()</code> function:</p>
+<p>All of these computations take place within R. The <code>magicians</code> data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I’ll create an <code>arrowmagics</code> variable using the <code>arrow_read_csv()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagics</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span>, as_data_frame <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
@@ -1679,14 +1673,16 @@ $air_date &lt;date32[day]&gt;
 $rating &lt;double&gt;
 $viewers &lt;double&gt;</code></pre>
 </div>
-<p>When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) – all of the computations will be done on that data set. Second, the <code>arrownomics</code> variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The <strong>arrow</strong> package allows you to design <strong>dplyr</strong> pipelines using only this pointer object:</p>
+<p>When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) – all of the computations will be done on that data set. Second, the <code>arrowmagics</code> variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The <strong>arrow</strong> package allows you to design <strong>dplyr</strong> pipelines using only this pointer object:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
     viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
-    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
   <span class='op'>)</span>
 </code></pre>
 </div>
@@ -1694,48 +1690,54 @@ $viewers &lt;double&gt;</code></pre>
 season: int64
 viewers: double
 rating: double
+year: int64
 
 See $.data for the source Arrow object</code></pre>
 </div>
-<p>When the input is <code>arrownomics</code>, the effect of the <strong>dplyr</strong> code is construct a query that can be passed to <strong>libarrow</strong> to be evaluated. This works because the <strong>arrow</strong> package supplies methods for <code>mutate()</code>, <code>group_by()</code>, and <code>summarise()</code> that are called whenever the input data is and Arrow Table.</p>
+<p>When the input is <code>arrowmagics</code>, the effect of the <strong>dplyr</strong> code is construct a query that can be passed to <strong>libarrow</strong> to be evaluated. This works because the <strong>arrow</strong> package supplies methods for <code>mutate()</code>, <code>group_by()</code>, and <code>summarise()</code> that are called whenever the input data is and Arrow Table.</p>
 <p>It’s important to realise that at this point, no actual computations have been performed on the Arrow data. If you want the query to be evaluated using the data, you need to use the <code>compute()</code> or <code>collect()</code> functions at the end of the pipeline. These two functions behave slightly differently. The <code>compute()</code> function runs the query, but leaves the resulting data inside Arrow.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
     viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
-    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
   <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>compute</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Table
-5 rows x 3 columns
+5 rows x 4 columns
 $season &lt;int64&gt;
 $viewers &lt;double&gt;
-$rating &lt;double&gt;</code></pre>
+$rating &lt;double&gt;
+$year &lt;int64&gt;</code></pre>
 </div>
 <p>This can be useful when you’re creating an intermediate data set that you want to reuse in Arrow later. If, on the other hand, you want the output to be pulled into R so that you can do R computation with it, use the <code>collect()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
     viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
-    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
   <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code># A tibble: 5 × 3
-  season viewers rating
-   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;
-1      1   0.776  0.308
-2      2   0.788  0.323
-3      3   0.696  0.269
-4      4   0.541  0.2  
-5      5   0.353  0.111</code></pre>
+<pre><code># A tibble: 5 × 4
+  season viewers rating  year
+   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+1      1   0.776  0.308  2016
+2      2   0.788  0.323  2017
+3      3   0.696  0.269  2018
+4      4   0.541  0.2    2019
+5      5   0.353  0.111  2020</code></pre>
 </div>
 <p>The nice thing for R users is that all of this feels like regular R code. Although <strong>libarrow</strong> is doing all the serious computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. The <strong>dplyr</strong> interface provided by the <strong>arrow</strong> package works seamlessly and invisibly.</p>
 <p>In our ideal world, the <strong>dplyr</strong> interface is all you would ever need to use. Internally, the <strong>arrow</strong> package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using <strong>libarrow</strong>. You the user would never need to think about what’s happening under the hood.</p>
@@ -1743,50 +1745,33 @@ $rating &lt;double&gt;</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
-    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>, 
+    leap <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/leap_year.html'>leap_year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>
   <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code># A tibble: 5 × 2
-  season  year
-   &lt;int&gt; &lt;int&gt;
-1      1  2016
-2      2  2017
-3      3  2018
-4      4  2019
-5      5  2020</code></pre>
-</div>
-<p>That works fine, but this doesn’t!</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagics</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
-    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>,
-    leap <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/leap_year.html'>leap_year</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
-  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>Warning: Error : Expression leap_year(year) not supported in Arrow;
+<pre><code>Warning: Expression leap_year(air_date) not supported in Arrow;
 pulling data into R</code></pre>
-<pre><code># A tibble: 5 × 3
-  season  year leap 
-   &lt;int&gt; &lt;int&gt; &lt;lgl&gt;
-1      1  2016 TRUE 
-2      2  2017 FALSE
-3      3  2018 FALSE
-4      4  2019 FALSE
-5      5  2020 TRUE </code></pre>
+<pre><code># A tibble: 65 × 8
+   season episode title          air_date   rating viewers  year leap 
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;          &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;
+ 1      1       1 Unauthorized … 2015-12-16    0.2    0.92  2015 FALSE
+ 2      1       2 The Source of… 2016-01-25    0.4    1.11  2016 TRUE 
+ 3      1       3 Consequences … 2016-02-01    0.4    0.9   2016 TRUE 
+ 4      1       4 The World in … 2016-02-08    0.3    0.75  2016 TRUE 
+ 5      1       5 Mendings, Maj… 2016-02-15    0.3    0.75  2016 TRUE 
+ 6      1       6 Impractical A… 2016-02-22    0.3    0.65  2016 TRUE 
+ 7      1       7 The Mayakovsk… 2016-02-29    0.3    0.7   2016 TRUE 
+ 8      1       8 The Strangled… 2016-03-07    0.3    0.67  2016 TRUE 
+ 9      1       9 The Writing R… 2016-03-14    0.3    0.71  2016 TRUE 
+10      1      10 Homecoming     2016-03-21    0.3    0.78  2016 TRUE 
+# … with 55 more rows</code></pre>
 </div>
 <p>In this case, the warning is telling you that the computations weren’t actually performed in Arrow: realising that it doesn’t know how to interpret <code>leap_year()</code>, the <strong>arrow</strong> package has tried to “fail gracefully” and pulled everything back into R where the <code>leap_year()</code> function <em>is</em> defined.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
 <img src="https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.gif" alt="Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via [giphy](https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via <a href="https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -1815,7 +1800,7 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </div>
 <p>The actual output continues for quite a while: there are currently 221 compute functions, most of which are low level functions needed to perform basic computational operations.</p>
 <p>There are two different ways you can call these compute functions yourself, one that provides a little <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a> to make your life a little easier, and another that calls the functions pretty directly. I’ll talk about the first of these in this section.</p>
-<p>Let’s imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object like <code>arrownomics</code>. If you were working with native R data like <code>economics</code>, you can do something like this:</p>
+<p>Let’s imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object like <code>arrowmagics</code>. If you were working with native R data like <code>magicians</code>, you can do something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -1824,7 +1809,7 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </div>
 <pre><code># A tibble: 65 × 7
    season episode title                air_date   rating viewers days 
-    &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;drt&gt;
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;drt&gt;
  1      1       1 Unauthorized Magic   2015-12-16    0.2    0.92  0 d…
  2      1       2 The Source of Magic  2016-01-25    0.4    1.11 40 d…
  3      1       3 Consequences of Adv… 2016-02-01    0.4    0.9  47 d…
@@ -1872,7 +1857,7 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </div>
 <p>Notice there’s no warning message here? That’s because the computations were done in Arrow and the data have not been pulled into R.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
 <img src="https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif" alt="Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 6: Okay fine, there’s no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via <a href="https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -1906,7 +1891,7 @@ Figure 6: Okay fine, there’s no connection between slightly-evil-Julia burning
 <p>Once the binding has been registered, whenever <code>leap_year()</code> is encountered within one of the <strong>arrow</strong>-supplied <strong>dplyr</strong> functions, R will substitute my <code>arrowish_leap_year()</code> function in place of the <code>lubridate::leap_year()</code> function that would normally be called. This is only possible because R has extremely sophisticated <a href="https://adv-r.hadley.nz/metaprogramming.html">metaprogramming</a> tools: you (the developer) can write functions that “capture” the code that the user input, and if necessary modify that code before R evaluates it. This is a very powerful tool for constructing domain-specific languages within R. The tidyverse uses it extensively, and the <strong>arrow</strong> package does too. The <strong>dplyr</strong> bindings inside <strong>arrow</strong> use metaprogramming tricks to modify the user input in such a way that – in this example – the user input is interpreted as if the user had called <code>arrowish_leap_year()</code> rather than <code>leap_year()</code>.</p>
 <p>Taken together, these two pieces give us the answer to our puzzle. The call to <code>arrow_days_between()</code> works in my original example <em>because it exists in the context of an</em> <strong>arrow</strong> <em>supplied <code>mutate()</code> function</em>. Internally, <strong>arrow</strong> uses metaprogramming magic to ensure that <code>arrow_days_between()</code> is reinterpreted as a call to the <strong>libarrow</strong> <code>days_between()</code> function. But that metaprogramming magic doesn’t exist anywhere else: if you try to call <code>arrow_days_between()</code> from the R console, you get an error.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
 <img src="https://media.giphy.com/media/3o7btOKJ72mkcrsCNW/giphy.gif" alt="Metaprogramming is about as irritating as Imagine Dragons. Image via [giphy](https://giphy.com/gifs/syfy-3o7btOKJ72mkcrsCNW), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 7: Metaprogramming is about as irritating as Imagine Dragons. Image via <a href="https://giphy.com/gifs/syfy-3o7btOKJ72mkcrsCNW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -1949,7 +1934,7 @@ Figure 7: Metaprogramming is about as irritating as Imagine Dragons. Image via <
 20106</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-28"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
 <img src="https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.gif" alt="Kady was an under-used character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 8: Kady was an under-used character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -1959,7 +1944,7 @@ Figure 8: Kady was an under-used character. Image via <a href="https://giphy.com
 <h2 id="putting-it-together">Putting it together</h2>
 <h3 id="using-arrow-expressions">Using Arrow expressions</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-29"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
 <img src="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif" alt="Okay look, I'll level with you. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 9: Okay look, I’ll level with you. This post is getting very long and I don’t know about you but I need a short break to appreciate the beautiful people. Image via <a href="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -2031,7 +2016,7 @@ pulling data into R</code></pre>
 # … with 55 more rows</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-33"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
 <img src="https://media.giphy.com/media/l2Sq18e02qsxjKfBK/giphy.gif" alt="Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via [giphy](https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
 Figure 10: Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via <a href="https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
@@ -2053,7 +2038,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-20 17:01:57 AEDT</p>
+<p>2022-01-20 17:09:24 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
@@ -2061,7 +2046,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
