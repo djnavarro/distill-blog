@@ -6,16 +6,7 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Wed, 19 Jan 2022 00:00:00 +0000</lastBuildDate>
-    <item>
-      <title>My first contribution to Apache Arrow</title>
-      <dc:creator>Danielle Navarro</dc:creator>
-      <link>https://blog.djnavarro.net/posts/2022-01-19_contributing-to-arrow</link>
-      <description>A guide for R developers who would like to contribute to the arrow package without ending up in tears. Okay, not too many tears.</description>
-      <guid>https://blog.djnavarro.net/posts/2022-01-19_contributing-to-arrow</guid>
-      <pubDate>Wed, 19 Jan 2022 00:00:00 +0000</pubDate>
-      <media:content url="https://blog.djnavarro.net/posts/2022-01-19_contributing-to-arrow/img/kaleb-tapp-J59wWPn09BE-unsplash.jpg" medium="image" type="image/jpeg"/>
-    </item>
+    <lastBuildDate>Tue, 18 Jan 2022 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Binding Apache Arrow to R</title>
       <dc:creator>Danielle Navarro</dc:creator>
