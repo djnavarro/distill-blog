@@ -1498,13 +1498,16 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <ul>
 <li><a href="#why-am-i-writing-this">Why am I writing this?</a></li>
 <li><a href="#primer-what-is-arrow">Primer: What is Arrow?</a></li>
-<li><a href="#using-arrow-within-r">Using Arrow within R</a>
-<ul>
+<li><a href="#using-arrow-within-r">Using Arrow within R</a></li>
 <li><a href="#using-dplyr-bindings">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></a></li>
 <li><a href="#using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</a></li>
-<li><a href="#a-weird-digression">A weird digression</a></li>
-<li><a href="#using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></a></li>
+<li><a href="#a-weird-digression">A weird digression</a>
+<ul>
+<li><a href="#part-one-object-oriented-programming">Part one: Object oriented programming</a></li>
+<li><a href="#part-two-metaprogramming">Part two: Metaprogramming</a></li>
+<li><a href="#cooperative-magic">Cooperative magic</a></li>
 </ul></li>
+<li><a href="#using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></a></li>
 <li><a href="#writing-arrow-expressions">Writing Arrow expressions</a></li>
 <li><a href="#arrowish-functions">Writing functions for Arrow pipelines</a></li>
 <li><a href="#epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</a></li>
@@ -1609,7 +1612,7 @@ Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain t
 </p>
 </div>
 </div>
-<h3 id="using-dplyr-bindings">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></h3>
+<h2 id="using-dplyr-bindings">Using the <strong>dplyr</strong> bindings in <strong>arrow</strong></h2>
 <blockquote>
 <p>I think I have some special fish magicks.<br>     – Josh Hoberman (The Magicians: Season 4, Episode 13)</p>
 </blockquote>
@@ -1785,7 +1788,7 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 </p>
 </div>
 </div>
-<h3 id="using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</h3>
+<h2 id="using-arrow-functions">Using the <code>arrow_*()</code> functions in <strong>dplyr</strong> code</h2>
 <p>Okay, let’s dig a little deeper.</p>
 <p>In the last section I talked about the <strong>dplyr</strong> bindings that <strong>arrow</strong> provides, which are designed to mimic their native R equivalents as seamlessly as possible. These bindings work by rewriting the R functions that they mimic using only the C++ compute functions supplied by <strong>libarrow</strong>. That’s the way you’d usually interact with Arrow in R, but you can access those compute functions more directly. To see what compute functions are exposed by the C++ <strong>libarrow</strong> library, you can call <code>list_compute_functions()</code> from R:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1810,8 +1813,10 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 <p>Let’s imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object like <code>arrowmagicks</code>. If you were working with native R data like <code>magicians</code>, you can do something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>air_date</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2015-12-16"</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>start_date</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2015-12-16"</span><span class='op'>)</span>
+
+<span class='va'>magicians</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>air_date</span> <span class='op'>-</span> <span class='va'>start_date</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code># A tibble: 65 × 7
@@ -1829,11 +1834,14 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 10      1      10 Homecoming           2016-03-21    0.3    0.78 96 d…
 # … with 55 more rows</code></pre>
 </div>
-<p>Here I’ve created a new <code>days</code> column that counts the number of days that have elapsed between the <code>date</code> variable and January 1st, 1967. There are a lot of data analysis situations in which you might want to do exactly this, but right now you can’t actually do this using the <strong>arrow</strong> dplyr bindings because temporal arithmetic is a work in progress (I’m making small contributions to that myself, actually!). In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn’t. If you try it right now, you get this error:</p>
+<p>Here I’ve created a new <code>days</code> column that counts the number of days that have elapsed between the <code>air_date</code> for an episode and the <code>start_date</code> (December 16th, 2015) when the first episode of Season 1 aired. There are a lot of data analysis situations in which you might want to do something like this, but right now you can’t actually do this using the <strong>arrow</strong> dplyr bindings because temporal arithmetic is a work in progress. In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn’t. If you try it right now, you get this error:</p>
+<aside>
+Improving support for date/time calculations is one of the things I’m working on
+</aside>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>air_date</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2015-12-16"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>air_date</span> <span class='op'>-</span> <span class='va'>start_date</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
@@ -1843,7 +1851,7 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2015-12-16"</span><span class='op'>)</span>, <span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='va'>start_date</span>, <span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
@@ -1871,23 +1879,22 @@ Figure 6: Okay fine, there’s no connection between slightly-evil-Julia burning
 </p>
 </div>
 </div>
-<h3 id="a-weird-digression">A weird digression</h3>
+<h2 id="a-weird-digression">A weird digression</h2>
 <p>Okay, here’s a puzzle. In the previous section I used the <code>arrow_days_between()</code> function in the middle of a <strong>dplyr</strong> pipe to work around a current limitation in <strong>arrow</strong>. What happens if I try to call this function in another context?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>date1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span>
-<span class='va'>date2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2022-01-18"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>today</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2022-01-18"</span><span class='op'>)</span>
 
-<span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='va'>date1</span>, <span class='va'>date2</span><span class='op'>)</span>
+<span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='va'>start_date</span>, <span class='va'>today</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>Error in arrow_days_between(date1, date2): could not find function &quot;arrow_days_between&quot;</code></pre>
+<pre><code>Error in arrow_days_between(start_date, today): could not find function &quot;arrow_days_between&quot;</code></pre>
 </div>
 <p>It turns out there is no R function called <code>arrow_days_between()</code>. This is … surprising, to say the least. I mean, it really does look like I used this function in the last section, doesn’t it? How does this work?</p>
 <p>The answer to this requires a slightly deeper understanding of what the <strong>dplyr</strong> bindings in <strong>arrow</strong> do, and it’s kind of a two part answer.</p>
-<p>Part one:</p>
+<h3 id="part-one-object-oriented-programming">Part one: Object oriented programming</h3>
 <p>Let’s consider the <code>mutate()</code> function. <strong>dplyr</strong> defines <code>mutate()</code> as an S3 generic function, which allows it to display “polymorphism”: it behaves differently depending on what kind of object is passed to to the generic. When you pass a data frame to <code>mutate()</code>, the call is “dispatched” to the <code>mutate.arrow_dplyr_query()</code> methods supplied by (but not exported by) <strong>dplyr</strong>. The <strong>arrow</strong> package builds on this by supplying methods that apply for Arrow objects. Specifically, there are internal functions <code>mutate.ArrowTabular()</code>, <code>mutate.Dataset()</code>, and <code>mutate.arrow_dplyr_query()</code> that are used to provide <code>mutate()</code> functionality for Arrow data sets. In other words, the “top level” <strong>dplyr</strong> functions in <strong>arrow</strong> are S3 methods, and method dispatch is the mechanism that does the work.</p>
-<p>Part two:</p>
+<h3 id="part-two-metaprogramming">Part two: Metaprogramming</h3>
 <p>Now let’s consider the <code>leap_year()</code> function that my contribution focused on. Not only is this not a generic function, it’s not even a <strong>dplyr</strong> function. It’s a regular function in the <strong>lubridate</strong> package. So how is it possible for <strong>arrow</strong> to mimic the behaviour of <code>lubridate::leap_year()</code> without messing up <strong>lubridate</strong>? This is where the <em>dplyr</em> binding part comes in. Let’s imagine that I’d written an actual function called <code>arrowish_leap_year()</code> (I’ll show you how to write your own <a href="#arrowish-functions">“arrowish” functions</a> later in the post) that performs leap year calculations for Arrow data. If I’d done this inside the <strong>arrow</strong> package<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> then I’d include a line like this to register a binding:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1896,6 +1903,7 @@ Figure 6: Okay fine, there’s no connection between slightly-evil-Julia burning
 </div>
 </div>
 <p>Once the binding has been registered, whenever <code>leap_year()</code> is encountered within one of the <strong>arrow</strong>-supplied <strong>dplyr</strong> functions, R will substitute my <code>arrowish_leap_year()</code> function in place of the <code>lubridate::leap_year()</code> function that would normally be called. This is only possible because R has extremely sophisticated <a href="https://adv-r.hadley.nz/metaprogramming.html">metaprogramming</a> tools: you (the developer) can write functions that “capture” the code that the user input, and if necessary modify that code before R evaluates it. This is a very powerful tool for constructing domain-specific languages within R. The tidyverse uses it extensively, and the <strong>arrow</strong> package does too. The <strong>dplyr</strong> bindings inside <strong>arrow</strong> use metaprogramming tricks to modify the user input in such a way that – in this example – the user input is interpreted as if the user had called <code>arrowish_leap_year()</code> rather than <code>leap_year()</code>.</p>
+<h3 id="cooperative-magic">Cooperative magic</h3>
 <p>Taken together, these two pieces give us the answer to our puzzle. The call to <code>arrow_days_between()</code> works in my original example <em>because it exists in the context of an</em> <strong>arrow</strong> <em>supplied <code>mutate()</code> function</em>. Internally, <strong>arrow</strong> uses metaprogramming magic to ensure that <code>arrow_days_between()</code> is reinterpreted as a call to the <strong>libarrow</strong> <code>days_between()</code> function. But that metaprogramming magic doesn’t exist anywhere else: if you try to call <code>arrow_days_between()</code> from the R console, you get an error.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
@@ -1905,16 +1913,13 @@ Figure 7: Metaprogramming is about as irritating as Imagine Dragons. Image via <
 </p>
 </div>
 </div>
-<h3 id="using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></h3>
+<h2 id="using-call-function">Accessing <strong>libarrow</strong> with <code>call_function()</code></h2>
 <p>Yeah okay, that’s nice and all, but what if you want to access one of the <strong>libarrow</strong> functions directly, without relying on the metaprogramming magic that <strong>arrow</strong> uses? In everyday data analysis you probably wouldn’t need to do this, but it’s a use case that arises fairly often when you want to write your own functions that can interact with Arrow.</p>
 <p>So let’s strip back another level of abstraction!</p>
-<p>Should you ever find yourself wanting to call <strong>libarrow</strong> compute functions directly from R, <code>call_function()</code> is your best friend. It exposes the <strong>libarrow</strong> functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That’s the price you pay for low-level access: you have to do all the low-level work! Here’s what I mean: this code doesn’t work because <code>date1</code> and <code>date2</code> are R-native Date objects:</p>
+<p>Should you ever find yourself wanting to call <strong>libarrow</strong> compute functions directly from R, <code>call_function()</code> is your best friend. It exposes the <strong>libarrow</strong> functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That’s the price you pay for low-level access: you have to do all the low-level work! Here’s what I mean: this code doesn’t work because <code>start_date</code> and <code>today</code> are R-native Date objects:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>date1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"1967-01-01"</span><span class='op'>)</span>
-<span class='va'>date2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2022-01-18"</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>date1</span>, <span class='va'>date2</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>start_date</span>, <span class='va'>today</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Error: Argument 1 is of class Date but it must be one of &quot;Array&quot;, &quot;ChunkedArray&quot;, &quot;RecordBatch&quot;, &quot;Table&quot;, or &quot;Scalar&quot;</code></pre>
@@ -1922,23 +1927,23 @@ Figure 7: Metaprogramming is about as irritating as Imagine Dragons. Image via <
 <p>In order for the <strong>libarrow</strong> functions to work, you have to make sure that the input values exist in Arrow. In this case it’s pretty easy: all we need to do is create Arrow Scalars for each date. Here’s how we do that:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrow_date1</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>date1</span><span class='op'>)</span>
-<span class='va'>arrow_date2</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>date2</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrow_start_date</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>start_date</span><span class='op'>)</span>
+<span class='va'>arrow_today</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
 
-<span class='va'>arrow_date1</span>
+<span class='va'>arrow_start_date</span>
 </code></pre>
 </div>
 <pre><code>Scalar
-1967-01-01</code></pre>
+2015-12-16</code></pre>
 </div>
-<p>The <code>arrow_date1</code> and <code>arrow_date2</code> variables are now pointers to data structures in Arrow, and are suitable for passing to the <strong>libarrow</strong> <code>days_between()</code> function:</p>
+<p>The <code>arrow_start_date</code> and <code>arrow_today</code> variables are now pointers to data structures in Arrow, and are suitable for passing to the <strong>libarrow</strong> <code>days_between()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>arrow_date1</span>, <span class='va'>arrow_date2</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>arrow_start_date</span>, <span class='va'>arrow_today</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Scalar
-20106</code></pre>
+2225</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
@@ -1951,9 +1956,9 @@ Figure 8: Kady was an under-used character. Image via <a href="https://giphy.com
 <h2 id="writing-arrow-expressions">Writing Arrow expressions</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
-<img src="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif" alt="Okay look, I'll level with you. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"  />
+<img src="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif" alt="Okay look, I'll level with you. There is absolutely no connection between this gif and Arrow Expressions. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"  />
 <p class="caption">
-Figure 9: Okay look, I’ll level with you. This post is getting very long and I don’t know about you but I need a short break to appreciate the beautiful people. Image via <a href="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+Figure 9: Okay look, I’ll level with you. There is absolutely no connection between this gif and Arrow Expressions. This post is getting very long and I don’t know about you but I need a short break to appreciate the beautiful people. Image via <a href="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
 </p>
 </div>
 </div>
@@ -2044,7 +2049,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-21 09:51:46 AEDT</p>
+<p>2022-01-21 10:07:28 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>

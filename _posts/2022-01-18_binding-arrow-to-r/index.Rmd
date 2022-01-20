@@ -174,7 +174,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.g
 ```
 
 
-### Using the **dplyr** bindings in **arrow** {#using-dplyr-bindings}
+## Using the **dplyr** bindings in **arrow** {#using-dplyr-bindings}
 
 > I think I have some special fish magicks.<br>
 > &nbsp; &nbsp; -- Josh Hoberman (The Magicians: Season 4, Episode 13)
@@ -283,7 +283,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.
 ```
 
 
-### Using the `arrow_*()` functions in **dplyr** code {#using-arrow-functions}
+## Using the `arrow_*()` functions in **dplyr** code {#using-arrow-functions}
 
 Okay, let's dig a little deeper. 
 
@@ -300,15 +300,19 @@ There are two different ways you can call these compute functions yourself, one 
 Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrowmagicks`. If you were working with native R data like `magicians`, you can do something like this:
 
 ```{r}
+start_date <- as.Date("2015-12-16")
+
 magicians %>% 
-  mutate(days = air_date - as.Date("2015-12-16"))
+  mutate(days = air_date - start_date)
 ```
 
-Here I've created a new `days` column that counts the number of days that have elapsed between the `date` variable and January 1st, 1967. There are a lot of data analysis situations in which you might want to do exactly this, but right now you can't actually do this using the **arrow** dplyr bindings because temporal arithmetic is a work in progress (I'm making small contributions to that myself, actually!). In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn't. If you try it right now, you get this error:
+Here I've created a new `days` column that counts the number of days that have elapsed between the `air_date` for an episode and the `start_date` (December 16th, 2015) when the first episode of Season 1 aired. There are a lot of data analysis situations in which you might want to do something like this, but right now you can't actually do this using the **arrow** dplyr bindings because temporal arithmetic is a work in progress. In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn't. If you try it right now, you get this error:
+
+<aside>Improving support for date/time calculations is one of the things I'm working on</aside>
 
 ```{r, error=TRUE}
 arrowmagicks %>% 
-  mutate(days = air_date - as.Date("2015-12-16")) %>% 
+  mutate(days = air_date - start_date) %>% 
   collect()
 ```
 
@@ -316,7 +320,7 @@ Right now, there are no general purpose arithmetic operations in **arrow** that 
 
 ```{r}
 arrowmagicks %>% 
-  mutate(days = arrow_days_between(as.Date("2015-12-16"), air_date)) %>% 
+  mutate(days = arrow_days_between(start_date, air_date)) %>% 
   collect()
 ```
 
@@ -331,26 +335,25 @@ knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.g
 ```
 
 
-### A weird digression
+## A weird digression
 
 Okay, here's a puzzle. In the previous section I used the `arrow_days_between()` function in the middle of a **dplyr** pipe to work around a current limitation in **arrow**. What happens if I try to call this function in another context?
 
 ```{r, error=TRUE}
-date1 <- as.Date("1967-01-01")
-date2 <- as.Date("2022-01-18")
+today <- as.Date("2022-01-18")
 
-arrow_days_between(date1, date2)
+arrow_days_between(start_date, today)
 ```
 
 It turns out there is no R function called `arrow_days_between()`. This is ... surprising, to say the least. I mean, it really does look like I used this function in the last section, doesn't it? How does this work?
 
 The answer to this requires a slightly deeper understanding of what the **dplyr** bindings in **arrow** do, and it's kind of a two part answer.  
 
-Part one: 
+### Part one: Object oriented programming 
 
 Let's consider the `mutate()` function. **dplyr** defines `mutate()` as an S3 generic function, which allows it to display "polymorphism": it behaves differently depending on what kind of object is passed to to the generic. When you pass a data frame to `mutate()`, the call is "dispatched" to the `mutate.arrow_dplyr_query()` methods supplied by (but not exported by) **dplyr**. The **arrow** package builds on this by supplying methods that apply for Arrow objects. Specifically, there are internal functions `mutate.ArrowTabular()`, `mutate.Dataset()`, and `mutate.arrow_dplyr_query()` that are used to provide `mutate()` functionality for Arrow data sets. In other words, the "top level" **dplyr** functions in **arrow** are S3 methods, and method dispatch is the mechanism that does the work.
 
-Part two: 
+### Part two: Metaprogramming 
 
 Now let's consider the `leap_year()` function that my contribution focused on. Not only is this not a generic function, it's not even a **dplyr** function. It's a regular function in the **lubridate** package. So how is it possible for **arrow** to mimic the behaviour of `lubridate::leap_year()` without messing up **lubridate**? This is where the *dplyr* binding part comes in. Let's imagine that I'd written an actual function called `arrowish_leap_year()` (I'll show you how to write your own ["arrowish" functions](#arrowish-functions) later in the post) that performs leap year calculations for Arrow data. If I'd done this inside the **arrow** package^[My actual code didn't bother to name my function. It's just an anonymous function passed to `register_binding()`.] then I'd include a line like this to register a binding:
 
@@ -359,6 +362,8 @@ register_binding("leap_year", arrowish_leap_year)
 ```
 
 Once the binding has been registered, whenever `leap_year()` is encountered within one of the **arrow**-supplied **dplyr** functions, R will substitute my `arrowish_leap_year()` function in place of the `lubridate::leap_year()` function that would normally be called. This is only possible because R has extremely sophisticated [metaprogramming](https://adv-r.hadley.nz/metaprogramming.html) tools: you (the developer) can write functions that "capture" the code that the user input, and if necessary modify that code before R evaluates it. This is a very powerful tool for constructing domain-specific languages within R. The tidyverse uses it extensively, and the **arrow** package does too. The **dplyr** bindings inside **arrow** use metaprogramming tricks to modify the user input in such a way that -- in this example -- the user input is interpreted as if the user had called `arrowish_leap_year()` rather than `leap_year()`.
+
+### Cooperative magic
 
 Taken together, these two pieces give us the answer to our puzzle. The call to `arrow_days_between()` works in my original example *because it exists in the context of an* **arrow** *supplied `mutate()` function*. Internally, **arrow** uses metaprogramming magic to ensure that `arrow_days_between()` is reinterpreted as a call to the **libarrow** `days_between()` function. But that metaprogramming magic doesn't exist anywhere else: if you try to call `arrow_days_between()` from the R console, you get an error.
 
@@ -372,34 +377,31 @@ knitr::include_graphics("https://media.giphy.com/media/3o7btOKJ72mkcrsCNW/giphy.
 
 
 
-### Accessing **libarrow** with `call_function()` {#using-call-function}
+## Accessing **libarrow** with `call_function()` {#using-call-function}
 
 Yeah okay, that's nice and all, but what if you want to access one of the **libarrow** functions directly, without relying on the metaprogramming magic that **arrow** uses? In everyday data analysis you probably wouldn't need to do this, but it's a use case that arises fairly often when you want to write your own functions that can interact with Arrow. 
 
 So let's strip back another level of abstraction! 
 
-Should you ever find yourself wanting to call **libarrow** compute functions directly from R, `call_function()` is your best friend. It exposes the **libarrow** functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That's the price you pay for low-level access: you have to do all the low-level work! Here's what I mean: this code doesn't work because `date1` and `date2` are R-native Date objects:
+Should you ever find yourself wanting to call **libarrow** compute functions directly from R, `call_function()` is your best friend. It exposes the **libarrow** functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That's the price you pay for low-level access: you have to do all the low-level work! Here's what I mean: this code doesn't work because `start_date` and `today` are R-native Date objects:
 
 ```{r, error=TRUE}
-date1 <- as.Date("1967-01-01")
-date2 <- as.Date("2022-01-18")
-
-call_function("days_between", date1, date2)
+call_function("days_between", start_date, today)
 ```
 
 In order for the **libarrow** functions to work, you have to make sure that the input values exist in Arrow. In this case it's pretty easy: all we need to do is create Arrow Scalars for each date. Here's how we do that:
 
 ```{r}
-arrow_date1 <- Scalar$create(date1)
-arrow_date2 <- Scalar$create(date2)
+arrow_start_date <- Scalar$create(start_date)
+arrow_today <- Scalar$create(today)
 
-arrow_date1
+arrow_start_date
 ```
 
-The `arrow_date1` and `arrow_date2` variables are now pointers to data structures in Arrow, and are suitable for passing to the **libarrow** `days_between()` function:
+The `arrow_start_date` and `arrow_today` variables are now pointers to data structures in Arrow, and are suitable for passing to the **libarrow** `days_between()` function:
 
 ```{r}
-call_function("days_between", arrow_date1, arrow_date2)
+call_function("days_between", arrow_start_date, arrow_today)
 ```
 
 
@@ -411,7 +413,6 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.
 ```
 
 
-
 ## Writing Arrow expressions
 
 
@@ -419,7 +420,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Okay look, I'll level with you. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"
+#| fig.cap = "Okay look, I'll level with you. There is absolutely no connection between this gif and Arrow Expressions. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"
 knitr::include_graphics("https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif")
 ```
 
