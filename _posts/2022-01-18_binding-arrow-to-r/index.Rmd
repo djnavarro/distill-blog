@@ -404,7 +404,7 @@ Taken together, these two pieces give us the answer to our puzzle. The call to `
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and my slightly-evil digression. I just love this scene and secretly wish I was her. Of all the characters Julia has the most personally transformative arc (in my opinion), in both good ways and bad. There's a lot going on with her life, her person, and her body. I relate to that. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"
+#| fig.cap = "I guess there's a connection between slightly-evil-Julia burning down the talking trees and my slightly-evil digression? Sort of. I mean the truth is just that I just love this scene and secretly wish I was her. Of all the characters Julia has the most personally transformative arc (in my opinion), in both good ways and bad. There's a lot going on with her life, her person, and her body. I relate to that. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"
 knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif")
 ```
 
@@ -414,17 +414,17 @@ knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.g
 <!----------------------------------------------------------------------------->
 
 
-Yeah okay, that's nice and all, but what if you want to access one of the **libarrow** functions directly, without relying on the metaprogramming magic that **arrow** uses? In everyday data analysis you probably wouldn't need to do this, but it's a use case that arises fairly often when you want to write your own functions that can interact with Arrow. 
+The weirdness of that digression leads naturally to a practical question. Given that the "arrow-prefix" function don't actually exist in the usual sense of the term, and the corresponding bindings can only be called in an **arrowplyr** context, how the heck does an R developer call the **libarrow** functions directly? In everyday data analysis you wouldn't want to do this very often, but from a programming perspective it matters: if you want to write your own functions that play nicely with **arrowplyr** pipelines, it's very handy to know how to call **libarrow** directly.  
 
 So let's strip back another level of abstraction! 
 
-Should you ever find yourself wanting to call **libarrow** compute functions directly from R, `call_function()` is your best friend. It exposes the **libarrow** functions with a bare minimum of overhead, and because of this you have to make sure you pass it Arrow-friendly objects. That's the price you pay for low-level access: you have to do all the low-level work! Here's what I mean: this code doesn't work because `start_date` and `today` are R-native Date objects:
+Should you ever find yourself wanting to call **libarrow** compute functions directly from R, `call_function()` will become your new best friend. It provides a very minimal interface that exposes the **libarrow** functions to R. The "bare bones" nature of this interface has advantages and disadvantages. The advantage is simplicity: your code doesn't depend on any of the fancy bells and whistles. Those are fabulous from the user perspective, but from a developer point of view you usually want to keep it simple. The price you pay for this is that you must pass appropriate Arrow objects. You can't pass a regular R object to a **libarrow** function and expect it to work. For example:
 
 ```{r, error=TRUE}
 call_function("days_between", start_date, today)
 ```
 
-In order for the **libarrow** functions to work, you have to make sure that the input values exist in Arrow. In this case it's pretty easy: all we need to do is create Arrow Scalars for each date. Here's how we do that:
+This doesn't work because start_date` and `today` are R-native Date objects and do not refer to any data structures in Arrow. The **libarrow** functions expect to receive pointers to Arrow objects. To fix the previous example, all we need to do is create Arrow Scalars for each date. Here's how we do that:
 
 ```{r}
 arrow_start_date <- Scalar$create(start_date)
@@ -433,18 +433,19 @@ arrow_today <- Scalar$create(today)
 arrow_start_date
 ```
 
-The `arrow_start_date` and `arrow_today` variables are now pointers to data structures in Arrow, and are suitable for passing to the **libarrow** `days_between()` function:
+The `arrow_start_date` and `arrow_today` variables are R data structures, but they're only thin wrappers. The actual data are stored in Arrow, and the R objects are really just pointers to the Arrow data. These objects are suitable for passing to the **libarrow** `days_between()` function, and this works:
 
 ```{r}
 call_function("days_between", arrow_start_date, arrow_today)
 ```
 
+Huh. Apparently it took me over 2000 days to write a proper fangirl post about *The Magicians*. I'm really late to the pop culture party, aren't I? Oh dear. I'm getting old.
 
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Kady was an under-used character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-kady-xUA7b4focaBB2CVSBq), copyright [syfy](https://www.syfy.com)"
-knitr::include_graphics("https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.gif")
+#| fig.cap = "I'm getting lazier with these connections. Using a Library gif because I'm talking about the C++ library? I mean really, you'd think I'd be better than that wouldn't you? But no. I am not. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-26AHOmyGvNBim4GHK), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/26AHOmyGvNBim4GHK/giphy.gif")
 ```
 
 
@@ -453,16 +454,65 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7b4focaBB2CVSBq/giphy.
 ## Arrow expressions
 <!----------------------------------------------------------------------------->
 
+There's one more foundational topic I should discuss before I can show you how to write **arrowplyr**-friendly functions, and that's Arrow Expressions. When I introduced **arrowplyr** early in the post I noted that most of your code is used to specify a query, and that query doesn't get evaluated until `compute()` or `collect()` is called. If you want to write code that plays nicely with this workflow, you need to ensure that your custom functions return an Arrow Expression. 
+
+The basic idea behind expressions is probably familiar to R users, since they are what powers the metaprogramming capabilities of the language and are used extensively throughout tidyverse as well as base R. In base R, the `quote()` function is used to capture a user expression and `eval()` is used to force it to evaluate. Here's a simple example where I use `quote()` to "capture" some R code and prevent it from evaluating:  
+
+```{r}
+head_expr <- quote(head(magicians, n = 3))
+head_expr
+```
+
+If I wanted to be clever I could modify the code in `head_expr` before allowing R to pull the trigger on evaluating it. I could combine a lot of expressions together, change parts of the code as needed, and evaluate them wherever I wanted. As you might imagine, this is super useful for creating domain specific languages within R, and **arrow** use it a lot. But this isn't a post about metaprogramming so let's evaluate it now:
+
+```{r}
+eval(head_expr)
+```
+
+The example above uses native R code. It's not tied to Arrow in any sense. However, the **arrow** package provides a mechanism for doing something similar in an Arrow context. For example, here's me creating a character string as an Arrow Scalar:
+
+```{r}
+fillory <- Scalar$create("A world as intricate as filigree")
+fillory
+```
+
+Here's me creating the corresponding object within an Arrow Expression:
+
+```{r}
+fillory <- Expression$scalar(
+  Scalar$create("A world as intricate as filigree")
+)
+fillory
+```
+
+I suspect this would not seem particularly impressive on its own, but you can use the same idea to create function calls that can be evaluated later within the Arrow context:
+
+```{r}
+ember <- Expression$create("utf8_capitalize", fillory)
+ember
+```
+
+So close. We are so very close to the end now. 
 
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Okay look, I'll level with you. There is absolutely no connection between this gif and Arrow Expressions. This post is getting very long and I don't know about you but I need a short break to appreciate the beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"
+#| fig.cap = "Okay look, I'll level with you. At this point there is absolutely no connection between the gifs and the content. This post is getting very long and my brain is fried. I need a short break to appreciate the beautiful people, and Kings Idri and Eliot are both very beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"
 knitr::include_graphics("https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif")
 ```
 
 
 ## Writing arrowplyr functions {#arrowish-functions}
+
+At long last we have all the ingredients needed to write a function that can be used in an **arrowplyr** pipeline. Here's a simple implementation of the base R `toupper()` function
+
+```{r}
+arrowish_toupper <- function(x) {
+  Expression$create("utf8_capitalize", x)
+}
+```
+
+As it happens **arrowplyr** pipelines already support the `toupper()` function, so there really wasn't a need for me to write this. However, at present they don't support the **lubridate** `leap_year()` function, which was the purpose of my very small contribution today. An Arrow friendly version of `leap_year()` looks like this:
 
 ```{r}
 arrowish_leap_year <- function(date) {
@@ -471,28 +521,41 @@ arrowish_leap_year <- function(date) {
 }
 ```
 
-Trying to use lubridate fails:
+Before putting our functions into action, lets see what happens when we try to write a simply data analysis pipeline without them:
+
 
 ```{r, error=TRUE}
 arrowmagicks %>% 
   mutate(
+    title = toupper(title),
     year = year(air_date), 
     leap = leap_year(air_date)
   ) %>% 
   collect()
 ```
 
-Using our function works:
+<aside>The internal **arrow** function that handles this is called "abandon_ship". No, I don't know why I felt the need to mention this`</aside>
+
+Yes, it returns the correct answer, but only because **arrow** detected a function it doesn't understand and "abandoned ship". It pulled the data into R and let **dplyr** do all the work. Now let's see what happens when we use our functions instead:
+
 
 ```{r}
 arrowmagicks %>% 
   mutate(
+    title = arrowish_toupper(title),
     year = year(air_date),
     leap = arrowish_leap_year(air_date)
   ) %>% 
   collect()
 ```
 
+Everything works perfectly within Arrow. No ships are abandoned, the **arrowplyr** pipeline springs no leaks, and we all live happily ever after. 
+
+Sort of.
+
+I mean, we're all still alive.
+
+That has to count as a win, right?
 
 ```{r}
 #| echo = FALSE,
