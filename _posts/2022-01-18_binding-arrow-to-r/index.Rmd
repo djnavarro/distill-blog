@@ -462,7 +462,7 @@ head_expr <- quote(head(magicians, n = 3))
 head_expr
 ```
 
-If I wanted to be clever I could modify the code in `head_expr` before allowing R to pull the trigger on evaluating it. I could combine a lot of expressions together, change parts of the code as needed, and evaluate them wherever I wanted. As you might imagine, this is super useful for creating domain specific languages within R, and **arrow** use it a lot. But this isn't a post about metaprogramming so let's evaluate it now:
+If I wanted to be clever I could modify the code in `head_expr` before allowing R to pull the trigger on evaluating it. I could combine a lot of expressions together, change parts of the code as needed, and evaluate them wherever I wanted. As you might imagine, this is super useful for creating domain specific languages within R. But this isn't a post about metaprogramming so let's evaluate it now:
 
 ```{r}
 eval(head_expr)
