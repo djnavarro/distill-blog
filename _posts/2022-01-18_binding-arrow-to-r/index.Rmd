@@ -371,9 +371,7 @@ today <- as.Date("2022-01-18")
 arrow_days_between(start_date, today)
 ```
 
-It turns out there is no R function called `arrow_days_between()`. This is ... surprising, to say the least. I mean, it really does look like I used this function in the last section, doesn't it? How does this work?
-
-The answer to this requires a slightly deeper understanding of what the **dplyr** bindings in **arrow** do, and it's kind of a two part answer.  
+It turns out there is no R function called `arrow_days_between()`. This is ... surprising, to say the least. I mean, it really does look like I used this function in the last section, doesn't it? How does this work? The answer to this requires a slightly deeper understanding of what the **dplyr** bindings in **arrow** do, and it's kind of a two-part answer.
 
 
 
@@ -385,7 +383,9 @@ Let's consider the `mutate()` function. **dplyr** defines `mutate()` as an S3 ge
 
 ### Part two: Metaprogramming 
 
-Now let's consider the `leap_year()` function that my contribution focused on. Not only is this not a generic function, it's not even a **dplyr** function. It's a regular function in the **lubridate** package. So how is it possible for **arrow** to mimic the behaviour of `lubridate::leap_year()` without messing up **lubridate**? This is where the *dplyr* binding part comes in. Let's imagine that I'd written an actual function called `arrowish_leap_year()` (I'll show you how to write your own ["arrowish" functions](#arrowish-functions) later in the post) that performs leap year calculations for Arrow data. If I'd done this inside the **arrow** package^[My actual code didn't bother to name my function. It's just an anonymous function passed to `register_binding()`.] then I'd include a line like this to register a binding:
+Now let's consider the `leap_year()` function that my contribution focused on. Not only is this not a generic function, it's not even a **dplyr** function. It's a regular function in the **lubridate** package. So how is it possible for **arrow** to mimic the behaviour of `lubridate::leap_year()` without messing up **lubridate**? This is where the *dplyr* binding part comes in. Let's imagine that I'd written an actual function called `arrowish_leap_year()` that performs leap year calculations for Arrow data. If I'd done this inside the **arrow** package^[My actual code didn't bother to name my function. It's just an anonymous function passed to `register_binding()`.] then I'd include a line like this to register a binding:
+
+<aside>I'll show you how to write your own ["arrowish" functions](#arrowish-functions) later in the post</aside>
 
 ```{r, eval=FALSE}
 register_binding("leap_year", arrowish_leap_year)
@@ -397,7 +397,7 @@ Once the binding has been registered, whenever `leap_year()` is encountered with
 
 ### Cooperative magic
 
-Taken together, these two pieces give us the answer to our puzzle. The call to `arrow_days_between()` works in my original example *because it exists in the context of an* **arrow** *supplied `mutate()` function*. Internally, **arrow** uses metaprogramming magic to ensure that `arrow_days_between()` is reinterpreted as a call to the **libarrow** `days_between()` function. But that metaprogramming magic doesn't exist anywhere else: if you try to call `arrow_days_between()` from the R console, you get an error.
+Taken together, these two pieces give us the answer to our puzzle. The call to `arrow_days_between()` works in my original example because that call was constructed within the context of an **arrow**-supplied `mutate()` function. The interpretation of this code isn't performed by **dplyr** it is handled by **arrow**. Internally, **arrow** uses metaprogramming magic to ensure that `arrow_days_between()` is reinterpreted as a call to the **libarrow** `days_between()` function. But that metaprogramming magic doesn't apply anywhere except the **arrowplyr** context. If you try to call `arrow_days_between()` from the R console or even in a regular **dplyr** pipeline, you get an error because technically speaking this function doesn't exist. 
 
 
 ```{r}
