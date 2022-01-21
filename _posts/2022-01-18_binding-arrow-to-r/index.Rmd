@@ -520,7 +520,7 @@ arrowish_leap_year <- function(date) {
 }
 ```
 
-Before putting our functions into action, lets see what happens when we try to write a simply data analysis pipeline without them:
+Before putting our functions into action, lets see what happens when we try to write a simple data analysis pipeline without them:
 
 
 ```{r, error=TRUE}
