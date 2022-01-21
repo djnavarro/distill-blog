@@ -1773,7 +1773,7 @@ $year &lt;int64&gt;</code></pre>
 4      4   0.541  0.2    2019
 5      5   0.353  0.111  2020</code></pre>
 </div>
-<p>The nice thing for R users is that all of this feels like regular R code. Although <strong>libarrow</strong> is doing all the serious computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. The <strong>arrowplyr</strong> toolkit works seamlessly and invisibly.</p>
+<p>The nice thing for R users is that all of this feels like regular R code. Under the hood <strong>libarrow</strong> is doing all the serious computation, but at the R level the user really doesn’t need to worry too much about that. The <strong>arrowplyr</strong> toolkit works seamlessly and invisibly.</p>
 <p>In our ideal world, the <strong>arrowplyr</strong> interface is all you would ever need to use. Internally, the <strong>arrow</strong> package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using <strong>libarrow</strong>. You the user would never need to think about what’s happening under the hood.</p>
 <p>Real life, however, is filled with <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">leaky abstractions</a>, and <strong>arrowplyr</strong> is no exception. Because it’s a huge project that is under active development, there’s a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like <strong>lubridate</strong> and <strong>stringr</strong>. It’s awesome that this functionality is coming online, but because it’s happening so quickly there are gaps. The small contribution that I made today was to fill one of those gaps: currently, you can’t refer to the <code>leap_year()</code> function from <strong>lubridate</strong> in an <strong>arrowplyr</strong> pipeline. Well, technically you can, but whenever <strong>arrow</strong> encounters a function it doesn’t know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here’s what that looks like:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2159,7 +2159,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-21 15:42:08 AEDT</p>
+<p>2022-01-21 15:48:29 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>

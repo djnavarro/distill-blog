@@ -277,7 +277,7 @@ arrowmagicks %>%
   collect()
 ```
 
-The nice thing for R users is that all of this feels like regular R code. Although **libarrow** is doing all the serious computation -- none of the real work is being done within R -- but the user really doesn't need to worry too much about that. The **arrowplyr** toolkit works seamlessly and invisibly.
+The nice thing for R users is that all of this feels like regular R code. Under the hood **libarrow** is doing all the serious computation, but at the R level the user really doesn't need to worry too much about that. The **arrowplyr** toolkit works seamlessly and invisibly.
 
 In our ideal world, the **arrowplyr** interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
 
