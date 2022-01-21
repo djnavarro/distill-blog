@@ -84,7 +84,7 @@ knitr::include_graphics("https://media.giphy.com/media/3o7ZePnuDJ1EiNsK3u/giphy.
 
 I've been in my current role for a little over a week (or had been when I started writing this post!), and today my [first contribution](https://github.com/apache/arrow/pull/12173/) to Apache Arrow was merged. It was very modest contribution: I wrote some code that determines whether any given year is a leap year. It precisely mirrors the behaviour of the `leap_year()` function in the **lubridate** package, except that it can be applied to Arrow data and it will behave itself when used in the context of a **dplyr** pipeline (more on that later). The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago.  
 
-<aside>Throughout this post I'll use boldface to refer to specific R packages like **dplyr** or C++ libraries like **libarrow**</aside>
+<aside>Throughout this post I'll use boldface to refer to specific R packages like **dplyr** or C++ libraries like **libarrow**. In a slight abuse of notation, I'll also use **arrowplyr** to refer to the combination of **arrow** and **dplyr**</aside>
 
 This post is the story of how I learned this sorcery.
 
@@ -164,10 +164,10 @@ Let's start with the C++ library. The role of **libarrow** is to do all the heav
 What about the R package? The role of **arrow** is to expose the functionality of **libarrow** to the R user, to make that functionality feel "natural" in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python). In order to give you the flexibility you need, the **arrow** package allows you to interact with **libarrow** at three different levels of abstraction:
 
 - There's a heavily abstracted interface that uses [the dplyr bindings supplied by arrow](#using-dplyr-bindings). This version strives to make **libarrow** almost completely invisible, hidden behind an interface that uses familiar R function names.
-- There's a lightly abstracted interface you can access [using the `arrow_*()` functions](#using-arrow-functions). This version exposes the **libarrow** functions without attempting to exactly mirror any particular R functions, but providing some convenient "syntactic sugar" that allows you to pass R objects.
+- There's a lightly abstracted interface you can access [using the `arrow_*()` functions](#using-arrow-functions). This version exposes the **libarrow** functions without attempting to exactly mirror any particular R functions, and provides a little [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar) to make your life easier.
 - Finally, there's a minimally abstracted interface [using `call_function()`](#using-call-function). This version provides a bare bones interface, without any of the syntactic sugar.
 
-In the rest of this section I'll talk about these three levels of abstraction. Let's load the packages we're going to need for this post and dive right in!
+Over the next few sections section I'll talk about these three levels of abstraction. So let's load the packages we're going to need for this post and dive right in!
 
 ```{r}
 library(tibble)
@@ -186,7 +186,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.g
 
 
 <!----------------------------------------------------------------------------->
-## Using the **dplyr** bindings {#using-dplyr-bindings}
+## Using **arrowplyr** bindings {#using-dplyr-bindings}
 <!----------------------------------------------------------------------------->
 
 
@@ -222,7 +222,9 @@ arrowmagicks
 
 <aside>The "arrowmagicks" variable name is a reference to the Josh Hoberman quote at the start of the section. For a while Josh was completely convinced he had been gifted with special magic because he was a fish for a while. It made sense at the time, I guess? It's a weird show</aside>
 
-When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrowmagicks` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. The **arrow** package allows you to design **dplyr** pipelines using only this pointer object:
+When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrowmagicks` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. 
+
+The most natural way to work with this data in R is to make sure that both the **arrow** and **dplyr** packages are loaded, and then write regular **dplyr** code. You can do this because the **arrow** package supplies methods for **dplyr** functions, and these methods will be called whenever the input data is an Arrow Table. I'll refer to this data analyses that use this workflow as "**arrowplyr** pipelines". The "**arrowplyr**" terminology is not strictly accurate because there's no R package by that name (its a neologism I just made up), but I think it helps clarify that the workflow relies on the interaction between the two packages. Here's an example of an **arrowplyr** pipeline:
 
 ```{r}
 arrowmagicks %>% 
@@ -235,9 +237,9 @@ arrowmagicks %>%
   )
 ```
 
-When the input is `arrowmagicks`, the effect of the **dplyr** code is construct a query that can be passed to **libarrow** to be evaluated. This works because the **arrow** package supplies methods for `mutate()`, `group_by()`, and `summarise()` that are called whenever the input data is and Arrow Table. 
+It looks like a regular **dplyr** pipeline, but because the input is `arrowmagicks` (an Arrow Table object), the effect of this is construct a query that can be passed to **libarrow** to be evaluated. 
 
-It's important to realise that at this point, all we have done is define the quety. No actual computations have been performed on the Arrow data. This is a deliberate choice for efficiency purposes: on the C++ side there are a lot of performance optimisations that are only possible because the compute kernel has access to the entire query before any computations are performed. As a consequence of this, you need to explicitly tell Arrow when you want to pull the trigger and execute the query. 
+It's important to realise that at this point, all we have done is define a query: no computations have been performed on the Arrow data. This is a deliberate choice for efficiency purposes: on the C++ side there are a lot of performance optimisations that are only possible because the compute kernel has access to the entire query before any computations are performed. As a consequence of this, you need to explicitly tell Arrow when you want to pull the trigger and execute the query. 
 
 <aside>Later in the post I'll talk about Arrow Expressions, the tool that powers this trickery</aside>
 
@@ -270,11 +272,11 @@ arrowmagicks %>%
   collect()
 ```
 
-The nice thing for R users is that all of this feels like regular R code. Although **libarrow** is doing all the serious computation -- none of the real work is being done within R -- but the user really doesn't need to worry too much about that. The **dplyr** interface provided by the **arrow** package works seamlessly and invisibly.
+The nice thing for R users is that all of this feels like regular R code. Although **libarrow** is doing all the serious computation -- none of the real work is being done within R -- but the user really doesn't need to worry too much about that. The **arrowplyr** toolkit works seamlessly and invisibly.
 
-In our ideal world, the **dplyr** interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
+In our ideal world, the **arrowplyr** interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
 
-Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and the **arrow** package is no exception. The current version of the package (v6.0.1) doesn't mirror all the functionality of **dplyr** and the support for other tidyverse packages like **lubridate** and **stringr** is very much a work in progress! For example, the current release doesn't support the `leap_year()` function in **lubridate** -- not surprising, since that's exactly the thing I was trying to fix in my first contribution -- and whenever it encounters a function it doesn't know how to handle, **arrow** will throw a warning, pull the data into R and try to complete the query using native R code. Here's what that looks like:
+Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and **arrowplyr** is no exception. Because it's a huge project that is under active development, there's a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like **lubridate** and **stringr**. It's awesome that this functionality is coming online, but because it's happening so quickly there are gaps. The smol contribution that I made today was to fill one of those gaps: currently, you can't refer to the `leap_year()` function from **lubridate** in an **arrowplyr** pipeline. Well, technically you can, but whenever **arrow** encounters a function it doesn't know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here's what that looks like:
 
 ```{r}
 arrowmagicks %>% 
@@ -285,7 +287,7 @@ arrowmagicks %>%
   collect()
 ```
 
-In this case, the warning is telling you that the computations weren't actually performed in Arrow: realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R where the `leap_year()` function *is* defined.
+An answer has been calculated, but the warning is there to tell you that the computations weren't performed in Arrow. Realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R. The end result of all this is that the code executes as a regular **dplyr** pipeline and not as an **arrowplyr** one. It's not the worst possible outcome, but it still makes me sad. 😭
 
 ```{r}
 #| echo = FALSE,
@@ -303,7 +305,9 @@ knitr::include_graphics("https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.
 
 Okay, let's dig a little deeper. 
 
-In the last section I talked about the **dplyr** bindings that **arrow** provides, which are designed to mimic their native R equivalents as seamlessly as possible. These bindings work by rewriting the R functions that they mimic using only the C++ compute functions supplied by **libarrow**. That's the way you'd usually interact with Arrow in R, but you can access those compute functions more directly. To see what compute functions are exposed by the C++ **libarrow** library, you can call `list_compute_functions()` from R:
+In the last section I talked about **arrowplyr**, a collection of **dplyr** bindings provided by the **arrow** package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there's quite a lot going on to make this magic work. In most cases, the **arrow** developers have rewritten the R functions that they mimic. They (we?) have done this in a way that the computations rely only the C++ compute functions provided by **libarrow**, thereby ensuring that the data never have to enter R. The **arrowplyr** interface is the way you'd usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you're working within an **arrowplyr** pipeline it is (relatively!) straightforward, and that's what I'll talk about in this section. However, there is also a more direct method which I'll discuss later in the post.
+
+To see what compute functions are exposed by the C++ **libarrow** library, you can call `list_compute_functions()` from R:
 
 ```{r, out.lines = 10}
 list_compute_functions()
@@ -311,7 +315,6 @@ list_compute_functions()
 
 The actual output continues for quite a while: there are currently `r length(list_compute_functions())` compute functions, most of which are low level functions needed to perform basic computational operations. 
 
-There are two different ways you can call these compute functions yourself, one that provides a little [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar) to make your life a little easier, and another that calls the functions pretty directly. I'll talk about the first of these in this section.  
 
 Let's imagine you're writing **dplyr** code to work with datetime data in a Table object like `arrowmagicks`. If you were working with native R data like `magicians`, you can do something like this:
 
@@ -342,18 +345,17 @@ arrowmagicks %>%
 
 Notice there's no warning message here? That's because the computations were done in Arrow and the data have not been pulled into R. 
 
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and calling libarrow functions in dplyr pipes. I just love this scene and secretly wish I was her. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"
-knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif")
-```
-
-
 
 <!----------------------------------------------------------------------------->
-## A digression
+## A slightly-evil digression
 <!----------------------------------------------------------------------------->
+
+> Marina, blatantly lying: <br>&nbsp;&nbsp;&nbsp; "Hi. I'm Marina. I'm here to help." <br>
+> Josh, missing important memories: <br>&nbsp;&nbsp;&nbsp; "So you're like some powerful, benevolent White Witch?" <br> 
+> Marina, comically sincere: <br>&nbsp;&nbsp;&nbsp; "Uh-huh." <br><br>
+> &nbsp; &nbsp; -- The Magicians: Season 4, Episode 2
+
+<aside>At this point in the show *everybody* except currently-amnesic main characters knows that Marina has no interest in helping anyone except Marina. I love Marina so much</aside>
 
 
 Okay, here's a puzzle. In the previous section I used the `arrow_days_between()` function in the middle of a **dplyr** pipe to work around a current limitation in **arrow**. What happens if I try to call this function in another context?
@@ -396,10 +398,9 @@ Taken together, these two pieces give us the answer to our puzzle. The call to `
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Metaprogramming is about as irritating as Imagine Dragons. Image via [giphy](https://giphy.com/gifs/syfy-3o7btOKJ72mkcrsCNW), copyright [syfy](https://www.syfy.com)"
-knitr::include_graphics("https://media.giphy.com/media/3o7btOKJ72mkcrsCNW/giphy.gif")
+#| fig.cap = "Okay fine, there's no connection between slightly-evil-Julia burning down the talking trees and my slightly-evil digression. I just love this scene and secretly wish I was her. Of all the characters Julia has the most personally transformative arc (in my opinion), in both good ways and bad. There's a lot going on with her life, her person, and her body. I relate to that. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"
+knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif")
 ```
-
 
 
 <!----------------------------------------------------------------------------->
