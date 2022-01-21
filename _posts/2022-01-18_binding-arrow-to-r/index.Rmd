@@ -507,7 +507,7 @@ At long last we have all the ingredients needed to write a function that can be 
 
 ```{r}
 arrowish_toupper <- function(x) {
-  Expression$create("utf8_capitalize", x)
+  Expression$create("utf8_upper", x)
 }
 ```
 
