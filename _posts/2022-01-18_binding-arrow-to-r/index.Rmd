@@ -310,7 +310,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.
 
 Okay, let's dig a little deeper. 
 
-In the last section I talked about **arrowplyr**, a collection of **dplyr** bindings provided by the **arrow** package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there's quite a lot going on to make this magic work. In most cases, the **arrow** developers have rewritten the R functions that they mimic. They (we?) have done this in a way that the computations rely only the C++ compute functions provided by **libarrow**, thereby ensuring that the data never have to enter R. The **arrowplyr** interface is the way you'd usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you're working within an **arrowplyr** pipeline it is (relatively!) straightforward, and that's what I'll talk about in this section. However, there is also a more direct method which I'll discuss later in the post.
+In the last section I talked about **arrowplyr**, a collection of **dplyr** bindings provided by the **arrow** package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there's quite a lot going on to make this magic work. In most cases, the **arrow** developers -- which I guess includes me now! 🎉 -- have rewritten the R functions that they mimic. We've done this in a way that the computations rely only the C++ compute functions provided by **libarrow**, thereby ensuring that the data never have to enter R. The **arrowplyr** interface is the way you'd usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you're working within an **arrowplyr** pipeline it is (relatively!) straightforward, and that's what I'll talk about in this section. However, there is also a more direct method which I'll discuss later in the post.
 
 To see what compute functions are exposed by the C++ **libarrow** library, you can call `list_compute_functions()` from R:
 
@@ -423,7 +423,7 @@ Should you ever find yourself wanting to call **libarrow** compute functions dir
 call_function("days_between", start_date, today)
 ```
 
-This doesn't work because start_date` and `today` are R-native Date objects and do not refer to any data structures in Arrow. The **libarrow** functions expect to receive pointers to Arrow objects. To fix the previous example, all we need to do is create Arrow Scalars for each date. Here's how we do that:
+This doesn't work because `start_date` and `today` are R-native Date objects and do not refer to any data structures in Arrow. The **libarrow** functions expect to receive pointers to Arrow objects. To fix the previous example, all we need to do is create Arrow Scalars for each date. Here's how we do that:
 
 ```{r}
 arrow_start_date <- Scalar$create(start_date)

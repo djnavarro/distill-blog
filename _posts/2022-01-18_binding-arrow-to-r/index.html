@@ -1816,7 +1816,7 @@ Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communicat
 <h2 id="using-arrow-functions">Calling “arrow-prefix” functions</h2>
 <!----------------------------------------------------------------------------->
 <p>Okay, let’s dig a little deeper.</p>
-<p>In the last section I talked about <strong>arrowplyr</strong>, a collection of <strong>dplyr</strong> bindings provided by the <strong>arrow</strong> package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there’s quite a lot going on to make this magic work. In most cases, the <strong>arrow</strong> developers have rewritten the R functions that they mimic. They (we?) have done this in a way that the computations rely only the C++ compute functions provided by <strong>libarrow</strong>, thereby ensuring that the data never have to enter R. The <strong>arrowplyr</strong> interface is the way you’d usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you’re working within an <strong>arrowplyr</strong> pipeline it is (relatively!) straightforward, and that’s what I’ll talk about in this section. However, there is also a more direct method which I’ll discuss later in the post.</p>
+<p>In the last section I talked about <strong>arrowplyr</strong>, a collection of <strong>dplyr</strong> bindings provided by the <strong>arrow</strong> package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there’s quite a lot going on to make this magic work. In most cases, the <strong>arrow</strong> developers – which I guess includes me now! 🎉 – have rewritten the R functions that they mimic. We’ve done this in a way that the computations rely only the C++ compute functions provided by <strong>libarrow</strong>, thereby ensuring that the data never have to enter R. The <strong>arrowplyr</strong> interface is the way you’d usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you’re working within an <strong>arrowplyr</strong> pipeline it is (relatively!) straightforward, and that’s what I’ll talk about in this section. However, there is also a more direct method which I’ll discuss later in the post.</p>
 <p>To see what compute functions are exposed by the C++ <strong>libarrow</strong> library, you can call <code>list_compute_functions()</code> from R:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1954,7 +1954,7 @@ Figure 6: I guess there’s a connection between slightly-evil-Julia burning dow
 </div>
 <pre><code>Error: Argument 1 is of class Date but it must be one of &quot;Array&quot;, &quot;ChunkedArray&quot;, &quot;RecordBatch&quot;, &quot;Table&quot;, or &quot;Scalar&quot;</code></pre>
 </div>
-<p>This doesn’t work because start_date<code>and</code>today` are R-native Date objects and do not refer to any data structures in Arrow. The <strong>libarrow</strong> functions expect to receive pointers to Arrow objects. To fix the previous example, all we need to do is create Arrow Scalars for each date. Here’s how we do that:</p>
+<p>This doesn’t work because <code>start_date</code> and <code>today</code> are R-native Date objects and do not refer to any data structures in Arrow. The <strong>libarrow</strong> functions expect to receive pointers to Arrow objects. To fix the previous example, all we need to do is create Arrow Scalars for each date. Here’s how we do that:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrow_start_date</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>start_date</span><span class='op'>)</span>
@@ -2159,7 +2159,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-21 15:51:09 AEDT</p>
+<p>2022-01-21 16:57:36 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>
