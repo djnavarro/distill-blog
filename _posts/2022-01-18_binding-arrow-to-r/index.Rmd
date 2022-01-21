@@ -2,8 +2,8 @@
 title: "Binding Apache Arrow to R"
 description:
   I've been learning how to program with Apache Arrow inside R, and also I
-  have been watching "The Magicians" obsessively. For no sensible reason I
-  wrote a blog post that combines these two fixations
+  have been watching the SyFy show "The Magicians" obsessively. For no sensible 
+  reason I wrote a blog post that combines these two fixations
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -12,7 +12,7 @@ author:
     affiliation_url: https://voltrondata.com
     orcid_id: 0000-0001-7648-6578
 date: 2022-01-18
-preview: img/muhammad-haikal-sjukri--RMBf_xSf2U-unsplash.jpg
+preview: img/magicians_hard_glossy_armour.jpg
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/binding-arrow-to-r
 repository_url: https://github.com/djnavarro/distill-blog/
