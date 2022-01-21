@@ -360,7 +360,7 @@ Notice there's no warning message here? That's because the computations were don
 > Marina, comically sincere: <br>&nbsp;&nbsp;&nbsp; "Uh-huh." <br><br>
 > &nbsp; &nbsp; -- The Magicians: Season 4, Episode 2
 
-<aside>At this point in the show *everybody* except currently-amnesic main characters knows that Marina has no interest in helping anyone except Marina. I love Marina so much</aside>
+<aside>At this point in the show *everybody* except the currently-amnesic main characters knows that Marina has no interest in helping anyone except Marina. I love Marina so much</aside>
 
 
 Okay, here's a puzzle. In the previous section I used the `arrow_days_between()` function in the middle of a **dplyr** pipe to work around a current limitation in **arrow**. What happens if I try to call this function in another context?
@@ -521,7 +521,6 @@ arrowish_leap_year <- function(date) {
 ```
 
 Before putting our functions into action, lets see what happens when we try to write a simple data analysis pipeline without them:
-
 
 ```{r, error=TRUE}
 arrowmagicks %>% 
