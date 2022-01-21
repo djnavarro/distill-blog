@@ -1,0 +1,3196 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #5e5e5e; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+
+  <!--radix_placeholder_meta_tags-->
+<title>Notes from a data witch: Binding Apache Arrow to R</title>
+
+<meta property="description" itemprop="description" content="I&#39;ve been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show &quot;The Magicians&quot; obsessively. For no sensible reason I wrote a blog post that combines these two fixations"/>
+
+<link rel="canonical" href="https://blog.djnavarro.net/binding-arrow-to-r/"/>
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
+
+<!--  https://schema.org/Article -->
+<meta property="article:published" itemprop="datePublished" content="2022-01-18"/>
+<meta property="article:created" itemprop="dateCreated" content="2022-01-18"/>
+<meta name="article:author" content="Danielle Navarro"/>
+
+<!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+<meta property="og:title" content="Notes from a data witch: Binding Apache Arrow to R"/>
+<meta property="og:type" content="article"/>
+<meta property="og:description" content="I&#39;ve been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show &quot;The Magicians&quot; obsessively. For no sensible reason I wrote a blog post that combines these two fixations"/>
+<meta property="og:url" content="https://blog.djnavarro.net/binding-arrow-to-r/"/>
+<meta property="og:image" content="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/img/magicians_hard_glossy_armour.jpg"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="Notes from a data witch"/>
+
+<!--  https://dev.twitter.com/cards/types/summary -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:title" content="Notes from a data witch: Binding Apache Arrow to R"/>
+<meta property="twitter:description" content="I&#39;ve been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show &quot;The Magicians&quot; obsessively. For no sensible reason I wrote a blog post that combines these two fixations"/>
+<meta property="twitter:url" content="https://blog.djnavarro.net/binding-arrow-to-r/"/>
+<meta property="twitter:image" content="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/img/magicians_hard_glossy_armour.jpg"/>
+
+<!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
+<meta name="citation_title" content="Notes from a data witch: Binding Apache Arrow to R"/>
+<meta name="citation_fulltext_html_url" content="https://blog.djnavarro.net/binding-arrow-to-r"/>
+<meta name="citation_fulltext_world_readable" content=""/>
+<meta name="citation_online_date" content="2022/01/18"/>
+<meta name="citation_publication_date" content="2022/01/18"/>
+<meta name="citation_author" content="Danielle Navarro"/>
+<meta name="citation_author_institution" content="Voltron Data"/>
+<!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+<script type="text/json" id="radix-rmarkdown-metadata">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["Binding Apache Arrow to R"]},{"type":"character","attributes":{},"value":["I've been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show \"The Magicians\" obsessively. For no sensible reason I wrote a blog post that combines these two fixations"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["Voltron Data"]},{"type":"character","attributes":{},"value":["https://voltrondata.com"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["2022-01-18"]},{"type":"character","attributes":{},"value":["img/magicians_hard_glossy_armour.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/binding-arrow-to-r"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["binding-arrow-to-r"]},{"type":"character","attributes":{},"value":["2022-01-18"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/binding-arrow-to-r/"]}]}
+</script>
+<!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["img/magicians_hard_glossy_armour.jpg","img/muhammad-haikal-sjukri--RMBf_xSf2U-unsplash.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","magicians.csv"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+<meta name="distill:offset" content="../.."/>
+
+<script type="application/javascript">
+
+  window.headroom_prevent_pin = false;
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // initialize headroom for banner
+    var header = $('header').get(0);
+    var headerHeight = header.offsetHeight;
+    var headroom = new Headroom(header, {
+      tolerance: 5,
+      onPin : function() {
+        if (window.headroom_prevent_pin) {
+          window.headroom_prevent_pin = false;
+          headroom.unpin();
+        }
+      }
+    });
+    headroom.init();
+    if(window.location.hash)
+      headroom.unpin();
+    $(header).addClass('headroom--transition');
+
+    // offset scroll location for banner on hash change
+    // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+    window.addEventListener("hashchange", function(event) {
+      window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+    });
+
+    // responsive menu
+    $('.distill-site-header').each(function(i, val) {
+      var topnav = $(this);
+      var toggle = topnav.find('.nav-toggle');
+      toggle.on('click', function() {
+        topnav.toggleClass('responsive');
+      });
+    });
+
+    // nav dropdowns
+    $('.nav-dropbtn').click(function(e) {
+      $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+      $(this).parent().siblings('.nav-dropdown')
+         .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $("body").click(function(e){
+      $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $(".nav-dropdown").click(function(e){
+      e.stopPropagation();
+    });
+  });
+</script>
+
+<style type="text/css">
+
+/* Theme (user-documented overrideables for nav appearance) */
+
+.distill-site-nav {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: #0F2E3D;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.distill-site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.distill-site-nav a:hover {
+  color: white;
+}
+
+@media print {
+  .distill-site-nav {
+    display: none;
+  }
+}
+
+.distill-site-header {
+
+}
+
+.distill-site-footer {
+
+}
+
+
+/* Site Header */
+
+.distill-site-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.distill-site-header .nav-left {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header .nav-left {
+    margin-left: 0;
+  }
+}
+
+
+.distill-site-header .nav-right {
+  float: right;
+  margin-right: 8px;
+}
+
+.distill-site-header a,
+.distill-site-header .title {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 10px 14px 10px;
+}
+
+.distill-site-header .title {
+  font-size: 18px;
+  min-width: 150px;
+}
+
+.distill-site-header .logo {
+  padding: 0;
+}
+
+.distill-site-header .logo img {
+  display: none;
+  max-height: 20px;
+  width: auto;
+  margin-bottom: -4px;
+}
+
+.distill-site-header .nav-image img {
+  max-height: 18px;
+  width: auto;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+
+
+@media screen and (min-width: 1000px) {
+  .distill-site-header .logo img {
+    display: inline-block;
+  }
+  .distill-site-header .nav-left {
+    margin-left: 20px;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 20px;
+  }
+  .distill-site-header .title {
+    padding-left: 12px;
+  }
+}
+
+
+.distill-site-header .nav-toggle {
+  display: none;
+}
+
+.nav-dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.nav-dropdown .nav-dropbtn {
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 16px 10px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  margin-top: 1px;
+  z-index: 2;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 200px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 2px;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-dropdown-content hr {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dropdown-active {
+  display: block;
+}
+
+.nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+  color: black;
+  padding: 6px 24px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.nav-dropdown-content .nav-dropdown-header {
+  display: block;
+  padding: 5px 24px;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropbtn {
+  color: white;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.nav-right .nav-dropdown-content {
+  margin-left: -45%;
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+  .distill-site-header a.nav-toggle {
+    float: right;
+    display: block;
+  }
+  .distill-site-header .title {
+    margin-left: 0;
+  }
+  .distill-site-header .nav-right {
+    margin-right: 0;
+  }
+  .distill-site-header {
+    overflow: hidden;
+  }
+  .nav-right .nav-dropdown-content {
+    margin-left: 0;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-header.responsive {position: relative; min-height: 500px; }
+  .distill-site-header.responsive a.nav-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .distill-site-header.responsive a,
+  .distill-site-header.responsive .nav-dropdown {
+    display: block;
+    text-align: left;
+  }
+  .distill-site-header.responsive .nav-left,
+  .distill-site-header.responsive .nav-right {
+    width: 100%;
+  }
+  .distill-site-header.responsive .nav-dropdown {float: none;}
+  .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+  .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Site Footer */
+
+.distill-site-footer {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 3;
+  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Headroom */
+
+d-title {
+  padding-top: 6rem;
+}
+
+@media print {
+  d-title {
+    padding-top: 4rem;
+  }
+}
+
+.headroom {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.headroom--transition {
+  transition: all .4s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+/* adjust viewport for navbar height */
+/* helps vertically center bootstrap (non-distill) content */
+.min-vh-100 {
+  min-height: calc(100vh - 100px) !important;
+}
+
+</style>
+
+<script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="../../site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+<link href="../../site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+<script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
+<script src="../../site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+<script src="../../site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+<script type="application/javascript">
+
+function getMeta(metaName) {
+  var metas = document.getElementsByTagName('meta');
+  for (let i = 0; i < metas.length; i++) {
+    if (metas[i].getAttribute('name') === metaName) {
+      return metas[i].getAttribute('content');
+    }
+  }
+  return '';
+}
+
+function offsetURL(url) {
+  var offset = getMeta('distill:offset');
+  return offset ? offset + '/' + url : url;
+}
+
+function createFuseIndex() {
+
+  // create fuse index
+  var options = {
+    keys: [
+      { name: 'title', weight: 20 },
+      { name: 'categories', weight: 15 },
+      { name: 'description', weight: 10 },
+      { name: 'contents', weight: 5 },
+    ],
+    ignoreLocation: true,
+    threshold: 0
+  };
+  var fuse = new window.Fuse([], options);
+
+  // fetch the main search.json
+  return fetch(offsetURL('search.json'))
+    .then(function(response) {
+      if (response.status == 200) {
+        return response.json().then(function(json) {
+          // index main articles
+          json.articles.forEach(function(article) {
+            fuse.add(article);
+          });
+          // download collections and index their articles
+          return Promise.all(json.collections.map(function(collection) {
+            return fetch(offsetURL(collection)).then(function(response) {
+              if (response.status === 200) {
+                return response.json().then(function(articles) {
+                  articles.forEach(function(article) {
+                    fuse.add(article);
+                  });
+                })
+              } else {
+                return Promise.reject(
+                  new Error('Unexpected status from search index request: ' +
+                            response.status)
+                );
+              }
+            });
+          })).then(function() {
+            return fuse;
+          });
+        });
+
+      } else {
+        return Promise.reject(
+          new Error('Unexpected status from search index request: ' +
+                      response.status)
+        );
+      }
+    });
+}
+
+window.document.addEventListener("DOMContentLoaded", function (event) {
+
+  // get search element (bail if we don't have one)
+  var searchEl = window.document.getElementById('distill-search');
+  if (!searchEl)
+    return;
+
+  createFuseIndex()
+    .then(function(fuse) {
+
+      // make search box visible
+      searchEl.classList.remove('hidden');
+
+      // initialize autocomplete
+      var options = {
+        autoselect: true,
+        hint: false,
+        minLength: 2,
+      };
+      window.autocomplete(searchEl, options, [{
+        source: function(query, callback) {
+          const searchOptions = {
+            isCaseSensitive: false,
+            shouldSort: true,
+            minMatchCharLength: 2,
+            limit: 10,
+          };
+          var results = fuse.search(query, searchOptions);
+          callback(results
+            .map(function(result) { return result.item; })
+          );
+        },
+        templates: {
+          suggestion: function(suggestion) {
+            var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+              ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+              : '';
+            var html = `
+              <div class="search-item">
+                <h3>${suggestion.title}</h3>
+                <div class="search-item-description">
+                  ${suggestion.description || ''}
+                </div>
+                <div class="search-item-preview">
+                  ${img}
+                </div>
+              </div>
+            `;
+            return html;
+          }
+        }
+      }]).on('autocomplete:selected', function(event, suggestion) {
+        window.location.href = offsetURL(suggestion.path);
+      });
+      // remove inline display style on autocompleter (we want to
+      // manage responsive display via css)
+      $('.algolia-autocomplete').css("display", "");
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+
+});
+
+</script>
+
+<style type="text/css">
+
+.nav-search {
+  font-size: x-small;
+}
+
+/* Algolioa Autocomplete */
+
+.algolia-autocomplete {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: sub;
+  background-color: white;
+  color: black;
+  padding: 6px;
+  padding-top: 8px;
+  padding-bottom: 0;
+  border-radius: 6px;
+  border: 1px #0F2E3D solid;
+  width: 180px;
+}
+
+
+@media screen and (max-width: 768px) {
+  .distill-site-nav .algolia-autocomplete {
+    display: none;
+    visibility: hidden;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete {
+    display: inline-block;
+    visibility: visible;
+  }
+  .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+    margin-left: 0;
+    width: 400px;
+    max-height: 400px;
+  }
+}
+
+.algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+  width: 90%;
+  outline: none;
+  border: none;
+}
+
+.algolia-autocomplete .aa-hint {
+  color: #999;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+  width: 550px;
+  max-height: 70vh;
+  overflow-x: visible;
+  overflow-y: scroll;
+  padding: 5px;
+  margin-top: 3px;
+  margin-left: -150px;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #999;
+  border-top: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+  cursor: pointer;
+  padding: 5px 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+  border-bottom: none;
+  margin-bottom: 2px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+  overflow: hidden;
+  font-size: 0.8em;
+  line-height: 1.4em;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+  font-size: 1rem;
+  margin-block-start: 0;
+  margin-block-end: 5px;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+  display: inline-block;
+  overflow: hidden;
+  height: 2.8em;
+  width: 80%;
+  margin-right: 4%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+  display: inline-block;
+  width: 15%;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+  height: 3em;
+  width: auto;
+  display: none;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+  display: initial;
+}
+
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+  background-color: #eee;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+</style>
+
+
+<!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+<style type="text/css">
+
+body {
+  background-color: white;
+}
+
+.pandoc-table {
+  width: 100%;
+}
+
+.pandoc-table>caption {
+  margin-bottom: 10px;
+}
+
+.pandoc-table th:not([align]) {
+  text-align: left;
+}
+
+.pagedtable-footer {
+  font-size: 15px;
+}
+
+d-byline .byline {
+  grid-template-columns: 2fr 2fr;
+}
+
+d-byline .byline h3 {
+  margin-block-start: 1.5em;
+}
+
+d-byline .byline .authors-affiliations h3 {
+  margin-block-start: 0.5em;
+}
+
+.authors-affiliations .orcid-id {
+  width: 16px;
+  height:16px;
+  margin-left: 4px;
+  margin-right: 4px;
+  vertical-align: middle;
+  padding-bottom: 2px;
+}
+
+d-title .dt-tags {
+  margin-top: 1em;
+  grid-column: text;
+}
+
+.dt-tags .dt-tag {
+  text-decoration: none;
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0em 0.4em;
+  margin-right: 0.5em;
+  margin-bottom: 0.4em;
+  font-size: 70%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+d-article table.gt_table td,
+d-article table.gt_table th {
+  border-bottom: none;
+}
+
+.html-widget {
+  margin-bottom: 2.0em;
+}
+
+.l-screen-inset {
+  padding-right: 16px;
+}
+
+.l-screen .caption {
+  margin-left: 10px;
+}
+
+.shaded {
+  background: rgb(247, 247, 247);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .html-widget {
+  margin-bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .shaded-content {
+  background: white;
+}
+
+.text-output {
+  margin-top: 0;
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+d-article {
+  padding-top: 2.5rem;
+  padding-bottom: 30px;
+}
+
+d-appendix {
+  padding-top: 30px;
+}
+
+d-article>p>img {
+  width: 100%;
+}
+
+d-article h2 {
+  margin: 1rem 0 1.5rem 0;
+}
+
+d-article h3 {
+  margin-top: 1.5rem;
+}
+
+d-article iframe {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 2.0em;
+  width: 100%;
+}
+
+/* Tweak code blocks */
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: auto;
+}
+
+d-article div.sourceCode {
+  background-color: white;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 10px;
+  font-size: 12px;
+  border-left: 2px solid rgba(0,0,0,0.1);
+}
+
+d-article pre {
+  font-size: 12px;
+  color: black;
+  background: none;
+  margin-top: 0;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+d-article pre a {
+  border-bottom: none;
+}
+
+d-article pre a:hover {
+  border-bottom: none;
+  text-decoration: underline;
+}
+
+d-article details {
+  grid-column: text;
+  margin-bottom: 0.8em;
+}
+
+@media(min-width: 768px) {
+
+d-article pre,
+d-article div.sourceCode,
+d-article div.sourceCode pre {
+  overflow: visible !important;
+}
+
+d-article div.sourceCode pre {
+  padding-left: 18px;
+  font-size: 14px;
+}
+
+d-article pre {
+  font-size: 14px;
+}
+
+}
+
+figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* CSS for d-contents */
+
+.d-contents {
+  grid-column: text;
+  color: rgba(0,0,0,0.8);
+  font-size: 0.9em;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+  padding-left: 0.25em;
+  justify-self: start;
+}
+
+@media(min-width: 1000px) {
+  .d-contents.d-contents-float {
+    height: 0;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: center;
+    padding-right: 3em;
+    padding-left: 2em;
+  }
+}
+
+.d-contents nav h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.d-contents li {
+  list-style-type: none
+}
+
+.d-contents nav > ul {
+  padding-left: 0;
+}
+
+.d-contents ul {
+  padding-left: 1em
+}
+
+.d-contents nav ul li {
+  margin-top: 0.6em;
+  margin-bottom: 0.2em;
+}
+
+.d-contents nav a {
+  font-size: 13px;
+  border-bottom: none;
+  text-decoration: none
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.d-contents nav a:hover {
+  text-decoration: underline solid rgba(0, 0, 0, 0.6)
+}
+
+.d-contents nav > ul > li > a {
+  font-weight: 600;
+}
+
+.d-contents nav > ul > li > ul {
+  font-weight: inherit;
+}
+
+.d-contents nav > ul > li > ul > li {
+  margin-top: 0.2em;
+}
+
+
+.d-contents nav ul {
+  margin-top: 0;
+  margin-bottom: 0.25em;
+}
+
+.d-article-with-toc h2:nth-child(2) {
+  margin-top: 0;
+}
+
+
+/* Figure */
+
+.figure {
+  position: relative;
+  margin-bottom: 2.5em;
+  margin-top: 1.5em;
+}
+
+.figure img {
+  width: 100%;
+}
+
+.figure .caption {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5em;
+}
+
+.figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.figure .caption a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.figure .caption b,
+.figure .caption strong, {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+/* Citations */
+
+d-article .citation {
+  color: inherit;
+  cursor: inherit;
+}
+
+div.hanging-indent{
+  margin-left: 1em; text-indent: -1em;
+}
+
+/* Citation hover box */
+
+.tippy-box[data-theme~=light-border] {
+  background-color: rgba(250, 250, 250, 0.95);
+}
+
+.tippy-content > p {
+  margin-bottom: 0;
+  padding: 2px;
+}
+
+
+/* Tweak 1000px media break to show more text */
+
+@media(min-width: 1000px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 16px;
+  }
+
+  .grid {
+    grid-column-gap: 16px;
+  }
+
+  d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+  }
+  figure .caption, .figure .caption, figure figcaption {
+    font-size: 13px;
+  }
+}
+
+@media(min-width: 1180px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 32px;
+  }
+
+  .grid {
+    grid-column-gap: 32px;
+  }
+}
+
+
+/* Get the citation styles for the appendix (not auto-injected on render since
+   we do our own rendering of the citation appendix) */
+
+d-appendix .citation-appendix,
+.d-appendix .citation-appendix {
+  font-size: 11px;
+  line-height: 15px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 18px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.02);
+  padding: 10px 18px;
+  border-radius: 3px;
+  color: rgba(150, 150, 150, 1);
+  overflow: hidden;
+  margin-top: -12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Include appendix styles here so they can be overridden */
+
+d-appendix {
+  contain: layout style;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-top: 60px;
+  margin-bottom: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  color: rgba(0,0,0,0.5);
+  padding-top: 60px;
+  padding-bottom: 48px;
+}
+
+d-appendix h3 {
+  grid-column: page-start / text-start;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 1em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.65);
+}
+
+d-appendix h3 + * {
+  margin-top: 1em;
+}
+
+d-appendix ol {
+  padding: 0 0 0 15px;
+}
+
+@media (min-width: 768px) {
+  d-appendix ol {
+    padding: 0 0 0 30px;
+    margin-left: -30px;
+  }
+}
+
+d-appendix li {
+  margin-bottom: 1em;
+}
+
+d-appendix a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+d-appendix > * {
+  grid-column: text;
+}
+
+d-appendix > d-footnote-list,
+d-appendix > d-citation-list,
+d-appendix > distill-appendix {
+  grid-column: screen;
+}
+
+/* Include footnote styles here so they can be overridden */
+
+d-footnote-list {
+  contain: layout style;
+}
+
+d-footnote-list > * {
+  grid-column: text;
+}
+
+d-footnote-list a.footnote-backlink {
+  color: rgba(0,0,0,0.3);
+  padding-left: 0.5em;
+}
+
+
+
+/* Anchor.js */
+
+.anchorjs-link {
+  /*transition: all .25s linear; */
+  text-decoration: none;
+  border-bottom: none;
+}
+*:hover > .anchorjs-link {
+  margin-left: -1.125em !important;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/* Social footer */
+
+.social_footer {
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.67);
+}
+
+.disqus-comments {
+  margin-right: 30px;
+}
+
+.disqus-comment-count {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#disqus_thread {
+  margin-top: 30px;
+}
+
+.article-sharing a {
+  border-bottom: none;
+  margin-right: 8px;
+}
+
+.article-sharing a:hover {
+  border-bottom: none;
+}
+
+.sidebar-section.subscribe {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.subscribe p {
+  margin-bottom: 0.5em;
+}
+
+
+.article-footer .subscribe {
+  font-size: 15px;
+  margin-top: 45px;
+}
+
+
+.sidebar-section.custom {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.custom p {
+  margin-bottom: 0.5em;
+}
+
+/* Styles for listing layout (hide title) */
+.layout-listing d-title, .layout-listing .d-title {
+  display: none;
+}
+
+/* Styles for posts lists (not auto-injected) */
+
+
+.posts-with-sidebar {
+  padding-left: 45px;
+  padding-right: 45px;
+}
+
+.posts-list .description h2,
+.posts-list .description p {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+.posts-list .description h2 {
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.posts-list h2.post-tag {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  padding-bottom: 12px;
+}
+.posts-list {
+  margin-top: 60px;
+  margin-bottom: 24px;
+}
+
+.posts-list .post-preview {
+  text-decoration: none;
+  overflow: hidden;
+  display: block;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 24px 0;
+}
+
+.post-preview-last {
+  border-bottom: none !important;
+}
+
+.posts-list .posts-list-caption {
+  grid-column: screen;
+  font-weight: 400;
+}
+
+.posts-list .post-preview h2 {
+  margin: 0 0 6px 0;
+  line-height: 1.2em;
+  font-style: normal;
+  font-size: 24px;
+}
+
+.posts-list .post-preview p {
+  margin: 0 0 12px 0;
+  line-height: 1.4em;
+  font-size: 16px;
+}
+
+.posts-list .post-preview .thumbnail {
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  position: relative;
+  max-width: 500px;
+}
+.posts-list .post-preview img {
+  width: 100%;
+  display: block;
+}
+
+.posts-list .metadata {
+  font-size: 12px;
+  line-height: 1.4em;
+  margin-bottom: 18px;
+}
+
+.posts-list .metadata > * {
+  display: inline-block;
+}
+
+.posts-list .metadata .publishedDate {
+  margin-right: 2em;
+}
+
+.posts-list .metadata .dt-authors {
+  display: block;
+  margin-top: 0.3em;
+  margin-right: 2em;
+}
+
+.posts-list .dt-tags {
+  display: block;
+  line-height: 1em;
+}
+
+.posts-list .dt-tags .dt-tag {
+  display: inline-block;
+  color: rgba(0,0,0,0.6);
+  padding: 0.3em 0.4em;
+  margin-right: 0.2em;
+  margin-bottom: 0.4em;
+  font-size: 60%;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.posts-list img {
+  opacity: 1;
+}
+
+.posts-list img[data-src] {
+  opacity: 0;
+}
+
+.posts-more {
+  clear: both;
+}
+
+
+.posts-sidebar {
+  font-size: 16px;
+}
+
+.posts-sidebar h3 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.sidebar-section {
+  margin-bottom: 30px;
+}
+
+.categories ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.categories li {
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 0;
+}
+
+.categories li>a {
+  border-bottom: none;
+}
+
+.categories li>a:hover {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.categories .active {
+  font-weight: 600;
+}
+
+.categories .category-count {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+@media(min-width: 768px) {
+  .posts-list .post-preview h2 {
+    font-size: 26px;
+  }
+  .posts-list .post-preview .thumbnail {
+    float: right;
+    width: 30%;
+    margin-bottom: 0;
+  }
+  .posts-list .post-preview .description {
+    float: left;
+    width: 45%;
+  }
+  .posts-list .post-preview .metadata {
+    float: left;
+    width: 20%;
+    margin-top: 8px;
+  }
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.5em;
+    font-size: 16px;
+  }
+  .posts-with-sidebar .posts-list {
+    float: left;
+    width: 75%;
+  }
+  .posts-with-sidebar .posts-sidebar {
+    float: right;
+    width: 20%;
+    margin-top: 60px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
+
+
+/* Improve display for browsers without grid (IE/Edge <= 15) */
+
+.downlevel {
+  line-height: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+}
+
+.downlevel .d-title {
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+}
+
+.downlevel .d-title h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1em;
+  margin: 0 0 0.5rem;
+}
+
+.downlevel .d-title p {
+  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.55em;
+  margin-top: 0;
+}
+
+.downlevel .d-byline {
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  font-size: 0.8rem;
+  line-height: 1.8em;
+}
+
+.downlevel .section-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.downlevel .d-article {
+  font-size: 1.06rem;
+  line-height: 1.7em;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+
+.downlevel .d-appendix {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: none;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.5);
+  padding-top: 40px;
+  padding-bottom: 48px;
+}
+
+.downlevel .footnotes ol {
+  padding-left: 13px;
+}
+
+.downlevel .base-grid,
+.downlevel .distill-header,
+.downlevel .d-title,
+.downlevel .d-abstract,
+.downlevel .d-article,
+.downlevel .d-appendix,
+.downlevel .distill-appendix,
+.downlevel .d-byline,
+.downlevel .d-footnote-list,
+.downlevel .d-citation-list,
+.downlevel .distill-footer,
+.downlevel .appendix-bottom,
+.downlevel .posts-container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media(min-width: 768px) {
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+  padding-left: 150px;
+  padding-right: 150px;
+  max-width: 900px;
+}
+}
+
+.downlevel pre code {
+  display: block;
+  border-left: 2px solid rgba(0, 0, 0, .1);
+  padding: 0 0 0 20px;
+  font-size: 14px;
+}
+
+.downlevel code, .downlevel pre {
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+.downlevel .posts-list .post-preview {
+  color: inherit;
+}
+
+
+
+</style>
+
+<script type="application/javascript">
+
+function is_downlevel_browser() {
+  if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                 window.navigator.userAgent)) {
+    return true;
+  } else {
+    return window.load_distill_framework === undefined;
+  }
+}
+
+// show body when load is complete
+function on_load_complete() {
+
+  // add anchors
+  if (window.anchors) {
+    window.anchors.options.placement = 'left';
+    window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+  }
+
+
+  // set body to visible
+  document.body.style.visibility = 'visible';
+
+  // force redraw for leaflet widgets
+  if (window.HTMLWidgets) {
+    var maps = window.HTMLWidgets.findAll(".leaflet");
+    $.each(maps, function(i, el) {
+      var map = this.getMap();
+      map.invalidateSize();
+      map.eachLayer(function(layer) {
+        if (layer instanceof L.TileLayer)
+          layer.redraw();
+      });
+    });
+  }
+
+  // trigger 'shown' so htmlwidgets resize
+  $('d-article').trigger('shown');
+}
+
+function init_distill() {
+
+  init_common();
+
+  // create front matter
+  var front_matter = $('<d-front-matter></d-front-matter>');
+  $('#distill-front-matter').wrap(front_matter);
+
+  // create d-title
+  $('.d-title').changeElementType('d-title');
+
+  // create d-byline
+  var byline = $('<d-byline></d-byline>');
+  $('.d-byline').replaceWith(byline);
+
+  // create d-article
+  var article = $('<d-article></d-article>');
+  $('.d-article').wrap(article).children().unwrap();
+
+  // move posts container into article
+  $('.posts-container').appendTo($('d-article'));
+
+  // create d-appendix
+  $('.d-appendix').changeElementType('d-appendix');
+
+  // flag indicating that we have appendix items
+  var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+  // replace footnotes with <d-footnote>
+  $('.footnote-ref').each(function(i, val) {
+    appendix = true;
+    var href = $(this).attr('href');
+    var id = href.replace('#', '');
+    var fn = $('#' + id);
+    var fn_p = $('#' + id + '>p');
+    fn_p.find('.footnote-back').remove();
+    var text = fn_p.html();
+    var dtfn = $('<d-footnote></d-footnote>');
+    dtfn.html(text);
+    $(this).replaceWith(dtfn);
+  });
+  // remove footnotes
+  $('.footnotes').remove();
+
+  // move refs into #references-listing
+  $('#references-listing').replaceWith($('#refs'));
+
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    var id = $(this).attr('id');
+    $('.d-contents a[href="#' + id + '"]').parent().remove();
+    appendix = true;
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+  });
+
+  // show d-appendix if we have appendix content
+  $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+  // localize layout chunks to just output
+  $('.layout-chunk').each(function(i, val) {
+
+    // capture layout
+    var layout = $(this).attr('data-layout');
+
+    // apply layout to markdown level block elements
+    var elements = $(this).children().not('details, div.sourceCode, pre, script');
+    elements.each(function(i, el) {
+      var layout_div = $('<div class="' + layout + '"></div>');
+      if (layout_div.hasClass('shaded')) {
+        var shaded_content = $('<div class="shaded-content"></div>');
+        $(this).wrap(shaded_content);
+        $(this).parent().wrap(layout_div);
+      } else {
+        $(this).wrap(layout_div);
+      }
+    });
+
+
+    // unwrap the layout-chunk div
+    $(this).children().unwrap();
+  });
+
+  // remove code block used to force  highlighting css
+  $('.distill-force-highlighting-css').parent().remove();
+
+  // remove empty line numbers inserted by pandoc when using a
+  // custom syntax highlighting theme
+  $('code.sourceCode a:empty').remove();
+
+  // load distill framework
+  load_distill_framework();
+
+  // wait for window.distillRunlevel == 4 to do post processing
+  function distill_post_process() {
+
+    if (!window.distillRunlevel || window.distillRunlevel < 4)
+      return;
+
+    // hide author/affiliations entirely if we have no authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+    if (!have_authors)
+      $('d-byline').addClass('hidden');
+
+    // article with toc class
+    $('.d-contents').parent().addClass('d-article-with-toc');
+
+    // strip links that point to #
+    $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+    // add orcid ids
+    $('.authors-affiliations').find('.author').each(function(i, el) {
+      var orcid_id = front_matter.authors[i].orcidID;
+      if (orcid_id) {
+        var a = $('<a></a>');
+        a.attr('href', 'https://orcid.org/' + orcid_id);
+        var img = $('<img></img>');
+        img.addClass('orcid-id');
+        img.attr('alt', 'ORCID ID');
+        img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+        a.append(img);
+        $(this).append(a);
+      }
+    });
+
+    // hide elements of author/affiliations grid that have no value
+    function hide_byline_column(caption) {
+      $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+    }
+
+    // affiliations
+    var have_affiliations = false;
+    for (var i = 0; i<front_matter.authors.length; ++i) {
+      var author = front_matter.authors[i];
+      if (author.affiliation !== "&nbsp;") {
+        have_affiliations = true;
+        break;
+      }
+    }
+    if (!have_affiliations)
+      $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+    // published date
+    if (!front_matter.publishedDate)
+      hide_byline_column("Published");
+
+    // document object identifier
+    var doi = $('d-byline').find('h3:contains("DOI")');
+    var doi_p = doi.next().empty();
+    if (!front_matter.doi) {
+      // if we have a citation and valid citationText then link to that
+      if ($('#citation').length > 0 && front_matter.citationText) {
+        doi.html('Citation');
+        $('<a href="#citation"></a>')
+          .text(front_matter.citationText)
+          .appendTo(doi_p);
+      } else {
+        hide_byline_column("DOI");
+      }
+    } else {
+      $('<a></a>')
+         .attr('href', "https://doi.org/" + front_matter.doi)
+         .html(front_matter.doi)
+         .appendTo(doi_p);
+    }
+
+     // change plural form of authors/affiliations
+    if (front_matter.authors.length === 1) {
+      var grid = $('.authors-affiliations');
+      grid.children('h3:contains("Authors")').text('Author');
+      grid.children('h3:contains("Affiliations")').text('Affiliation');
+    }
+
+    // remove d-appendix and d-footnote-list local styles
+    $('d-appendix > style:first-child').remove();
+    $('d-footnote-list > style:first-child').remove();
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // hoverable references
+    $('span.citation[data-cites]').each(function() {
+      var refs = $(this).attr('data-cites').split(" ");
+      var refHtml = refs.map(function(ref) {
+        return "<p>" + $('#ref-' + ref).html() + "</p>";
+      }).join("\n");
+      window.tippy(this, {
+        allowHTML: true,
+        content: refHtml,
+        maxWidth: 500,
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start'
+      });
+    });
+
+    // clear polling timer
+    clearInterval(tid);
+
+    // show body now that everything is ready
+    on_load_complete();
+  }
+
+  var tid = setInterval(distill_post_process, 50);
+  distill_post_process();
+
+}
+
+function init_downlevel() {
+
+  init_common();
+
+   // insert hr after d-title
+  $('.d-title').after($('<hr class="section-separator"/>'));
+
+  // check if we have authors
+  var front_matter = JSON.parse($("#distill-front-matter").html());
+  var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+  // manage byline/border
+  if (!have_authors)
+    $('.d-byline').remove();
+  $('.d-byline').after($('<hr class="section-separator"/>'));
+  $('.d-byline a').remove();
+
+  // remove toc
+  $('.d-contents').remove();
+
+  // move appendix elements
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+  });
+
+
+  // inject headers into references and footnotes
+  var refs_header = $('<h3></h3>');
+  refs_header.text('References');
+  $('#refs').prepend(refs_header);
+
+  var footnotes_header = $('<h3></h3');
+  footnotes_header.text('Footnotes');
+  $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+  // move appendix-bottom entries to the bottom
+  $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+  $('.appendix-bottom').remove();
+
+  // remove appendix if it's empty
+  if ($('.d-appendix').children().length === 0)
+    $('.d-appendix').remove();
+
+  // prepend separator above appendix
+  $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+  // trim code
+  $('pre>code').each(function(i, val) {
+    $(this).html($.trim($(this).html()));
+  });
+
+  // move posts-container right before article
+  $('.posts-container').insertBefore($('.d-article'));
+
+  $('body').addClass('downlevel');
+
+  on_load_complete();
+}
+
+
+function init_common() {
+
+  // jquery plugin to change element types
+  (function($) {
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+        attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+        return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+  })(jQuery);
+
+  // prevent underline for linked images
+  $('a > img').parent().css({'border-bottom' : 'none'});
+
+  // mark non-body figures created by knitr chunks as 100% width
+  $('.layout-chunk').each(function(i, val) {
+    var figures = $(this).find('img, .html-widget');
+    if ($(this).attr('data-layout') !== "l-body") {
+      figures.css('width', '100%');
+    } else {
+      figures.css('max-width', '100%');
+      figures.filter("[width]").each(function(i, val) {
+        var fig = $(this);
+        fig.css('width', fig.attr('width') + 'px');
+      });
+
+    }
+  });
+
+  // auto-append index.html to post-preview links in file: protocol
+  // and in rstudio ide preview
+  $('.post-preview').each(function(i, val) {
+    if (window.location.protocol === "file:")
+      $(this).attr('href', $(this).attr('href') + "index.html");
+  });
+
+  // get rid of index.html references in header
+  if (window.location.protocol !== "file:") {
+    $('.distill-site-header a[href]').each(function(i,val) {
+      $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+    });
+  }
+
+  // add class to pandoc style tables
+  $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+  $('.kable-table').children('table').addClass('pandoc-table');
+
+  // add figcaption style to table captions
+  $('caption').parent('table').addClass("figcaption");
+
+  // initialize posts list
+  if (window.init_posts_list)
+    window.init_posts_list();
+
+  // implmement disqus comment link
+  $('.disqus-comment-count').click(function() {
+    window.headroom_prevent_pin = true;
+    $('#disqus_thread').toggleClass('hidden');
+    if (!$('#disqus_thread').hasClass('hidden')) {
+      var offset = $(this).offset();
+      $(window).resize();
+      $('html, body').animate({
+        scrollTop: offset.top - 35
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (is_downlevel_browser())
+    init_downlevel();
+  else
+    window.addEventListener('WebComponentsReady', init_distill);
+});
+
+</script>
+
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+
+
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      50px;
+  --body-size:       1.06rem;
+  --code-size:       14px;
+  --aside-size:      12px;
+  --fig-cap-size:    13px;
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    sans-serif;
+  --mono-font:       monospace;
+  --body-font:       sans-serif;
+  --navbar-font:     sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   13px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       #0F2E3D;
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+</style>
+<style type="text/css">
+/* base variables */
+
+/* Edit the CSS properties in this file to create a custom
+   Distill theme. Only edit values in the right column
+   for each row; values shown are the CSS defaults.
+   To return any property to the default,
+   you may set its value to: unset
+   All rows must end with a semi-colon.                      */
+
+/* Optional: embed custom fonts here with `@import`          */
+/* This must remain at the top of this file.                 */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
+html {
+  /*-- Main font sizes --*/
+  --title-size:      40px;
+  --body-size:       16px;
+  --code-size:       16px;
+  --aside-size:      14px;
+  --fig-cap-size:    14px;
+
+  /*-- Main font colors --*/
+  --title-color:     #000000;
+  --header-color:    rgba(0, 0, 0, 0.8);
+  --body-color:      rgba(0, 0, 0, 0.8);
+  --aside-color:     rgba(0, 0, 0, 0.6);
+  --fig-cap-color:   rgba(0, 0, 0, 0.6);
+
+  /*-- Specify custom fonts ~~~ must be imported above   --*/
+  --heading-font:    'Atkinson Hyperlegible', sans-serif;
+  --mono-font:       'Fira Code', monospace;
+  --body-font:       'Atkinson Hyperlegible', sans-serif;
+  --navbar-font:     'Atkinson Hyperlegible', sans-serif;  /* websites + blogs only */
+}
+
+/*-- ARTICLE METADATA --*/
+d-byline {
+  --heading-size:    0.6rem;
+  --heading-color:   rgba(0, 0, 0, 0.5);
+  --body-size:       0.8rem;
+  --body-color:      rgba(0, 0, 0, 0.8);
+}
+
+/*-- ARTICLE TABLE OF CONTENTS --*/
+.d-contents {
+  --heading-size:    18px;
+  --contents-size:   16px;
+}
+
+/*-- ARTICLE APPENDIX --*/
+d-appendix {
+  --heading-size:    15px;
+  --heading-color:   rgba(0, 0, 0, 0.65);
+  --text-size:       0.8em;
+  --text-color:      rgba(0, 0, 0, 0.5);
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+/* These properties only apply to Distill sites and blogs  */
+
+.distill-site-header {
+  --title-size:       18px;
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       black; /* #0F2E3D; */
+}
+
+.distill-site-footer {
+  --text-color:       rgba(255, 255, 255, 0.8);
+  --text-size:        15px;
+  --hover-color:      white;
+  --bkgd-color:       black; /* #0F2E3D; */
+}
+
+/*-- Additional custom styles --*/
+/* Add any additional CSS rules below                      */
+
+
+/*-- ARTICLE CODE BLOCK --*/
+d-article pre {
+  background-color: #eeeeee;
+  padding: 10px;
+  overflow-x: auto !important;
+}
+
+d-article div.sourceCode pre{
+  overflow-x: auto !important;
+}
+
+
+/*-- INLINE CODE -- */
+d-article p code {
+  font-size: 14px;
+  color: #000000;
+  background-color: #eeeeee;
+  padding: 3px;
+}
+
+/* -- REMOVE THUMBNAIL IMAGES -- */
+/*
+.posts-list .post-preview .description{
+  width: 75%;
+}
+.posts-list .post-preview .thumbnail {
+  width: 0;
+  display: none;
+}
+.posts-list .post-preview img {
+  display: none;
+}
+*/
+
+
+/* -- ASIDE TAGS -- */
+aside {
+  padding-block-end: 1rem;
+}</style>
+<style type="text/css">
+/* base style */
+
+/* FONT FAMILIES */
+
+:root {
+  --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
+body,
+.posts-list .post-preview p,
+.posts-list .description p {
+  font-family: var(--body-font), var(--body-default);
+}
+
+h1, h2, h3, h4, h5, h6,
+.posts-list .post-preview h2,
+.posts-list .description h2 {
+  font-family: var(--heading-font), var(--heading-default);
+}
+
+d-article div.sourceCode code,
+d-article pre code {
+  font-family: var(--mono-font), var(--mono-default);
+}
+
+
+/*-- TITLE --*/
+d-title h1,
+.posts-list > h1 {
+  color: var(--title-color, black);
+}
+
+d-title h1 {
+  font-size: var(--title-size, 50px);
+}
+
+/*-- HEADERS --*/
+d-article h1,
+d-article h2,
+d-article h3,
+d-article h4,
+d-article h5,
+d-article h6 {
+  color: var(--header-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- BODY --*/
+d-article > p,  /* only text inside of <p> tags */
+d-article > ul, /* lists */
+d-article > ol {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+  font-size: var(--body-size, 1.06rem);
+}
+
+
+/*-- CODE --*/
+d-article div.sourceCode code,
+d-article pre code {
+  font-size: var(--code-size, 14px);
+}
+
+/*-- ASIDE --*/
+d-article aside {
+  font-size: var(--aside-size, 12px);
+  color: var(--aside-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- FIGURE CAPTIONS --*/
+figure .caption,
+figure figcaption,
+.figure .caption {
+  font-size: var(--fig-cap-size, 13px);
+  color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+}
+
+/*-- METADATA --*/
+d-byline h3 {
+  font-size: var(--heading-size, 0.6rem);
+  color: var(--heading-color, rgba(0, 0, 0, 0.5));
+}
+
+d-byline {
+  font-size: var(--body-size, 0.8rem);
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+d-byline a,
+d-article d-byline a {
+  color: var(--body-color, rgba(0, 0, 0, 0.8));
+}
+
+/*-- TABLE OF CONTENTS --*/
+.d-contents nav h3 {
+  font-size: var(--heading-size, 18px);
+}
+
+.d-contents nav a {
+  font-size: var(--contents-size, 13px);
+}
+
+/*-- APPENDIX --*/
+d-appendix h3 {
+  font-size: var(--heading-size, 15px);
+  color: var(--heading-color, rgba(0, 0, 0, 0.65));
+}
+
+d-appendix {
+  font-size: var(--text-size, 0.8em);
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+d-appendix d-footnote-list a.footnote-backlink {
+  color: var(--text-color, rgba(0, 0, 0, 0.5));
+}
+
+/*-- WEBSITE HEADER + FOOTER --*/
+.distill-site-header .title {
+  font-size: var(--title-size, 18px);
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.distill-site-header a,
+.nav-dropdown .nav-dropbtn {
+  font-family: var(--navbar-font), var(--heading-default);
+}
+
+.nav-dropdown .nav-dropbtn {
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  font-size: var(--text-size, 15px);
+}
+
+.distill-site-header a:hover,
+.nav-dropdown:hover .nav-dropbtn {
+  color: var(--hover-color, white);
+}
+
+.distill-site-header {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer {
+  font-size: var(--text-size, 15px);
+  color: var(--text-color, rgba(255, 255, 255, 0.8));
+  background-color: var(--bkgd-color, #0F2E3D);
+}
+
+.distill-site-footer a:hover {
+  color: var(--hover-color, white);
+}</style>
+<!--/radix_placeholder_distill-->
+  <script src="../../site_libs/header-attrs-2.11/header-attrs.js"></script>
+  <script src="../../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+  <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
+  <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
+  <link href="../../site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
+  <script src="../../site_libs/tippy-6.2.7/tippy.umd.min.js"></script>
+  <script src="../../site_libs/anchor-4.2.2/anchor.min.js"></script>
+  <script src="../../site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="../../site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+<!-- plausible -->
+<script async defer data-domain="blog.djnavarro.net" src="https://plausible.io/js/plausible.js"></script>
+
+<!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"Binding Apache Arrow to R","description":"I've been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show \"The Magicians\" obsessively. For no sensible reason I wrote a blog post that combines these two fixations","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"Voltron Data","affiliationURL":"https://voltrondata.com","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2022-01-18T00:00:00.000+11:00","citationText":"Navarro, 2022"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a class="logo" href="https://djnavarro.net">
+<img src="../../image/logo-profile.png" alt="Logo"/>
+</a>
+<a href="../../index.html" class="title">Notes from a data witch</a>
+<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
+</div>
+<div class="nav-right">
+<a href="../../about.html">About</a>
+<a href="../../index.xml">RSS</a>
+<a href="https://github.com/djnavarro">GitHub</a>
+<a href="https://twitter.com/djnavarro">Twitter</a>
+<a href="https://djnavarro.net">Homepage</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>Binding Apache Arrow to R</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+<p>I’ve been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show “The Magicians” obsessively. For no sensible reason I wrote a blog post that combines these two fixations</p>
+</div>
+
+<div class="d-byline">
+  
+  true
+  
+<br/>2022-01-18
+</div>
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#why-am-i-writing-this">Why am I writing this?</a></li>
+<li><a href="#what-is-arrow">What is Arrow?</a></li>
+<li><a href="#using-arrow-in-r">Using Arrow in R</a></li>
+<li><a href="#using-dplyr-bindings">Using “arrowplyr” bindings</a></li>
+<li><a href="#using-arrow-functions">Calling “arrow-prefix” functions</a></li>
+<li><a href="#a-slightly-evil-digression">A slightly-evil digression</a>
+<ul>
+<li><a href="#part-one-object-oriented-programming">Part one: Object oriented programming</a></li>
+<li><a href="#part-two-metaprogramming">Part two: Metaprogramming</a></li>
+<li><a href="#cooperative-magic">Cooperative magic</a></li>
+</ul></li>
+<li><a href="#using-call-function">Calling libarrow directly</a></li>
+<li><a href="#arrow-expressions">Arrow expressions</a></li>
+<li><a href="#arrowish-functions">Writing arrowplyr functions</a></li>
+<li><a href="#epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</a></li>
+</ul>
+</nav>
+</div>
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+<!--------------- setup post ----------------->
+<!--------------- post ----------------->
+<p>So I have a new job.</p>
+<p>In my previous job as an academic, a large part of my work – my favourite part, if I’m honest – involved creating open access resources to help people use modern open source tools for data analysis. In my totally different role in developer relations at Voltron Data, a large part of my work involves, um … <em>[checks job description]</em> … creating open access resources to help people use modern open source tools for data analysis. Well okay then!</p>
+<p>I’d better get on that, I suppose?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<img src="https://media.giphy.com/media/3o7ZePnuDJ1EiNsK3u/giphy.gif" alt="Eliot Waugh. All I can say at this point is that thanks to his magnificent performance I have developed a terribly awkward crush on Hale Appleman.  Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-3o7ZePnuDJ1EiNsK3u), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 1: Eliot Waugh. All I can say at this point is that thanks to his magnificent performance I have developed a terribly awkward crush on Hale Appleman. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-3o7ZePnuDJ1EiNsK3u">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<aside>
+<br>Yes I have been binge watching <a href="https://en.wikipedia.org/wiki/The_Magicians_(American_TV_series)"><em>The Magicians</em></a> lately. My preemptive apologies to everyone for the gif spam.
+</aside>
+<p>I’ve been in my current role for a little over a week (or had been when I started writing this post!), and today my <a href="https://github.com/apache/arrow/pull/12173/">first contribution</a> to Apache Arrow was merged. It was very modest contribution: I wrote some code that determines whether any given year is a leap year. It precisely mirrors the behaviour of the <code>leap_year()</code> function in the <strong>lubridate</strong> package, except that it can be applied to Arrow data and it will behave itself when used in the context of a <strong>dplyr</strong> pipeline (more on that later). The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago.</p>
+<aside>
+Throughout this post I’ll use boldface to refer to specific R packages like <strong>dplyr</strong> or C++ libraries like <strong>libarrow</strong>. In a slight abuse of notation, I’ll also use <strong>arrowplyr</strong> to refer to the combination of <strong>arrow</strong> and <strong>dplyr</strong>
+</aside>
+<p>This post is the story of how I learned Arrow magic. ✨ 🏹 ✨</p>
+<!----------------------------------------------------------------------------->
+<h2 id="why-am-i-writing-this">Why am I writing this?</h2>
+<!----------------------------------------------------------------------------->
+<blockquote>
+<p>The danger of sublimated trauma is a major theme in our story <br>     – The Great God Ember (The Magicians: Season 2, Episode 3)</p>
+</blockquote>
+<p>It might seem peculiar that I’m writing such a long post about such a tiny contribution to an open source project. After all, it doesn’t actually take a lot of work to figure out how to detect leap years. You can do it in one line of R code:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>4</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>100</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>400</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>This is a logical expression corresponding to the following rules. If the <code>year</code> is divisible by 4 then it is a leap year (e.g., 1996 was a leap year). But there’s an exception: if <code>year</code> is divisible by 100 then it isn’t a leap year (e.g., 1900 wasn’t a leap year). But there’s also an exception to the exception: if <code>year</code> is divisible by 400 then it is a leap year (e.g., 2000 was a leap year). Yes, the process of mapping the verbally stated rules onto a logical expression is kind of annoying, but it’s not conceptually difficult or unusual. There is no magic in leap year calculation, no mystery that needs unpacking and explaining.</p>
+<aside>
+All this assumes years are counted using the <a href="https://en.wikipedia.org/wiki/Gregorian_calendar">Gregorian calendar</a>. There are, of course, <a href="https://en.wikipedia.org/wiki/List_of_calendars">other calendars</a>
+</aside>
+<p>The magic comes in when you start thinking about what the <strong>arrow</strong> package actually does. It lets you write perfectly ordinary R code for data manipulation that returns perfectly ordinary R data structures, even though the data have never been loaded into R and all the computation is performed externally using Apache Arrow. The code you write with <strong>arrow</strong> looks and feels like regular R code, but almost none of the work is being done by R. This <em>is</em> deep magic, and it is this magic that needs to be demystified.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<img src="https://media.giphy.com/media/xUA7b94cNgJ4qoi532/giphy-downsized-large.gif" alt="Two key moments in &quot;The Magicians&quot; when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via [giphy](https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 2: Two key moments in “The Magicians” when Julia Wicker discovers she can do magic, defying the expectations of others. One moment occurs at the start of Season 1 as a novice, after she had been told she failed the magic exams at Brakebills University; another moment occurs at the end of Season 2 after all magic has supposedly been turned off by the Old Gods or something. The parallel between the two moments is striking. Oh and Quentin Coldwater is in both scenes too I guess. Whatevs. Image via <a href="https://giphy.com/gifs/syfy-magic-julia-xUA7b94cNgJ4qoi532">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<p>I have three reasons for wanting to unpack and explain this magic.</p>
+<ul>
+<li>The first reason is personal: I’ve been a professional educator for over 15 years and it has become habit. The moment I learn a new thing my first impulse is to work out how to explain it to someone else.</li>
+<li>The second reasons is professional: I work for Voltron Data now, and part of my job is to make an educational contribution to the open source Apache Arrow project. Arrow is a pretty cool project, but there’s very little value in magnificent software if you don’t help people learn how to take advantage of it!</li>
+<li>The third reason is ethical: a readable tutorial/explanation lowers barriers to entry. I mean, let’s be honest: the only reason I was able to work up the courage to contribute to Apache Arrow is that I work for a company that is deeply invested in open source software and in the Arrow project specifically. I had colleagues and friends I could ask for advice. If I failed I knew they would be there to help me. I had a safety net.</li>
+</ul>
+<p>The last of these is huuuuuuugely important from a community point of view. Not everyone has the safety net that I have, and it makes a big difference. In a former life I’ve been on the other side of this divide: I’ve been the person with no support, nobody to ask for help, and I’ve run afoul of capricious gatekeeping in the open source world. It is a deeply unpleasant experience, and one I would not wish upon anyone else. We lose good people when this happens, and I really don’t want that!</p>
+<p>The quote from the beginning of this section, the one about the danger of sublimated trauma, is relevant here: if we want healthy user communities it is our <em>obligation</em> on the inside to provide safe environments and delightful experiences. Our job is to find and remove barriers to entry. We want to provide that “safety net” that ensures that even if you fall (because we all fall sometimes), you don’t get hurt. Failing safely at something can be a learning experience; suffering trauma, however, is almost never healthy. So yeah, this matters to me. I want to take what I’ve learned now that I’m on the inside and make that knowledge more widely accessible.</p>
+<aside>
+Everyone deserves a <a href="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/code_hero_rstats.png">safety net</a> when first learning to walk the tightropes. It’s not a luxury, it’s a necessity
+</aside>
+<p>Before diving in, I should say something about the “assumed knowledge” for this post.</p>
+<ul>
+<li>I’ll do my best to explain R concepts as I go, but the post does assume that the reader is comfortable in R and knows how to use <strong>dplyr</strong> for data manipulation. If you need a refresher on these topics, I cannot recommend <a href="https://r4ds.had.co.nz/">“R for data science”</a> highly enough. It’s a fabulous resource!</li>
+<li>On the Arrow side it would help a little if you have some vague idea of what Arrow is about. I will of course explain as I go, but if you’re looking for a post that starts at the very beginning, I wrote a post on <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">“Getting started with Apache Arrow”</a> that does exactly this and discusses a lot of the basics.</li>
+<li>Finally, a tiny R warning: later in the post I will do a little excursion into object oriented programming and metaprogramming in R, which will be familiar to some but not all readers. If you’re not comfortable with these topics, you should still be okay to skim those sections and still get the important parts of this post. It’s not essential to understand the main ideas.</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<img src="https://media.giphy.com/media/26gswa3eMvprpfjSE/giphy.gif" alt="The Great God Ember. Capricious, chaotic, and utterly unreliable unless what you're looking for is a whimsical death. Pretty much the opposite of what we'd hope for in a healthy open source community really! He is, however, a very entertaining character. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-fillory-26gswa3eMvprpfjSE), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 3: The Great God Ember. Capricious, chaotic, and utterly unreliable unless what you’re looking for is a whimsical death. Pretty much the opposite of what we’d hope for in a healthy open source community really! He is, however, a very entertaining character. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-fillory-26gswa3eMvprpfjSE">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<h2 id="what-is-arrow">What is Arrow?</h2>
+<!----------------------------------------------------------------------------->
+<p>In case you decided not to read the introductory <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">“Getting started with Apache Arrow”</a> post, here’s an extremely condensed version. Apache Arrow is a standard and open source library that represents tabular data efficiently in memory. More generally it refers to a collection of tools used to work with Arrow data. There are libraries supporting Arrow in many different programming languages, including C, C++, C#, Go, Java, JavaScript, Julia, MATLAB, Python, R, Ruby, and Rust. It’s pretty cool.</p>
+<!----------------------------------------------------------------------------->
+<h2 id="using-arrow-in-r">Using Arrow in R</h2>
+<!----------------------------------------------------------------------------->
+<p>A fundamental thing to understand about the <strong>arrow</strong> package in R is that it doesn’t implement the Apache Arrow standard directly. In fact, it tries very hard not to do any of the heavy lifting itself. There’s a C++ library that does that in a super efficient way, and the job of the R package is to supply bindings that allow the R user to interact with that library using a familiar interface. The C++ library is called <strong>libarrow</strong>. Although the long term goal is to make the integration so seamless that you can use the <strong>arrow</strong> R package without ever <em>needing</em> to understand the C++ library, my experience has been that most people <em>want</em> to know something about what’s happening under the hood. It can be unsettling to find yourself programming with tools you don’t quite understand, so I’ll dig a little deeper in this post.</p>
+<p>Let’s start with the C++ library. The role of <strong>libarrow</strong> is to do all the heavy computational work. It implements all the Arrow standards for representing tabular data in memory, provides support for the Apache “Inter-Process Communication” (IPC) protocol that lets you efficiently transfer data from one application to another, and supplies a <em>compute kernel</em> that allows you to do some data wrangling when your data are represented as an Arrow table. It is, fundamentally, the engine that makes everything work.</p>
+<p>What about the R package? The role of <strong>arrow</strong> is to expose the functionality of <strong>libarrow</strong> to the R user, to make that functionality feel “natural” in R, and to make it easier for R users to write Arrow code that is smoothly interoperable with Arrow code written in other languages (e.g., Python). In order to give you the flexibility you need, the <strong>arrow</strong> package allows you to interact with <strong>libarrow</strong> at three different levels of abstraction:</p>
+<ul>
+<li>There’s a heavily abstracted interface that uses <a href="#using-dplyr-bindings">the dplyr bindings supplied by arrow</a>. This version strives to make <strong>libarrow</strong> almost completely invisible, hidden behind an interface that uses familiar R function names.</li>
+<li>There’s a lightly abstracted interface you can access <a href="#using-arrow-functions">using the <code>arrow_*()</code> functions</a>. This version exposes the <strong>libarrow</strong> functions without attempting to exactly mirror any particular R functions, and provides a little <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a> to make your life easier.</li>
+<li>Finally, there’s a minimally abstracted interface <a href="#using-call-function">using <code>call_function()</code></a>. This version provides a bare bones interface, without any of the syntactic sugar.</li>
+</ul>
+<p>Over the next few sections section I’ll talk about these three levels of abstraction. So let’s load the packages we’re going to need for this post and dive right in!</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://lubridate.tidyverse.org'>lubridate</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<img src="https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.gif" alt="Penny Adiyodi in the Neitherlands, diving head first into a fountain that transports him to a new and magical world. I cannot stress enough that Penny does not, by and large, make good choices. Impulse control is a virtue, but not one that he possesses in abundance. Image via [giphy](https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain that transports him to a new and magical world. I cannot stress enough that Penny does not, by and large, make good choices. Impulse control is a virtue, but not one that he possesses in abundance. Image via <a href="https://giphy.com/gifs/syfy-penny-alice-26gscWcSEXuJH91tK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<h2 id="using-dplyr-bindings">Using “arrowplyr” bindings</h2>
+<!----------------------------------------------------------------------------->
+<blockquote>
+<p>I think I have some special fish magicks.<br>     – Josh Hoberman (The Magicians: Season 4, Episode 13)</p>
+</blockquote>
+<p>When I wrote my <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">Getting started with Apache Arrow</a> post, I concluded with an illustration of how you can write <strong>dplyr</strong> code that will work smoothly in R even when the data themselves are stored in Arrow. Here’s a little recap of how that works, using a tiny data set I pulled from <a href="https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)">The Magicians Wikipedia page</a>. Here’s what that data set looks like:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span>, as_data_frame <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>magicians</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 65 × 6
+   season episode title                      air_date   rating viewers
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                      &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+ 1      1       1 Unauthorized Magic         2015-12-16    0.2    0.92
+ 2      1       2 The Source of Magic        2016-01-25    0.4    1.11
+ 3      1       3 Consequences of Advanced … 2016-02-01    0.4    0.9 
+ 4      1       4 The World in the Walls     2016-02-08    0.3    0.75
+ 5      1       5 Mendings, Major and Minor  2016-02-15    0.3    0.75
+ 6      1       6 Impractical Applications   2016-02-22    0.3    0.65
+ 7      1       7 The Mayakovsky Circumstan… 2016-02-29    0.3    0.7 
+ 8      1       8 The Strangled Heart        2016-03-07    0.3    0.67
+ 9      1       9 The Writing Room           2016-03-14    0.3    0.71
+10      1      10 Homecoming                 2016-03-21    0.3    0.78
+# … with 55 more rows</code></pre>
+</div>
+<p>In the code above I used the <code>read_csv_arrow()</code> function from the <strong>arrow</strong> package. If you’ve used the <code>read_csv()</code> function from <strong>readr</strong> this will seem very familiar: although Arrow C++ code is doing a lot of the work under the hood, the Arrow options have been chosen to mirror the familiar <strong>readr</strong> interface. The <code>as_data_frame</code> argument is specific to <strong>arrow</strong> though: when it is <code>TRUE</code> the data are imported into R as a data frame or tibble, and when it is <code>FALSE</code> the data are imported into Arrow. Strictly speaking I didn’t need to specify it in this example because <code>TRUE</code> is the default value. I ony included here so that I could draw attention to it.</p>
+<p>Okay, now that we have the data let’s start with a fairly typical data analysis process: computing summary variables. Perhaps I want to know the average popularity and ratings for each season of <em>The Magicians</em>, and extract the year in which the season aired. The <strong>dplyr</strong> package provides me with the tools I need to do this, using functions like <code>mutate()</code> to create new variables, <code>group_by()</code> to specify grouping variables, and <code>summarise()</code> to aggregate data within group:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
+    viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
+  <span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 5 × 4
+  season viewers rating  year
+   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+1      1   0.776  0.308  2016
+2      2   0.788  0.323  2017
+3      3   0.696  0.269  2018
+4      4   0.541  0.2    2019
+5      5   0.353  0.111  2020</code></pre>
+</div>
+<p>All of these computations take place within R. The <code>magicians</code> data set is stored in R, and all the calculations are done using this data structure.</p>
+<p>What can we do when the data are stored in Arrow? It turns out the code is almost identical, but the first thing I’ll need to do is load the data into Arrow. The simplest way to do this is to set <code>as_data_frame = FALSE</code> when calling <code>arrow_read_csv()</code></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span>, as_data_frame <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>arrowmagicks</span>
+</code></pre>
+</div>
+<pre><code>Table
+65 rows x 6 columns
+$season &lt;int64&gt;
+$episode &lt;int64&gt;
+$title &lt;string&gt;
+$air_date &lt;date32[day]&gt;
+$rating &lt;double&gt;
+$viewers &lt;double&gt;</code></pre>
+</div>
+<aside>
+The “arrowmagicks” variable name is a reference to the quote at the start of the section. For a while Josh was convinced he had been gifted with special magic because he had been a fish. It made sense at the time, I guess? It’s a weird show
+</aside>
+<p>When I do this, two things happen. First, a data set is created outside of R in memory allocated to Arrow: all of the computations will be done on that data set. Second, the <code>arrowmagicks</code> variable is created inside R, which consists of a pointer to the actual data along with some handy metadata.</p>
+<p>The most natural way to work with this data in R is to make sure that both the <strong>arrow</strong> and <strong>dplyr</strong> packages are loaded, and then write regular <strong>dplyr</strong> code. You can do this because the <strong>arrow</strong> package supplies methods for <strong>dplyr</strong> functions, and these methods will be called whenever the input data is an Arrow Table. I’ll refer to this data analyses that use this workflow as “<strong>arrowplyr</strong> pipelines”. Here’s an example of an <strong>arrowplyr</strong> pipeline:</p>
+<aside>
+The “<strong>arrowplyr</strong>” terminology is not strictly accurate because there’s no R package by that name, but I find it useful
+</aside>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
+    viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
+  <span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>InMemoryDataset (query)
+season: int64
+viewers: double
+rating: double
+year: int64
+
+See $.data for the source Arrow object</code></pre>
+</div>
+<p>It looks like a regular <strong>dplyr</strong> pipeline, but because the input is <code>arrowmagicks</code> (an Arrow Table object), the effect of this is construct a query that can be passed to <strong>libarrow</strong> to be evaluated.</p>
+<p>It’s important to realise that at this point, all we have done is define a query: no computations have been performed on the Arrow data. This is a deliberate choice for efficiency purposes: on the C++ side there are a lot of performance optimisations that are only possible because the compute kernel has access to the entire query before any computations are performed. As a consequence of this, you need to explicitly tell Arrow when you want to pull the trigger and execute the query.</p>
+<aside>
+Later in the post I’ll talk about Arrow Expressions, the tool that powers this trickery
+</aside>
+<p>There are two ways to trigger query execution, one using the <code>compute()</code> function and the other using <code>collect()</code>. These two functions behave slightly differently and are useful for different purposes. The <code>compute()</code> function runs the query, but leaves the resulting data inside Arrow:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
+    viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>compute</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Table
+5 rows x 4 columns
+$season &lt;int64&gt;
+$viewers &lt;double&gt;
+$rating &lt;double&gt;
+$year &lt;int64&gt;</code></pre>
+</div>
+<p>This is useful whenever you’re creating an intermediate data set that you want to reuse in Arrow later, but don’t need to use this intermediate data structure inside R. If, however, you want the output to be pulled into R so that you can do R computation with it, use the <code>collect()</code> function:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>season</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>
+    viewers <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>viewers</span><span class='op'>)</span>,
+    rating <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>rating</span><span class='op'>)</span>, 
+    year <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='va'>year</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 5 × 4
+  season viewers rating  year
+   &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+1      1   0.776  0.308  2016
+2      2   0.788  0.323  2017
+3      3   0.696  0.269  2018
+4      4   0.541  0.2    2019
+5      5   0.353  0.111  2020</code></pre>
+</div>
+<p>The nice thing for R users is that all of this feels like regular R code. Although <strong>libarrow</strong> is doing all the serious computation – none of the real work is being done within R – but the user really doesn’t need to worry too much about that. The <strong>arrowplyr</strong> toolkit works seamlessly and invisibly.</p>
+<p>In our ideal world, the <strong>arrowplyr</strong> interface is all you would ever need to use. Internally, the <strong>arrow</strong> package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using <strong>libarrow</strong>. You the user would never need to think about what’s happening under the hood.</p>
+<p>Real life, however, is filled with <a href="https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/">leaky abstractions</a>, and <strong>arrowplyr</strong> is no exception. Because it’s a huge project that is under active development, there’s a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like <strong>lubridate</strong> and <strong>stringr</strong>. It’s awesome that this functionality is coming online, but because it’s happening so quickly there are gaps. The small contribution that I made today was to fill one of those gaps: currently, you can’t refer to the <code>leap_year()</code> function from <strong>lubridate</strong> in an <strong>arrowplyr</strong> pipeline. Well, technically you can, but whenever <strong>arrow</strong> encounters a function it doesn’t know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here’s what that looks like:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>, 
+    leap <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/leap_year.html'>leap_year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Warning: Expression leap_year(air_date) not supported in Arrow;
+pulling data into R</code></pre>
+<pre><code># A tibble: 65 × 8
+   season episode title          air_date   rating viewers  year leap 
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;          &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;
+ 1      1       1 Unauthorized … 2015-12-16    0.2    0.92  2015 FALSE
+ 2      1       2 The Source of… 2016-01-25    0.4    1.11  2016 TRUE 
+ 3      1       3 Consequences … 2016-02-01    0.4    0.9   2016 TRUE 
+ 4      1       4 The World in … 2016-02-08    0.3    0.75  2016 TRUE 
+ 5      1       5 Mendings, Maj… 2016-02-15    0.3    0.75  2016 TRUE 
+ 6      1       6 Impractical A… 2016-02-22    0.3    0.65  2016 TRUE 
+ 7      1       7 The Mayakovsk… 2016-02-29    0.3    0.7   2016 TRUE 
+ 8      1       8 The Strangled… 2016-03-07    0.3    0.67  2016 TRUE 
+ 9      1       9 The Writing R… 2016-03-14    0.3    0.71  2016 TRUE 
+10      1      10 Homecoming     2016-03-21    0.3    0.78  2016 TRUE 
+# … with 55 more rows</code></pre>
+</div>
+<p>An answer has been calculated, but the warning is there to tell you that the computations weren’t performed in Arrow. Realising that it doesn’t know how to interpret <code>leap_year()</code>, the <strong>arrow</strong> package has tried to “fail gracefully” and pulled everything back into R. The end result of all this is that the code executes as a regular <strong>dplyr</strong> pipeline and not as an <strong>arrowplyr</strong> one. It’s not the worst possible outcome, but it still makes me sad. 😭</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
+<img src="https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.gif" alt="Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via [giphy](https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 5: Quentin from timeline 40 talking to Alice from timeline 23. Communication across incommensurate universes is difficult. In the show it requires a Tesla Flexion. In Arrow, we use dplyr bindings. Image via <a href="https://giphy.com/gifs/syfy-alice-love-you-xUPGcJ8PkgoCQFMjHW">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<h2 id="using-arrow-functions">Calling “arrow-prefix” functions</h2>
+<!----------------------------------------------------------------------------->
+<p>Okay, let’s dig a little deeper.</p>
+<p>In the last section I talked about <strong>arrowplyr</strong>, a collection of <strong>dplyr</strong> bindings provided by the <strong>arrow</strong> package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there’s quite a lot going on to make this magic work. In most cases, the <strong>arrow</strong> developers have rewritten the R functions that they mimic. They (we?) have done this in a way that the computations rely only the C++ compute functions provided by <strong>libarrow</strong>, thereby ensuring that the data never have to enter R. The <strong>arrowplyr</strong> interface is the way you’d usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you’re working within an <strong>arrowplyr</strong> pipeline it is (relatively!) straightforward, and that’s what I’ll talk about in this section. However, there is also a more direct method which I’ll discuss later in the post.</p>
+<p>To see what compute functions are exposed by the C++ <strong>libarrow</strong> library, you can call <code>list_compute_functions()</code> from R:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/list_compute_functions.html'>list_compute_functions</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>  [1] &quot;abs&quot;                            
+  [2] &quot;abs_checked&quot;                    
+  [3] &quot;acos&quot;                           
+  [4] &quot;acos_checked&quot;                   
+  [5] &quot;add&quot;                            
+  [6] &quot;add_checked&quot;                    
+  [7] &quot;all&quot;                            
+  [8] &quot;and&quot;                            
+  [9] &quot;and_kleene&quot;                     
+ [10] &quot;and_not&quot;                        
+....</code></pre>
+</div>
+<p>The actual output continues for quite a while: there are currently 221 compute functions, most of which are low level functions needed to perform basic computational operations.</p>
+<p>Let’s imagine you’re writing <strong>dplyr</strong> code to work with datetime data in a Table object like <code>arrowmagicks</code>. If you were working with native R data like <code>magicians</code>, you can do something like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>start_date</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2015-12-16"</span><span class='op'>)</span>
+
+<span class='va'>magicians</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>air_date</span> <span class='op'>-</span> <span class='va'>start_date</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 65 × 7
+   season episode title                air_date   rating viewers days 
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;drt&gt;
+ 1      1       1 Unauthorized Magic   2015-12-16    0.2    0.92  0 d…
+ 2      1       2 The Source of Magic  2016-01-25    0.4    1.11 40 d…
+ 3      1       3 Consequences of Adv… 2016-02-01    0.4    0.9  47 d…
+ 4      1       4 The World in the Wa… 2016-02-08    0.3    0.75 54 d…
+ 5      1       5 Mendings, Major and… 2016-02-15    0.3    0.75 61 d…
+ 6      1       6 Impractical Applica… 2016-02-22    0.3    0.65 68 d…
+ 7      1       7 The Mayakovsky Circ… 2016-02-29    0.3    0.7  75 d…
+ 8      1       8 The Strangled Heart  2016-03-07    0.3    0.67 82 d…
+ 9      1       9 The Writing Room     2016-03-14    0.3    0.71 89 d…
+10      1      10 Homecoming           2016-03-21    0.3    0.78 96 d…
+# … with 55 more rows</code></pre>
+</div>
+<p>Here I’ve created a new <code>days</code> column that counts the number of days that have elapsed between the <code>air_date</code> for an episode and the <code>start_date</code> (December 16th, 2015) when the first episode of Season 1 aired. There are a lot of data analysis situations in which you might want to do something like this, but right now you can’t actually do this using the <strong>arrow</strong> dplyr bindings because temporal arithmetic is a work in progress. In the not-too-distant future users should be able to expect code like this to work seamlessly, but right now it doesn’t. If you try it right now, you get this error:</p>
+<aside>
+Improving support for date/time calculations is one of the things I’m working on
+</aside>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='va'>air_date</span> <span class='op'>-</span> <span class='va'>start_date</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error: NotImplemented: Function subtract_checked has no kernel matching input types (array[date32[day]], scalar[date32[day]])</code></pre>
+</div>
+<p>Right now, there are no general purpose arithmetic operations in <strong>arrow</strong> that allow you to subtract one date from another. However, because I chose this example rather carefully to find an edge case where the R package is missing some <strong>libarrow</strong> functionality, it turns out there is actually a <code>days_between()</code> function in <strong>libarrow</strong> that we could use to solve this problem, and it’s not too hard to use it. If you want to call one of the <strong>libarrow</strong> functions inside your <strong>dplyr</strong> pipeline, all you have to do is add an <code>arrow_</code> prefix to the function name. For example, the C++ <code>days_between()</code> function becomes <code>arrow_days_between()</code> when called within the <strong>arrow</strong> <strong>dplyr</strong> pipeline:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>days <span class='op'>=</span> <span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='va'>start_date</span>, <span class='va'>air_date</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 65 × 7
+   season episode title                air_date   rating viewers  days
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;
+ 1      1       1 Unauthorized Magic   2015-12-16    0.2    0.92     0
+ 2      1       2 The Source of Magic  2016-01-25    0.4    1.11    40
+ 3      1       3 Consequences of Adv… 2016-02-01    0.4    0.9     47
+ 4      1       4 The World in the Wa… 2016-02-08    0.3    0.75    54
+ 5      1       5 Mendings, Major and… 2016-02-15    0.3    0.75    61
+ 6      1       6 Impractical Applica… 2016-02-22    0.3    0.65    68
+ 7      1       7 The Mayakovsky Circ… 2016-02-29    0.3    0.7     75
+ 8      1       8 The Strangled Heart  2016-03-07    0.3    0.67    82
+ 9      1       9 The Writing Room     2016-03-14    0.3    0.71    89
+10      1      10 Homecoming           2016-03-21    0.3    0.78    96
+# … with 55 more rows</code></pre>
+</div>
+<p>Notice there’s no warning message here? That’s because the computations were done in Arrow and the data have not been pulled into R.</p>
+<!----------------------------------------------------------------------------->
+<h2 id="a-slightly-evil-digression">A slightly-evil digression</h2>
+<!----------------------------------------------------------------------------->
+<blockquote>
+<p>Marina, blatantly lying: <br>    “Hi. I’m Marina. I’m here to help.” <br> Josh, missing important memories: <br>    “So you’re like some powerful, benevolent White Witch?” <br> Marina, comically sincere: <br>    “Uh-huh.” <br><br>     – The Magicians: Season 4, Episode 2</p>
+</blockquote>
+<aside>
+At this point in the show <em>everybody</em> except currently-amnesic main characters knows that Marina has no interest in helping anyone except Marina. I love Marina so much
+</aside>
+<p>Okay, here’s a puzzle. In the previous section I used the <code>arrow_days_between()</code> function in the middle of a <strong>dplyr</strong> pipe to work around a current limitation in <strong>arrow</strong>. What happens if I try to call this function in another context?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>today</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.Date.html'>as.Date</a></span><span class='op'>(</span><span class='st'>"2022-01-18"</span><span class='op'>)</span>
+
+<span class='fu'>arrow_days_between</span><span class='op'>(</span><span class='va'>start_date</span>, <span class='va'>today</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error in arrow_days_between(start_date, today): could not find function &quot;arrow_days_between&quot;</code></pre>
+</div>
+<p>It turns out there is no R function called <code>arrow_days_between()</code>. This is … surprising, to say the least. I mean, it really does look like I used this function in the last section, doesn’t it? How does this work? The answer to this requires a slightly deeper understanding of what the <strong>dplyr</strong> bindings in <strong>arrow</strong> do, and it’s kind of a two-part answer.</p>
+<h3 id="part-one-object-oriented-programming">Part one: Object oriented programming</h3>
+<p>Let’s consider the <code>mutate()</code> function. <strong>dplyr</strong> defines <code>mutate()</code> as an S3 generic function, which allows it to display “polymorphism”: it behaves differently depending on what kind of object is passed to to the generic. When you pass a data frame to <code>mutate()</code>, the call is “dispatched” to the <code>mutate.arrow_dplyr_query()</code> methods supplied by (but not exported by) <strong>dplyr</strong>. The <strong>arrow</strong> package builds on this by supplying methods that apply for Arrow objects. Specifically, there are internal functions <code>mutate.ArrowTabular()</code>, <code>mutate.Dataset()</code>, and <code>mutate.arrow_dplyr_query()</code> that are used to provide <code>mutate()</code> functionality for Arrow data sets. In other words, the “top level” <strong>dplyr</strong> functions in <strong>arrow</strong> are S3 methods, and method dispatch is the mechanism that does the work.</p>
+<h3 id="part-two-metaprogramming">Part two: Metaprogramming</h3>
+<p>Now let’s consider the <code>leap_year()</code> function that my contribution focused on. Not only is this not a generic function, it’s not even a <strong>dplyr</strong> function. It’s a regular function in the <strong>lubridate</strong> package. So how is it possible for <strong>arrow</strong> to mimic the behaviour of <code>lubridate::leap_year()</code> without messing up <strong>lubridate</strong>? This is where the <em>dplyr</em> binding part comes in. Let’s imagine that I’d written an actual function called <code>arrowish_leap_year()</code> that performs leap year calculations for Arrow data. If I’d done this inside the <strong>arrow</strong> package<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> then I’d include a line like this to register a binding:</p>
+<aside>
+I’ll show you how to write your own <a href="#arrowish-functions">“arrowish” functions</a> later in the post
+</aside>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>register_binding</span><span class='op'>(</span><span class='st'>"leap_year"</span>, <span class='va'>arrowish_leap_year</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Once the binding has been registered, whenever <code>leap_year()</code> is encountered within one of the <strong>arrow</strong>-supplied <strong>dplyr</strong> functions, R will substitute my <code>arrowish_leap_year()</code> function in place of the <code>lubridate::leap_year()</code> function that would normally be called. This is only possible because R has extremely sophisticated <a href="https://adv-r.hadley.nz/metaprogramming.html">metaprogramming</a> tools: you (the developer) can write functions that “capture” the code that the user input, and if necessary modify that code before R evaluates it. This is a very powerful tool for constructing domain-specific languages within R. The tidyverse uses it extensively, and the <strong>arrow</strong> package does too. The <strong>dplyr</strong> bindings inside <strong>arrow</strong> use metaprogramming tricks to modify the user input in such a way that – in this example – the user input is interpreted as if the user had called <code>arrowish_leap_year()</code> rather than <code>leap_year()</code>.</p>
+<h3 id="cooperative-magic">Cooperative magic</h3>
+<p>Taken together, these two pieces give us the answer to our puzzle. The call to <code>arrow_days_between()</code> works in my original example because that call was constructed within the context of an <strong>arrow</strong>-supplied <code>mutate()</code> function. The interpretation of this code isn’t performed by <strong>dplyr</strong> it is handled by <strong>arrow</strong>. Internally, <strong>arrow</strong> uses metaprogramming magic to ensure that <code>arrow_days_between()</code> is reinterpreted as a call to the <strong>libarrow</strong> <code>days_between()</code> function. But that metaprogramming magic doesn’t apply anywhere except the <strong>arrowplyr</strong> context. If you try to call <code>arrow_days_between()</code> from the R console or even in a regular <strong>dplyr</strong> pipeline, you get an error because technically speaking this function doesn’t exist.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<img src="https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.gif" alt="I guess there's a connection between slightly-evil-Julia burning down the talking trees and my slightly-evil digression? Sort of. I mean the truth is just that I just love this scene and secretly wish I was her. Of all the characters Julia has the most personally transformative arc (in my opinion), in both good ways and bad. There's a lot going on with her life, her person, and her body. I relate to that. Image via [giphy](https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 6: I guess there’s a connection between slightly-evil-Julia burning down the talking trees and my slightly-evil digression? Sort of. I mean the truth is just that I just love this scene and secretly wish I was her. Of all the characters Julia has the most personally transformative arc (in my opinion), in both good ways and bad. There’s a lot going on with her life, her person, and her body. I relate to that. Image via <a href="https://giphy.com/gifs/syfy-l0IydgNESZjrALWqA">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<h2 id="using-call-function">Calling libarrow directly</h2>
+<!----------------------------------------------------------------------------->
+<p>The weirdness of that digression leads naturally to a practical question. Given that the “arrow-prefix” function don’t actually exist in the usual sense of the term, and the corresponding bindings can only be called in an <strong>arrowplyr</strong> context, how the heck does an R developer call the <strong>libarrow</strong> functions directly? In everyday data analysis you wouldn’t want to do this very often, but from a programming perspective it matters: if you want to write your own functions that play nicely with <strong>arrowplyr</strong> pipelines, it’s very handy to know how to call <strong>libarrow</strong> directly.</p>
+<p>So let’s strip back another level of abstraction!</p>
+<p>Should you ever find yourself wanting to call <strong>libarrow</strong> compute functions directly from R, <code>call_function()</code> will become your new best friend. It provides a very minimal interface that exposes the <strong>libarrow</strong> functions to R. The “bare bones” nature of this interface has advantages and disadvantages. The advantage is simplicity: your code doesn’t depend on any of the fancy bells and whistles. Those are fabulous from the user perspective, but from a developer point of view you usually want to keep it simple. The price you pay for this is that you must pass appropriate Arrow objects. You can’t pass a regular R object to a <strong>libarrow</strong> function and expect it to work. For example:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>start_date</span>, <span class='va'>today</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Error: Argument 1 is of class Date but it must be one of &quot;Array&quot;, &quot;ChunkedArray&quot;, &quot;RecordBatch&quot;, &quot;Table&quot;, or &quot;Scalar&quot;</code></pre>
+</div>
+<p>This doesn’t work because start_date<code>and</code>today` are R-native Date objects and do not refer to any data structures in Arrow. The <strong>libarrow</strong> functions expect to receive pointers to Arrow objects. To fix the previous example, all we need to do is create Arrow Scalars for each date. Here’s how we do that:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrow_start_date</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>start_date</span><span class='op'>)</span>
+<span class='va'>arrow_today</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
+
+<span class='va'>arrow_start_date</span>
+</code></pre>
+</div>
+<pre><code>Scalar
+2015-12-16</code></pre>
+</div>
+<p>The <code>arrow_start_date</code> and <code>arrow_today</code> variables are R data structures, but they’re only thin wrappers. The actual data are stored in Arrow, and the R objects are really just pointers to the Arrow data. These objects are suitable for passing to the <strong>libarrow</strong> <code>days_between()</code> function, and this works:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://arrow.apache.org/docs/r//reference/call_function.html'>call_function</a></span><span class='op'>(</span><span class='st'>"days_between"</span>, <span class='va'>arrow_start_date</span>, <span class='va'>arrow_today</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Scalar
+2225</code></pre>
+</div>
+<p>Huh. Apparently it took me over 2000 days to write a proper fangirl post about <em>The Magicians</em>. I’m really late to the pop culture party, aren’t I? Oh dear. I’m getting old.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-25"></span>
+<img src="https://media.giphy.com/media/26AHOmyGvNBim4GHK/giphy.gif" alt="I'm getting lazier with these connections. Using a Library gif because I'm talking about the C++ library? I mean really, you'd think I'd be better than that wouldn't you? But no. I am not. Image via [giphy](https://giphy.com/gifs/syfy-the-magicians-26AHOmyGvNBim4GHK), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 7: I’m getting lazier with these connections. Using a Library gif because I’m talking about the C++ library? I mean really, you’d think I’d be better than that wouldn’t you? But no. I am not. Image via <a href="https://giphy.com/gifs/syfy-the-magicians-26AHOmyGvNBim4GHK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<h2 id="arrow-expressions">Arrow expressions</h2>
+<!----------------------------------------------------------------------------->
+<p>There’s one more foundational topic I should discuss before I can show you how to write <strong>arrowplyr</strong>-friendly functions, and that’s Arrow Expressions. When I introduced <strong>arrowplyr</strong> early in the post I noted that most of your code is used to specify a query, and that query doesn’t get evaluated until <code>compute()</code> or <code>collect()</code> is called. If you want to write code that plays nicely with this workflow, you need to ensure that your custom functions return an Arrow Expression.</p>
+<p>The basic idea behind expressions is probably familiar to R users, since they are what powers the metaprogramming capabilities of the language and are used extensively throughout tidyverse as well as base R. In base R, the <code>quote()</code> function is used to capture a user expression and <code>eval()</code> is used to force it to evaluate. Here’s a simple example where I use <code>quote()</code> to “capture” some R code and prevent it from evaluating:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>head_expr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>quote</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>magicians</span>, n <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>head_expr</span>
+</code></pre>
+</div>
+<pre><code>head(magicians, n = 3)</code></pre>
+</div>
+<p>If I wanted to be clever I could modify the code in <code>head_expr</code> before allowing R to pull the trigger on evaluating it. I could combine a lot of expressions together, change parts of the code as needed, and evaluate them wherever I wanted. As you might imagine, this is super useful for creating domain specific languages within R, and <strong>arrow</strong> use it a lot. But this isn’t a post about metaprogramming so let’s evaluate it now:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/eval.html'>eval</a></span><span class='op'>(</span><span class='va'>head_expr</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 3 × 6
+  season episode title                       air_date   rating viewers
+   &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                       &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+1      1       1 Unauthorized Magic          2015-12-16    0.2    0.92
+2      1       2 The Source of Magic         2016-01-25    0.4    1.11
+3      1       3 Consequences of Advanced S… 2016-02-01    0.4    0.9 </code></pre>
+</div>
+<p>The example above uses native R code. It’s not tied to Arrow in any sense. However, the <strong>arrow</strong> package provides a mechanism for doing something similar in an Arrow context. For example, here’s me creating a character string as an Arrow Scalar:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fillory</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"A world as intricate as filigree"</span><span class='op'>)</span>
+<span class='va'>fillory</span>
+</code></pre>
+</div>
+<pre><code>Scalar
+A world as intricate as filigree</code></pre>
+</div>
+<p>Here’s me creating the corresponding object within an Arrow Expression:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fillory</span> <span class='op'>&lt;-</span> <span class='va'>Expression</span><span class='op'>$</span><span class='fu'>scalar</span><span class='op'>(</span>
+  <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"A world as intricate as filigree"</span><span class='op'>)</span>
+<span class='op'>)</span>
+<span class='va'>fillory</span>
+</code></pre>
+</div>
+<pre><code>Expression
+&quot;A world as intricate as filigree&quot;</code></pre>
+</div>
+<p>I suspect this would not seem particularly impressive on its own, but you can use the same idea to create function calls that can be evaluated later within the Arrow context:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ember</span> <span class='op'>&lt;-</span> <span class='va'>Expression</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"utf8_capitalize"</span>, <span class='va'>fillory</span><span class='op'>)</span>
+<span class='va'>ember</span>
+</code></pre>
+</div>
+<pre><code>Expression
+utf8_capitalize(&quot;A world as intricate as filigree&quot;)</code></pre>
+</div>
+<p>So close. We are so very close to the end now.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
+<img src="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif" alt="Okay look, I'll level with you. At this point there is absolutely no connection between the gifs and the content. This post is getting very long and my brain is fried. I need a short break to appreciate the beautiful people, and Kings Idri and Eliot are both very beautiful people. Image via [giphy](https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 8: Okay look, I’ll level with you. At this point there is absolutely no connection between the gifs and the content. This post is getting very long and my brain is fried. I need a short break to appreciate the beautiful people, and Kings Idri and Eliot are both very beautiful people. Image via <a href="https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.gif">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<h2 id="arrowish-functions">Writing arrowplyr functions</h2>
+<p>At long last we have all the ingredients needed to write a function that can be used in an <strong>arrowplyr</strong> pipeline. Here’s a simple implementation of the base R <code>toupper()</code> function</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowish_toupper</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>Expression</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"utf8_capitalize"</span>, <span class='va'>x</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<p>As it happens <strong>arrowplyr</strong> pipelines already support the <code>toupper()</code> function, so there really wasn’t a need for me to write this. However, at present they don’t support the <strong>lubridate</strong> <code>leap_year()</code> function, which was the purpose of my very small contribution today. An Arrow friendly version of <code>leap_year()</code> looks like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowish_leap_year</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>date</span><span class='op'>)</span> <span class='op'>{</span>
+   <span class='va'>year</span> <span class='op'>&lt;-</span> <span class='va'>Expression</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='st'>"year"</span>, <span class='va'>date</span><span class='op'>)</span>
+  <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>4</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>&amp;</span> <span class='op'>(</span><span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>100</span> <span class='op'>!=</span> <span class='fl'>0</span><span class='op'>)</span> <span class='op'>|</span> <span class='op'>(</span><span class='va'>year</span> <span class='op'><a href='https://rdrr.io/r/base/Arithmetic.html'>%%</a></span> <span class='fl'>400</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<p>Before putting our functions into action, lets see what happens when we try to write a simply data analysis pipeline without them:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    title <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/chartr.html'>toupper</a></span><span class='op'>(</span><span class='va'>title</span><span class='op'>)</span>,
+    year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>, 
+    leap <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/leap_year.html'>leap_year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Warning: Expression leap_year(air_date) not supported in Arrow;
+pulling data into R</code></pre>
+<pre><code># A tibble: 65 × 8
+   season episode title          air_date   rating viewers  year leap 
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;          &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;lgl&gt;
+ 1      1       1 UNAUTHORIZED … 2015-12-16    0.2    0.92  2015 FALSE
+ 2      1       2 THE SOURCE OF… 2016-01-25    0.4    1.11  2016 TRUE 
+ 3      1       3 CONSEQUENCES … 2016-02-01    0.4    0.9   2016 TRUE 
+ 4      1       4 THE WORLD IN … 2016-02-08    0.3    0.75  2016 TRUE 
+ 5      1       5 MENDINGS, MAJ… 2016-02-15    0.3    0.75  2016 TRUE 
+ 6      1       6 IMPRACTICAL A… 2016-02-22    0.3    0.65  2016 TRUE 
+ 7      1       7 THE MAYAKOVSK… 2016-02-29    0.3    0.7   2016 TRUE 
+ 8      1       8 THE STRANGLED… 2016-03-07    0.3    0.67  2016 TRUE 
+ 9      1       9 THE WRITING R… 2016-03-14    0.3    0.71  2016 TRUE 
+10      1      10 HOMECOMING     2016-03-21    0.3    0.78  2016 TRUE 
+# … with 55 more rows</code></pre>
+</div>
+<aside>
+The internal <strong>arrow</strong> function that handles this is called “abandon_ship”. No, I don’t know why I felt the need to mention this`
+</aside>
+<p>Yes, it returns the correct answer, but only because <strong>arrow</strong> detected a function it doesn’t understand and has “abandoned ship”. It pulled the data into R and let <strong>dplyr</strong> do all the work. Now let’s see what happens when we use our functions instead:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span>
+    title <span class='op'>=</span> <span class='fu'>arrowish_toupper</span><span class='op'>(</span><span class='va'>title</span><span class='op'>)</span>,
+    year <span class='op'>=</span> <span class='fu'><a href='https://lubridate.tidyverse.org/reference/year.html'>year</a></span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>,
+    leap <span class='op'>=</span> <span class='fu'>arrowish_leap_year</span><span class='op'>(</span><span class='va'>air_date</span><span class='op'>)</span>
+  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 65 × 8
+   season episode title          air_date   rating viewers  year leap 
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;          &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;lgl&gt;
+ 1      1       1 Unauthorized … 2015-12-16    0.2    0.92  2015 FALSE
+ 2      1       2 The source of… 2016-01-25    0.4    1.11  2016 TRUE 
+ 3      1       3 Consequences … 2016-02-01    0.4    0.9   2016 TRUE 
+ 4      1       4 The world in … 2016-02-08    0.3    0.75  2016 TRUE 
+ 5      1       5 Mendings, maj… 2016-02-15    0.3    0.75  2016 TRUE 
+ 6      1       6 Impractical a… 2016-02-22    0.3    0.65  2016 TRUE 
+ 7      1       7 The mayakovsk… 2016-02-29    0.3    0.7   2016 TRUE 
+ 8      1       8 The strangled… 2016-03-07    0.3    0.67  2016 TRUE 
+ 9      1       9 The writing r… 2016-03-14    0.3    0.71  2016 TRUE 
+10      1      10 Homecoming     2016-03-21    0.3    0.78  2016 TRUE 
+# … with 55 more rows</code></pre>
+</div>
+<p>Everything works perfectly within Arrow. No ships are abandoned, the <strong>arrowplyr</strong> pipeline springs no leaks, and we all live happily ever after.</p>
+<p>Sort of.</p>
+<p>I mean, we’re all still alive.</p>
+<p>That has to count as a win, right? 🎉</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-36"></span>
+<img src="https://media.giphy.com/media/l2Sq18e02qsxjKfBK/giphy.gif" alt="Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via [giphy](https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK), copyright [syfy](https://www.syfy.com)"  />
+<p class="caption">
+Figure 9: Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via <a href="https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK">giphy</a>, copyright <a href="https://www.syfy.com">syfy</a>
+</p>
+</div>
+</div>
+<!----------------------------------------------------------------------------->
+<h2 id="epilogue-wheres-the-rest-of-the-owl">Epilogue: Where’s the rest of the owl?</h2>
+<!----------------------------------------------------------------------------->
+<aside>
+In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/how-to-draw-an-owl">how to draw an owl</a>
+</aside>
+<p>The story I’ve told in this post is a little incomplete. I’ve shown you how to write a function like <code>arrowish_leap_year()</code> that can slot into a <strong>dplyr</strong> pipeline and operate on an Arrow data structure. But I haven’t said anything about the precise workings of how <code>register_binding()</code> works, in part because the details of the metaprogramming magic is one of the mysteries I’m currently unpacking while I dig into the code base.</p>
+<p>But that’s not the only thing I’ve left unsaid. I haven’t talked about unit tests, for example. I haven’t talked about the social/technical process of getting code merged into the Arrow repository. If you’ve made it to the end of this post and are curious about joining the Arrow developer community, these are things you need to know about. I’ll probably write something about those topics later on, but in the meantime here are some fabulous resources that might be handy:</p>
+<ul>
+<li><a href="https://arrow.apache.org/docs/dev/developers/guide/index.html">Apache Arrow New Contributors Guide</a> (thank you to Alenka Frim!)</li>
+<li><a href="https://arrow.apache.org/docs/dev/r/articles/developers/bindings.html">Developers Guide to Writing Bindings</a> (thank you to Nic Crane!)</li>
+<li><a href="https://arrow.apache.org/cookbook/r/">Apache Arrow R Cookbook</a> (thank you to Nic Crane again)</li>
+</ul>
+<p>Enjoy! 🍰</p>
+<!--------------- appendices ----------------->
+<div class="layout-chunk" data-layout="l-body">
+<h2 class="appendix" id="last-updated">Last updated</h2>
+<p>2022-01-21 14:13:39 AEDT</p>
+<h2 class="appendix" id="details">Details</h2>
+<p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
+</div>
+<!--------------- miscellanea ----------------->
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>My actual code didn’t bother to name my function. It’s just an anonymous function passed to <code>register_binding()</code>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom">
+  <h3 id="updates-and-corrections">Corrections</h3>
+  <p>If you see mistakes or want to suggest changes, please <a href="https://github.com/djnavarro/distill-blog/issues/new">create an issue</a> on the source repository.</p>
+  <h3 id="reuse">Reuse</h3>
+  <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/djnavarro/distill-blog/">https://github.com/djnavarro/distill-blog/</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
+  <h3 id="citation">Citation</h3>
+  <p>For attribution, please cite this work as</p>
+  <pre class="citation-appendix short">Navarro (2022, Jan. 18). Notes from a data witch: Binding Apache Arrow to R. Retrieved from https://blog.djnavarro.net/binding-arrow-to-r</pre>
+  <p>BibTeX citation</p>
+  <pre class="citation-appendix long">@misc{navarro2022binding,
+  author = {Navarro, Danielle},
+  title = {Notes from a data witch: Binding Apache Arrow to R},
+  url = {https://blog.djnavarro.net/binding-arrow-to-r},
+  year = {2022}
+}</pre>
+</div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+
+</body>
+
+</html>
