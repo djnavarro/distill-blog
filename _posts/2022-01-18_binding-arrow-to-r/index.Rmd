@@ -148,8 +148,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gswa3eMvprpfjSE/giphy.g
 ## What is Arrow?
 <!----------------------------------------------------------------------------->
 
-TBA.
-
+In case you decided not to read the introductory ["Getting started with Apache Arrow"](https://blog.djnavarro.net/starting-apache-arrow-in-r) post, here's an extremely condensed version. Apache Arrow is a standard and open source library that represents tabular data efficiently in memory. More generally it refers to a collection of tools used to work with Arrow data. There are libraries supporting Arrow in many different programming languages, including C, C++, C#, Go, Java, JavaScript, Julia, MATLAB, Python, R, Ruby, and Rust. It's pretty cool. 
 
 
 <!----------------------------------------------------------------------------->
