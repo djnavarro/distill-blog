@@ -123,11 +123,11 @@ I have three reasons for wanting to unpack and explain this magic.
 - The second reasons is professional: I work for Voltron Data now, and part of my job is to make an educational contribution to the open source Apache Arrow project. Arrow is a pretty cool project, but there's very little value in magnificent software if you don't help people learn how to take advantage of it! 
 - The third reason is ethical: a readable tutorial/explanation lowers barriers to entry. I mean, let's be honest: the only reason I was able to work up the courage to contribute to Apache Arrow is that I work for a company that is deeply invested in open source software and in the Arrow project specifically. I had colleagues and friends I could ask for advice. If I failed I knew they would be there to help me. I had a safety net. 
 
-The last of these is important from an equity and inclusion point of view. Not everyone has the safety net that I have, and in a former lifetime I've been on the other side. I've been the person with no support, nobody to ask for help, and I've run afoul of capricious gatekeeping in the open source world. It is a deeply unpleasant experience, and one I would not wish upon anyone else. The quote from Ember about the danger of sublimated trauma is relevant here: if we want healthy user communities it is our *obligation* on the inside to provide safe environments and delightful experiences. Our job is to find and remove barriers to entry. We want to provide that "safety net" that ensures that even if you fall (because we all fall sometimes), you don't get hurt. Failing at something is often a learning experience; trauma, on the other hand, is not.
+The last of these is huuuuuuugely important from a community point of view. Not everyone has the safety net that I have, and it makes a big difference. In a former life I've been on the other side of this divide: I've been the person with no support, nobody to ask for help, and I've run afoul of capricious gatekeeping in the open source world. It is a deeply unpleasant experience, and one I would not wish upon anyone else. We lose good people when this happens, and I really don't want that! 
+
+The quote from the beginning of this section, the one about the danger of sublimated trauma, is relevant here: if we want healthy user communities it is our *obligation* on the inside to provide safe environments and delightful experiences. Our job is to find and remove barriers to entry. We want to provide that "safety net" that ensures that even if you fall (because we all fall sometimes), you don't get hurt. Failing safely at something can be a learning experience; suffering trauma, however, is almost never healthy. So yeah, this matters to me. I want to take what I've learned now that I'm on the inside and make that knowledge more widely accessible. 
 
 <aside>Everyone deserves a [safety net](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/code_hero_rstats.png) when first learning to walk the tightropes. It's not a luxury, it's a necessity</aside>
-
-So yeah. I'm not usually a person prone to earnestness but this is something that matters to me. It's time for me to pay it forward, so to speak. I'd like to take what I've learned and make that knowledge more widely accessible. 
 
 Before diving in, I should say something about the "assumed knowledge" for this post. 
 
@@ -186,7 +186,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.g
 
 
 <!----------------------------------------------------------------------------->
-## Using **arrowplyr** bindings {#using-dplyr-bindings}
+## Using "arrowplyr" bindings {#using-dplyr-bindings}
 <!----------------------------------------------------------------------------->
 
 
@@ -200,7 +200,9 @@ magicians <- read_csv_arrow("magicians.csv", as_data_frame = TRUE)
 magicians
 ```
 
-Let's suppose I wanted to calculate the average unemployment rate for every year in the data. The **dplyr** package provides me with the tools I need to do this, using functions like `mutate()` to create new variables, `group_by()` to specify grouping variables, and `summarise()` to aggregate data within group:
+In the code above I used the `read_csv_arrow()` function from the **arrow** package. If you've used the `read_csv()` function from **readr** this will seem very familiar: although Arrow C++ code is doing a lot of the work under the hood, the Arrow options have been chosen to mirror the familiar **readr** interface. The `as_data_frame` argument is specific to **arrow** though: when it is `TRUE` the data are imported into R as a data frame or tibble, and when it is `FALSE` the data are imported into Arrow. Strictly speaking I didn't need to specify it in this example because `TRUE` is the default value. I ony included here so that I could draw attention to it. 
+
+Okay, now that we have the data let's start with a fairly typical data analysis process: computing summary variables. Perhaps I want to know the average popularity and ratings for each season of *The Magicians*, and extract the year in which the season aired. The **dplyr** package provides me with the tools I need to do this, using functions like `mutate()` to create new variables, `group_by()` to specify grouping variables, and `summarise()` to aggregate data within group:
 
 ```{r}
 magicians %>% 
@@ -213,18 +215,22 @@ magicians %>%
   )
 ```
 
-All of these computations take place within R. The `magicians` data set is stored in R, and all the calculations are done using this data structure. What can we do when the data are stored in Arrow? Well, first I'll create an `arrowmagicks` variable using the `arrow_read_csv()` function:
+All of these computations take place within R. The `magicians` data set is stored in R, and all the calculations are done using this data structure. 
+
+What can we do when the data are stored in Arrow? It turns out the code is almost identical, but the first thing  I'll need to do is load the data into Arrow. The simplest way to do this is to set `as_data_frame = FALSE` when calling `arrow_read_csv()` 
 
 ```{r}
 arrowmagicks <- read_csv_arrow("magicians.csv", as_data_frame = FALSE)
 arrowmagicks
 ```
 
-<aside>The "arrowmagicks" variable name is a reference to the Josh Hoberman quote at the start of the section. For a while Josh was completely convinced he had been gifted with special magic because he was a fish for a while. It made sense at the time, I guess? It's a weird show</aside>
+<aside>The "arrowmagicks" variable name is a reference to the quote at the start of the section. For a while Josh was convinced he had been gifted with special magic because he had been a fish. It made sense at the time, I guess? It's a weird show</aside>
 
-When I do this, two things happen. First, a data set is created outside of R (in memory allocated to Arrow) -- all of the computations will be done on that data set. Second, the `arrowmagicks` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. 
+When I do this, two things happen. First, a data set is created outside of R in memory allocated to Arrow: all of the computations will be done on that data set. Second, the `arrowmagicks` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. 
 
-The most natural way to work with this data in R is to make sure that both the **arrow** and **dplyr** packages are loaded, and then write regular **dplyr** code. You can do this because the **arrow** package supplies methods for **dplyr** functions, and these methods will be called whenever the input data is an Arrow Table. I'll refer to this data analyses that use this workflow as "**arrowplyr** pipelines". The "**arrowplyr**" terminology is not strictly accurate because there's no R package by that name (its a neologism I just made up), but I think it helps clarify that the workflow relies on the interaction between the two packages. Here's an example of an **arrowplyr** pipeline:
+The most natural way to work with this data in R is to make sure that both the **arrow** and **dplyr** packages are loaded, and then write regular **dplyr** code. You can do this because the **arrow** package supplies methods for **dplyr** functions, and these methods will be called whenever the input data is an Arrow Table. I'll refer to this data analyses that use this workflow as "**arrowplyr** pipelines". Here's an example of an **arrowplyr** pipeline:
+
+<aside>The "**arrowplyr**" terminology is not strictly accurate because there's no R package by that name, but I find it useful</aside>
 
 ```{r}
 arrowmagicks %>% 
@@ -276,7 +282,7 @@ The nice thing for R users is that all of this feels like regular R code. Althou
 
 In our ideal world, the **arrowplyr** interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
 
-Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and **arrowplyr** is no exception. Because it's a huge project that is under active development, there's a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like **lubridate** and **stringr**. It's awesome that this functionality is coming online, but because it's happening so quickly there are gaps. The smol contribution that I made today was to fill one of those gaps: currently, you can't refer to the `leap_year()` function from **lubridate** in an **arrowplyr** pipeline. Well, technically you can, but whenever **arrow** encounters a function it doesn't know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here's what that looks like:
+Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and **arrowplyr** is no exception. Because it's a huge project that is under active development, there's a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like **lubridate** and **stringr**. It's awesome that this functionality is coming online, but because it's happening so quickly there are gaps. The small contribution that I made today was to fill one of those gaps: currently, you can't refer to the `leap_year()` function from **lubridate** in an **arrowplyr** pipeline. Well, technically you can, but whenever **arrow** encounters a function it doesn't know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here's what that looks like:
 
 ```{r}
 arrowmagicks %>% 
@@ -299,7 +305,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.
 
 
 <!----------------------------------------------------------------------------->
-## Calling arrow-prefix functions {#using-arrow-functions}
+## Calling "arrow-prefix" functions {#using-arrow-functions}
 <!----------------------------------------------------------------------------->
 
 
@@ -456,7 +462,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.
 ```
 
 
-## Writing functions for Arrow pipelines {#arrowish-functions}
+## Writing arrowplyr functions {#arrowish-functions}
 
 ```{r}
 arrowish_leap_year <- function(date) {
