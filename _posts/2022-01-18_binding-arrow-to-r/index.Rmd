@@ -84,7 +84,7 @@ knitr::include_graphics("https://media.giphy.com/media/3o7ZePnuDJ1EiNsK3u/giphy.
 
 I've been in my current role for a little over a week (or had been when I started writing this post!), and today my [first contribution](https://github.com/apache/arrow/pull/12173/) to Apache Arrow was merged. It was very modest contribution: I wrote some code that determines whether any given year is a leap year. It precisely mirrors the behaviour of the `leap_year()` function in the **lubridate** package, except that it can be applied to Arrow data and it will behave itself when used in the context of a **dplyr** pipeline (more on that later). The code itself is not complicated, but it relies on a little magic and a deeper understanding of Arrow than I possessed two weeks ago.  
 
-<aside>Throughout this post I'll use boldface to refer to specific R packages like **dplyr** or C++ libraries like **libarrow**. In a slight abuse of notation, I'll also use **arrowplyr** to refer to the combination of **arrow** and **dplyr**</aside>
+<aside>Throughout this post I'll use boldface to refer to specific R packages like **dplyr** or C++ libraries like **libarrow**</aside>
 
 This post is the story of how I learned Arrow magic. ✨ 🏹 ✨   
 
@@ -227,9 +227,9 @@ arrowmagicks
 
 When I do this, two things happen. First, a data set is created outside of R in memory allocated to Arrow: all of the computations will be done on that data set. Second, the `arrowmagicks` variable is created inside R, which consists of a pointer to the actual data along with some handy metadata. 
 
-The most natural way to work with this data in R is to make sure that both the **arrow** and **dplyr** packages are loaded, and then write regular **dplyr** code. You can do this because the **arrow** package supplies methods for **dplyr** functions, and these methods will be called whenever the input data is an Arrow Table. I'll refer to this data analyses that use this workflow as "**arrowplyr** pipelines". Here's an example of an **arrowplyr** pipeline:
+The most natural way to work with this data in R is to make sure that both the **arrow** and **dplyr** packages are loaded, and then write regular **dplyr** code. You can do this because the **arrow** package supplies methods for **dplyr** functions, and these methods will be called whenever the input data is an Arrow Table. I'll refer to this data analyses that use this workflow as "arrowplyr pipelines". Here's an example of an arrowplyr pipeline:
 
-<aside>The "**arrowplyr**" terminology is not strictly accurate because there's no R package by that name, but I find it useful</aside>
+<aside>I've chosen not to boldface the "arrowplyr" terminology. **arrow** is a package and **dplyr** is a package, but arrowplyr isn't. It's simply a convenient fiction</aside>
 
 ```{r}
 arrowmagicks %>% 
@@ -277,11 +277,11 @@ arrowmagicks %>%
   collect()
 ```
 
-The nice thing for R users is that all of this feels like regular R code. Under the hood **libarrow** is doing all the serious computation, but at the R level the user really doesn't need to worry too much about that. The **arrowplyr** toolkit works seamlessly and invisibly.
+The nice thing for R users is that all of this feels like regular R code. Under the hood **libarrow** is doing all the serious computation, but at the R level the user really doesn't need to worry too much about that. The arrowplyr toolkit works seamlessly and invisibly.
 
-In our ideal world, the **arrowplyr** interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
+In our ideal world, the arrowplyr interface is all you would ever need to use. Internally, the **arrow** package would intercept all the R function calls you make, and replace them with an equivalent function that performs exactly the same computation using **libarrow**. You the user would never need to think about what's happening under the hood.
 
-Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and **arrowplyr** is no exception. Because it's a huge project that is under active development, there's a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like **lubridate** and **stringr**. It's awesome that this functionality is coming online, but because it's happening so quickly there are gaps. The small contribution that I made today was to fill one of those gaps: currently, you can't refer to the `leap_year()` function from **lubridate** in an **arrowplyr** pipeline. Well, technically you can, but whenever **arrow** encounters a function it doesn't know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here's what that looks like:
+Real life, however, is filled with [leaky abstractions](https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/), and arrowplyr is no exception. Because it's a huge project that is under active development, there's a lot of functionality being introduced. As an example, the current version of the package (v6.0.1) has limited support for tidyverse packages like **lubridate** and **stringr**. It's awesome that this functionality is coming online, but because it's happening so quickly there are gaps. The small contribution that I made today was to fill one of those gaps: currently, you can't refer to the `leap_year()` function from **lubridate** in an arrowplyr pipeline. Well, technically you can, but whenever **arrow** encounters a function it doesn't know how to execute in Arrow it throws a warning, pulls the data into R, and completes the query using native R code. Here's what that looks like:
 
 ```{r}
 arrowmagicks %>% 
@@ -292,7 +292,7 @@ arrowmagicks %>%
   collect()
 ```
 
-An answer has been calculated, but the warning is there to tell you that the computations weren't performed in Arrow. Realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R. The end result of all this is that the code executes as a regular **dplyr** pipeline and not as an **arrowplyr** one. It's not the worst possible outcome, but it still makes me sad. 😭
+An answer has been calculated, but the warning is there to tell you that the computations weren't performed in Arrow. Realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R. The end result of all this is that the code executes as a regular **dplyr** pipeline and not as an arrowplyr one. It's not the worst possible outcome, but it still makes me sad. 😭
 
 ```{r}
 #| echo = FALSE,
@@ -310,7 +310,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUPGcJ8PkgoCQFMjHW/giphy.
 
 Okay, let's dig a little deeper. 
 
-In the last section I talked about **arrowplyr**, a collection of **dplyr** bindings provided by the **arrow** package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there's quite a lot going on to make this magic work. In most cases, the **arrow** developers -- which I guess includes me now! 🎉 -- have rewritten the R functions that they mimic. We've done this in a way that the computations rely only the C++ compute functions provided by **libarrow**, thereby ensuring that the data never have to enter R. The **arrowplyr** interface is the way you'd usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you're working within an **arrowplyr** pipeline it is (relatively!) straightforward, and that's what I'll talk about in this section. However, there is also a more direct method which I'll discuss later in the post.
+In the last section I talked about arrowplyr, a collection of **dplyr** bindings provided by the **arrow** package. These are designed to mimic their native R equivalents as seamlessly as possible to enable you to write familiar code. Internally, there's quite a lot going on to make this magic work. In most cases, the **arrow** developers -- which I guess includes me now! 🎉 -- have rewritten the R functions that they mimic. We've done this in a way that the computations rely only the C++ compute functions provided by **libarrow**, thereby ensuring that the data never have to enter R. The arrowplyr interface is the way you'd usually interact with Arrow in R, but there are ways in which you can access the C++ compute functions a little more more directly. There are two different ways you can call these compute functions yourself. If you're working within an arrowplyr pipeline it is (relatively!) straightforward, and that's what I'll talk about in this section. However, there is also a more direct method which I'll discuss later in the post.
 
 To see what compute functions are exposed by the C++ **libarrow** library, you can call `list_compute_functions()` from R:
 
@@ -397,7 +397,7 @@ Once the binding has been registered, whenever `leap_year()` is encountered with
 
 ### Cooperative magic
 
-Taken together, these two pieces give us the answer to our puzzle. The call to `arrow_days_between()` works in my original example because that call was constructed within the context of an **arrow**-supplied `mutate()` function. The interpretation of this code isn't performed by **dplyr** it is handled by **arrow**. Internally, **arrow** uses metaprogramming magic to ensure that `arrow_days_between()` is reinterpreted as a call to the **libarrow** `days_between()` function. But that metaprogramming magic doesn't apply anywhere except the **arrowplyr** context. If you try to call `arrow_days_between()` from the R console or even in a regular **dplyr** pipeline, you get an error because technically speaking this function doesn't exist. 
+Taken together, these two pieces give us the answer to our puzzle. The call to `arrow_days_between()` works in my original example because that call was constructed within the context of an **arrow**-supplied `mutate()` function. The interpretation of this code isn't performed by **dplyr** it is handled by **arrow**. Internally, **arrow** uses metaprogramming magic to ensure that `arrow_days_between()` is reinterpreted as a call to the **libarrow** `days_between()` function. But that metaprogramming magic doesn't apply anywhere except the arrowplyr context. If you try to call `arrow_days_between()` from the R console or even in a regular **dplyr** pipeline, you get an error because technically speaking this function doesn't exist. 
 
 
 ```{r}
@@ -413,7 +413,7 @@ knitr::include_graphics("https://media.giphy.com/media/l0IydgNESZjrALWqA/giphy.g
 <!----------------------------------------------------------------------------->
 
 
-The weirdness of that digression leads naturally to a practical question. Given that the "arrow-prefix" function don't actually exist in the usual sense of the term, and the corresponding bindings can only be called in an **arrowplyr** context, how the heck does an R developer call the **libarrow** functions directly? In everyday data analysis you wouldn't want to do this very often, but from a programming perspective it matters: if you want to write your own functions that play nicely with **arrowplyr** pipelines, it's very handy to know how to call **libarrow** directly.  
+The weirdness of that digression leads naturally to a practical question. Given that the "arrow-prefix" function don't actually exist in the usual sense of the term, and the corresponding bindings can only be called in an arrowplyr context, how the heck does an R developer call the **libarrow** functions directly? In everyday data analysis you wouldn't want to do this very often, but from a programming perspective it matters: if you want to write your own functions that play nicely with arrowplyr pipelines, it's very handy to know how to call **libarrow** directly.  
 
 So let's strip back another level of abstraction! 
 
@@ -453,7 +453,7 @@ knitr::include_graphics("https://media.giphy.com/media/26AHOmyGvNBim4GHK/giphy.g
 ## Arrow expressions
 <!----------------------------------------------------------------------------->
 
-There's one more foundational topic I should discuss before I can show you how to write **arrowplyr**-friendly functions, and that's Arrow Expressions. When I introduced **arrowplyr** early in the post I noted that most of your code is used to specify a query, and that query doesn't get evaluated until `compute()` or `collect()` is called. If you want to write code that plays nicely with this workflow, you need to ensure that your custom functions return an Arrow Expression. 
+There's one more foundational topic I should discuss before I can show you how to write arrowplyr-friendly functions, and that's Arrow Expressions. When I introduced arrowplyr early in the post I noted that most of your code is used to specify a query, and that query doesn't get evaluated until `compute()` or `collect()` is called. If you want to write code that plays nicely with this workflow, you need to ensure that your custom functions return an Arrow Expression. 
 
 The basic idea behind expressions is probably familiar to R users, since they are what powers the metaprogramming capabilities of the language and are used extensively throughout tidyverse as well as base R. In base R, the `quote()` function is used to capture a user expression and `eval()` is used to force it to evaluate. Here's a simple example where I use `quote()` to "capture" some R code and prevent it from evaluating:  
 
@@ -503,7 +503,7 @@ knitr::include_graphics("https://media.giphy.com/media/xUA7aOXC4Lrm8p2Ofm/giphy.
 
 ## Writing arrowplyr functions {#arrowish-functions}
 
-At long last we have all the ingredients needed to write a function that can be used in an **arrowplyr** pipeline. Here's a simple implementation of the base R `toupper()` function
+At long last we have all the ingredients needed to write a function that can be used in an arrowplyr pipeline. Here's a simple implementation of the base R `toupper()` function
 
 ```{r}
 arrowish_toupper <- function(x) {
@@ -511,7 +511,7 @@ arrowish_toupper <- function(x) {
 }
 ```
 
-As it happens **arrowplyr** pipelines already support the `toupper()` function, so there really wasn't a need for me to write this. However, at present they don't support the **lubridate** `leap_year()` function, which was the purpose of my very small contribution today. An Arrow friendly version of `leap_year()` looks like this:
+As it happens arrowplyr pipelines already support the `toupper()` function, so there really wasn't a need for me to write this. However, at present they don't support the **lubridate** `leap_year()` function, which was the purpose of my very small contribution today. An Arrow friendly version of `leap_year()` looks like this:
 
 ```{r}
 arrowish_leap_year <- function(date) {
@@ -547,7 +547,7 @@ arrowmagicks %>%
   collect()
 ```
 
-Everything works perfectly within Arrow. No ships are abandoned, the **arrowplyr** pipeline springs no leaks, and we all live happily ever after. 
+Everything works perfectly within Arrow. No ships are abandoned, the arrowplyr pipeline springs no leaks, and we all live happily ever after. 
 
 Sort of.
 
