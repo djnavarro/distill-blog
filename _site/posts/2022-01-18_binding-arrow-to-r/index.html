@@ -2529,7 +2529,7 @@ Figure 1: Eliot Waugh. All I can say at this point is that thanks to his magnifi
 <aside>
 Throughout this post I’ll use boldface to refer to specific R packages like <strong>dplyr</strong> or C++ libraries like <strong>libarrow</strong>. In a slight abuse of notation, I’ll also use <strong>arrowplyr</strong> to refer to the combination of <strong>arrow</strong> and <strong>dplyr</strong>
 </aside>
-<p>This post is the story of how I learned this sorcery.</p>
+<p>This post is the story of how I learned Arrow magic. ✨ 🏹 ✨</p>
 <!----------------------------------------------------------------------------->
 <h2 id="why-am-i-writing-this">Why am I writing this?</h2>
 <!----------------------------------------------------------------------------->
@@ -2620,7 +2620,7 @@ Figure 4: Penny Adiyodi in the Neitherlands, diving head first into a fountain t
 <blockquote>
 <p>I think I have some special fish magicks.<br>     – Josh Hoberman (The Magicians: Season 4, Episode 13)</p>
 </blockquote>
-<p>When I wrote my <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">Getting started with Apache Arrow</a> post, I concluded with an illustration of how you can write <strong>dplyr</strong> code that will work smoothly in R even when the data themselves are stored in Arrow. Here’s a little recap of how that works, using a tiny daya set I pulled from <a href="https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)">The Magicians Wikipedia page</a>. Here’s what that data set looks like:</p>
+<p>When I wrote my <a href="https://blog.djnavarro.net/starting-apache-arrow-in-r">Getting started with Apache Arrow</a> post, I concluded with an illustration of how you can write <strong>dplyr</strong> code that will work smoothly in R even when the data themselves are stored in Arrow. Here’s a little recap of how that works, using a tiny data set I pulled from <a href="https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)">The Magicians Wikipedia page</a>. Here’s what that data set looks like:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span>, as_data_frame <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
@@ -3087,7 +3087,7 @@ pulling data into R</code></pre>
 <aside>
 The internal <strong>arrow</strong> function that handles this is called “abandon_ship”. No, I don’t know why I felt the need to mention this`
 </aside>
-<p>Yes, it returns the correct answer, but only because <strong>arrow</strong> detected a function it doesn’t understand and “abandoned ship”. It pulled the data into R and let <strong>dplyr</strong> do all the work. Now let’s see what happens when we use our functions instead:</p>
+<p>Yes, it returns the correct answer, but only because <strong>arrow</strong> detected a function it doesn’t understand and has “abandoned ship”. It pulled the data into R and let <strong>dplyr</strong> do all the work. Now let’s see what happens when we use our functions instead:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -3117,7 +3117,7 @@ The internal <strong>arrow</strong> function that handles this is called “aban
 <p>Everything works perfectly within Arrow. No ships are abandoned, the <strong>arrowplyr</strong> pipeline springs no leaks, and we all live happily ever after.</p>
 <p>Sort of.</p>
 <p>I mean, we’re all still alive.</p>
-<p>That has to count as a win, right?</p>
+<p>That has to count as a win, right? 🎉</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-36"></span>
 <img src="https://media.giphy.com/media/l2Sq18e02qsxjKfBK/giphy.gif" alt="Eliot and Margo applaud your success. They are the best characters, and you are also the best because you have made it to the end of a long and strange blog post. Image via [giphy](https://giphy.com/gifs/syfy-bravo-the-magicians-l2Sq18e02qsxjKfBK), copyright [syfy](https://www.syfy.com)"  />
@@ -3139,11 +3139,11 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <li><a href="https://arrow.apache.org/docs/dev/r/articles/developers/bindings.html">Developers Guide to Writing Bindings</a> (thank you to Nic Crane!)</li>
 <li><a href="https://arrow.apache.org/cookbook/r/">Apache Arrow R Cookbook</a> (thank you to Nic Crane again)</li>
 </ul>
-<p>Enjoy!</p>
+<p>Enjoy! 🍰</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-21 13:52:39 AEDT</p>
+<p>2022-01-21 14:01:21 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>

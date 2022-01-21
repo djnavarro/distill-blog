@@ -86,7 +86,7 @@ I've been in my current role for a little over a week (or had been when I starte
 
 <aside>Throughout this post I'll use boldface to refer to specific R packages like **dplyr** or C++ libraries like **libarrow**. In a slight abuse of notation, I'll also use **arrowplyr** to refer to the combination of **arrow** and **dplyr**</aside>
 
-This post is the story of how I learned this sorcery.
+This post is the story of how I learned Arrow magic. ✨ 🏹 ✨   
 
 
 
@@ -192,7 +192,7 @@ knitr::include_graphics("https://media.giphy.com/media/26gscWcSEXuJH91tK/giphy.g
 > I think I have some special fish magicks.<br>
 > &nbsp; &nbsp; -- Josh Hoberman (The Magicians: Season 4, Episode 13)
 
-When I wrote my [Getting started with Apache Arrow](https://blog.djnavarro.net/starting-apache-arrow-in-r) post, I concluded with an illustration of how you can write **dplyr** code that will work smoothly in R even when the data themselves are stored in Arrow. Here's a little recap of how that works, using a tiny daya set I pulled from [The Magicians Wikipedia page](https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)). Here's what that data set looks like:
+When I wrote my [Getting started with Apache Arrow](https://blog.djnavarro.net/starting-apache-arrow-in-r) post, I concluded with an illustration of how you can write **dplyr** code that will work smoothly in R even when the data themselves are stored in Arrow. Here's a little recap of how that works, using a tiny data set I pulled from [The Magicians Wikipedia page](https://en.wikipedia.org/wiki/List_of_The_Magicians_(American_TV_series)_episodes#Season_1_(2015%E2%80%9316)). Here's what that data set looks like:
 
 ```{r}
 magicians <- read_csv_arrow("magicians.csv", as_data_frame = TRUE)
@@ -535,7 +535,7 @@ arrowmagicks %>%
 
 <aside>The internal **arrow** function that handles this is called "abandon_ship". No, I don't know why I felt the need to mention this`</aside>
 
-Yes, it returns the correct answer, but only because **arrow** detected a function it doesn't understand and "abandoned ship". It pulled the data into R and let **dplyr** do all the work. Now let's see what happens when we use our functions instead:
+Yes, it returns the correct answer, but only because **arrow** detected a function it doesn't understand and has "abandoned ship". It pulled the data into R and let **dplyr** do all the work. Now let's see what happens when we use our functions instead:
 
 
 ```{r}
@@ -554,7 +554,7 @@ Sort of.
 
 I mean, we're all still alive.
 
-That has to count as a win, right?
+That has to count as a win, right? 🎉
 
 ```{r}
 #| echo = FALSE,
@@ -580,7 +580,7 @@ But that's not the only thing I've left unsaid. I haven't talked about unit test
 - [Developers Guide to Writing Bindings](https://arrow.apache.org/docs/dev/r/articles/developers/bindings.html) (thank you to Nic Crane!)
 - [Apache Arrow R Cookbook](https://arrow.apache.org/cookbook/r/) (thank you to Nic Crane again)
 
-Enjoy!
+Enjoy! 🍰
 
 
 
