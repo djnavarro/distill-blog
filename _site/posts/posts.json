@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2022-01-27_data-types-in-arrow-and-r/",
+    "title": "Data types in Arrow and R",
+    "description": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit",
+    "author": [
+      {
+        "name": "Danielle Navarro",
+        "url": "https://djnavarro.net"
+      }
+    ],
+    "date": "2022-01-27",
+    "categories": [],
+    "contents": "\n\n\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.\n\n\nLast updated\n2022-01-27 15:23:24 AEDT\nDetails\nsource code, R environment\n\n\n\n\n\n\n\n\n",
+    "preview": {},
+    "last_modified": "2022-01-27T15:23:25+11:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2022-01-18_binding-arrow-to-r/",
     "title": "Binding Apache Arrow to R",
     "description": "I've been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show \"The Magicians\" obsessively. For no sensible reason I wrote a blog post that combines these two fixations",

@@ -1,0 +1,91 @@
+---
+title: "Data types in Arrow and R" # <---- UPDATE ME
+description:
+  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
+  consectetur, adipisci velit # <---- UPDATE ME
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: Voltron Data
+    affiliation_url: https://voltrondata.com
+    orcid_id: 0000-0001-7648-6578
+date: 2022-01-27
+preview: preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/data-types-in-arrow-and-r 
+repository_url: https://github.com/djnavarro/distill-blog/
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+params:
+  slug: data-types-in-arrow-and-r
+  date: 2022-01-27
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+```
+
+
+<!--------------- post ----------------->
+
+https://arrow.apache.org/docs/r/articles/arrow.html
+
+Normally it just works. You don't have to think too much. At most, you might want to tweak the schema. Here's how that works. 
+
+But sometimes you run into edge cases. Other times you just want a deeper understanding of what's going on. So let's take a look inside
+
+## Logical types
+
+## Integer types
+
+## Numeric types
+
+## Character types
+
+## Date/time types
+
+
+
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  name = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+
+

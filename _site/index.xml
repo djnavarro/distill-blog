@@ -6,7 +6,15 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 18 Jan 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 Jan 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Data types in Arrow and R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-01-27_data-types-in-arrow-and-r</link>
+      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</description>
+      <guid>https://blog.djnavarro.net/posts/2022-01-27_data-types-in-arrow-and-r</guid>
+      <pubDate>Thu, 27 Jan 2022 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Binding Apache Arrow to R</title>
       <dc:creator>Danielle Navarro</dc:creator>
