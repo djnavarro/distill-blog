@@ -1803,6 +1803,9 @@ pulling data into R</code></pre>
 10      1      10 Homecoming     2016-03-21    0.3    0.78  2016 TRUE 
 # … with 55 more rows</code></pre>
 </div>
+<aside>
+This is a bit of an oversimplification. The “warn and pull into R” behaviour shown here is what happens when the data is a Table object. If it is a Dataset object, <strong>arrow</strong> throws an error
+</aside>
 <p>An answer has been calculated, but the warning is there to tell you that the computations weren’t performed in Arrow. Realising that it doesn’t know how to interpret <code>leap_year()</code>, the <strong>arrow</strong> package has tried to “fail gracefully” and pulled everything back into R. The end result of all this is that the code executes as a regular <strong>dplyr</strong> pipeline and not as an arrowplyr one. It’s not the worst possible outcome, but it still makes me sad. 😭</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
@@ -2159,7 +2162,7 @@ In case you don’t know the reference: <a href="https://knowyourmeme.com/memes/
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-22 06:22:14 AEDT</p>
+<p>2022-01-31 10:08:56 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-18_binding-arrow-to-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-18_binding-arrow-to-r/renv.lock">R environment</a></p>
 </div>

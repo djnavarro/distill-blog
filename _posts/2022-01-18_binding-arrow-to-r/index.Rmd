@@ -292,6 +292,8 @@ arrowmagicks %>%
   collect()
 ```
 
+<aside>This is a bit of an oversimplification. The "warn and pull into R" behaviour shown here is what happens when the data is a Table object. If it is a Dataset object, **arrow** throws an error</aside>
+
 An answer has been calculated, but the warning is there to tell you that the computations weren't performed in Arrow. Realising that it doesn't know how to interpret `leap_year()`, the **arrow** package has tried to "fail gracefully" and pulled everything back into R. The end result of all this is that the code executes as a regular **dplyr** pipeline and not as an arrowplyr one. It's not the worst possible outcome, but it still makes me sad. 😭
 
 ```{r}

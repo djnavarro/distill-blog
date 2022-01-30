@@ -6,7 +6,7 @@
       "description": "Additional detail about the author, supplied even though no-one asked",
       "author": [],
       "contents": "\nDanielle Navarro is a data scientist, an R developer, and a generative artist. She currently works as a Developer Relations Engineer at Voltron Data, helping other data scientists use Apache Arrow to accelerate their data analysis pipelines. In a previous life she was an academic, working as a computational cognitive scientist at UNSW Sydney. Danielle is a cofounder of R-Ladies Sydney, and in her better moments she makes art from code. She is prone to describing herself in the third person in biographies, but is willing to admit that it’s super weird.\nProfile image, courtesy of Mara Averick:\n\n\n\n\n\n\n\n",
-      "last_modified": "2022-01-22T06:22:20+11:00"
+      "last_modified": "2022-01-31T10:06:48+11:00"
     },
     {
       "path": "index.html",
@@ -14,7 +14,7 @@
       "description": "A blog by Danielle Navarro, focusing mostly on R and data science\n",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2022-01-22T06:22:20+11:00"
+      "last_modified": "2022-01-31T10:06:49+11:00"
     }
   ],
   "collections": ["posts/posts.json"]
