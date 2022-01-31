@@ -126,7 +126,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["img/character-types.png","img/cover.jpg","img/cover.png","img/dataframe-types.png","img/datatypes01.png","img/datatypes02.png","img/datatypes03.png","img/datatypes04.png","img/datatypes05.png","img/datatypes06.png","img/datatypes07.png","img/datatypes08.png","img/datatypes09.png","img/datatypes10.png","img/datatypes11.png","img/datatypes12.png","img/datatypes13.png","img/date-types.png","img/duration-types.png","img/factor-types.png","img/integer-types-01.png","img/integer-types-02.png","img/logical-types.png","img/null-types.png","img/numeric-types.png","img/raw-types.png","img/visual-convention.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["img/character-types.png","img/cover.jpg","img/cover.png","img/dataframe-types.png","img/datatypes01.png","img/datatypes02.png","img/datatypes03.png","img/datatypes04.png","img/datatypes05.png","img/datatypes06.png","img/datatypes07.png","img/datatypes08.png","img/datatypes09.png","img/datatypes10.png","img/datatypes11.png","img/datatypes12.png","img/datatypes13.png","img/date-types.png","img/duration-types.png","img/factor-types.png","img/integer-types-01.png","img/integer-types-02.png","img/logical-types.png","img/null-types.png","img/numeric-types.png","img/raw-types.png","img/visual-convention.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","magicians.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1496,12 +1496,17 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
+<li><a href="#why-mapping-languages-is-hard">Why mapping languages is hard</a></li>
+<li><a href="#translating-tables">Translating tables</a></li>
+<li><a href="#translating-columns">Translating columns</a>
+<ul>
 <li><a href="#logical-types">Logical types</a></li>
 <li><a href="#integer-types">Integer types</a></li>
 <li><a href="#numeric-types">Numeric types</a></li>
 <li><a href="#character-types">Character types</a></li>
 <li><a href="#datetime-types">Date/time types</a></li>
 <li><a href="#other-types">Other types</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -1516,29 +1521,153 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
-<p><a href="https://arrow.apache.org/docs/r/articles/arrow.html" class="uri">https://arrow.apache.org/docs/r/articles/arrow.html</a></p>
-<p>Normally it just works. You don’t have to think too much. At most, you might want to tweak the schema. Here’s how that works.</p>
-<p>But sometimes you run into edge cases. Other times you just want a deeper understanding of what’s going on. So let’s take a look inside</p>
+<blockquote>
+<p>Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>     – William Van Orman Quine, 1960, <a href="https://en.wikipedia.org/wiki/Word_and_Object">Word and Object</a></p>
+</blockquote>
+<p>Consider this piece of magic</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
+
+<span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span><span class='op'>)</span>
+<span class='va'>magicians</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 65 × 6
+   season episode title                      air_date   rating viewers
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                      &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+ 1      1       1 Unauthorized Magic         2015-12-16    0.2    0.92
+ 2      1       2 The Source of Magic        2016-01-25    0.4    1.11
+ 3      1       3 Consequences of Advanced … 2016-02-01    0.4    0.9 
+ 4      1       4 The World in the Walls     2016-02-08    0.3    0.75
+ 5      1       5 Mendings, Major and Minor  2016-02-15    0.3    0.75
+ 6      1       6 Impractical Applications   2016-02-22    0.3    0.65
+ 7      1       7 The Mayakovsky Circumstan… 2016-02-29    0.3    0.7 
+ 8      1       8 The Strangled Heart        2016-03-07    0.3    0.67
+ 9      1       9 The Writing Room           2016-03-14    0.3    0.71
+10      1      10 Homecoming                 2016-03-21    0.3    0.78
+# … with 55 more rows</code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>magicians</span><span class='op'>)</span>
+<span class='va'>arrowmagicks</span>
+</code></pre>
+</div>
+<pre><code>Table
+65 rows x 6 columns
+$season &lt;int32&gt;
+$episode &lt;int32&gt;
+$title &lt;string&gt;
+$air_date &lt;date32[day]&gt;
+$rating &lt;double&gt;
+$viewers &lt;double&gt;</code></pre>
+</div>
+<p>The <code>magicians</code> data set is a “data frame” (a tibble, technically) stored in R. The <code>arrowmagicks</code> data set, however, is a pointer to a data structure stored in Arrow. That data structure is a “Table” object. Arrow Tables are roughly analogous to data frames – both represent tabular data with columns that may be of different types – but they are not the same. An act of <em>translation</em> has occurred. Similarly when we look at the individual columns we see that something similar has happened. “Integer” columns in R are mapped to “int32” columns in Arrow, “Date” columns in R become “date32” columns in Arrow, and so on. Even without knowing much about the data types in the two languages, you can infer a lot from the names! In this case you can reasonably (and correctly) infer that the translation from R to Arrow is a sensible one. Better yet, in this case, when we pull the <code>arrowmagicks</code> data back into R we recover the original data:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://dplyr.tidyverse.org/reference/compute.html'>collect</a></span><span class='op'>(</span><span class='va'>arrowmagicks</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 65 × 6
+   season episode title                      air_date   rating viewers
+    &lt;int&gt;   &lt;int&gt; &lt;chr&gt;                      &lt;date&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+ 1      1       1 Unauthorized Magic         2015-12-16    0.2    0.92
+ 2      1       2 The Source of Magic        2016-01-25    0.4    1.11
+ 3      1       3 Consequences of Advanced … 2016-02-01    0.4    0.9 
+ 4      1       4 The World in the Walls     2016-02-08    0.3    0.75
+ 5      1       5 Mendings, Major and Minor  2016-02-15    0.3    0.75
+ 6      1       6 Impractical Applications   2016-02-22    0.3    0.65
+ 7      1       7 The Mayakovsky Circumstan… 2016-02-29    0.3    0.7 
+ 8      1       8 The Strangled Heart        2016-03-07    0.3    0.67
+ 9      1       9 The Writing Room           2016-03-14    0.3    0.71
+10      1      10 Homecoming                 2016-03-21    0.3    0.78
+# … with 55 more rows</code></pre>
+</div>
+<p>In this example the translation back and forth “just works”. You really don’t have to think too much about the subtle differences in how Arrow and R “think about the world” and how their data structures are organised. And in general that’s what we <em>want</em> in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures!</p>
+<p>That being said, it’s also valuable to give the data analyst flexibility. The <strong>arrow</strong> package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the <a href="https://en.wikipedia.org/wiki/Indeterminacy_of_translation">indeterminacy of translation</a> at the top of this post was originally written about natural languages, but I think it applies in programming too. There’s no “single” rulebook that tells you how to translate between R and Arrow: there can’t be.</p>
+<p>Suppose that I knew that there would in fact be a “Season 5.1648” coming, consisting of a single episode whose title corresponded to the full text of the <a href="https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf">Treaty of Westphalia</a>. Knowing that this new data point is coming, I’d perhaps want my Arrow data to encode <code>season</code> as a numeric variable, and I’d probably want to recognise that the text in the <code>title</code> field can be quite long. To do that I can specify an explicit <em>schema</em> that tells the <strong>arrow</strong> package how to translate my R data set into Arrow. I can do this with the <code>schema()</code> function:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>translation</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Schema.html'>schema</a></span><span class='op'>(</span>
+  season <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
+  episode <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int32</a></span><span class='op'>(</span><span class='op'>)</span>,
+  title <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>large_utf8</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
+  air_date <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>date32</a></span><span class='op'>(</span><span class='op'>)</span>,
+  rating <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>,
+  viewers <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Now I can use my schema to govern the translation:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>magicians</span>, schema <span class='op'>=</span> <span class='va'>translation</span><span class='op'>)</span>
+<span class='va'>arrowmagicks2</span>
+</code></pre>
+</div>
+<pre><code>Table
+65 rows x 6 columns
+$season &lt;double&gt;
+$episode &lt;int32&gt;
+$title &lt;large_string&gt;
+$air_date &lt;date32[day]&gt;
+$rating &lt;double&gt;
+$viewers &lt;double&gt;</code></pre>
+</div>
+<p>This is of course a very silly example. But the underlying issue is fairly serious.</p>
+<h2 id="why-mapping-languages-is-hard">Why mapping languages is hard</h2>
+<p>Blah blah I used to teach categorisation and mental representation. Organising the world into concepts (or data structures) is hard. We define ontologies that impose order on a chaotic world. A famous attempt to do this in 1668 by John Wilkins in <a href="https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&amp;gbpv=1">An Essay Towards a Real Character, and a Philosophical Language</a>. A small snippet taken from the section “On Beasts”:</p>
+<blockquote>
+<p>BEASTS, may be distinguished by their several shapes, properties, uses, food, their tameness or wildness, etc. into such as are either</p>
+<ul>
+<li><p>VIVIPAROUS; producing living young.</p>
+<ul>
+<li><p>WHOLE FOOTED, the <em>soles</em> of whose <em>feet</em> is are undivided, being used chiefly for <em>Carriage</em>. I.</p></li>
+<li><p>CLOVEN FOOTED. II. <br> <em>Clawed</em>, or <em>multifidous</em>; the end of whose <em>feet</em> is branched out into <em>toes</em>; whether</p>
+<ul>
+<li><p>NOT RAPACIOUS. III.</p></li>
+<li><p>RAPACIOUS; living upon the prey of other <em>Animals</em>; having generally <em>six short pointed</em> incisors, or <em>cutting teeth</em>, and <em>two long fangs</em> to hold their prey; whether the</p>
+<ul>
+<li>CAT-KIND; having a <em>roundish head</em>. IV.</li>
+<li>DOG-KIND; whose <em>heads</em> are <em>more oblong</em>. V.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>OVIPAROUS; breeding <em>Eggs</em>. VI.</p></li>
+</ul>
+</blockquote>
+<p>It goes on to elaborate. As a scientific taxonomy it’s… interesting. But even psychologically it betrays the peculiarities of the author. Wilkins had the noble ambition of defining a “universal language”, but as a 17th century English gentleman there are certain deficiencies! I note as an Australian that there’s no distinction between placental and marsupial mammals here! But of course the problems are more general. In 1952 the Argentinian author Jorge Luis Borges published an essay called <a href="https://ccrma.stanford.edu/courses/155/assignment/ex1/Borges.pdf">The Analytical Language of John Wilkins</a> and describes a classification system from an fictitious “Celestial Emporium of Benevolent Knowledge”:</p>
+<blockquote>
+<p>In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies</p>
+</blockquote>
+<p>It’s pretty unlikely that any human language would produce a classification system quite as chaotic as Borges’ fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. Michel Foucault actually refers to this Borges passage in the preface to his famous work <a href="https://en.wikipedia.org/wiki/The_Order_of_Things">The Order of Things: An Archaeology of the Human Sciences</a> on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay</p>
+<blockquote>
+<p>shattered … all the familiar landmarks of thought — our thought, the thought that bears the stamp of our age and our geography — breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things</p>
+</blockquote>
+<p><a href="https://arrow.apache.org/docs/r/articles/arrow.html" class="uri">https://arrow.apache.org/docs/r/articles/arrow.html</a></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
 <img src="img/visual-convention.png" alt="Graphical convention used in diagrams" width="960" />
 <p class="caption">
 Figure 1: Graphical convention used in diagrams
 </p>
 </div>
 </div>
-<h2 id="logical-types">Logical types</h2>
+<h2 id="translating-tables">Translating tables</h2>
+<h2 id="translating-columns">Translating columns</h2>
+<h3 id="logical-types">Logical types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-2"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
 <img src="img/logical-types.png" alt="Default mappings for logical types" width="960" />
 <p class="caption">
 Figure 2: Default mappings for logical types
 </p>
 </div>
 </div>
-<h2 id="integer-types">Integer types</h2>
+<h3 id="integer-types">Integer types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-3"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
 <img src="img/integer-types-01.png" alt="Default mappings for some integer types" width="960" />
 <p class="caption">
 Figure 3: Default mappings for some integer types
@@ -1546,34 +1675,34 @@ Figure 3: Default mappings for some integer types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-4"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
 <img src="img/integer-types-02.png" alt="Default mappings for other integer types" width="960" />
 <p class="caption">
 Figure 4: Default mappings for other integer types
 </p>
 </div>
 </div>
-<h2 id="numeric-types">Numeric types</h2>
+<h3 id="numeric-types">Numeric types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-9"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
 Figure 5: Default mappings for numeric types
 </p>
 </div>
 </div>
-<h2 id="character-types">Character types</h2>
+<h3 id="character-types">Character types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-10"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
 Figure 6: Default mappings for character types
 </p>
 </div>
 </div>
-<h2 id="datetime-types">Date/time types</h2>
+<h3 id="datetime-types">Date/time types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
 Figure 7: Default mappings for date/time types
@@ -1581,16 +1710,16 @@ Figure 7: Default mappings for date/time types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 8: Default mappings for duration types
 </p>
 </div>
 </div>
-<h2 id="other-types">Other types</h2>
+<h3 id="other-types">Other types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 9: Default mappings for null types
@@ -1598,7 +1727,7 @@ Figure 9: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-10"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for raw types
@@ -1606,7 +1735,7 @@ Figure 10: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for factor types
@@ -1614,17 +1743,20 @@ Figure 11: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for data frame types
 </p>
 </div>
 </div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-31 11:31:05 AEDT</p>
+<p>2022-01-31 16:18:58 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -1632,7 +1764,7 @@ Figure 12: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

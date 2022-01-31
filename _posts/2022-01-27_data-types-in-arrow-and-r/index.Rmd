@@ -40,6 +40,8 @@ checklist:
 <!--------------- setup post ----------------->
 
 ```{r setup, include=FALSE}
+tz <- .sys.timezone
+.sys.timezone <- "UTC"
 knitr::opts_chunk$set(echo = TRUE)
 refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 ```
@@ -47,11 +49,88 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 
 <!--------------- post ----------------->
 
+> Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>
+> &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
+
+
+Consider this piece of magic
+
+
+```{r}
+library(dplyr)
+library(arrow)
+
+magicians <- read_csv_arrow("magicians.csv")
+magicians
+
+arrowmagicks <- arrow_table(magicians)
+arrowmagicks
+```
+
+The `magicians` data set is a "data frame" (a tibble, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a "Table" object. Arrow Tables are roughly analogous to data frames -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of *translation* has occurred. Similarly when we look at the individual columns we see that something similar has happened. "Integer" columns in R are mapped to "int32" columns in Arrow, "Date" columns in R become "date32" columns in Arrow, and so on. Even without knowing much about the data types in the two languages, you can infer a lot from the names! In this case you can reasonably (and correctly) infer that the translation from R to Arrow is a sensible one. Better yet, in this case, when we pull the `arrowmagicks` data back into R we recover the original data:
+
+```{r}
+collect(arrowmagicks)
+```
+
+In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we *want* in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
+
+That being said, it's also valuable to give the data analyst flexibility. The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no "single" rulebook that tells you how to translate between R and Arrow: there can't be. 
+
+Suppose that I knew that there would in fact be a "Season 5.1648" coming, consisting of a single episode whose title corresponded to the full text of the [Treaty of Westphalia](https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf). Knowing that this new data point is coming, I'd perhaps want my Arrow data to encode `season` as a numeric variable, and I'd probably want to recognise that the text in the `title` field can be quite long. To do that I can specify an explicit *schema* that tells the **arrow** package how to translate my R data set into Arrow. I can do this with the `schema()` function:
+
+```{r}
+translation <- schema(
+  season = float64(), # not the default
+  episode = int32(),
+  title = large_utf8(), # not the default
+  air_date = date32(),
+  rating = float64(),
+  viewers = float64()
+)
+```
+
+Now I can use my schema to govern the translation:
+
+```{r}
+arrowmagicks2 <- arrow_table(magicians, schema = translation)
+arrowmagicks2
+```
+
+This is of course a very silly example. But the underlying issue is fairly serious. 
+
+## Why mapping languages is hard
+
+Blah blah I used to teach categorisation and mental representation. Organising the world into concepts (or data structures) is hard. We define ontologies that impose order on a chaotic world. A famous attempt to do this in 1668 by John Wilkins in [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1). A small snippet taken from the section "On Beasts":
+
+> BEASTS, may be distinguished by their several shapes, properties, uses, food, their tameness or wildness, etc. into such as are either
+> 
+> - VIVIPAROUS; producing living young.
+> 
+>     - WHOLE FOOTED, the *soles* of whose *feet* is are undivided, being used chiefly for *Carriage*. I.
+>     - CLOVEN FOOTED. II. <br>
+>       *Clawed*, or *multifidous*; the end of whose *feet* is branched out into *toes*; whether
+>       
+>         - NOT RAPACIOUS. III.
+>         - RAPACIOUS; living upon the prey of other *Animals*; having generally *six short pointed* incisors, or *cutting teeth*, and *two long fangs* to hold their prey; whether the
+>         
+>             - CAT-KIND; having a *roundish head*. IV.
+>             - DOG-KIND; whose *heads* are *more oblong*. V.
+>             
+> - OVIPAROUS; breeding *Eggs*. VI.
+
+It goes on to elaborate. As a scientific taxonomy it's... interesting. But even psychologically it betrays the peculiarities of the author. Wilkins had the noble ambition of defining a "universal language", but as a 17th century English gentleman there are certain deficiencies! I note as an Australian that there's no distinction between placental and marsupial mammals here! But of course the problems are more general. In 1952 the Argentinian author Jorge Luis Borges published an essay called [The Analytical Language of John Wilkins](https://ccrma.stanford.edu/courses/155/assignment/ex1/Borges.pdf) and describes a classification system from an fictitious "Celestial Emporium of Benevolent Knowledge":
+
+> In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies
+
+It's pretty unlikely that any human language would produce a classification system quite as chaotic as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. Michel Foucault actually refers to this Borges passage in the preface to his famous work [The Order of Things: An Archaeology of the Human Sciences](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay 
+
+> shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things
+
+
+
 https://arrow.apache.org/docs/r/articles/arrow.html
 
-Normally it just works. You don't have to think too much. At most, you might want to tweak the schema. Here's how that works. 
-
-But sometimes you run into edge cases. Other times you just want a deeper understanding of what's going on. So let's take a look inside
 
 
 ```{r}
@@ -63,8 +142,14 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 ```
 
 
+## Translating tables
 
-## Logical types
+
+
+
+## Translating columns
+
+### Logical types
 
 ```{r}
 #| echo = FALSE,
@@ -74,8 +159,7 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 knitr::include_graphics("img/logical-types.png", dpi = 100)
 ```
 
-
-## Integer types
+### Integer types
 
 ```{r}
 #| echo = FALSE,
@@ -95,7 +179,7 @@ knitr::include_graphics("img/integer-types-02.png", dpi = 100)
 ```
 
 
-## Numeric types
+### Numeric types
 
 
 ```{r}
@@ -107,8 +191,7 @@ knitr::include_graphics("img/numeric-types.png", dpi = 100)
 ```
 
 
-
-## Character types
+### Character types
 
 ```{r}
 #| echo = FALSE,
@@ -118,7 +201,7 @@ knitr::include_graphics("img/character-types.png", dpi = 100)
 ```
 
 
-## Date/time types
+### Date/time types
 
 ```{r}
 #| echo = FALSE,
@@ -136,7 +219,7 @@ knitr::include_graphics("img/duration-types.png", dpi = 100)
 
 
 
-## Other types
+### Other types
 
 ```{r}
 #| echo = FALSE,
@@ -159,6 +242,7 @@ knitr::include_graphics("img/raw-types.png", dpi = 100)
 knitr::include_graphics("img/factor-types.png", dpi = 100)
 ```
 
+
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
@@ -166,6 +250,10 @@ knitr::include_graphics("img/factor-types.png", dpi = 100)
 knitr::include_graphics("img/dataframe-types.png", dpi = 100)
 ```
 
+
+```{r, echo=FALSE}
+.sys.timezone <- tz
+```
 
 <!--------------- appendices ----------------->
 
