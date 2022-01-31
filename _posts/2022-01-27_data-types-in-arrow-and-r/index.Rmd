@@ -11,7 +11,7 @@ author:
     affiliation_url: https://voltrondata.com
     orcid_id: 0000-0001-7648-6578
 date: 2022-01-27
-preview: preview-image.jpg  # <---- UPDATE ME 
+preview: img/cover.jpg  # <---- UPDATE ME 
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/data-types-in-arrow-and-r 
 repository_url: https://github.com/djnavarro/distill-blog/
@@ -53,18 +53,118 @@ Normally it just works. You don't have to think too much. At most, you might wan
 
 But sometimes you run into edge cases. Other times you just want a deeper understanding of what's going on. So let's take a look inside
 
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Graphical convention used in diagrams"
+
+knitr::include_graphics("img/visual-convention.png", dpi = 100)
+```
+
+
+
 ## Logical types
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for logical types"
+
+knitr::include_graphics("img/logical-types.png", dpi = 100)
+```
+
 
 ## Integer types
 
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for some integer types"
+
+knitr::include_graphics("img/integer-types-01.png", dpi = 100)
+```
+
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for other integer types"
+
+knitr::include_graphics("img/integer-types-02.png", dpi = 100)
+```
+
+
 ## Numeric types
+
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for numeric types"
+
+knitr::include_graphics("img/numeric-types.png", dpi = 100)
+```
+
+
 
 ## Character types
 
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for character types"
+knitr::include_graphics("img/character-types.png", dpi = 100)
+```
+
+
 ## Date/time types
 
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for date/time types"
+knitr::include_graphics("img/date-types.png", dpi = 100)
+```
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for duration types"
+knitr::include_graphics("img/duration-types.png", dpi = 100)
+```
 
 
+
+## Other types
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for null types"
+knitr::include_graphics("img/null-types.png", dpi = 100)
+```
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for raw types"
+knitr::include_graphics("img/raw-types.png", dpi = 100)
+```
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for factor types"
+knitr::include_graphics("img/factor-types.png", dpi = 100)
+```
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for data frame types"
+knitr::include_graphics("img/dataframe-types.png", dpi = 100)
+```
 
 
 <!--------------- appendices ----------------->
