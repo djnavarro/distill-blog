@@ -57,6 +57,7 @@ Consider this piece of magic
 
 
 ```{r}
+library(tibble)
 library(dplyr)
 library(arrow)
 
@@ -74,6 +75,8 @@ collect(arrowmagicks)
 ```
 
 In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we *want* in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
+
+## Defining schemas
 
 That being said, it's also valuable to give the data analyst flexibility. The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no "single" rulebook that tells you how to translate between R and Arrow: there can't be. 
 
@@ -129,27 +132,32 @@ It's pretty unlikely that any human language would produce a classification syst
 
 
 
-https://arrow.apache.org/docs/r/articles/arrow.html
+## Translating data types
 
+So how do we construct data structures in Arrow that are appropriate translations of data structures in R, and vice versa? For the moment, let's keep things simple and assume that the mapping we're interested in has the same format as the one described at the start of the post: in R we want to encode the data as a data frame, and in Arrow we want to encode it as a Table. If so, the translation question is really a matter of how we encode the columns.
 
+In the rest of this post I'll use a lot of diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), as shown below:
 
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Graphical convention used in diagrams"
+#| fig.cap = "Illustration of the graphical convention used in the later   diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background)."
 
 knitr::include_graphics("img/visual-convention.png", dpi = 100)
 ```
 
-
-## Translating tables
-
-
-
-
-## Translating columns
+<aside><br>Instead of using alt-text, I've included verbose and descriptive figure captions that verbally describe the content of each diagram</aside>
 
 ### Logical types
+
+I'll start with the simplest possible case: a data frame with one column of logical data. Logical data in R can take on three possible values: `TRUE` and `FALSE` are the two allowed truth values, and `NA` is used to denote missing data. 
+
+```{r}
+df <- tibble(values = c(TRUE, FALSE, NA))
+df
+```
+
+Arrow has an analogous "boolean" type, which has truth values `true` and `false`. Just like R, missing values are allowed, and are represented as `null`. Arrow booleans and R logicals are essentially equivalent to one another, so by default the **arrow** package will map an R logical to an Arrow boolean and vice versa.
 
 ```{r}
 #| echo = FALSE,
@@ -158,6 +166,29 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 
 knitr::include_graphics("img/logical-types.png", dpi = 100)
 ```
+
+So let's do it:
+
+```{r}
+tb <- arrow_table(df)
+tb
+```
+
+It's mildly annoying this doesn't print out the actual values. Happily the **arrow** package supplies a `$` operator for Arrow Table objects so we can do this:
+
+```{r}
+tb$values
+```
+
+Okay, that makes sense. The "ChunkedArray" bit might seem a little unfamiliar to R users -- and I'll come back to it later -- but for now we can imagine it's something similar to an R vector. 
+
+This also tells us a little more about the relationship between R data frames and Arrow Tables. In R, a data frame is a collection of equal-length vectors; in Arrow, a Table is a collection of equal-length chunked arrays. This is convenient for me because I can use the `chunked_array()` function for the rest of this section. Instead of going through that elaborate process of creating a tibble and then calling `arrow_table()` I could have just done this:
+
+```{r}
+values <- c(TRUE, FALSE, NA)
+chunked_array(values)
+```
+
 
 ### Integer types
 
@@ -217,8 +248,6 @@ knitr::include_graphics("img/date-types.png", dpi = 100)
 knitr::include_graphics("img/duration-types.png", dpi = 100)
 ```
 
-
-
 ### Other types
 
 ```{r}
@@ -249,6 +278,13 @@ knitr::include_graphics("img/factor-types.png", dpi = 100)
 #| fig.cap = "Default mappings for data frame types"
 knitr::include_graphics("img/dataframe-types.png", dpi = 100)
 ```
+
+
+## Resources
+
+- https://arrow.apache.org/docs/r/articles/arrow.html
+- https://arrow.apache.org/docs/cpp/api/datatype.html
+
 
 
 ```{r, echo=FALSE}

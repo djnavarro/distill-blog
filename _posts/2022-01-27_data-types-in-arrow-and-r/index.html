@@ -1496,9 +1496,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
+<li><a href="#defining-schemas">Defining schemas</a></li>
 <li><a href="#why-mapping-languages-is-hard">Why mapping languages is hard</a></li>
-<li><a href="#translating-tables">Translating tables</a></li>
-<li><a href="#translating-columns">Translating columns</a>
+<li><a href="#translating-data-types">Translating data types</a>
 <ul>
 <li><a href="#logical-types">Logical types</a></li>
 <li><a href="#integer-types">Integer types</a></li>
@@ -1507,6 +1507,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#datetime-types">Date/time types</a></li>
 <li><a href="#other-types">Other types</a></li>
 </ul></li>
+<li><a href="#resources">Resources</a></li>
 </ul>
 </nav>
 </div>
@@ -1527,7 +1528,8 @@ checklist:
 <p>Consider this piece of magic</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
 
 <span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span><span class='op'>)</span>
@@ -1584,6 +1586,7 @@ $viewers &lt;double&gt;</code></pre>
 # … with 55 more rows</code></pre>
 </div>
 <p>In this example the translation back and forth “just works”. You really don’t have to think too much about the subtle differences in how Arrow and R “think about the world” and how their data structures are organised. And in general that’s what we <em>want</em> in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures!</p>
+<h2 id="defining-schemas">Defining schemas</h2>
 <p>That being said, it’s also valuable to give the data analyst flexibility. The <strong>arrow</strong> package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the <a href="https://en.wikipedia.org/wiki/Indeterminacy_of_translation">indeterminacy of translation</a> at the top of this post was originally written about natural languages, but I think it applies in programming too. There’s no “single” rulebook that tells you how to translate between R and Arrow: there can’t be.</p>
 <p>Suppose that I knew that there would in fact be a “Season 5.1648” coming, consisting of a single episode whose title corresponded to the full text of the <a href="https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf">Treaty of Westphalia</a>. Knowing that this new data point is coming, I’d perhaps want my Arrow data to encode <code>season</code> as a numeric variable, and I’d probably want to recognise that the text in the <code>title</code> field can be quite long. To do that I can specify an explicit <em>schema</em> that tells the <strong>arrow</strong> package how to translate my R data set into Arrow. I can do this with the <code>schema()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1645,29 +1648,90 @@ $viewers &lt;double&gt;</code></pre>
 <blockquote>
 <p>shattered … all the familiar landmarks of thought — our thought, the thought that bears the stamp of our age and our geography — breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things</p>
 </blockquote>
-<p><a href="https://arrow.apache.org/docs/r/articles/arrow.html" class="uri">https://arrow.apache.org/docs/r/articles/arrow.html</a></p>
+<h2 id="translating-data-types">Translating data types</h2>
+<p>So how do we construct data structures in Arrow that are appropriate translations of data structures in R, and vice versa? For the moment, let’s keep things simple and assume that the mapping we’re interested in has the same format as the one described at the start of the post: in R we want to encode the data as a data frame, and in Arrow we want to encode it as a Table. If so, the translation question is really a matter of how we encode the columns.</p>
+<p>In the rest of this post I’ll use a lot of diagrams showing the default mappings that the <strong>arrow</strong> package uses when converting data columns from R to Arrow and vice versa. In each case I’ll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), as shown below:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
-<img src="img/visual-convention.png" alt="Graphical convention used in diagrams" width="960" />
+<img src="img/visual-convention.png" alt="Illustration of the graphical convention used in the later   diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background)." width="960" />
 <p class="caption">
-Figure 1: Graphical convention used in diagrams
+Figure 1: Illustration of the graphical convention used in the later diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background).
 </p>
 </div>
 </div>
-<h2 id="translating-tables">Translating tables</h2>
-<h2 id="translating-columns">Translating columns</h2>
+<aside>
+<br>Instead of using alt-text, I’ve included verbose and descriptive figure captions that verbally describe the content of each diagram
+</aside>
 <h3 id="logical-types">Logical types</h3>
+<p>I’ll start with the simplest possible case: a data frame with one column of logical data. Logical data in R can take on three possible values: <code>TRUE</code> and <code>FALSE</code> are the two allowed truth values, and <code>NA</code> is used to denote missing data.</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>df</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>values <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>NA</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>df</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 3 × 1
+  values
+  &lt;lgl&gt; 
+1 TRUE  
+2 FALSE 
+3 NA    </code></pre>
+</div>
+<p>Arrow has an analogous “boolean” type, which has truth values <code>true</code> and <code>false</code>. Just like R, missing values are allowed, and are represented as <code>null</code>. Arrow booleans and R logicals are essentially equivalent to one another, so by default the <strong>arrow</strong> package will map an R logical to an Arrow boolean and vice versa.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
 <img src="img/logical-types.png" alt="Default mappings for logical types" width="960" />
 <p class="caption">
 Figure 2: Default mappings for logical types
 </p>
 </div>
 </div>
+<p>So let’s do it:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+<span class='va'>tb</span>
+</code></pre>
+</div>
+<pre><code>Table
+3 rows x 1 columns
+$values &lt;bool&gt;</code></pre>
+</div>
+<p>It’s mildly annoying this doesn’t print out the actual values. Happily the <strong>arrow</strong> package supplies a <code>$</code> operator for Arrow Table objects so we can do this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tb</span><span class='op'>$</span><span class='va'>values</span>
+</code></pre>
+</div>
+<pre><code>ChunkedArray
+[
+  [
+    true,
+    false,
+    null
+  ]
+]</code></pre>
+</div>
+<p>Okay, that makes sense. The “ChunkedArray” bit might seem a little unfamiliar to R users – and I’ll come back to it later – but for now we can imagine it’s something similar to an R vector.</p>
+<p>This also tells us a little more about the relationship between R data frames and Arrow Tables. In R, a data frame is a collection of equal-length vectors; in Arrow, a Table is a collection of equal-length chunked arrays. This is convenient for me because I can use the <code>chunked_array()</code> function for the rest of this section. Instead of going through that elaborate process of creating a tibble and then calling <code>arrow_table()</code> I could have just done this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>values</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>NA</span><span class='op'>)</span>
+<span class='fu'><a href='https://arrow.apache.org/docs/r//reference/ChunkedArray.html'>chunked_array</a></span><span class='op'>(</span><span class='va'>values</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>ChunkedArray
+[
+  [
+    true,
+    false,
+    null
+  ]
+]</code></pre>
+</div>
 <h3 id="integer-types">Integer types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
 <img src="img/integer-types-01.png" alt="Default mappings for some integer types" width="960" />
 <p class="caption">
 Figure 3: Default mappings for some integer types
@@ -1675,7 +1739,7 @@ Figure 3: Default mappings for some integer types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
 <img src="img/integer-types-02.png" alt="Default mappings for other integer types" width="960" />
 <p class="caption">
 Figure 4: Default mappings for other integer types
@@ -1684,7 +1748,7 @@ Figure 4: Default mappings for other integer types
 </div>
 <h3 id="numeric-types">Numeric types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-9"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
 Figure 5: Default mappings for numeric types
@@ -1693,7 +1757,7 @@ Figure 5: Default mappings for numeric types
 </div>
 <h3 id="character-types">Character types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-10"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
 Figure 6: Default mappings for character types
@@ -1702,7 +1766,7 @@ Figure 6: Default mappings for character types
 </div>
 <h3 id="datetime-types">Date/time types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
 Figure 7: Default mappings for date/time types
@@ -1710,7 +1774,7 @@ Figure 7: Default mappings for date/time types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 8: Default mappings for duration types
@@ -1719,7 +1783,7 @@ Figure 8: Default mappings for duration types
 </div>
 <h3 id="other-types">Other types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 9: Default mappings for null types
@@ -1727,7 +1791,7 @@ Figure 9: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for raw types
@@ -1735,7 +1799,7 @@ Figure 10: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for factor types
@@ -1743,20 +1807,25 @@ Figure 11: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for data frame types
 </p>
 </div>
 </div>
+<h2 id="resources">Resources</h2>
+<ul>
+<li><a href="https://arrow.apache.org/docs/r/articles/arrow.html" class="uri">https://arrow.apache.org/docs/r/articles/arrow.html</a></li>
+<li><a href="https://arrow.apache.org/docs/cpp/api/datatype.html" class="uri">https://arrow.apache.org/docs/cpp/api/datatype.html</a></li>
+</ul>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-31 16:18:58 AEDT</p>
+<p>2022-01-31 20:19:02 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -1764,7 +1833,7 @@ Figure 12: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
