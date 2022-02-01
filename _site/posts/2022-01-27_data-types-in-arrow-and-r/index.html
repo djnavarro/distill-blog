@@ -2833,18 +2833,89 @@ Figure 5: Default mappings for other integer types
 </p>
 </div>
 </div>
-<p>If this diagram looks ugly and unhelpful, well… yeah, I agree. Translations become messy when the boxes in one language don’t quite match up to the content expressed in another. For three “big” integer types I think it’s easier to just write out the translation rules verbally:</p>
-<p>For int64: if the user sets</p>
+<p>If this diagram looks ugly and unhelpful, well… yeah, I agree. Translations become messy when the boxes in one language don’t quite match up to the content expressed in another. Sometimes it’s just easier to see the system in action, so let’s write a little helper function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>integer_types</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>arrow_type</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>arrow_integer</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>arrow_type</span><span class='op'>)</span>
-  <span class='va'>r_import</span> <span class='op'>&lt;-</span> <span class='va'>arrow_integer</span><span class='op'>$</span><span class='fu'>as_vector</span><span class='op'>(</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>translate_integer</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>value_arrow</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span>
+  <span class='va'>value_r</span> <span class='op'>&lt;-</span> <span class='va'>value_arrow</span><span class='op'>$</span><span class='fu'>as_vector</span><span class='op'>(</span><span class='op'>)</span>
   <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
-    arrow <span class='op'>=</span> <span class='va'>arrow_integer</span><span class='op'>$</span><span class='va'>type</span><span class='op'>$</span><span class='va'>name</span>,
-    r <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='va'>r_import</span><span class='op'>)</span>
+    arrow <span class='op'>=</span> <span class='va'>value_arrow</span><span class='op'>$</span><span class='va'>type</span><span class='op'>$</span><span class='va'>name</span>,
+    r <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='va'>value_r</span><span class='op'>)</span>
   <span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<p>The <code>translate_integer()</code> function takes an integer <code>value</code> and an <code>type</code> as input, and it returns a vector that tells you what Arrow type was created (this should be identical to <code>type</code>), and what R class gets returned when we import that Arrow object back into R.</p>
+<p>To illustrate, let’s encode the number 10 as an unsigned 8-bit integer in Arrow and then see what happens when that gets pulled back into R. This is an easy case because uint8 always maps back to integer:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint8</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    arrow         r 
+  &quot;uint8&quot; &quot;integer&quot; </code></pre>
+</div>
+<p>Next, let’s see how <strong>arrow</strong> handles the three types that are a little awkward for R to represent as integers. First, let’s see what happens when all the values are small enough that R actually <em>can</em> represent them as integers:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    arrow         r 
+ &quot;uint32&quot; &quot;integer&quot; </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    arrow         r 
+ &quot;uint64&quot; &quot;integer&quot; </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    arrow         r 
+  &quot;int64&quot; &quot;integer&quot; </code></pre>
+</div>
+<p>Okay, that makes sense. If the numbers <em>can</em> be represented using the R integer class then that’s what <strong>arrow</strong> will do.</p>
+<p>Now let’s increase the number to something that R cannot represent as an integer, and see what happens:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    arrow         r 
+ &quot;uint32&quot; &quot;numeric&quot; </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>    arrow         r 
+ &quot;uint64&quot; &quot;numeric&quot; </code></pre>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>      arrow           r 
+    &quot;int64&quot; &quot;integer64&quot; </code></pre>
+</div>
+<p>The last result might be a little surprising to many R users. The integer64 class is supplied by the <strong>bit64</strong> package, and provides an R class that behaves like 64-bit integers in R.</p>
+<p>Just to complicate matters, there’s a special option for uint64 that you can use to force <strong>arrow</strong> to always return integer64:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>arrow.int64_downcast <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>      arrow           r 
+    &quot;int64&quot; &quot;integer64&quot; </code></pre>
+</div>
+<p>Anyway. That’s the whole story. Just need to make it coherent!</p>
+<p>Before moving on, allow me to clean up state:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>arrow.int64_downcast <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
@@ -2854,7 +2925,7 @@ TODO:
 Mathematically: floating points as approximations to the reals. uncountable infinity is a bitch
 -->
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
 Figure 6: Default mappings for numeric types
@@ -2863,7 +2934,7 @@ Figure 6: Default mappings for numeric types
 </div>
 <h2 id="character-types">Character types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
 Figure 7: Default mappings for character types
@@ -2876,7 +2947,7 @@ TODO
 Quine has a smartarse quote about time being lingustically special
 -->
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
 Figure 8: Default mappings for date/time types
@@ -2884,7 +2955,7 @@ Figure 8: Default mappings for date/time types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-23"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 9: Default mappings for duration types
@@ -2893,7 +2964,7 @@ Figure 9: Default mappings for duration types
 </div>
 <h2 id="other-types">Other types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for null types
@@ -2901,7 +2972,7 @@ Figure 10: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-25"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for raw types
@@ -2909,7 +2980,7 @@ Figure 11: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for factor types
@@ -2917,7 +2988,7 @@ Figure 12: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 13: Default mappings for data frame types
@@ -2935,7 +3006,7 @@ Figure 13: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-01 14:22:38 AEDT</p>
+<p>2022-02-01 16:49:00 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -2943,7 +3014,7 @@ Figure 13: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
