@@ -126,7 +126,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["img/character-types.png","img/cover.jpg","img/cover.png","img/dataframe-types.png","img/datatypes01.png","img/datatypes02.png","img/datatypes03.png","img/datatypes04.png","img/datatypes05.png","img/datatypes06.png","img/datatypes07.png","img/datatypes08.png","img/datatypes09.png","img/datatypes10.png","img/datatypes11.png","img/datatypes12.png","img/datatypes13.png","img/date-types.png","img/duration-types.png","img/factor-types.png","img/integer-types-01.png","img/integer-types-02.png","img/logical-types.png","img/null-types.png","img/numeric-types.png","img/raw-types.png","img/visual-convention.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","magicians.csv"]}
+  {"type":"character","attributes":{},"value":["img/character-types.png","img/cover.jpg","img/cover.png","img/dataframe-types.png","img/datatypes01.png","img/datatypes02.png","img/datatypes03.png","img/datatypes04.png","img/datatypes05.png","img/datatypes06.png","img/datatypes07.png","img/datatypes08.png","img/datatypes09.png","img/datatypes10.png","img/datatypes11.png","img/datatypes12.png","img/datatypes13.png","img/datatypes14.png","img/date-types.png","img/duration-types.png","img/factor-types.png","img/integer-types-01.png","img/integer-types-02.png","img/integer-types-03.png","img/logical-types.png","img/null-types.png","img/numeric-types.png","img/raw-types.png","img/visual-convention.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","magicians.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1730,87 +1730,162 @@ $values &lt;bool&gt;</code></pre>
 ]</code></pre>
 </div>
 <h3 id="integer-types">Integer types</h3>
+<p>Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight. This makes it a little more complicated!</p>
+<p>To make sense of the different types, it helps to take a moment to think about how integers are represented in a binary format. Let’s suppose we allocate 8 bits to specify an integer. If we do that, then there are <span class="math inline">\(2^8 = 256\)</span> unique binary patterns we can create with these bits. Because of this, there is a fundamental constraint: no matter how we choose to set it up, 8-bit integers can only represent 256 distinct numbers. Technically, we could choose any 256 numbers we like, but in practice there are only two schemes used for 8-bit integers: <em>unsigned</em> 8-bit integers (“uint8”) use those bits to represent integers from 0 to 255, whereas <em>signed</em> 8-bit integers (“int8”) can represent integers from -128 to 127.</p>
+<p>More generally, an unsigned n-bit integer can represent integers from 0 to <span class="math inline">\(2^n - 1\)</span>, whereas a signed n-bit integer can represent integers from <span class="math inline">\(-2^{n-1}\)</span> to <span class="math inline">\(2^{n-1} - 1\)</span>. Here’s what that looks like for all the integer types supported by Arrow:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Description</th>
+<th style="text-align: right;">Name</th>
+<th style="text-align: right;">Smallest Value</th>
+<th style="text-align: right;">Largest Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>8 bit unsigned</td>
+<td style="text-align: right;">uint8</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">255</td>
+</tr>
+<tr class="even">
+<td>16 bit unsigned</td>
+<td style="text-align: right;">uint16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">65535</td>
+</tr>
+<tr class="odd">
+<td>32 bit unsigned</td>
+<td style="text-align: right;">uint32</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4294967295</td>
+</tr>
+<tr class="even">
+<td>64 bit unsigned</td>
+<td style="text-align: right;">uint64</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">18446744073709551615</td>
+</tr>
+<tr class="odd">
+<td>8 bit signed</td>
+<td style="text-align: right;">int8</td>
+<td style="text-align: right;">-128</td>
+<td style="text-align: right;">127</td>
+</tr>
+<tr class="even">
+<td>16 bit signed</td>
+<td style="text-align: right;">int16</td>
+<td style="text-align: right;">-32768</td>
+<td style="text-align: right;">32767</td>
+</tr>
+<tr class="odd">
+<td>32 bit signed</td>
+<td style="text-align: right;">int32</td>
+<td style="text-align: right;">-2147483648</td>
+<td style="text-align: right;">2147483647</td>
+</tr>
+<tr class="even">
+<td>64 bit signed</td>
+<td style="text-align: right;">int64</td>
+<td style="text-align: right;">-9223372036854775808</td>
+<td style="text-align: right;">9223372036854775807</td>
+</tr>
+</tbody>
+</table>
+<p>On the R side, the integer type supplied by base R is a 32 bit signed integer, and has a natural one-to-one mapping to the Arrow int32 type. Because of this, the <strong>arrow</strong> default is to convert an R integer to an Arrow int32 and vice versa.</p>
+<p>What about the other seven Arrow types? This is where it gets a little trickier. The table above illustrates that some integer types are fully contained within others: unsurprisingly, every number representable by int16 can also be represented by int32, so we can say that the int16 numbers are fully “contained” by (i.e. are a proper subset of) the int32 numbers. Similarly, uint16 is contained by unit32. There are many cases where an unsigned type is contained by a signed type: for instance, int32 contains all the uint16 numbers. However, because the unsigned integers cannot represent negative numbers, the reverse is never true. So we can map out the relationships between the different types like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
-<img src="img/integer-types-01.png" alt="Default mappings for some integer types" width="960" />
+<img src="img/integer-types-03.png" alt="Containment relationships between the integer types." width="274" />
 <p class="caption">
-Figure 3: Default mappings for some integer types
+Figure 3: Containment relationships between the integer types.
 </p>
 </div>
 </div>
+<p>Whenever type A contains type B, it’s possible to transform an object of type B into an object of type A without losing information or requiring any special handling. R integers are 32 bit signed integers, which means it’s possible to convert Arrow data of types int32, int16, int8, uint16, and uint8 to R integers completely painlessly. So for these data types the <strong>arrow</strong> defaults give us this relationship:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<img src="img/integer-types-01.png" alt="Default mappings for some integer types" width="960" />
+<p class="caption">
+Figure 4: Default mappings for some integer types
+</p>
+</div>
+</div>
+<p>Other integer types are messier</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
 <img src="img/integer-types-02.png" alt="Default mappings for other integer types" width="960" />
 <p class="caption">
-Figure 4: Default mappings for other integer types
+Figure 5: Default mappings for other integer types
 </p>
 </div>
 </div>
 <h3 id="numeric-types">Numeric types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
-Figure 5: Default mappings for numeric types
+Figure 6: Default mappings for numeric types
 </p>
 </div>
 </div>
 <h3 id="character-types">Character types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
-Figure 6: Default mappings for character types
+Figure 7: Default mappings for character types
 </p>
 </div>
 </div>
 <h3 id="datetime-types">Date/time types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
-Figure 7: Default mappings for date/time types
+Figure 8: Default mappings for date/time types
 </p>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
-Figure 8: Default mappings for duration types
+Figure 9: Default mappings for duration types
 </p>
 </div>
 </div>
 <h3 id="other-types">Other types</h3>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
-Figure 9: Default mappings for null types
-</p>
-</div>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
-<img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
-<p class="caption">
-Figure 10: Default mappings for raw types
+Figure 10: Default mappings for null types
 </p>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
-<img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
+<img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
-Figure 11: Default mappings for factor types
+Figure 11: Default mappings for raw types
 </p>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
+<img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
+<p class="caption">
+Figure 12: Default mappings for factor types
+</p>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
-Figure 12: Default mappings for data frame types
+Figure 13: Default mappings for data frame types
 </p>
 </div>
 </div>
@@ -1825,7 +1900,7 @@ Figure 12: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-01-31 20:19:02 AEDT</p>
+<p>2022-02-01 12:22:57 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -1841,6 +1916,15 @@ Figure 12: Default mappings for data frame types
 <div class="d-appendix">
 </div>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->

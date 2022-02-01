@@ -192,6 +192,37 @@ chunked_array(values)
 
 ### Integer types
 
+Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight. This makes it a little more complicated!
+
+To make sense of the different types, it helps to take a moment to think about how integers are represented in a binary format. Let's suppose we allocate 8 bits to specify an integer. If we do that, then there are $2^8 = 256$ unique binary patterns we can create with these bits. Because of this, there is a fundamental constraint: no matter how we choose to set it up, 8-bit integers can only represent 256 distinct numbers. Technically, we could choose any 256 numbers we like, but in practice there are only two schemes used for 8-bit integers: *unsigned* 8-bit integers ("uint8") use those bits to represent integers from 0 to 255, whereas *signed* 8-bit integers ("int8") can represent integers from -128 to 127. 
+
+More generally, an unsigned n-bit integer can represent integers from 0 to $2^n - 1$, whereas a signed n-bit integer can represent integers from $-2^{n-1}$ to $2^{n-1} - 1$. Here's what that looks like for all the integer types supported by Arrow:
+
+| Description     | Name   | Smallest Value       |        Largest Value |
+| --------------- | -----: | -------------------: | -------------------: |
+| 8 bit unsigned  | uint8  | 0                    |                  255 |
+| 16 bit unsigned | uint16 | 0                    |                65535 |
+| 32 bit unsigned | uint32 | 0                    |           4294967295 |
+| 64 bit unsigned | uint64 | 0                    | 18446744073709551615 |
+| 8 bit signed    | int8   | -128                 |                  127 |
+| 16 bit signed   | int16  | -32768               |                32767 |
+| 32 bit signed   | int32  | -2147483648          |           2147483647 |
+| 64 bit signed   | int64  | -9223372036854775808 |  9223372036854775807 |
+
+On the R side, the integer type supplied by base R is a 32 bit signed integer, and has a natural one-to-one mapping to the Arrow int32 type. Because of this, the **arrow** default is to convert an R integer to an Arrow int32 and vice versa. 
+
+What about the other seven Arrow types? This is where it gets a little trickier. The table above illustrates that some integer types are fully contained within others: unsurprisingly, every number representable by int16 can also be represented by int32, so we can say that the int16 numbers are fully "contained" by (i.e. are a proper subset of) the int32 numbers. Similarly, uint16 is contained by unit32. There are many cases where an unsigned type is contained by a signed type: for instance, int32 contains all the uint16 numbers. However, because the unsigned integers cannot represent negative numbers, the reverse is never true. So we can map out the relationships between the different types like this: 
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Containment relationships between the integer types."
+
+knitr::include_graphics("img/integer-types-03.png", dpi = 350)
+```
+
+Whenever type A contains type B, it's possible to transform an object of type B into an object of type A without losing information or requiring any special handling. R integers are 32 bit signed integers, which means it's possible to convert Arrow data of types int32, int16, int8, uint16, and uint8 to R integers completely painlessly. So for these data types the **arrow** defaults give us this relationship:
+
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
@@ -199,6 +230,8 @@ chunked_array(values)
 
 knitr::include_graphics("img/integer-types-01.png", dpi = 100)
 ```
+
+Other integer types are messier
 
 
 ```{r}
