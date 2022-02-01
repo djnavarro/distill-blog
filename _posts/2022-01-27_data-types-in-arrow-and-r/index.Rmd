@@ -53,6 +53,22 @@ refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 > &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
 
 
+<!-- 
+TODO: 
+
+Insert the point from conversation with Jon. The code the read_* functions is
+complicated. It handles everything for you because "reading the data" is a 
+constrained task. That means the developers can optimise almost everything. 
+
+In contrast, the code underpinning schema() etc is simple. It takes care of 
+choices for you when those choices are "obvious", but it leaves all the edge
+cases for you to deal with. There are a lot of weird edge cases because 
+"translating between languages" is underdetermined and can only ever be 
+approximate. The developers can help make it easier, but the user has to be
+the final arbiter, and it helps to understand what each language is "doing". 
+
+-->
+
 Consider this piece of magic
 
 
@@ -148,7 +164,11 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 
 <aside><br>Instead of using alt-text, I've included verbose and descriptive figure captions that verbally describe the content of each diagram</aside>
 
-### Logical types
+## Logical types
+
+<!-- 
+TODO: add discussion of two-valued and three-valued logics here
+-->
 
 I'll start with the simplest possible case: a data frame with one column of logical data. Logical data in R can take on three possible values: `TRUE` and `FALSE` are the two allowed truth values, and `NA` is used to denote missing data. 
 
@@ -189,12 +209,25 @@ values <- c(TRUE, FALSE, NA)
 chunked_array(values)
 ```
 
+<!-- 
+TODO: foreshadow that the NA, null thing will be explained later
+-->
 
-### Integer types
 
-Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight. This makes it a little more complicated!
+
+## Integer types
+
+Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight. 
 
 To make sense of the different types, it helps to take a moment to think about how integers are represented in a binary format. Let's suppose we allocate 8 bits to specify an integer. If we do that, then there are $2^8 = 256$ unique binary patterns we can create with these bits. Because of this, there is a fundamental constraint: no matter how we choose to set it up, 8-bit integers can only represent 256 distinct numbers. Technically, we could choose any 256 numbers we like, but in practice there are only two schemes used for 8-bit integers: *unsigned* 8-bit integers ("uint8") use those bits to represent integers from 0 to 255, whereas *signed* 8-bit integers ("int8") can represent integers from -128 to 127. 
+
+<!-- 
+TODO:
+
+Mathematically: 
+  signed = the integers, Z
+  unsigned = the naturals, N
+-->
 
 More generally, an unsigned n-bit integer can represent integers from 0 to $2^n - 1$, whereas a signed n-bit integer can represent integers from $-2^{n-1}$ to $2^{n-1} - 1$. Here's what that looks like for all the integer types supported by Arrow:
 
@@ -231,8 +264,7 @@ Whenever type A contains type B, it's possible to transform an object of type B 
 knitr::include_graphics("img/integer-types-01.png", dpi = 100)
 ```
 
-Other integer types are messier
-
+Other integer types are messier. To keep things nice and simple, what we'd *like* to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that's possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that's what **arrow** does by default. However, if there are values that "overflow" this range, then **arrow** will import the data as a different type, as shown below:
 
 ```{r}
 #| echo = FALSE,
@@ -242,8 +274,29 @@ Other integer types are messier
 knitr::include_graphics("img/integer-types-02.png", dpi = 100)
 ```
 
+If this diagram looks ugly and unhelpful, well... yeah, I agree. Translations become messy when the boxes in one language don't quite match up to the content expressed in another. For three "big" integer types I think it's easier to just write out the translation rules verbally:
 
-### Numeric types
+For int64: if the user sets
+
+```{r}
+integer_types <- function(value, arrow_type) {
+  arrow_integer <- Scalar$create(value, arrow_type)
+  r_import <- arrow_integer$as_vector()
+  return(c(
+    arrow = arrow_integer$type$name,
+    r = class(r_import)
+  ))
+}
+```
+
+
+## Numeric types
+
+<!-- 
+TODO:
+Mathematically: floating points as approximations to the reals. uncountable infinity is a bitch
+-->
+
 
 
 ```{r}
@@ -255,7 +308,7 @@ knitr::include_graphics("img/numeric-types.png", dpi = 100)
 ```
 
 
-### Character types
+## Character types
 
 ```{r}
 #| echo = FALSE,
@@ -265,7 +318,13 @@ knitr::include_graphics("img/character-types.png", dpi = 100)
 ```
 
 
-### Date/time types
+## Date/time types
+
+<!--
+TODO
+Quine has a smartarse quote about time being lingustically special
+-->
+
 
 ```{r}
 #| echo = FALSE,
@@ -281,7 +340,7 @@ knitr::include_graphics("img/date-types.png", dpi = 100)
 knitr::include_graphics("img/duration-types.png", dpi = 100)
 ```
 
-### Other types
+## Other types
 
 ```{r}
 #| echo = FALSE,

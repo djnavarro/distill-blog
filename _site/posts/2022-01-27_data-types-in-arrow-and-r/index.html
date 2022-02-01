@@ -2484,15 +2484,13 @@ d-appendix d-footnote-list a.footnote-backlink {
 <ul>
 <li><a href="#defining-schemas">Defining schemas</a></li>
 <li><a href="#why-mapping-languages-is-hard">Why mapping languages is hard</a></li>
-<li><a href="#translating-data-types">Translating data types</a>
-<ul>
+<li><a href="#translating-data-types">Translating data types</a></li>
 <li><a href="#logical-types">Logical types</a></li>
 <li><a href="#integer-types">Integer types</a></li>
 <li><a href="#numeric-types">Numeric types</a></li>
 <li><a href="#character-types">Character types</a></li>
 <li><a href="#datetime-types">Date/time types</a></li>
 <li><a href="#other-types">Other types</a></li>
-</ul></li>
 <li><a href="#resources">Resources</a></li>
 </ul>
 </nav>
@@ -2511,6 +2509,21 @@ checklist:
 <blockquote>
 <p>Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>     – William Van Orman Quine, 1960, <a href="https://en.wikipedia.org/wiki/Word_and_Object">Word and Object</a></p>
 </blockquote>
+<!-- 
+TODO: 
+
+Insert the point from conversation with Jon. The code the read_* functions is
+complicated. It handles everything for you because "reading the data" is a 
+constrained task. That means the developers can optimise almost everything. 
+
+In contrast, the code underpinning schema() etc is simple. It takes care of 
+choices for you when those choices are "obvious", but it leaves all the edge
+cases for you to deal with. There are a lot of weird edge cases because 
+"translating between languages" is underdetermined and can only ever be 
+approximate. The developers can help make it easier, but the user has to be
+the final arbiter, and it helps to understand what each language is "doing". 
+
+-->
 <p>Consider this piece of magic</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2648,7 +2661,10 @@ Figure 1: Illustration of the graphical convention used in the later diagrams, s
 <aside>
 <br>Instead of using alt-text, I’ve included verbose and descriptive figure captions that verbally describe the content of each diagram
 </aside>
-<h3 id="logical-types">Logical types</h3>
+<h2 id="logical-types">Logical types</h2>
+<!-- 
+TODO: add discussion of two-valued and three-valued logics here
+-->
 <p>I’ll start with the simplest possible case: a data frame with one column of logical data. Logical data in R can take on three possible values: <code>TRUE</code> and <code>FALSE</code> are the two allowed truth values, and <code>NA</code> is used to denote missing data.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2715,9 +2731,19 @@ $values &lt;bool&gt;</code></pre>
   ]
 ]</code></pre>
 </div>
-<h3 id="integer-types">Integer types</h3>
-<p>Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight. This makes it a little more complicated!</p>
+<!-- 
+TODO: foreshadow that the NA, null thing will be explained later
+-->
+<h2 id="integer-types">Integer types</h2>
+<p>Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight.</p>
 <p>To make sense of the different types, it helps to take a moment to think about how integers are represented in a binary format. Let’s suppose we allocate 8 bits to specify an integer. If we do that, then there are <span class="math inline">\(2^8 = 256\)</span> unique binary patterns we can create with these bits. Because of this, there is a fundamental constraint: no matter how we choose to set it up, 8-bit integers can only represent 256 distinct numbers. Technically, we could choose any 256 numbers we like, but in practice there are only two schemes used for 8-bit integers: <em>unsigned</em> 8-bit integers (“uint8”) use those bits to represent integers from 0 to 255, whereas <em>signed</em> 8-bit integers (“int8”) can represent integers from -128 to 127.</p>
+<!-- 
+TODO:
+
+Mathematically: 
+  signed = the integers, Z
+  unsigned = the naturals, N
+-->
 <p>More generally, an unsigned n-bit integer can represent integers from 0 to <span class="math inline">\(2^n - 1\)</span>, whereas a signed n-bit integer can represent integers from <span class="math inline">\(-2^{n-1}\)</span> to <span class="math inline">\(2^{n-1} - 1\)</span>. Here’s what that looks like for all the integer types supported by Arrow:</p>
 <table>
 <thead>
@@ -2798,7 +2824,7 @@ Figure 4: Default mappings for some integer types
 </p>
 </div>
 </div>
-<p>Other integer types are messier</p>
+<p>Other integer types are messier. To keep things nice and simple, what we’d <em>like</em> to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that’s possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that’s what <strong>arrow</strong> does by default. However, if there are values that “overflow” this range, then <strong>arrow</strong> will import the data as a different type, as shown below:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
 <img src="img/integer-types-02.png" alt="Default mappings for other integer types" width="960" />
@@ -2807,27 +2833,50 @@ Figure 5: Default mappings for other integer types
 </p>
 </div>
 </div>
-<h3 id="numeric-types">Numeric types</h3>
+<p>If this diagram looks ugly and unhelpful, well… yeah, I agree. Translations become messy when the boxes in one language don’t quite match up to the content expressed in another. For three “big” integer types I think it’s easier to just write out the translation rules verbally:</p>
+<p>For int64: if the user sets</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>integer_types</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>arrow_type</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>arrow_integer</span> <span class='op'>&lt;-</span> <span class='va'>Scalar</span><span class='op'>$</span><span class='fu'>create</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>arrow_type</span><span class='op'>)</span>
+  <span class='va'>r_import</span> <span class='op'>&lt;-</span> <span class='va'>arrow_integer</span><span class='op'>$</span><span class='fu'>as_vector</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+    arrow <span class='op'>=</span> <span class='va'>arrow_integer</span><span class='op'>$</span><span class='va'>type</span><span class='op'>$</span><span class='va'>name</span>,
+    r <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='va'>r_import</span><span class='op'>)</span>
+  <span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<h2 id="numeric-types">Numeric types</h2>
+<!-- 
+TODO:
+Mathematically: floating points as approximations to the reals. uncountable infinity is a bitch
+-->
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
 Figure 6: Default mappings for numeric types
 </p>
 </div>
 </div>
-<h3 id="character-types">Character types</h3>
+<h2 id="character-types">Character types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
 Figure 7: Default mappings for character types
 </p>
 </div>
 </div>
-<h3 id="datetime-types">Date/time types</h3>
+<h2 id="datetime-types">Date/time types</h2>
+<!--
+TODO
+Quine has a smartarse quote about time being lingustically special
+-->
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
 Figure 8: Default mappings for date/time types
@@ -2835,16 +2884,16 @@ Figure 8: Default mappings for date/time types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 9: Default mappings for duration types
 </p>
 </div>
 </div>
-<h3 id="other-types">Other types</h3>
+<h2 id="other-types">Other types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for null types
@@ -2852,7 +2901,7 @@ Figure 10: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for raw types
@@ -2860,7 +2909,7 @@ Figure 11: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for factor types
@@ -2868,7 +2917,7 @@ Figure 12: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 13: Default mappings for data frame types
@@ -2886,7 +2935,7 @@ Figure 13: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-01 12:22:57 AEDT</p>
+<p>2022-02-01 14:22:38 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
