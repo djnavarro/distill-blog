@@ -6,7 +6,16 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Tue, 18 Jan 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 05 Feb 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>R scripts for twitter blocks</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-02-05_r-scripts-for-twitter-blocks</link>
+      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</description>
+      <guid>https://blog.djnavarro.net/posts/2022-02-05_r-scripts-for-twitter-blocks</guid>
+      <pubDate>Sat, 05 Feb 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-02-05_r-scripts-for-twitter-blocks/img/jeremy-bezanger-Nh1tBGgEcG4-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
     <item>
       <title>Binding Apache Arrow to R</title>
       <dc:creator>Danielle Navarro</dc:creator>
