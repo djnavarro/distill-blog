@@ -18,6 +18,7 @@ repository_url: https://github.com/djnavarro/distill-blog/
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
 params:
   slug: r-scripts-for-twitter-blocks
   date: 2022-02-05
@@ -49,7 +50,7 @@ library(rtweet)
 
 Twitter is a complicated place. I've met some of my closest friends through twitter, it's the place where I keep in touch with my professional community, and it's an important part of my work as a developer advocate at Voltron Data. But it's also a general purpose social media site, and there is a lot of content out there I prefer not to see. In particular, because I'm transgender and have absolutely no desire to participate in or even view the public debate that surrounds trans lives, I go to some lengths to ensure that content of that kind doesn't appear on my twitter feed. On my primary account (where, with one exception, I don't block anyone) I use the twitter mute functionality to hide that content; on my private alt account, however, I use blocks extensively. In this post I'll briefly talk about the scripts I use to manage this from R using the [rtweet](https://docs.ropensci.org/rtweet/) package.
 
-## Warning: this is off-label usage
+## Warning: off-label usage
 
 
 ## Setting up
@@ -66,15 +67,6 @@ Step two. The authentication mechanism in the current version of rtweet is a lit
 auth_setup_default()
 ```
 
-Step three is the part that reveals that this is an off-label usage of the rtweet package. I'm going to rely on two unexported functions from rtweet. This is generally a bad idea. It's something you don't do unless you're desperate. But I'm assuming that if you're actually considering doing this rather than reading for curiosity then you're desperate to block out harassment so let's do it:
-
-```{r}
-TWIT_post <- rtweet:::TWIT_post
-TWIT_paginate_cursor <- rtweet:::TWIT_paginate_cursor
-```
-
-I'll call these two functions later. 
-
 ## Write a blocking function
 
 Let's write a function that I'll whimsically call `cancel_user()`. You feed it a numerical code that corresponds to the user id (more on that momentarily), and specify whether you want to mute or block that user by setting `type = "mute"` or `type = "block"`. Note that rtweet already has a mute function called `post_mute()` that is more flexible in how you can specify the user; but there is no analog for blocking. From the Twitter perspective, however, the only difference between the two is which API endpoint you want to sent the request to:
@@ -85,7 +77,7 @@ cancel_user <- function(user, type) {
     "block" = "/1.1/blocks/create",
     "mute" = "/1.1/mutes/users/create"
   )
-  TWIT_post(
+  rtweet:::TWIT_post(
     token = NULL,
     api = api[type],
     params = list(user_id = user)
@@ -158,14 +150,14 @@ list_cancelled <- function(type, n_max, ...) {
     include_entities = "false",
     skip_status = "true"
   )
-  resp <- TWIT_paginate_cursor(NULL, api[type], params, n = n_max, ...)
+  resp <- rtweet:::TWIT_paginate_cursor(NULL, api[type], params, n = n_max, ...)
   users <- unlist(lapply(resp, function(x) x$ids))
   return(users)
 }
 
 cancel_followers <- function(user, type = "block", n_max = 50000, precancelled = numeric(0)) {
 
-  followers <- rtweet::get_followers(user, n = n_max, retryonratelimit = TRUE)
+  followers <- get_followers(user, n = n_max, retryonratelimit = TRUE)
   followers <- followers$from_id
 
   uncancelled <- setdiff(followers, precancelled)
@@ -176,9 +168,9 @@ cancel_followers <- function(user, type = "block", n_max = 50000, precancelled =
 ```
 
 
-### Putting it to work
+## Putting it to work
 
-So if you wanted to block everyone who follows "ObviouslyHatefulPerson" on twitter (yes, I checked, it's not a real account), then you could do this:
+So if you wanted to block everyone who follows "ObviouslyHatefulPerson" on twitter^[Yes, I checked, it's not a real account.], then you could do this:
 
 ```{r, eval=FALSE}
 cancel_followers("ObviouslyHatefulPerson")
@@ -190,7 +182,14 @@ It would look up all their followers and block them one by one. Alternatively, i
 cancel_followers("ObviouslyHatefulPerson", type = "mute")
 ```
 
-As mentioned, though, muting is slow. Twitter imposes rate limits on muting that it doesn't impose on blocks, so the script will hang for long periods of time when you're muting large numbers of people. It's not a very efficient process, but it does work if you're patient enough or desperate enough to spend a couple of months muting a few hundred thousand transphobic twitter accounts.
+Be warned though, due to the twitter API rate limites, the muting process is slow. 
+
+## Epilogue
+
+I wrote this post in two minds. On the one hand, the rtweet developers made a decision not to support blocklists for a reason, and presumably the twitter developers have some reason for making it difficult to mute large numbers of accounts. It's very rarely a good idea to write code that works against the clear intent of the tools you're relying on. It is almost certain to break later on.
+
+On the other hand, this is functionality that I personally need. On my primary account I've made the deliberate decision not to block anyone^[There is one exception to this rule, but I'm not prepared to talk about it.] but to keep my twitter feed free of a particular type of content I have had to mute an extremely large number of accounts. Twitter makes that difficult to do, but with the help of these scripts I managed to automate the process. After a month or two, with a little manual intervention, the problematic content was gone from my feed, and I was able to get back to doing my job. So, if anyone else finds themselves in a similar situation, hopefully this blog post will help. 
+
 
 <!--------------- appendices ----------------->
 
@@ -210,7 +209,6 @@ refinery::insert_netlify_redirect(
   date = params$date
 )
 ```
-
 
 
 

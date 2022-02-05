@@ -121,7 +121,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params"]}},"value":[{"type":"character","attributes":{},"value":["R scripts for twitter blocks"]},{"type":"character","attributes":{},"value":["Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","affiliation","affiliation_url","orcid_id","url"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["Voltron Data"]},{"type":"character","attributes":{},"value":["https://voltrondata.com"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]}]}]},{"type":"character","attributes":{},"value":["2022-02-05"]},{"type":"character","attributes":{},"value":["img/jeremy-bezanger-Nh1tBGgEcG4-unsplash.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/r-scripts-for-twitter-blocks"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["r-scripts-for-twitter-blocks"]},{"type":"character","attributes":{},"value":["2022-02-05"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params"]}},"value":[{"type":"character","attributes":{},"value":["R scripts for twitter blocks"]},{"type":"character","attributes":{},"value":["Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","affiliation","affiliation_url","orcid_id","url"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["Voltron Data"]},{"type":"character","attributes":{},"value":["https://voltrondata.com"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]}]}]},{"type":"character","attributes":{},"value":["2022-02-05"]},{"type":"character","attributes":{},"value":["img/jeremy-bezanger-Nh1tBGgEcG4-unsplash.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/r-scripts-for-twitter-blocks"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["r-scripts-for-twitter-blocks"]},{"type":"character","attributes":{},"value":["2022-02-05"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1492,6 +1492,20 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </div>
 
 <div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#warning-off-label-usage">Warning: off-label usage</a></li>
+<li><a href="#setting-up">Setting up</a></li>
+<li><a href="#write-a-blocking-function">Write a blocking function</a></li>
+<li><a href="#preparing-it-for-use-at-scale">Preparing it for use at scale</a></li>
+<li><a href="#building-the-final-layer">Building the final layer</a></li>
+<li><a href="#putting-it-to-work">Putting it to work</a></li>
+<li><a href="#epilogue">Epilogue</a></li>
+</ul>
+</nav>
+</div>
 <!----
 
 checklist:
@@ -1504,7 +1518,7 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p>Twitter is a complicated place. I’ve met some of my closest friends through twitter, it’s the place where I keep in touch with my professional community, and it’s an important part of my work as a developer advocate at Voltron Data. But it’s also a general purpose social media site, and there is a lot of content out there I prefer not to see. In particular, because I’m transgender and have absolutely no desire to participate in or even view the public debate that surrounds trans lives, I go to some lengths to ensure that content of that kind doesn’t appear on my twitter feed. On my primary account (where, with one exception, I don’t block anyone) I use the twitter mute functionality to hide that content; on my private alt account, however, I use blocks extensively. In this post I’ll briefly talk about the scripts I use to manage this from R using the <a href="https://docs.ropensci.org/rtweet/">rtweet</a> package.</p>
-<h2 id="warning-this-is-off-label-usage">Warning: this is off-label usage</h2>
+<h2 id="warning-off-label-usage">Warning: off-label usage</h2>
 <h2 id="setting-up">Setting up</h2>
 <p>First, make sure you have the <a href="https://github.com/ropensci/rtweet">developer version of rtweet</a>: the scripts here rely on the in-development tools. I’m currently using rtweet version 0.7.0.9011. If you don’t have it, this is the command to install:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1631,8 +1645,8 @@ checklist:
 </code></pre>
 </div>
 </div>
-<h3 id="putting-it-to-work">Putting it to work</h3>
-<p>So if you wanted to block everyone who follows “ObviouslyHatefulPerson” on twitter (yes, I checked, it’s not a real account), then you could do this:</p>
+<h2 id="putting-it-to-work">Putting it to work</h2>
+<p>So if you wanted to block everyone who follows “ObviouslyHatefulPerson” on twitter<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, then you could do this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>cancel_followers</span><span class='op'>(</span><span class='st'>"ObviouslyHatefulPerson"</span><span class='op'>)</span>
@@ -1646,11 +1660,14 @@ checklist:
 </code></pre>
 </div>
 </div>
-<p>As mentioned, though, muting is slow. Twitter imposes rate limits on muting that it doesn’t impose on blocks, so the script will hang for long periods of time when you’re muting large numbers of people. It’s not a very efficient process, but it does work if you’re patient enough or desperate enough to spend a couple of months muting a few hundred thousand transphobic twitter accounts.</p>
+<p>Be warned though, due to the twitter API rate limites, the muting process is slow.</p>
+<h2 id="epilogue">Epilogue</h2>
+<p>I wrote this post in two minds. On the one hand, the rtweet developers made a decision not to support blocklists for a reason, and presumably the twitter developers have some reason for making it difficult to mute large numbers of accounts. It’s very rarely a good idea to write code that works against the clear intent of the tools you’re relying on. It is almost certain to break later on.</p>
+<p>On the other hand, this is functionality that I personally need. On my primary account I’ve made the deliberate decision not to block anyone<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> but to keep my twitter feed free of a particular type of content I have had to mute an extremely large number of accounts. Twitter makes that difficult to do, but with the help of these scripts I managed to automate the process. After a month or two, with a little manual intervention, the problematic content was gone from my feed, and I was able to get back to doing my job. So, if anyone else finds themselves in a similar situation, hopefully this blog post will help.</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-05 11:27:07 AEDT</p>
+<p>2022-02-05 12:20:35 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-02-05_r-scripts-for-twitter-blocks/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-02-05_r-scripts-for-twitter-blocks/renv.lock">R environment</a></p>
 </div>
@@ -1659,6 +1676,13 @@ checklist:
 
 </div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Yes, I checked, it’s not a real account.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>There is one exception to this rule, but I’m not prepared to talk about it.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
