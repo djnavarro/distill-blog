@@ -2520,15 +2520,6 @@ checklist:
 </code></pre>
 </div>
 </div>
-<p>Step three is the part that reveals that this is an off-label usage of the rtweet package. I’m going to rely on two unexported functions from rtweet. This is generally a bad idea. It’s something you don’t do unless you’re desperate. But I’m assuming that if you’re actually considering doing this rather than reading for curiosity then you’re desperate to block out harassment so let’s do it:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>TWIT_post</span> <span class='op'>&lt;-</span> <span class='fu'>rtweet</span><span class='fu'>:::</span><span class='va'>TWIT_post</span>
-<span class='va'>TWIT_paginate_cursor</span> <span class='op'>&lt;-</span> <span class='fu'>rtweet</span><span class='fu'>:::</span><span class='va'><a href='https://docs.ropensci.org/rtweet/reference/TWIT_paginate_max_id.html'>TWIT_paginate_cursor</a></span>
-</code></pre>
-</div>
-</div>
-<p>I’ll call these two functions later.</p>
 <h2 id="write-a-blocking-function">Write a blocking function</h2>
 <p>Let’s write a function that I’ll whimsically call <code>cancel_user()</code>. You feed it a numerical code that corresponds to the user id (more on that momentarily), and specify whether you want to mute or block that user by setting <code>type = "mute"</code> or <code>type = "block"</code>. Note that rtweet already has a mute function called <code>post_mute()</code> that is more flexible in how you can specify the user; but there is no analog for blocking. From the Twitter perspective, however, the only difference between the two is which API endpoint you want to sent the request to:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2538,7 +2529,7 @@ checklist:
     <span class='st'>"block"</span> <span class='op'>=</span> <span class='st'>"/1.1/blocks/create"</span>,
     <span class='st'>"mute"</span> <span class='op'>=</span> <span class='st'>"/1.1/mutes/users/create"</span>
   <span class='op'>)</span>
-  <span class='fu'>TWIT_post</span><span class='op'>(</span>
+  <span class='fu'>rtweet</span><span class='fu'>:::</span><span class='fu'>TWIT_post</span><span class='op'>(</span>
     token <span class='op'>=</span> <span class='cn'>NULL</span>,
     api <span class='op'>=</span> <span class='va'>api</span><span class='op'>[</span><span class='va'>type</span><span class='op'>]</span>,
     params <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>user_id <span class='op'>=</span> <span class='va'>user</span><span class='op'>)</span>
@@ -2613,14 +2604,14 @@ checklist:
     include_entities <span class='op'>=</span> <span class='st'>"false"</span>,
     skip_status <span class='op'>=</span> <span class='st'>"true"</span>
   <span class='op'>)</span>
-  <span class='va'>resp</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://docs.ropensci.org/rtweet/reference/TWIT_paginate_max_id.html'>TWIT_paginate_cursor</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='va'>api</span><span class='op'>[</span><span class='va'>type</span><span class='op'>]</span>, <span class='va'>params</span>, n <span class='op'>=</span> <span class='va'>n_max</span>, <span class='va'>...</span><span class='op'>)</span>
+  <span class='va'>resp</span> <span class='op'>&lt;-</span> <span class='fu'>rtweet</span><span class='fu'>:::</span><span class='fu'><a href='https://docs.ropensci.org/rtweet/reference/TWIT_paginate_max_id.html'>TWIT_paginate_cursor</a></span><span class='op'>(</span><span class='cn'>NULL</span>, <span class='va'>api</span><span class='op'>[</span><span class='va'>type</span><span class='op'>]</span>, <span class='va'>params</span>, n <span class='op'>=</span> <span class='va'>n_max</span>, <span class='va'>...</span><span class='op'>)</span>
   <span class='va'>users</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='va'>resp</span>, <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='va'>x</span><span class='op'>$</span><span class='va'>ids</span><span class='op'>)</span><span class='op'>)</span>
   <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>users</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 <span class='va'>cancel_followers</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>user</span>, <span class='va'>type</span> <span class='op'>=</span> <span class='st'>"block"</span>, <span class='va'>n_max</span> <span class='op'>=</span> <span class='fl'>50000</span>, <span class='va'>precancelled</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>numeric</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 
-  <span class='va'>followers</span> <span class='op'>&lt;-</span> <span class='fu'>rtweet</span><span class='fu'>::</span><span class='fu'><a href='https://docs.ropensci.org/rtweet/reference/get_followers.html'>get_followers</a></span><span class='op'>(</span><span class='va'>user</span>, n <span class='op'>=</span> <span class='va'>n_max</span>, retryonratelimit <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='va'>followers</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://docs.ropensci.org/rtweet/reference/get_followers.html'>get_followers</a></span><span class='op'>(</span><span class='va'>user</span>, n <span class='op'>=</span> <span class='va'>n_max</span>, retryonratelimit <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
   <span class='va'>followers</span> <span class='op'>&lt;-</span> <span class='va'>followers</span><span class='op'>$</span><span class='va'>from_id</span>
 
   <span class='va'>uncancelled</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setdiff</a></span><span class='op'>(</span><span class='va'>followers</span>, <span class='va'>precancelled</span><span class='op'>)</span>
@@ -2653,7 +2644,7 @@ checklist:
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-05 12:20:35 AEDT</p>
+<p>2022-02-05 12:25:25 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-02-05_r-scripts-for-twitter-blocks/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-02-05_r-scripts-for-twitter-blocks/renv.lock">R environment</a></p>
 </div>
