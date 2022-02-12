@@ -2513,7 +2513,7 @@ checklist:
 <p>This is almost always a bad idea.</p>
 <p>If you haven’t seen it, Hadley Wickham gave a very good talk about <a href="https://www.rstudio.com/resources/rstudioglobal-2021/maintaining-the-house-the-tidyverse-built/">maintaining R packages</a> as part the rstudio::global 2021 conference. At about the 19 minute mark he talks about the “off label” metaphor. In the context of medication, “off label” refers to any use of a medication that it’s not officially approved for. It might work, but there could be unknown consequences because maybe it hasn’t been fully explored in this context. When applied to software, “off label” use means you’re doing something with a function or package that the designer doesn’t really intend. Your code might work now, but if you’re relying on “incidental” properties of the function to achieve your desired ends, you’re taking a risk. Package maintainers will usually go to considerable lengths to make sure that updates to their packages don’t break your code when you’re using it for its intended purpose… but if you’re doing something “off label” there’s a good chance that the maintainers won’t have thought about your particular use case and they might unintentionally break your code.</p>
 <p>In short: you go off-label at your own risk. In this particular instance it is a risk I’ve chosen to take and I’m perfectly happy to fix my scripts if (or, let’s be realistic, <em>when</em>) future updates to <strong>rtweet</strong> cause them to break. Or possibly abandon my scripts. I knew the risks when I went off-label.</p>
-<p>But if you follow me along this path you need to be aware of the risk too… don’t go off-label lightly! In my case I didn’t do this on a whim: I chose this path about a year ago out of personal desperation (see later), and I’ve had to rewrite the scripts a lot in that time. So, please be careful.</p>
+<p>But if you follow me along this path you need to be aware of the risk too… don’t go off-label lightly! In my case I didn’t do this on a whim: I chose this path about a year ago out of personal desperation, and I’ve had to rewrite the scripts a lot in that time. So, please be careful.</p>
 <h2 id="setting-up">Setting up</h2>
 <p>The first step is to make sure you have the <a href="https://github.com/ropensci/rtweet">developer version of rtweet</a>: the scripts I’ve been using rely on the dev version of the package and won’t work with the current CRAN version. To be precise, I’m currently using rtweet version 0.7.0.9011. If you don’t have it, this is the command to install:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2687,7 +2687,7 @@ checklist:
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-12 11:04:11 AEDT</p>
+<p>2022-02-12 11:11:37 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-02-11_r-scripts-for-twitter-blocks/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-02-11_r-scripts-for-twitter-blocks/renv.lock">R environment</a></p>
 </div>

@@ -64,7 +64,7 @@ If you haven't seen it, Hadley Wickham gave a very good talk about [maintaining 
 
 In short: you go off-label at your own risk. In this particular instance it is a risk I've chosen to take and I'm perfectly happy to fix my scripts if (or, let's be realistic, *when*) future updates to **rtweet** cause them to break. Or possibly abandon my scripts. I knew the risks when I went off-label. 
 
-But if you follow me along this path you need to be aware of the risk too... don't go off-label lightly! In my case I didn't do this on a whim: I chose this path about a year ago out of personal desperation (see later), and I've had to rewrite the scripts a lot in that time. So, please be careful.
+But if you follow me along this path you need to be aware of the risk too... don't go off-label lightly! In my case I didn't do this on a whim: I chose this path about a year ago out of personal desperation, and I've had to rewrite the scripts a lot in that time. So, please be careful.
 
 ## Setting up
 
