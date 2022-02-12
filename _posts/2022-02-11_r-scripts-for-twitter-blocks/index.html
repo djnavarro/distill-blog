@@ -1579,7 +1579,7 @@ checklist:
 <p>As it turns out, for the particular scripts I use, I rarely need to rely on <code>lookup_users()</code> but it is a very handy thing to know about.</p>
 <h2 id="preparing-to-scale">Preparing to scale</h2>
 <p>As written there’s nothing particularly wrong with the <code>cancel_user()</code> function, but it’s also not very useful. I can use it to block or mute an individual account, sure, but if that were the problem I wanted to solve it would be a lot easier to do that using the block/mute buttons on twitter. I don’t need to write an R function to do that.</p>
-<p>The only real reason to implement this as an R function is if you intend to automate it in some fashion and repeat the operation on a scale that would be impossible to do manually. To give a sense of the scale at which I’ve had to implement this I currently have about 220000 accounts blocked from my private account, and a similar number muted from my main account. There’s no way I could possibly to that manually, so I’m going to need to be a little more thoughtful about my <code>cancel_user()</code> function.</p>
+<p>The only real reason to implement this as an R function is if you intend to automate it in some fashion and repeat the operation on a scale that would be impossible to do manually. To give a sense of the scale at which I’ve had to implement this I currently have about 220000 accounts blocked from my private account, and a similar number muted from my main account. There’s no way I could possibly do that manually, so I’m going to need to be a little more thoughtful about my <code>cancel_user()</code> function.</p>
 <h3 id="practice-safe-cancellation">Practice safe cancellation</h3>
 <p>The first step in making sure the function works well “at scale”<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> is error handling. If I have a list of 50000 account I want to block but for one reason or another <code>cancel_user()</code> throws an error on the 5th account, I don’t want to prevent R from attempting to block the remaining 49995 accounts. Better to catch the error and move on. My preferred way to do this is to use <code>purrr::safely()</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1701,7 +1701,7 @@ checklist:
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-12 11:11:37 AEDT</p>
+<p>2022-02-12 11:14:14 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-02-11_r-scripts-for-twitter-blocks/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-02-11_r-scripts-for-twitter-blocks/renv.lock">R environment</a></p>
 </div>

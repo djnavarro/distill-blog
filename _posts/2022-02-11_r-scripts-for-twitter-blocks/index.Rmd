@@ -123,7 +123,7 @@ As it turns out, for the particular scripts I use, I rarely need to rely on `loo
 
 As written there's nothing particularly wrong with the `cancel_user()` function, but it's also not very useful. I can use it to block or mute an individual account, sure, but if that were the problem I wanted to solve it would be a lot easier to do that using the block/mute buttons on twitter. I don't need to write an R function to do that. 
 
-The only real reason to implement this as an R function is if you intend to automate it in some fashion and repeat the operation on a scale that would be impossible to do manually. To give a sense of the scale at which I've had to implement this I currently have about 220000 accounts blocked from my private account, and a similar number muted from my main account. There's no way I could possibly to that manually, so I'm going to need to be a little more thoughtful about my `cancel_user()` function. 
+The only real reason to implement this as an R function is if you intend to automate it in some fashion and repeat the operation on a scale that would be impossible to do manually. To give a sense of the scale at which I've had to implement this I currently have about 220000 accounts blocked from my private account, and a similar number muted from my main account. There's no way I could possibly do that manually, so I'm going to need to be a little more thoughtful about my `cancel_user()` function. 
 
 ### Practice safe cancellation
 
