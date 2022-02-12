@@ -1,8 +1,11 @@
 ---
 title: "R scripts for twitter mutes and blocks" # <---- UPDATE ME
 description:
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit # <---- UPDATE ME
+  Social media safety tools like muting and blocking are often misused, but 
+  for people who are targeted for harassment they are powerful and important. 
+  This is a brief tutorial illustrating how to partially automate twitter mutes
+  and blocks from R. The intended use is defensive, to help people minimise 
+  the impact if they are targeted by large scale harassment.
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -138,6 +141,9 @@ Not surprisingly, the `cancel_safely()` function is much more useful when we're 
 
 ### Check your quotas my loves
 
+One thing that has always puzzled me about the twitter API is that it places rate limits on how many mutes you can post in any 15 minute period, but doesn't seem to impose any limits on the number of blocks you can post. I'm sure they have their reasons for doing it, but it's inconvenient. One consequence of this is that there are lots of tools that exist already for blocking large numbers of accounts. You don't actually need to write a custom R script for that! But if you want to mute large numbers of accounts, it's a lot harder: you have to write a script that keeps posting mutes until the rate limits are exceeded, then pauses until they reset, and then starts posting mutes again. Speaking from experience, this takes a *very* long time. As a purely practical matter, you don't want to be in the business of muting large numbers of accounts unless you are patient and have a very good reason. In my case, I did. 
+
+In any case, one thing we'll need to write a `rate_exceeeded()` function that returns `TRUE` if we've hit the rate limit and `FALSE` if we haven't. That's actually pretty easy to do, as it turns out, because any time our attempt to mute (or block) fails, the `cancel_safely()` function will catch the error and capture the error message. So all we have to do to write a `rate_exceeded()` function is to check to see if there's an error message, and if there is a message, see if that message informs us that the rate limite has been exceeded. This function accomplishes that goal:
 
 ```{r}
 rate_exceeded <- function(out) {
@@ -147,12 +153,16 @@ rate_exceeded <- function(out) {
 }
 ```
 
+Because blocks are not rate limited, in practice this function only applies when you're trying to mute accounts.
 
 ### Be chatty babes
+
+The last step in preparing the cancellation function to work well at scale is to make it chatty. In practice, a mass block/mute operation is something you leave running in its own R session, so you want it to leave behind an audit trail that describes its actions. A moderately verbose function is good here. You could make this as sophisticated as you like, but I find this works nicely for me:
 
 ```{r}
 cancel_verbosely <- function(user, type) {
 
+  # notify user attempt has started
   msg <- c(
     "block" = "blocking user id",
     "mute" = "muting user id"
@@ -160,6 +170,8 @@ cancel_verbosely <- function(user, type) {
   withr::local_options(scipen = 14)
   cli::cli_process_start(paste(msg[type], user))
 
+  # make the attempt; wait 5 mins if rate limits 
+  # exceeded and try again
   repeat {
     out <- cancel_safely(user, type)
     if(rate_exceeded(out)) {
@@ -169,6 +181,7 @@ cancel_verbosely <- function(user, type) {
     }
   }
 
+  # notify user of the outcome
   if(is.null(out$result)) {
     cli::cli_process_failed()
   } else{
@@ -177,7 +190,18 @@ cancel_verbosely <- function(user, type) {
 }
 ```
 
-## Building the final layer
+Here's what the output looks like when it successfully blocks a user. Not fancy, but it shows one line per account, specifies whether the action was a block or a mute, and makes clear whether the attempt succeeded or failed:
+
+```
+✓ blocking user id 15xxxx66 ... done
+```
+
+(where, in the real output the user id for the blocked account is of course not censored). In this function I've used the lovely [cli package](https://blog.djnavarro.net/pretty-little-clis) to create pretty messages at the R command line, but there's nothing stopping you from using simpler tools if you'd prefer.
+
+
+## Scaling up
+
+Now that we have a version of our block/mute function that is suitable for use on a larger scale, it's time to put it into practice. Let's say I have a list of 50000 `users` represented as numeric ids and I want to block (or mute) all these accounts. To do this, I'll need a vectorised version of cancellation function. Thanks to the functional programming tools in the **purrr** package, this is not too difficult. Here's the `cancel_users()` function that I use:
 
 ```{r}
 cancel_users <- function(users, type) {
@@ -185,7 +209,36 @@ cancel_users <- function(users, type) {
   cat(msg[type], length(users), " users\n...")
   purrr::walk(users, cancel_verbosely, type = type)
 }
+```
 
+When given a vector of user ids, the `cancel_users()` function will attempt to block/mute them all one at a time. When rate limits are exceeded it will pause and wait for them to reset, and then continue with the process. For mass muting in particular it can take a long time, so it's the kind of thing you run in its own session while you go do something else with your life. If you want to be clever about it you can make it a background job and sink the output to a log file but honestly I'm usually too lazy to bother with that: all I'm trying to do is sanitise my twitter experience, I'm not deploying production code here. 
+
+The trickier question is "where do I get this block list from?" 
+
+Here, I'm not going to be too specific, for a couple of reasons. Firstly, I don't want to be in the business of teaching people how to track down hidden networks of users embedded in social media. That's not something I'm comfortable doing. Secondly, if you're doing this defensively (i.e., you're protecting yourself from attack) then you probably already know something about where the attacks are coming from. You already have your own list of key names, because they're the people who keep harassing you. Really, your only goal is to block them and their followers, because the thing that's happening is they're targeting you and they're using their follower base as a weapon. Right? I mean if that's *not* the situation your in, and what you're actually trying to do is seek out a hidden population to potentially target them... yeah I'm not sure I want to be telling you the other tricks I know. So let's keep it very simple. 
+
+The easiest trick in the book (and, honestly, one of the most powerful when you're trying to block out harassment from a centralised "hub-and-spokes" network), is simply to find every account that follows more than $k$ of the $n$ of the key actors, and block/mute them. Actually, in the case of "astroturf" organisations that don't have real grassroots support, you can probably just pick a few of the big names and block (or mute) all their followers. That will eliminate the vast majority of the horribly traffic that you're trying to avoid. (Yes, I am speaking from experience here!)
+
+The **rtweet** package makes this fairly painless courtesy of the `get_followers()` function. Twitter makes follower lists public whenever the account itself is public, so you can use `get_followers()` to return a tibble that contains the user ids for all followers of a particular account.^[This is not unrelated to the reason why I keep my follows hidden behind private lists. In public it looks like I don't follow anyone but using private lists I actually follow several hundred people! Some time ago I had some unpleasant experiences with people using that information to target me, so now I use private lists exclusively. Being a trans woman on the internet is *fuuuuuuuun*.] Here's an example showing how you an write a wrapper around `get_followers()` and use it to block/mute everyone who follows a particular account:
+
+```{r}
+cancel_followers <- function(user, type = "block", n_max = 50000, precancelled = numeric(0)) {
+
+  followers <- get_followers(user, n = n_max, retryonratelimit = TRUE)
+  followers <- followers$from_id
+
+  uncancelled <- setdiff(followers, precancelled)
+  uncancelled <- sort(as.numeric(uncancelled))
+
+  cancel_users(uncancelled, type = type)
+}
+```
+
+Note the `precancelled` argument to this function. If you have a vector of numeric ids containing users that you've already blocked/muted, there's no point wasting time and bandwidth trying to block them again, so the function will ignore anything on that list. You could use the same idea to build a whitelist of accounts that would never get blocked or muted regardless of who they follow.
+
+We're almost at the end of the post. There's only one other thing I want to show here, and that's how to extract a list of all the accounts you currently have muted or blocked. Again this particular bit of functionality isn't exposed by **rtweet** directly, so you'll notice that I've had to go off-label again and call an unexported function! 
+
+```{r}
 list_cancelled <- function(type, n_max, ...) {
   api <- c(
     "block" = "/1.1/blocks/ids",
@@ -199,41 +252,15 @@ list_cancelled <- function(type, n_max, ...) {
   users <- unlist(lapply(resp, function(x) x$ids))
   return(users)
 }
-
-cancel_followers <- function(user, type = "block", n_max = 50000, precancelled = numeric(0)) {
-
-  followers <- get_followers(user, n = n_max, retryonratelimit = TRUE)
-  followers <- followers$from_id
-
-  uncancelled <- setdiff(followers, precancelled)
-  uncancelled <- sort(as.numeric(uncancelled))
-
-  cancel_users(uncancelled, type = type)
-}
 ```
 
-
-## Putting it to work
-
-So if you wanted to block everyone who follows "ObviouslyHatefulPerson" on twitter^[Yes, I checked, it's not a real account.], then you could do this:
-
-```{r, eval=FALSE}
-cancel_followers("ObviouslyHatefulPerson")
-```
-
-It would look up all their followers and block them one by one. Alternatively, if you prefer to mute rather than block, you can do this:
-
-```{r, eval=FALSE}
-cancel_followers("ObviouslyHatefulPerson", type = "mute")
-```
-
-Be warned though, due to the twitter API rate limites, the muting process is slow. 
+I'm not going to expand on this one, other than to mention that when you get to the point where you have hundreds of thousands of blocked or muted accounts, it's handy to use a function like this from time to time, and to save the results locally so that you can be a little more efficient whenever you next need to refresh your block/mute lists.
 
 ## Epilogue
 
 I wrote this post in two minds. On the one hand, the rtweet developers made a decision not to support blocklists for a reason, and presumably the twitter developers have some reason for making it difficult to mute large numbers of accounts. It's very rarely a good idea to write code that works against the clear intent of the tools you're relying on. It is almost certain to break later on.
 
-On the other hand, this is functionality that I personally need. On my primary account I've made the deliberate decision not to block anyone^[There is one exception to this rule, but I'm not prepared to talk about it.] but to keep my twitter feed free of a particular type of content I have had to mute an extremely large number of accounts. Twitter makes that difficult to do, but with the help of these scripts I managed to automate the process. After a month or two, with a little manual intervention, the problematic content was gone from my feed, and I was able to get back to doing my job. So, if anyone else finds themselves in a similar situation, hopefully this blog post will help. 
+On the other hand, this is functionality that I personally need. On my primary account I've made the deliberate decision not to block anyone^[There is one exception to this rule, but that's a personal matter.] but to keep my twitter feed free of a particular type of content I have had to mute an extremely large number of accounts. Twitter makes that difficult to do, but with the help of these scripts I managed to automate the process. After a month or two, with a little manual intervention, the problematic content was gone from my feed, and I was able to get back to doing my job. So, if anyone else finds themselves in a similar situation, hopefully this blog post will help. 
 
 
 <!--------------- appendices ----------------->
