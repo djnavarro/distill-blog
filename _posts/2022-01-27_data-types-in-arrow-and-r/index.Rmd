@@ -352,12 +352,42 @@ knitr::include_graphics("img/numeric-types.png", dpi = 100)
 
 ## Character types
 
+Strings are an interesting case. R uses a single data type to represent strings (character vectors) but Arrow has two types, known as strings and large strings. When using the **arrow** package, Arrow strings are specified using the `utf8()` function, and large strings correspond to the `large_utf8()` type. The default mapping is to assume that an R character vector maps onto the Arrow `utf8()` type, as shown below:
+
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
 #| fig.cap = "Default mappings for character types"
 knitr::include_graphics("img/character-types.png", dpi = 100)
 ```
+
+There's a little more than meets the eye here though, and you might be wondering about the difference between "strings" and "large strings" in Arrow, and when you might prefer one to the other. As you might expect, the large string type is suitable when you're storing large amounts of text, but to understand it properly I need to talk in more depth about how R and Arrow store strings, and I'll use this little snippet of song lyrics from *A Simple Goodbye* by [The Cruel Sea](https://en.wikipedia.org/wiki/The_Cruel_Sea_(band))
+
+```
+won't try and make you stay
+you won't even have to say
+bye-bye
+bye-bye
+bye-bye
+```
+
+Suppose I want to store this as a character vector in R, with one word per element. To do that I might write code like this:
+
+```{r}
+lyrics <- c(
+  "won't", "try", "and", "make", "you", "stay", 
+  "you", "won't", "even", "have", "to", "say",
+  "bye-bye", "bye-bye", "bye-bye"
+)
+```
+
+Each element of the `lyrics` vector is a variable-length string, and is stored internally by R as an array of individual characters^[As noted in the R internals manual, the specific data structure is referred to as a [CHARSXP](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Encodings-for-CHARSXPs). For the purposes of the current post I'm pretending that character strings are always encoded as UTF-8 because there's no need to complicate matters by talking about things like Latin-1, but be aware that R does support those things. If you're looking for a good overview of what UTF-8 encoding is all about, this blog post on [how unicode works](https://deliciousbrains.com/how-unicode-works/) is helpful.]
+
+blah blah global string pool in R 
+
+Arrow takes a different approach. As it was explained to me "String arrays in Arrow don't store individual strings. All the string data is stored end to end in one long buffer. A separate buffer of offsets is used to track where each string begins/ends. Normal string arrays use 32-bit offsets, large string arrays use 64-bit offsets" 
+
+okay, so why do I care? well, if you're using 32-bit integers to encode the offset, that imposes a limit on the total number of characters that can be included. The total size of the string array is capped at 2GiB because you don't have a way of referring to positions in the string larger than that. if you use 64-bit integers to encode the offset, that limit goes away (I mean technically there is a limit of course because 64-bit is still finite precision but it's *quite* a lot bigger). 
 
 
 ## Date/time types
@@ -366,6 +396,43 @@ knitr::include_graphics("img/character-types.png", dpi = 100)
 TODO
 Quine has a smartarse quote about time being lingustically special
 -->
+
+
+Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the [unix epoch](https://en.wikipedia.org/wiki/Unix_time). The unix epoch is the time 00:00:00 UTC on 1 January 1970. Unfortunately, it was a Thursday.
+
+On the R side of things, a Date object is represented internally as a numeric value, counting the number of days since the unix epoch. Here is today as a Date:
+
+```{r}
+today <- Sys.Date()
+today
+```
+
+If I use `unclass()` to see what it looks like under the hood:
+
+```{r}
+unclass(today)
+```
+
+A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we usually need to store information about the timezone as well. Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. [POSIX](https://en.wikipedia.org/wiki/POSIX) stands for "portable operating system interface", and it's a set of standards used to help operating systems remain compatible with each other. In this context though, it's not very meaningful: all it says "yup we use unix time." 
+
+The more important part of the name is actually the ["ct" versus "lt"](https://stackoverflow.com/questions/44778721/what-do-ct-and-lt-in-posixct-and-posixlt-mean) part. Let's start with POSIXct. The "ct" in POSIXct stands for "calendar time": internally, R stores the number of seconds that have elapsed since 1970-01-01 00:00 UTC.
+
+```{r}
+now <- Sys.time()
+now
+```
+
+If I peek under the hood using `unclass()` here's what I see:
+
+```{r}
+unclass(now)
+```
+
+The "lt" in POSIXlt stands for "local time", and the underlying data structure is quite different:
+
+```{r}
+unclass(as.POSIXlt(now))
+```
 
 
 ```{r}
