@@ -476,10 +476,74 @@ It is not a compact representation, and it's useful for quite different things t
 
 ## The date32 type
 
-Okay, now let's pivot over to the Arrow side and see what we have to work with.
+Okay, now let's pivot over to the Arrow side and see what we have to work with. The date32 type is similar -- but not identical -- to the R Date class. Just like the R Date class, it counts the number of days since 1970-01-01. To see this, let's create an analog of the `today` Date object inside Arrow, and represent it as a date32 type:
 
+```{r}
+today_date32 <- Scalar$create(today, type = date32())
+today_date32
+```
+
+We can expose the internal structure of this object by casting it to an integer:
+
+```{r}
+today_date32$cast(int32())
+```
+
+This is the same answer we got earlier when I used `unclass()` to take a peek at the internals of the `today` object. That being said, there is a subtle difference: in Arrow, the date32 type is explicitly a 32-bit integer. If you read through the help documentation for date/time classes in R you'll see that R has something a little more complicated going on. The details don't matter for this post, but you should be aware that Dates (and POSIXct objects) are stored as doubles. Unlike Arrow, they aren't stored as integers:
+
+```{r, results='hold'}
+typeof(today)
+typeof(now)
+```
+
+In any case, given that the Arrow date32 type and the R Date class are so similar to each other in structure and intended usage, it is natural to map R Dates to Arrow date32 types and vice versa, and that's what the **arrow** package does by default. 
 
 ## The date64 type
+
+The date64 type is similar to the date32 type, but instead of storing the number of days since 1970-01-01 as a 32-bit integer, it stores the number of milliseconds since 1970-01-01 00:00:00 UTC as a 64-bit integer. It's similar to the POSIXct class in R, except that:
+
+- it uses milliseconds instead of seconds
+- the internal storage is a 64-bit integer, not a 32-bit double
+- it doesn't "hide" timezone information in metadata or print methods
+
+Because it represents time at the millisecond level, the intended use of the date64 class is in situations where you want to keep track of units of time smaller than one day. I *can* create date64 objects from R Date objects if I want to...
+
+```{r}
+Scalar$create(today, date64())
+```
+
+...but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I'm doing is storing the date? So let's create an Arrow analog of `now` as a date64 object:
+
+```{r}
+now_date64 <- Scalar$create(now, date64())
+now_date64
+```
+
+The output is *printed* as a date, but again we can peek under the hood by explicitly casting this to a 64-bit integer:
+
+```{r}
+now_date64$cast(int64())
+```
+
+As a little reminder, this is what `now` looks like internally in R. It is essentially the same number, divided by 1000, because POSIXct stores the number of seconds whereas the Arrow date64 class stores the number of milliseconds.
+
+```{r}
+unclass(now)
+```
+
+This might strike you as very weird. On the face of it, what has happened is that I have taken `now` (which represents time at second-level precision), ported it over to Arrow, and created an object `now_date64` that apparently knows what millisecond it is???? How is that possible? Does Arrow have magic powers? 
+
+Not really. R is playing tricks here. Remember how I said that POSIXct objects are secretly doubles and not integers? Well, this is where that becomes relevant. It's quite hard to get R to confess that a POSIXct object actually knows the time at a more precise level than "to the nearest second" but you can get it do to so by coercing it to a POSIXlt object and then taking a peek at the `sec` variable:
+
+```{r}
+as.POSIXlt(now)$sec
+```
+
+Aha! Look at that decimal expansion. Turns out that even though `unclass(now)` quietly rounded the time to the nearest second, the original `now` variable was indeed a double, and it does store the time at subsecond accuracy. Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times. 
+
+Because of this, the default behaviour in **arrow** is to convert date64 types (64-bit integers interpreted as counts of milliseconds) to POSIXct classes (which are secretly 32-bit doubles interpreted as counts of seconds). 
+
+Right. Moving on.
 
 ## The timestamp type
 
