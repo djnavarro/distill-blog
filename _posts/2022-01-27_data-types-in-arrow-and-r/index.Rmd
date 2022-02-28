@@ -398,7 +398,21 @@ Quine has a smartarse quote about time being lingustically special
 -->
 
 
-Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the [unix epoch](https://en.wikipedia.org/wiki/Unix_time). The unix epoch is the time 00:00:00 UTC on 1 January 1970. Unfortunately, it was a Thursday.
+Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the [unix epoch](https://en.wikipedia.org/wiki/Unix_time). The unix epoch is the time 00:00:00 UTC on 1 January 1970. It was a Thursday.
+
+Despite agreeing on fundamentals, there are some oddities in the particulars. Base R has three date/time classes (Date, POSIXct, and POSIXlt), and while Arrow also has three date/time classes (date32, date64, and timestamp), the default mappings between them are a little puzzling unless you are deeply familiar with what all these data types are and what they represent. I'll do the deep dive in a moment, but to give you the big picture here's how the mapping works:
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for date/time types"
+knitr::include_graphics("img/date-types.png", dpi = 100)
+```
+
+
+
+
+### The Date class
 
 On the R side of things, a Date object is represented internally as a numeric value, counting the number of days since the unix epoch. Here is today as a Date:
 
@@ -413,7 +427,11 @@ If I use `unclass()` to see what it looks like under the hood:
 unclass(today)
 ```
 
-A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we usually need to store information about the timezone as well. Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. [POSIX](https://en.wikipedia.org/wiki/POSIX) stands for "portable operating system interface", and it's a set of standards used to help operating systems remain compatible with each other. In this context though, it's not very meaningful: all it says "yup we use unix time." 
+Fundamentally, a Date object is just a number: it counts the number of days that have elapsed since a fixed date. It does not care what the year is, what the month is, or what day of the month it is. It does not care how the date is displayed to the user. All those things are supplied by the `print()` method, and are not part of the Date itself.
+
+### The POSIXct class
+
+A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we might need to store information about the timezone as well (more on that later). Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. [POSIX](https://en.wikipedia.org/wiki/POSIX) stands for "portable operating system interface", and it's a set of standards used to help operating systems remain compatible with each other. In this context though, it's not very meaningful: all it says "yup we use unix time." 
 
 The more important part of the name is actually the ["ct" versus "lt"](https://stackoverflow.com/questions/44778721/what-do-ct-and-lt-in-posixct-and-posixlt-mean) part. Let's start with POSIXct. The "ct" in POSIXct stands for "calendar time": internally, R stores the number of seconds that have elapsed since 1970-01-01 00:00 UTC.
 
@@ -428,19 +446,46 @@ If I peek under the hood using `unclass()` here's what I see:
 unclass(now)
 ```
 
-The "lt" in POSIXlt stands for "local time", and the underlying data structure is quite different:
+There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time.^[This is a slight simplification: a POSIXct object is permitted to have a "tzone" attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt. However, it is optional and does not always get included.] The POSIXct object doesn't store the timezone information. The fact that it appears when I print out `now` occurs because the `print()` method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling `Sys.timezone()`, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see `OlsonNames()`). So if I wanted to print the time in Berlin, I could do this:
 
 ```{r}
-unclass(as.POSIXlt(now))
+print(now, tz = "Europe/Berlin")
 ```
 
+The important thing here is that the timezone is not inherently part of the POSIXct object: it belongs to the print method. Regardless of what you see when you print it out, the central idea in the POSIXct class is the same as in the Date class. These are numeric data structures that abstract away from *where* you are and the legal structures (timezones) that attache to your location. They are counts: Date objects count the number of days since the unix epoch, and POSIXct objects count the number of seconds. That's it.
+
+### The POSIXlt class
+
+What about POSIXlt? It turns out that this is a quite different kind of data structure, and it "thinks" about time in a very different waty. The "lt" in POSIXlt stands for "local time", and internally a POSIXlt object is a list that stores information about the time in a way that more closely mirrors how humans think about it. Here's what `now` looks like when I coerce it to a POSIXlt object:
 
 ```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Default mappings for date/time types"
-knitr::include_graphics("img/date-types.png", dpi = 100)
+now_lt <- as.POSIXlt(now)
+now_lt
 ```
+
+It *looks* the same, but this is an illusion produced by the `print()` method. Internally, the `now_lt` object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:
+
+```{r}
+unclass(now_lt)
+```
+
+As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.^[A little counterintuitively, the value of `sec` ranges from 0 to 61, presumably because leap seconds are a thing. I am *not* going to torture myself with that one today.] The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time. 
+
+It is not a compact representation, and it's useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a "timestamp".
+
+
+## The date32 type
+
+Okay, now let's pivot over to the Arrow side and see what we have to work with.
+
+
+## The date64 type
+
+## The timestamp type
+
+
+
+## Duration types
 
 ```{r}
 #| echo = FALSE,

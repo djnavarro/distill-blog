@@ -1503,7 +1503,16 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#integer-types">Integer types</a></li>
 <li><a href="#numeric-types">Numeric types</a></li>
 <li><a href="#character-types">Character types</a></li>
-<li><a href="#datetime-types">Date/time types</a></li>
+<li><a href="#datetime-types">Date/time types</a>
+<ul>
+<li><a href="#the-date-class">The Date class</a></li>
+<li><a href="#the-posixct-class">The POSIXct class</a></li>
+<li><a href="#the-posixlt-class">The POSIXlt class</a></li>
+</ul></li>
+<li><a href="#the-date32-type">The date32 type</a></li>
+<li><a href="#the-date64-type">The date64 type</a></li>
+<li><a href="#the-timestamp-type">The timestamp type</a></li>
+<li><a href="#duration-types">Duration types</a></li>
 <li><a href="#other-types">Other types</a></li>
 <li><a href="#resources">Resources</a></li>
 </ul>
@@ -1982,7 +1991,17 @@ bye-bye</code></pre>
 TODO
 Quine has a smartarse quote about time being lingustically special
 -->
-<p>Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch</a>. The unix epoch is the time 00:00:00 UTC on 1 January 1970. Unfortunately, it was a Thursday.</p>
+<p>Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch</a>. The unix epoch is the time 00:00:00 UTC on 1 January 1970. It was a Thursday.</p>
+<p>Despite agreeing on fundamentals, there are some oddities in the particulars. Base R has three date/time classes (Date, POSIXct, and POSIXlt), and while Arrow also has three date/time classes (date32, date64, and timestamp), the default mappings between them are a little puzzling unless you are deeply familiar with what all these data types are and what they represent. I’ll do the deep dive in a moment, but to give you the big picture here’s how the mapping works:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-23"></span>
+<img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
+<p class="caption">
+Figure 8: Default mappings for date/time types
+</p>
+</div>
+</div>
+<h3 id="the-date-class">The Date class</h3>
 <p>On the R side of things, a Date object is represented internally as a numeric value, counting the number of days since the unix epoch. Here is today as a Date:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1990,7 +2009,7 @@ Quine has a smartarse quote about time being lingustically special
 <span class='va'>today</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-02-25&quot;</code></pre>
+<pre><code>[1] &quot;2022-02-28&quot;</code></pre>
 </div>
 <p>If I use <code>unclass()</code> to see what it looks like under the hood:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1998,9 +2017,11 @@ Quine has a smartarse quote about time being lingustically special
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 19048</code></pre>
+<pre><code>[1] 19051</code></pre>
 </div>
-<p>A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we usually need to store information about the timezone as well. Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. <a href="https://en.wikipedia.org/wiki/POSIX">POSIX</a> stands for “portable operating system interface”, and it’s a set of standards used to help operating systems remain compatible with each other. In this context though, it’s not very meaningful: all it says “yup we use unix time.”</p>
+<p>Fundamentally, a Date object is just a number: it counts the number of days that have elapsed since a fixed date. It does not care what the year is, what the month is, or what day of the month it is. It does not care how the date is displayed to the user. All those things are supplied by the <code>print()</code> method, and are not part of the Date itself.</p>
+<h3 id="the-posixct-class">The POSIXct class</h3>
+<p>A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we might need to store information about the timezone as well (more on that later). Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. <a href="https://en.wikipedia.org/wiki/POSIX">POSIX</a> stands for “portable operating system interface”, and it’s a set of standards used to help operating systems remain compatible with each other. In this context though, it’s not very meaningful: all it says “yup we use unix time.”</p>
 <p>The more important part of the name is actually the <a href="https://stackoverflow.com/questions/44778721/what-do-ct-and-lt-in-posixct-and-posixlt-mean">“ct” versus “lt”</a> part. Let’s start with POSIXct. The “ct” in POSIXct stands for “calendar time”: internally, R stores the number of seconds that have elapsed since 1970-01-01 00:00 UTC.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2008,7 +2029,7 @@ Quine has a smartarse quote about time being lingustically special
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-02-25 17:25:48 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-02-28 11:52:53 AEDT&quot;</code></pre>
 </div>
 <p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2016,18 +2037,78 @@ Quine has a smartarse quote about time being lingustically special
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1645770349</code></pre>
+<pre><code>[1] 1646009574</code></pre>
 </div>
+<p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> The POSIXct object doesn’t store the timezone information. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
-<img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
-<p class="caption">
-Figure 8: Default mappings for date/time types
-</p>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
+</code></pre>
 </div>
+<pre><code>[1] &quot;2022-02-28 01:52:53 CET&quot;</code></pre>
 </div>
+<p>The important thing here is that the timezone is not inherently part of the POSIXct object: it belongs to the print method. Regardless of what you see when you print it out, the central idea in the POSIXct class is the same as in the Date class. These are numeric data structures that abstract away from <em>where</em> you are and the legal structures (timezones) that attache to your location. They are counts: Date objects count the number of days since the unix epoch, and POSIXct objects count the number of seconds. That’s it.</p>
+<h3 id="the-posixlt-class">The POSIXlt class</h3>
+<p>What about POSIXlt? It turns out that this is a quite different kind of data structure, and it “thinks” about time in a very different waty. The “lt” in POSIXlt stands for “local time”, and internally a POSIXlt object is a list that stores information about the time in a way that more closely mirrors how humans think about it. Here’s what <code>now</code> looks like when I coerce it to a POSIXlt object:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-28"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now_lt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
+<span class='va'>now_lt</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;2022-02-28 11:52:53 AEDT&quot;</code></pre>
+</div>
+<p>It <em>looks</em> the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now_lt</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>$sec
+[1] 53.83148
+
+$min
+[1] 52
+
+$hour
+[1] 11
+
+$mday
+[1] 28
+
+$mon
+[1] 1
+
+$year
+[1] 122
+
+$wday
+[1] 1
+
+$yday
+[1] 58
+
+$isdst
+[1] 1
+
+$zone
+[1] &quot;AEDT&quot;
+
+$gmtoff
+[1] 39600
+
+attr(,&quot;tzone&quot;)
+[1] &quot;&quot;     &quot;AEST&quot; &quot;AEDT&quot;</code></pre>
+</div>
+<p>As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time.</p>
+<p>It is not a compact representation, and it’s useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a “timestamp”.</p>
+<h2 id="the-date32-type">The date32 type</h2>
+<p>Okay, now let’s pivot over to the Arrow side and see what we have to work with.</p>
+<h2 id="the-date64-type">The date64 type</h2>
+<h2 id="the-timestamp-type">The timestamp type</h2>
+<h2 id="duration-types">Duration types</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 9: Default mappings for duration types
@@ -2036,7 +2117,7 @@ Figure 9: Default mappings for duration types
 </div>
 <h2 id="other-types">Other types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-29"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-32"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for null types
@@ -2044,7 +2125,7 @@ Figure 10: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-30"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-33"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for raw types
@@ -2052,7 +2133,7 @@ Figure 11: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-34"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for factor types
@@ -2060,7 +2141,7 @@ Figure 12: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-32"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-35"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 13: Default mappings for data frame types
@@ -2078,7 +2159,7 @@ Figure 13: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-25 17:25:48 AEDT</p>
+<p>2022-02-28 11:52:54 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -2086,11 +2167,13 @@ Figure 13: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
 <li id="fn1" role="doc-endnote"><p>As noted in the R internals manual, the specific data structure is referred to as a <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Encodings-for-CHARSXPs">CHARSXP</a>. For the purposes of the current post I’m pretending that character strings are always encoded as UTF-8 because there’s no need to complicate matters by talking about things like Latin-1, but be aware that R does support those things. If you’re looking for a good overview of what UTF-8 encoding is all about, this blog post on <a href="https://deliciousbrains.com/how-unicode-works/">how unicode works</a> is helpful.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>This is a slight simplification: a POSIXct object is permitted to have a “tzone” attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt. However, it is optional and does not always get included.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>A little counterintuitively, the value of <code>sec</code> ranges from 0 to 61, presumably because leap seconds are a thing. I am <em>not</em> going to torture myself with that one today.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

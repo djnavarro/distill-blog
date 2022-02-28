@@ -2489,7 +2489,16 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#integer-types">Integer types</a></li>
 <li><a href="#numeric-types">Numeric types</a></li>
 <li><a href="#character-types">Character types</a></li>
-<li><a href="#datetime-types">Date/time types</a></li>
+<li><a href="#datetime-types">Date/time types</a>
+<ul>
+<li><a href="#the-date-class">The Date class</a></li>
+<li><a href="#the-posixct-class">The POSIXct class</a></li>
+<li><a href="#the-posixlt-class">The POSIXlt class</a></li>
+</ul></li>
+<li><a href="#the-date32-type">The date32 type</a></li>
+<li><a href="#the-date64-type">The date64 type</a></li>
+<li><a href="#the-timestamp-type">The timestamp type</a></li>
+<li><a href="#duration-types">Duration types</a></li>
 <li><a href="#other-types">Other types</a></li>
 <li><a href="#resources">Resources</a></li>
 </ul>
@@ -2531,7 +2540,7 @@ the final arbiter, and it helps to understand what each language is "doing".
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span>
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/apache/arrow/'>arrow</a></span><span class='op'>)</span>
 
-<span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span><span class='op'>)</span>
+<span class='va'>magicians</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/read_delim_arrow.html'>read_csv_arrow</a></span><span class='op'>(</span><span class='st'>"magicians.csv"</span><span class='op'>)</span>
 <span class='va'>magicians</span>
 </code></pre>
 </div>
@@ -2550,7 +2559,7 @@ the final arbiter, and it helps to understand what each language is "doing".
 10      1      10 Homecoming                 2016-03-21    0.3    0.78
 # … with 55 more rows</code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>magicians</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>magicians</span><span class='op'>)</span>
 <span class='va'>arrowmagicks</span>
 </code></pre>
 </div>
@@ -2590,13 +2599,13 @@ $viewers &lt;double&gt;</code></pre>
 <p>Suppose that I knew that there would in fact be a “Season 5.1648” coming, consisting of a single episode whose title corresponded to the full text of the <a href="https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf">Treaty of Westphalia</a>. Knowing that this new data point is coming, I’d perhaps want my Arrow data to encode <code>season</code> as a numeric variable, and I’d probably want to recognise that the text in the <code>title</code> field can be quite long. To do that I can specify an explicit <em>schema</em> that tells the <strong>arrow</strong> package how to translate my R data set into Arrow. I can do this with the <code>schema()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>translation</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Schema.html'>schema</a></span><span class='op'>(</span>
-  season <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
-  episode <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int32</a></span><span class='op'>(</span><span class='op'>)</span>,
-  title <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>large_utf8</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
-  air_date <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>date32</a></span><span class='op'>(</span><span class='op'>)</span>,
-  rating <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>,
-  viewers <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>translation</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/Schema.html'>schema</a></span><span class='op'>(</span>
+  season <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
+  episode <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int32</a></span><span class='op'>(</span><span class='op'>)</span>,
+  title <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>large_utf8</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
+  air_date <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>date32</a></span><span class='op'>(</span><span class='op'>)</span>,
+  rating <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>,
+  viewers <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span>
 </code></pre>
 </div>
@@ -2604,7 +2613,7 @@ $viewers &lt;double&gt;</code></pre>
 <p>Now I can use my schema to govern the translation:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>magicians</span>, schema <span class='op'>=</span> <span class='va'>translation</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>arrowmagicks2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>magicians</span>, schema <span class='op'>=</span> <span class='va'>translation</span><span class='op'>)</span>
 <span class='va'>arrowmagicks2</span>
 </code></pre>
 </div>
@@ -2691,7 +2700,7 @@ Figure 2: Default mappings for logical types
 <p>So let’s do it:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/Table.html'>arrow_table</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
 <span class='va'>tb</span>
 </code></pre>
 </div>
@@ -2719,7 +2728,7 @@ $values &lt;bool&gt;</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>values</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>TRUE</span>, <span class='cn'>FALSE</span>, <span class='cn'>NA</span><span class='op'>)</span>
-<span class='fu'><a href='https://arrow.apache.org/docs/r//reference/ChunkedArray.html'>chunked_array</a></span><span class='op'>(</span><span class='va'>values</span><span class='op'>)</span>
+<span class='fu'><a href='https://arrow.apache.org/docs/r/reference/ChunkedArray.html'>chunked_array</a></span><span class='op'>(</span><span class='va'>values</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>ChunkedArray
@@ -2851,7 +2860,7 @@ Figure 5: Default mappings for other integer types
 <p>To illustrate, let’s encode the number 10 as an unsigned 8-bit integer in Arrow and then see what happens when that gets pulled back into R. This is an easy case because uint8 always maps back to integer:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint8</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint8</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>    arrow         r 
@@ -2860,19 +2869,19 @@ Figure 5: Default mappings for other integer types
 <p>Next, let’s see how <strong>arrow</strong> handles the three types that are a little awkward for R to represent as integers. First, let’s see what happens when all the values are small enough that R actually <em>can</em> represent them as integers:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>    arrow         r 
  &quot;uint32&quot; &quot;integer&quot; </code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>    arrow         r 
  &quot;uint64&quot; &quot;integer&quot; </code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>    arrow         r 
@@ -2882,19 +2891,19 @@ Figure 5: Default mappings for other integer types
 <p>Now let’s increase the number to something that R cannot represent as an integer, and see what happens:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>    arrow         r 
  &quot;uint32&quot; &quot;numeric&quot; </code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>    arrow         r 
  &quot;uint64&quot; &quot;numeric&quot; </code></pre>
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>      arrow           r 
@@ -2905,7 +2914,7 @@ Figure 5: Default mappings for other integer types
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>arrow.int64_downcast <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r//reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>      arrow           r 
@@ -2933,6 +2942,7 @@ Figure 6: Default mappings for numeric types
 </div>
 </div>
 <h2 id="character-types">Character types</h2>
+<p>Strings are an interesting case. R uses a single data type to represent strings (character vectors) but Arrow has two types, known as strings and large strings. When using the <strong>arrow</strong> package, Arrow strings are specified using the <code>utf8()</code> function, and large strings correspond to the <code>large_utf8()</code> type. The default mapping is to assume that an R character vector maps onto the Arrow <code>utf8()</code> type, as shown below:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
@@ -2941,21 +2951,150 @@ Figure 7: Default mappings for character types
 </p>
 </div>
 </div>
+<p>There’s a little more than meets the eye here though, and you might be wondering about the difference between “strings” and “large strings” in Arrow, and when you might prefer one to the other. As you might expect, the large string type is suitable when you’re storing large amounts of text, but to understand it properly I need to talk in more depth about how R and Arrow store strings, and I’ll use this little snippet of song lyrics from <em>A Simple Goodbye</em> by <a href="https://en.wikipedia.org/wiki/The_Cruel_Sea_(band)">The Cruel Sea</a></p>
+<pre><code>won&#39;t try and make you stay
+you won&#39;t even have to say
+bye-bye
+bye-bye
+bye-bye</code></pre>
+<p>Suppose I want to store this as a character vector in R, with one word per element. To do that I might write code like this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>lyrics</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
+  <span class='st'>"won't"</span>, <span class='st'>"try"</span>, <span class='st'>"and"</span>, <span class='st'>"make"</span>, <span class='st'>"you"</span>, <span class='st'>"stay"</span>, 
+  <span class='st'>"you"</span>, <span class='st'>"won't"</span>, <span class='st'>"even"</span>, <span class='st'>"have"</span>, <span class='st'>"to"</span>, <span class='st'>"say"</span>,
+  <span class='st'>"bye-bye"</span>, <span class='st'>"bye-bye"</span>, <span class='st'>"bye-bye"</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Each element of the <code>lyrics</code> vector is a variable-length string, and is stored internally by R as an array of individual characters<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+<p>blah blah global string pool in R</p>
+<p>Arrow takes a different approach. As it was explained to me “String arrays in Arrow don’t store individual strings. All the string data is stored end to end in one long buffer. A separate buffer of offsets is used to track where each string begins/ends. Normal string arrays use 32-bit offsets, large string arrays use 64-bit offsets”</p>
+<p>okay, so why do I care? well, if you’re using 32-bit integers to encode the offset, that imposes a limit on the total number of characters that can be included. The total size of the string array is capped at 2GiB because you don’t have a way of referring to positions in the string larger than that. if you use 64-bit integers to encode the offset, that limit goes away (I mean technically there is a limit of course because 64-bit is still finite precision but it’s <em>quite</em> a lot bigger).</p>
 <h2 id="datetime-types">Date/time types</h2>
 <!--
 TODO
 Quine has a smartarse quote about time being lingustically special
 -->
+<p>Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch</a>. The unix epoch is the time 00:00:00 UTC on 1 January 1970. It was a Thursday.</p>
+<p>Despite agreeing on fundamentals, there are some oddities in the particulars. Base R has three date/time classes (Date, POSIXct, and POSIXlt), and while Arrow also has three date/time classes (date32, date64, and timestamp), the default mappings between them are a little puzzling unless you are deeply familiar with what all these data types are and what they represent. I’ll do the deep dive in a moment, but to give you the big picture here’s how the mapping works:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-23"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
 Figure 8: Default mappings for date/time types
 </p>
 </div>
 </div>
+<h3 id="the-date-class">The Date class</h3>
+<p>On the R side of things, a Date object is represented internally as a numeric value, counting the number of days since the unix epoch. Here is today as a Date:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-23"></span>
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>today</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.Date</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>today</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;2022-02-28&quot;</code></pre>
+</div>
+<p>If I use <code>unclass()</code> to see what it looks like under the hood:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 19051</code></pre>
+</div>
+<p>Fundamentally, a Date object is just a number: it counts the number of days that have elapsed since a fixed date. It does not care what the year is, what the month is, or what day of the month it is. It does not care how the date is displayed to the user. All those things are supplied by the <code>print()</code> method, and are not part of the Date itself.</p>
+<h3 id="the-posixct-class">The POSIXct class</h3>
+<p>A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we might need to store information about the timezone as well (more on that later). Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. <a href="https://en.wikipedia.org/wiki/POSIX">POSIX</a> stands for “portable operating system interface”, and it’s a set of standards used to help operating systems remain compatible with each other. In this context though, it’s not very meaningful: all it says “yup we use unix time.”</p>
+<p>The more important part of the name is actually the <a href="https://stackoverflow.com/questions/44778721/what-do-ct-and-lt-in-posixct-and-posixlt-mean">“ct” versus “lt”</a> part. Let’s start with POSIXct. The “ct” in POSIXct stands for “calendar time”: internally, R stores the number of seconds that have elapsed since 1970-01-01 00:00 UTC.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Sys.time.html'>Sys.time</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='va'>now</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;2022-02-28 11:52:53 AEDT&quot;</code></pre>
+</div>
+<p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] 1646009574</code></pre>
+</div>
+<p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> The POSIXct object doesn’t store the timezone information. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;2022-02-28 01:52:53 CET&quot;</code></pre>
+</div>
+<p>The important thing here is that the timezone is not inherently part of the POSIXct object: it belongs to the print method. Regardless of what you see when you print it out, the central idea in the POSIXct class is the same as in the Date class. These are numeric data structures that abstract away from <em>where</em> you are and the legal structures (timezones) that attache to your location. They are counts: Date objects count the number of days since the unix epoch, and POSIXct objects count the number of seconds. That’s it.</p>
+<h3 id="the-posixlt-class">The POSIXlt class</h3>
+<p>What about POSIXlt? It turns out that this is a quite different kind of data structure, and it “thinks” about time in a very different waty. The “lt” in POSIXlt stands for “local time”, and internally a POSIXlt object is a list that stores information about the time in a way that more closely mirrors how humans think about it. Here’s what <code>now</code> looks like when I coerce it to a POSIXlt object:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now_lt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
+<span class='va'>now_lt</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;2022-02-28 11:52:53 AEDT&quot;</code></pre>
+</div>
+<p>It <em>looks</em> the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now_lt</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>$sec
+[1] 53.83148
+
+$min
+[1] 52
+
+$hour
+[1] 11
+
+$mday
+[1] 28
+
+$mon
+[1] 1
+
+$year
+[1] 122
+
+$wday
+[1] 1
+
+$yday
+[1] 58
+
+$isdst
+[1] 1
+
+$zone
+[1] &quot;AEDT&quot;
+
+$gmtoff
+[1] 39600
+
+attr(,&quot;tzone&quot;)
+[1] &quot;&quot;     &quot;AEST&quot; &quot;AEDT&quot;</code></pre>
+</div>
+<p>As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time.</p>
+<p>It is not a compact representation, and it’s useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a “timestamp”.</p>
+<h2 id="the-date32-type">The date32 type</h2>
+<p>Okay, now let’s pivot over to the Arrow side and see what we have to work with.</p>
+<h2 id="the-date64-type">The date64 type</h2>
+<h2 id="the-timestamp-type">The timestamp type</h2>
+<h2 id="duration-types">Duration types</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 9: Default mappings for duration types
@@ -2964,7 +3103,7 @@ Figure 9: Default mappings for duration types
 </div>
 <h2 id="other-types">Other types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-24"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-32"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for null types
@@ -2972,7 +3111,7 @@ Figure 10: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-25"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-33"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for raw types
@@ -2980,7 +3119,7 @@ Figure 11: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-26"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-34"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for factor types
@@ -2988,7 +3127,7 @@ Figure 12: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-35"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 13: Default mappings for data frame types
@@ -3006,7 +3145,7 @@ Figure 13: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-02-01 16:49:00 AEDT</p>
+<p>2022-02-28 11:52:54 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -3014,7 +3153,15 @@ Figure 13: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<section class="footnotes" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>As noted in the R internals manual, the specific data structure is referred to as a <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Encodings-for-CHARSXPs">CHARSXP</a>. For the purposes of the current post I’m pretending that character strings are always encoded as UTF-8 because there’s no need to complicate matters by talking about things like Latin-1, but be aware that R does support those things. If you’re looking for a good overview of what UTF-8 encoding is all about, this blog post on <a href="https://deliciousbrains.com/how-unicode-works/">how unicode works</a> is helpful.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>This is a slight simplification: a POSIXct object is permitted to have a “tzone” attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt. However, it is optional and does not always get included.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>A little counterintuitively, the value of <code>sec</code> ranges from 0 to 61, presumably because leap seconds are a thing. I am <em>not</em> going to torture myself with that one today.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
