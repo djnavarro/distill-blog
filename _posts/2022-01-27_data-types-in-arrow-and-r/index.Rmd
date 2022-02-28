@@ -446,17 +446,30 @@ If I peek under the hood using `unclass()` here's what I see:
 unclass(now)
 ```
 
-There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time.^[This is a slight simplification: a POSIXct object is permitted to have a "tzone" attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt. However, it is optional and does not always get included.] The POSIXct object doesn't store the timezone information. The fact that it appears when I print out `now` occurs because the `print()` method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling `Sys.timezone()`, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see `OlsonNames()`). So if I wanted to print the time in Berlin, I could do this:
+There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time. However, it doesn't necessarily have to be this way: a POSIXct object is permitted to have a "tzone" attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt.
+
+Nevertheless, when I created the `now` object by calling `Sys.time()`, no timezone information was stored in the object. The fact that it appears when I print out `now` occurs because the `print()` method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling `Sys.timezone()`, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see `OlsonNames()`). So if I wanted to print the time in Berlin, I could do this:
 
 ```{r}
 print(now, tz = "Europe/Berlin")
 ```
 
-The important thing here is that the timezone is not inherently part of the POSIXct object: it belongs to the print method. Regardless of what you see when you print it out, the central idea in the POSIXct class is the same as in the Date class. These are numeric data structures that abstract away from *where* you are and the legal structures (timezones) that attache to your location. They are counts: Date objects count the number of days since the unix epoch, and POSIXct objects count the number of seconds. That's it.
+If you want to record the timezone as part of your POSIXct object rather than relying on the print method to do the work, you can do so by setting the `tzone` attribute. To illustrate this, let's pretend I'm in Tokyo:
+
+```{r}
+attr(now, "tzone") <- "Asia/Tokyo"
+now
+```
+
+The important thing here is that the timezone is metadata used to change the how the time is displayed. Changing the timezone does not alter the number of seconds stored in the `now` object:
+
+```{r}
+unclass(now)
+```
 
 ### The POSIXlt class
 
-What about POSIXlt? It turns out that this is a quite different kind of data structure, and it "thinks" about time in a very different waty. The "lt" in POSIXlt stands for "local time", and internally a POSIXlt object is a list that stores information about the time in a way that more closely mirrors how humans think about it. Here's what `now` looks like when I coerce it to a POSIXlt object:
+What about POSIXlt? It turns out that this is a quite different kind of data structure, and it "thinks" about time in a very different way. The "lt" in POSIXlt stands for "local time", and internally a POSIXlt object is a list that stores information about the time in a way that more closely mirrors how humans think about it. Here's what `now` looks like when I coerce it to a POSIXlt object:
 
 ```{r}
 now_lt <- as.POSIXlt(now)
@@ -474,7 +487,7 @@ As you can see, this object separately stores the year (counted from 1900), the 
 It is not a compact representation, and it's useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a "timestamp".
 
 
-## The date32 type
+### The date32 type
 
 Okay, now let's pivot over to the Arrow side and see what we have to work with. The date32 type is similar -- but not identical -- to the R Date class. Just like the R Date class, it counts the number of days since 1970-01-01. To see this, let's create an analog of the `today` Date object inside Arrow, and represent it as a date32 type:
 
@@ -498,40 +511,36 @@ typeof(now)
 
 In any case, given that the Arrow date32 type and the R Date class are so similar to each other in structure and intended usage, it is natural to map R Dates to Arrow date32 types and vice versa, and that's what the **arrow** package does by default. 
 
-## The date64 type
+### The date64 type
 
-The date64 type is similar to the date32 type, but instead of storing the number of days since 1970-01-01 as a 32-bit integer, it stores the number of milliseconds since 1970-01-01 00:00:00 UTC as a 64-bit integer. It's similar to the POSIXct class in R, except that:
+The date64 type is similar to the date32 type, but instead of storing the number of days since 1970-01-01 as a 32-bit integer, it stores the number of milliseconds since 1970-01-01 00:00:00 UTC as a 64-bit integer. It's similar to the POSIXct class in R, except that (1) it uses milliseconds instead of seconds; (2) the internal storage is a 64-bit integer, not a 32-bit double; and (3) it does not have metadata and cannot represent timezones.
 
-- it uses milliseconds instead of seconds
-- the internal storage is a 64-bit integer, not a 32-bit double
-- it doesn't "hide" timezone information in metadata or print methods
-
-Because it represents time at the millisecond level, the intended use of the date64 class is in situations where you want to keep track of units of time smaller than one day. I *can* create date64 objects from R Date objects if I want to...
+As you might have guessed, the date64 type in Arrow isn't very similar to the Date class in R. Because it represents time at the millisecond level, the intended use of the date64 class is in situations where you want to keep track of units of time smaller than one day. Sure, I *can* create date64 objects from R Date objects if I want to...
 
 ```{r}
 Scalar$create(today, date64())
 ```
 
-...but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I'm doing is storing the date? So let's create an Arrow analog of `now` as a date64 object:
+...but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I'm doing is storing the date? Although POSIXct and date64 aren't exact matches, they're more closely related to each other than Date and date64. So let's create an Arrow analog of `now` as a date64 object:
 
 ```{r}
 now_date64 <- Scalar$create(now, date64())
 now_date64
 ```
 
-The output is *printed* as a date, but again we can peek under the hood by explicitly casting this to a 64-bit integer:
+The output is *printed* as a date, but it is a little bit misleading because it doesn't give you a good sense of the level of precision in the data. Again we can peek under the hood by explicitly casting this to a 64-bit integer:
 
 ```{r}
 now_date64$cast(int64())
 ```
 
-As a little reminder, this is what `now` looks like internally in R. It is essentially the same number, divided by 1000, because POSIXct stores the number of seconds whereas the Arrow date64 class stores the number of milliseconds.
+This isn't a count of the number of days since the unix epoch, it's a count of the number of milliseconds. It is essentially the same number, divided by 1000, as the one we obtained when I typed `unclass(now)`. However, there's a puzzle here that we need to solve. Let's take another look at `unclass(now)`:
 
 ```{r}
 unclass(now)
 ```
 
-This might strike you as very weird. On the face of it, what has happened is that I have taken `now` (which represents time at second-level precision), ported it over to Arrow, and created an object `now_date64` that apparently knows what millisecond it is???? How is that possible? Does Arrow have magic powers? 
+This might strike you as very weird. On the face of it, what has happened is that I have taken `now` (which ostensibly represents time at "second-level" precision), ported it over to Arrow, and created an object `now_date64` that apparently knows what millisecond it is???? How is that possible? Does Arrow have magic powers? 
 
 Not really. R is playing tricks here. Remember how I said that POSIXct objects are secretly doubles and not integers? Well, this is where that becomes relevant. It's quite hard to get R to confess that a POSIXct object actually knows the time at a more precise level than "to the nearest second" but you can get it do to so by coercing it to a POSIXlt object and then taking a peek at the `sec` variable:
 
@@ -539,13 +548,64 @@ Not really. R is playing tricks here. Remember how I said that POSIXct objects a
 as.POSIXlt(now)$sec
 ```
 
-Aha! Look at that decimal expansion. Turns out that even though `unclass(now)` quietly rounded the time to the nearest second, the original `now` variable was indeed a double, and it does store the time at subsecond accuracy. Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times. 
+Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in `now_date64`. The data was there all along. Even though `unclass(now)` produces an output that has been rounded to the nearest second, the original `now` variable is indeed a double, and it *does* store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times. 
 
 Because of this, the default behaviour in **arrow** is to convert date64 types (64-bit integers interpreted as counts of milliseconds) to POSIXct classes (which are secretly 32-bit doubles interpreted as counts of seconds). 
 
 Right. Moving on.
 
-## The timestamp type
+### The timestamp type
+
+The last of the Arrow date/time types is the timestamp. The core data structure is a 64-bit integer used to count the number of time units that have passed since the unix epoch, and this is associated with two additional pieces of metadata: the time unit used (e.g., "seconds", "milliseconds, "microseconds", "nanoseconds"), and the timezone. As with the POSIXct class in R, the timezone metadata is optional, but the time unit is necessary. The default is to use microseconds (i.e., `unit = "us"`):
+
+```{r, results='hold'}
+Scalar$create(now)
+Scalar$create(now, timestamp(unit = "us"))
+```
+
+Alternatively, we could use seconds:
+
+```{r}
+Scalar$create(now, timestamp(unit = "s"))
+```
+
+It's important to recognise that changing the unit does more than change the precision at which the timestamp is printed. It changes "the thing that is counted", so the numbers that get stored in the timestamp are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:
+
+```{r, results='hold'}
+Scalar$create(now, timestamp(unit = "s"))$cast(int64())
+Scalar$create(now, timestamp(unit = "ns"))$cast(int64())
+```
+
+Okay, what about timezone. Recall that `now` has a timezone attached to it, because I explicitly recorded the `tzone` attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the `now` object:
+
+```{r}
+now
+```
+
+When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn't do that: the time *as displayed* is shown in UTC. However, that doesn't mean that the metadata isn't there:
+
+```{r}
+now_timestamp <- Scalar$create(now)
+now_timestamp$type
+```
+
+I mention this because this caused me a considerable amount of panic at one point when I thought my timezone information had been lost when importing data from POSIXct into Arrow. Nothing was lost, it is simply that the **arrow** R package prints all timestamps in the corresponding UTC time regardless of what timezone is specified in the metadata. 
+
+There is, however, a catch. This worked last time *because* I was diligent and ensured that my `now` variable encoded the timezone. By default, a POSIXct object created by `Sys.time()` will not include the timezone. It's easy to forget this because the `print()` method for POSIXct objects will inspect the system timezone if the POSIXct object doesn't contain any timezone information, so it can often *look* like you have a timezone stored in your POSIXct object when actually you don't. When that happens, Arrow can't help you. Because the POSIXct object does not have a timezone (all appearances to the contrary), the object that arrives in Arrow won't have a timezone either. Here's what I mean:
+
+```{r}
+# a POSIXct object with no timezone
+new_now <- Sys.time() # has no time zone...
+new_now               # ... but appears to!
+
+# an Arrow timestamp with no timezone
+new_now_timestamp <- Scalar$create(new_now)
+new_now_timestamp$type
+```
+
+The takehome message in all this is that if you're going to be working in both Arrow and R, and using the **arrow** package for data interchange, you'd be well advised to be careful with your POSIXct objects and timezones. They are trickier than they look, and can lead to subtle translation errors if you are not careful! 
+
+### Okay but what about POSIXlt?
 
 
 
