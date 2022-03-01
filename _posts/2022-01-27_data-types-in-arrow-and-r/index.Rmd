@@ -83,9 +83,7 @@ arrowmagicks <- arrow_table(magicians)
 arrowmagicks
 ```
 
-```{r, include=FALSE}
-# ????????
-#conflicted::conflict_prefer("duration", "arrow")
+```{r, echo=FALSE, message=FALSE}
 conflicted::conflict_prefer("timestamp", "arrow")
 ```
 
@@ -637,7 +635,14 @@ This is very convenient from a data analysis perspective, since calculations per
 
 ## Duration types
 
-Any discussion of temporal data is incomplete without a discussion of duration types, which are used to describe a length of time without reference to any fixed origin. 
+Any discussion of temporal data is incomplete without a discussion of duration types, which are used to describe a length of time without reference to any fixed origin. The figure below shows the default mappings used by **arrow**:
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Default mappings for duration types"
+knitr::include_graphics("img/duration-types.png", dpi = 100)
+```
 
 
 ### The difftime class
@@ -672,23 +677,30 @@ unclass(hedy_age)
 
 ### The duration type
 
-The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not *exactly* equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing 0.23 as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of 0.23 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry.
+The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not *exactly* equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing 0.23 as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of 0.23 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
 
 ```{r}
-browser()
-#Scalar$create(rmd_time, type = duration())
+rmd_time_arrow <- Scalar$create(rmd_time)
+rmd_time_arrow
+rmd_time_arrow$type
+```
+
+What I really needed to is specify a higher level of precision. If I want to import a duration into Arrow rounded to the nearest microsecond, I could do this:
+
+```{r}
+rmd_time_arrow <- Scalar$create(rmd_time, duration(unit = "us"))
+rmd_time_arrow
+rmd_time_arrow$type
 ```
 
 
+### The hms::hms class
+
+### The time32 type
+
+### The time 64 type
 
 
-
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Default mappings for duration types"
-knitr::include_graphics("img/duration-types.png", dpi = 100)
-```
 
 ## Other types
 
