@@ -297,7 +297,7 @@ If this diagram looks ugly and unhelpful, well... yeah, I agree. Translations be
 
 ```{r}
 translate_integer <- function(value, type) {
-  value_arrow <- Scalar$create(value, type)
+  value_arrow <- scalar(value, type)
   value_r <- value_arrow$as_vector()
   return(c(
     arrow = value_arrow$type$name,
@@ -558,7 +558,7 @@ It is not a compact representation, and it's useful for quite different things t
 Okay, now let's pivot over to the Arrow side and see what we have to work with. The date32 type is similar -- but not identical -- to the R Date class. Just like the R Date class, it counts the number of days since 1970-01-01. To see this, let's create an analog of the `today` Date object inside Arrow, and represent it as a date32 type:
 
 ```{r}
-today_date32 <- Scalar$create(today, type = date32())
+today_date32 <- scalar(today, type = date32())
 today_date32
 ```
 
@@ -584,13 +584,13 @@ The date64 type is similar to the date32 type, but instead of storing the number
 As you might have guessed, the date64 type in Arrow isn't very similar to the Date class in R. Because it represents time at the millisecond level, the intended use of the date64 class is in situations where you want to keep track of units of time smaller than one day. Sure, I *can* create date64 objects from R Date objects if I want to...
 
 ```{r}
-Scalar$create(today, date64())
+scalar(today, date64())
 ```
 
 ...but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I'm doing is storing the date? Although POSIXct and date64 aren't exact matches, they're more closely related to each other than Date and date64. So let's create an Arrow analog of `now` as a date64 object:
 
 ```{r}
-now_date64 <- Scalar$create(now, date64())
+now_date64 <- scalar(now, date64())
 now_date64
 ```
 
@@ -625,21 +625,21 @@ Right. Moving on.
 The last of the Arrow date/time types is the timestamp. The core data structure is a 64-bit integer used to count the number of time units that have passed since the unix epoch, and this is associated with two additional pieces of metadata: the time unit used (e.g., "seconds", "milliseconds, "microseconds", "nanoseconds"), and the timezone. As with the POSIXct class in R, the timezone metadata is optional, but the time unit is necessary. The default is to use microseconds (i.e., `unit = "us"`):
 
 ```{r, results='hold'}
-Scalar$create(now)
-Scalar$create(now, timestamp(unit = "us"))
+scalar(now)
+scalar(now, timestamp(unit = "us"))
 ```
 
 Alternatively, we could use seconds:
 
 ```{r}
-Scalar$create(now, timestamp(unit = "s"))
+scalar(now, timestamp(unit = "s"))
 ```
 
 It's important to recognise that changing the unit does more than change the precision at which the timestamp is printed. It changes "the thing that is counted", so the numbers that get stored in the timestamp are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:
 
 ```{r, results='hold'}
-Scalar$create(now, timestamp(unit = "s"))$cast(int64())
-Scalar$create(now, timestamp(unit = "ns"))$cast(int64())
+scalar(now, timestamp(unit = "s"))$cast(int64())
+scalar(now, timestamp(unit = "ns"))$cast(int64())
 ```
 
 Okay, what about timezone. Recall that `now` has a timezone attached to it, because I explicitly recorded the `tzone` attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the `now` object:
@@ -651,7 +651,7 @@ now
 When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn't do that: the time *as displayed* is shown in UTC. However, that doesn't mean that the metadata isn't there:
 
 ```{r}
-now_timestamp <- Scalar$create(now)
+now_timestamp <- scalar(now)
 now_timestamp$type
 ```
 
@@ -665,7 +665,7 @@ new_now <- Sys.time() # has no time zone...
 new_now               # ... but appears to!
 
 # an Arrow timestamp with no timezone
-new_now_timestamp <- Scalar$create(new_now)
+new_now_timestamp <- scalar(new_now)
 new_now_timestamp$type
 ```
 
@@ -676,7 +676,7 @@ The take-home message in all this is that if you're going to be working in both 
 At long last we come to POSIXlt, which has no clear analog in Arrow. The key idea behind POSIXlt is to represent temporal information in terms of multiple different units: days, weeks, years, seconds, timezones, and so on. It's a very different kind of thing to a POSIXct object in R or a timestamp in Arrow. In R terms, it's essentially a list, and as a consequence the default behaviour in **arrow** is to import it as a struct (which serves essentially the same purpose). Here's how that looks:
 
 ```{r}
-Scalar$create(now_lt)
+scalar(now_lt)
 ```
 
 The struct object contains named fields that are identical to their POSIXlt equivalents, and whose types have been translated according to the default mappings: `sec` is a double, `min` is an int32, `hour` is an int32, `zone` is a string, and so on.
@@ -743,7 +743,7 @@ unclass(hedy_age)
 The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not *exactly* equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing 0.23 as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of 0.23 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
 
 ```{r}
-rmd_time_arrow <- Scalar$create(rmd_time)
+rmd_time_arrow <- scalar(rmd_time)
 rmd_time_arrow
 rmd_time_arrow$type
 ```
@@ -751,7 +751,7 @@ rmd_time_arrow$type
 What I really needed to is specify a higher level of precision. If I want to import a duration into Arrow rounded to the nearest microsecond, I could do this:
 
 ```{r}
-rmd_time_arrow <- Scalar$create(rmd_time, duration(unit = "us"))
+rmd_time_arrow <- scalar(rmd_time, duration(unit = "us"))
 rmd_time_arrow
 rmd_time_arrow$type
 ```
@@ -789,7 +789,7 @@ At a technical level, it would be perfectly possible to translate an hms object 
 Because of this, Arrow supplies two data types that are roughly analogous to the hms class in R, called time32 and time64. The time32 type stores the time of day as a signed 32-bit integer, which represents the number of seconds (or alternatively, milliseconds) since midnight. By default, the **arrow** package will translate an hms object to a time32 type, using seconds as the unit:
 
 ```{r}
-hms_time32_s <- Scalar$create(hms_time)
+hms_time32_s <- scalar(hms_time)
 hms_time32_s
 hms_time32_s$type
 ```
@@ -797,7 +797,7 @@ hms_time32_s$type
 To switch to milliseconds, I would use a command like this:
 
 ```{r}
-hms_time32_ms <- Scalar$create(hms_time, time32(unit = "ms"))
+hms_time32_ms <- scalar(hms_time, time32(unit = "ms"))
 hms_time32_ms
 ```
 
@@ -810,7 +810,7 @@ hms_time32_ms$type
 If you need to represent the time of day at a higher degree of precision, you'll want to use the time64 type, which (shockingly!) represents the time of day as a signed 64-bit integer. When using the time64 class you can choose microseconds (`unit = "us"`) or nanoseconds (the default, `unit = "ns"`) as the unit:
 
 ```{r}
-hms_time64_us <- Scalar$create(hms_time, time64())
+hms_time64_us <- scalar(hms_time, time64())
 hms_time64_us
 hms_time64_us$type
 ```
