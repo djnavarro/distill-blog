@@ -212,10 +212,26 @@ values <- c(TRUE, FALSE, NA)
 chunked_array(values)
 ```
 
+
 <!-- 
 TODO: foreshadow that the NA, null thing will be explained later
 -->
 
+In fact, I could have done this in an even more primitive way and passed a scalar value to Arrow. That's not something you usually find yourself needing to do, so the **arrow** package doesn't have an equivalent of `chunked_array()` that applies to scalars. However, most of the heavy lifting for `chunked_array()` is actually being done by the R6 object `ChunkedArray`.^[In general R6 classes use UpperCamelCase, and the snake_case functions with the same name provide an interface to the R6 class that feels more familiar to an R user.] There is a `Scalar` R6 object that we can use to import scalars:
+
+```{r}
+Scalar$create(TRUE, type = boolean())
+```
+
+In the same way that `chunked_array()` is an alias for `ChunkedArray$create()`, for the purpose of this post I'm going to define `scalar()` as an alias for `Scalar$create()`
+
+```{r}
+scalar <- function(x, type = NULL) {
+  Scalar$create(x, type)
+}
+
+scalar(TRUE, type = boolean())
+```
 
 
 ## Integer types
