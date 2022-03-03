@@ -353,6 +353,88 @@ options(arrow.int64_downcast = NULL)
 
 ## Numeric types
 
+In the last section I talked about the rather extensive range of data types that Arrow has to represent integers. Sure, there's a practical benefit to having all these different data types, but at the same time its wild that we even *need* so many different data structures to represent something so simple. Integers aren't complicated things. We learn them as kids even before we go to school, and we get taught the arithmetic rules to operate on them very early in childhood. 
+
+The problem, though, is that there are *a lot* of integers. It's a tad inconvenient sometimes, but the set of integers is infinite in size,^[Rest assured, dear reader, while I am entirely aware of the distinction between countably and uncountably infinite sets, and have been forced to learn more about the cardinality of transfinite numbers than any human deserves to endure, I will not be discussing any of that in this post. The word "infinite" is perfectly serviceable for our purposes, and if anyone even *tries* to discuss this with me further on twitter I will be forced to engage the services of a very unpleasant lawyer...] so it doesn't matter how many bits you allocate to your "int" type, there will always be integers that your machine cannot represent. But this is obvious, so why am I saying it? Mostly to foreshadow that things get worse when we enter the desert of the reals...
+
+The real numbers correspond to our intuitive concept of the continuous number line. Just like the integers, the real line extends infinitely far in both directions, but unlike the integers the reals are continuous: for any two real numbers -- no matter how close they are to each other -- there is *always* another real number in between. This, quite frankly, sucks. Because the moment you accept that this is true, something ugly happens. If I accept that there must exist a number between 1.01 and 1.02, which I'll call 1.015, then I have to accept that there is a number between 1.01 and 1.015, which I'll call 1.0075, and then I have to accept that... oh shit this is going to go on forever. In other words, the reals have the obnoxious property that there between any two real numbers there are an infinity of other real numbers. 
+
+Try shoving all *that* into your finite-precision machine. 
+
+### Floating point numbers
+
+Stepping away from the mathematics for a moment, most of us already know how programming languages attempt to solve the problem. They use [floating point numbers](https://en.wikipedia.org/wiki/Floating-point_arithmetic) as a crude tool to approximate the real numbers using a finite-precision machine, and it... sort of works, as long as you you never forget that floating point numbers don't always obey the normal rules of arithmetic. I imagine most people reading this post already know this but for those that don't, I'll show you the most famous example:
+
+```{r}
+0.1 + 0.2 == 0.3
+```
+
+This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are *not* real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig into the IEEE standard, but it does help a lot to have a general sense of *how* a floating point number (approximately) encodes a real number. 
+
+To that end, I'll quickly write a `unpack_double()` function that extracts the raw 64-bit binary representation of a numeric value in R, and a print method that will allow me to display the results in a (fairly) clean way: 
+
+```{r}
+unpack_double <- function(x) {
+  binary <- numToBits(x)    # little-endian binary representation
+  structure(
+    list(
+      sign = as.integer(binary[64]),        # 1-bit sign
+      exponent = as.integer(binary[63:53]), # 11-bit exponent
+      fraction = as.integer(binary[52:1])  # 52-bit binary fraction
+    ),
+    class = "unpacked_double"
+  )
+}
+
+print.unpacked_double <- function(x, ...) {
+  sign <- as.character(x$sign)
+  exponent <- paste(as.character(x$exponent), collapse = "")
+  fraction <- paste(as.character(x$fraction), collapse = "")
+  cat(sign, exponent, fraction, "\n")
+}
+```  
+
+Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
+
+```{r}
+unpack_double(0)
+```
+
+Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the *sign*: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an *exponent*: you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.]. The remaining 53 bits are used to represent a binary fraction. 
+
+To see this in action, let's see how `16` and `-8` are encoded. These are both whole numbers in binary, and they're both powers of two. One is positive and the other is negative, so you can see that the sign bit is different; and they're different powers of two so you can see that the exponent is different. But since they're both *exact* powers of 2 (in the same way that 10, 100, and 1000 are all exact powers of 10), there's nothing in the fraction component at all:
+
+```{r, results='hold'}
+unpack_double(16)
+unpack_double(-8)
+```
+
+In a binary representation these are "round numbers". The same is true for numbers like `.25` and `.0625` which are exact *negative* powers of 2 (i.e. $2^{-2} = .25$ and $2^{-4} = .0625$). These are also round numbers in a binary encoding:
+
+```{r, results='hold'}
+unpack_double(.25)
+unpack_double(.0625)
+```
+
+Now look what happens when I try the numbers in the famous example:
+
+```{r, results='hold'}
+unpack_double(.1)
+unpack_double(.2)
+unpack_double(.3)
+```
+
+Although these are clean numbers with a simple, finite *decimal* expansion, they are a lot messier in binary! Because of that, these numbers aren't represented exactly, and truncation errors occur. The errors are very small, but they exist:
+
+```{r}
+0.1 + 0.2 - 0.3
+```
+
+I promise there is a point to this story, honest, and it's about to come back around to the "data structures in R versus Arrow" topic.
+
+No, really!
+
+
 <!-- 
 TODO:
 Mathematically: floating points as approximations to the reals. uncountable infinity is a bitch
