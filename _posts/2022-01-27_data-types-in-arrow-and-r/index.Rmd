@@ -383,19 +383,19 @@ unpack_double <- function(x) {
   binary <- numToBits(x)    # little-endian binary representation
   structure(
     list(
-      sign = as.integer(binary[64]),        # 1-bit sign
-      exponent = as.integer(binary[63:53]), # 11-bit exponent
-      fraction = as.integer(binary[52:1])  # 52-bit binary fraction
+      sign = binary[64],        # 1-bit sign
+      exponent = binary[63:53], # 11-bit exponent
+      mantissa = binary[52:1]   # 52-bit mantissa
     ),
     class = "unpacked_double"
   )
 }
 
 print.unpacked_double <- function(x, ...) {
-  sign <- as.character(x$sign)
-  exponent <- paste(as.character(x$exponent), collapse = "")
-  fraction <- paste(as.character(x$fraction), collapse = "")
-  cat(sign, exponent, fraction, "\n")
+  sign <- as.character(as.integer(x$sign))
+  exponent <- paste(as.character(as.integer(x$exponent)), collapse = "")
+  mantissa <- paste(as.character(as.integer(x$mantissa)), collapse = "")
+  cat(sign, exponent, mantissa, "\n")
 }
 ```  
 
@@ -405,9 +405,9 @@ Armed with this, let's take a look at the format. To start out, I'll do the most
 unpack_double(0)
 ```
 
-Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the *sign*: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an *exponent*: you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.]. The remaining 53 bits are used to represent a binary fraction. 
+Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the *sign*: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an *exponent*: you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.]. The remaining 53 bits are used to represent a binary mantissa. 
 
-To see this in action, let's see how `16` and `-8` are encoded. These are both whole numbers in binary, and they're both powers of two. One is positive and the other is negative, so you can see that the sign bit is different; and they're different powers of two so you can see that the exponent is different. But since they're both *exact* powers of 2 (in the same way that 10, 100, and 1000 are all exact powers of 10), there's nothing in the fraction component at all:
+To see this in action, let's see how `16` and `-8` are encoded. These are both whole numbers in binary, and they're both powers of two. One is positive and the other is negative, so you can see that the sign bit is different; and they're different powers of two so you can see that the exponent is different. But since they're both *exact* powers of 2 (in the same way that 10, 100, and 1000 are all exact powers of 10), there's nothing in the mantissa component at all:
 
 ```{r, results='hold'}
 unpack_double(16)
@@ -435,13 +435,32 @@ Although these are clean numbers with a simple, finite *decimal* expansion, they
 0.1 + 0.2 - 0.3
 ```
 
-Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one, as long as we are careful to remember their limitations. 
+Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one because they allow us to "cover" a very wide span of numbers across the real line, at a pretty high level of precision, without using too much memory. The trickery works by using this decomposition:
 
-Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story -- even the weird Baudrillard bit -- and it's about to come back around to the "data structures in R versus Arrow" topic.
+$$
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
+$$
 
-No, really. 
+Any real number can decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don't). But the neat thing is about using it is that we can describe very large numbers this way and very small numbers this way. And just to prove to you that there is no magic in this simulation, this function takes the deconstructed representation of an R double and packs it up again:
+
+```{r, results='hold'}
+repack_double <- function(x) {
+  s <- ifelse(as.integer(x$sign) == 0, 1, -1)
+  p <- sum(as.integer(x$exponent) * 2^(10:0)) - 2^10 + 1
+  v <- sum(as.integer(x$mantissa) * (2^(-1:(-52)))) + 1
+  s * v * 2 ^ p
+}
+
+repack_double(unpack_double(12))
+repack_double(unpack_double(1345234623462342))
+repack_double(unpack_double(0.000000002345345234523))
+```
+
+We pretend that machines can do arithmetic. They can't, but it's a surprisingly powerful lie. 
 
 ### [Arrow] The float64 type
+
+Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story -- even the weird Baudrillard bit -- and it's time we switched back over to the Arrow side of things to think about what happens there.
 
 By now you're probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.^[Some precision is needed here: in this post I am using the names that appear in the [documentation to the **arrow** R package](https://arrow.apache.org/docs/r/reference/data-type.html). I'm doing this because the intended audience is an R user who wants to use the **arrow** package to interact with Arrow. However, you should be aware that these types are given slightly different names in the [documentation to the Arrow C++ library](https://arrow.apache.org/docs/cpp/api/datatype.html) to which **arrow** provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.] The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.^[They are both little-endian too.] Because the data structures are so similar, the default behaviour in **arrow** is to translate an R double into an Arrow float64 and vice versa. 
 
@@ -469,27 +488,74 @@ float_01 + float_02 - float_03
 
 ### [Arrow] The float32 and float16 types
 
+The float64 type provides an excellent, high precision floating point representation of numeric data. As data types go it is a good type. However, it is a 64-bit type, and sometimes you don't need to store your data at a high degree of precision. With that in mind, because Arrow places a strong emphasis on both scalability and efficiency, it also provides the float32 and float16 types. Encoding numeric data in these formats will save space, but will come at a cost of precision. As always, the decision of what encoding works best for your application will depend on what your needs are. 
+
+As far as the **arrow** package is concerned, there are no difficulties in passing data back and forth between R doubles and Arrow float32 types, but due to the drastic differences in precision it's not really possible to do this with float16. Still, we can briefly take a look at how it works for float32. Here's an example of me passing an R double to Arrow:
+
+```{r}
+float32_01 <- scalar(.1, type = float32())
+float32_01
+```
+
+Let's quickly verify that it is in fact a 32-bit float:
+
+```{r}
+float32_01$type
+```
+
+And now let's pull it back into R where it will be, once again, encoded as a double:
+
+```{r}
+float32_01$as_vector()
+```
+
+Yay! It works!
 
 ### [Arrow] The decimal type
 
-It's a little tricky for me to write about the decimal type directly because R doesn't have any analog of a decimal, so I can't import an "R decimal object" to Arrow. However, what I can do is take the Arrow float64 objects I defined earlier and explicitly cast them to decimal format:
+Earlier in this section I promised that the Baudrillard quote from *Simulacra and Simulation* was going to be relevant? Well, that time has arrived. It's also the moment at which the quote from *Word and Object* by Quine that opened this blog post becomes painfully relevant. Stripped of their fancy language, here's what the two authors are telling us in these passages:
+
+- The Baudrillard quote emphasises that floating point numbers are a *simulation*. They are the mechanism by which we pretend that we have access to real numbers on computers. We don't, but it's a lie that almost works.
+- The Quine quote emphasises that translation (and, I would argue, simulation also) is underdetermined. For any complicated thing there are many ways to simulate, or translate, or approximate it: all of them can be extremely good approximations, and they can *also* be inconsistent with one another. As it happens, this truism applies to floating point numbers too.
+
+Remember when I was talking about floating point numbers and how they rely on a representation that looks like this:
+
+$$
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{significand}) \times 2 ^ {\mbox{(exponent)}}
+$$
+
+Why do we use 2 here? Programmers have a tendency to like using 2 as the base unit for everything because it lines up nicely with binary representations, and that's often a good instinct when dealing with machines. Unfortunately, it's an enormous problem for floating point arithmetic because *humans* write numbers in decimal notation (in the arabic number system anyway). Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a "simple" decimal number like 0.1 doesn't have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.
+
+The solution? Easy: Just use a floating point number system that uses 10 as the base:
+
+$$
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{significand}) \times 10 ^ {\mbox{(exponent)}}
+$$
+This is the core idea behind [decimal floating point](https://en.wikipedia.org/wiki/Decimal_floating_point) numbers. 
+
+Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. However, R doesn't have any analog of a decimal so I can't import an "R decimal object" to Arrow. However, what I can do is take the Arrow float64 objects I defined earlier and explicitly cast them to decimal format:
 
 ```{r}
-decimal_01 <- float_01$cast(decimal(5, 5))
+decimal_01 <- float_01$cast(decimal128(5, 5))
 decimal_01
 decimal_01$type
 ```
 
+When we use the decimal floating point type, we no longer encounter the bizarre problem of discovering that .1 + .2 is apparently not equal to .3. Everything works out nicely:
+
 ```{r}
-decimal_02 <- float_02$cast(decimal(5, 5))
-decimal_03 <- float_03$cast(decimal(5, 5))
+decimal_02 <- float_02$cast(decimal128(5, 5))
+decimal_03 <- float_03$cast(decimal128(5, 5))
 decimal_01 + decimal_02 - decimal_03
 ```
+
+The logical tests work out nicely too:
 
 ```{r}
 decimal_01 + decimal_02 == decimal_03
 ```
 
+What's important to keep in mind here, though, is that decimal types don't make floating point errors disappear. Decimal floating point numbers are still subject to all the weirdness of binary floating point numbers. However, what it does means is that the weirdness of the *machine-level* representation (decimal floating point) is neatly aligned with the weirdness of the *human-level* representation (decimal numbers). That comes in handy sometimes.
 
 ## Character types
 
