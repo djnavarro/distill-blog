@@ -175,8 +175,6 @@ In the rest of this post I'll use a lot of diagrams showing the default mappings
 knitr::include_graphics("img/visual-convention.png", dpi = 100)
 ```
 
-<aside><br>Instead of using alt-text, I've included verbose and descriptive figure captions that verbally describe the content of each diagram</aside>
-
 ## Logical types
 
 <!-- 
