@@ -118,6 +118,20 @@ arrowmagicks2
 
 This is of course a toy example, as are all the other examples you'll encounter in this post. But the underlying issues are important ones! 
 
+
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
+```
+
+<br><br>
+
+
 ## Why mapping languages is hard
 
 > BEASTS, may be distinguished by their several shapes, properties, uses, food, their tameness or wildness, etc. into such as are either
@@ -212,6 +226,19 @@ In the rest of this post I'll use a lot of diagrams showing the default mappings
 knitr::include_graphics("img/visual-convention.png", dpi = 100)
 ```
 
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4893.jpg", dpi = 100)
+```
+
+<br><br>
+
+
 ## Logical types
 
 At long last we arrive at the point where I'm talking about the data values themselves, and the simplest kind of data to talk about are logical data. In R, logical data can take on three possible values: `TRUE` and `FALSE` are the two truth values, and `NA` is used to denote missing data.^[Should I take this opportunity to discuss the fact that this means that what R actually implements is a [three valued logic](https://en.wikipedia.org/wiki/Three-valued_logic)? No. No I should not. I am going to *think* it very loudly though.] In a moment I'll show you how to directly pass individual values from R to Arrow, but for the moment let's stick to what we know and pass an entire data frame across. Here's a tiny data frame, with one column of logical values:
@@ -282,6 +309,19 @@ scalar(TRUE)
 ```
 
 Awesome!
+
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4897.jpg", dpi = 100)
+```
+
+<br><br>
+
 
 ## Integer types
 
@@ -433,6 +473,18 @@ And that's it for integers. Next up we'll talk about numeric types, but first I'
 ```{r}
 options(arrow.int64_downcast = NULL)
 ```
+
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_46_4628.jpg", dpi = 100)
+```
+
+<br><br>
 
 
 ## Numeric types
@@ -692,6 +744,20 @@ Yay!
 
 As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren't a universal solution to the problems of binary floating-point numbers. They have severe limitations of their own and there are very good reasons why floats remain the default almost everywhere. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as to fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.
 
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4857.jpg", dpi = 100)
+```
+
+<br><br>
+
+
+
 ## Character types
 
 Our journey continues. We now leave behind the world of number and enter the domain of text. Such times we shall have! What sights we shall see! (And what terrors lie within?)
@@ -788,6 +854,18 @@ jung_talent_arrow_big$type
 ```
 
 Before moving on, I'll mention one additional complexity. This is a situation where the distinction between arrays and chunked arrays begins to matter. Strictly speaking, I lied earlier when I said there's only one data buffer. A more precise statement would be to say that there is one data buffer per *chunk*. Chunked arrays are designed to allow a block (or "chunk") of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that^[No I am not going to talk about them in this post. Masochist though I may be, nobody loves that much pain. If you are curious you will simply have to wait for a later post!], but they aren't immediately relevant. What matters is to recognise that in a chunked array, the 2GiB limit on utf8 type data applies on a per-chunk basis.  
+
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4828.jpg", dpi = 100)
+```
+
+<br><br>
 
 ## Date/time types
 
@@ -1021,6 +1099,17 @@ now - now_lt
 
 This is very convenient from a data analysis perspective, since calculations performed with date/time classes "just work" even though POSIXct objects are secretly doubles and POSIXlt objects are secretly lists. However, all this happens invisibly. In much the same way that it's easy to forget that POSIXct objects may not encode a timezone even though they *look* like they do, it can be easy to forget that POSIXct and POSIXlt are fundamentally different objects, and they map onto quite different data structures in Arrow. 
 
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4836.jpg", dpi = 100)
+```
+
+<br><br>
+
 ## Duration types
 
 Any discussion of temporal data is incomplete without a discussion of duration types, which are used to describe a length of time without reference to any fixed origin. The figure below shows the default mappings used by **arrow**:
@@ -1164,6 +1253,18 @@ She is quite tiresome at times.
 
 In essence, the **arrow** defaults are set up such that if you choose `time32()` when going from R to Arrow without specifying a unit, you will end up with the lowest precision representation of time (rounded to the nearest second), whereas if you do the same with `time64()` you end up with the highest precision (nanosecond level) representation. When going the other way, **arrow** will map time32 types and time64 types to hms objects, and the end result is that the time of day will be stored as a 32-bit double. 
 
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4783.jpg", dpi = 100)
+```
+
+<br><br>
+
+
 ## Other types
 
 As with any story told by humans, this one is incomplete. When I started writing this post I had the ambition to cover every single line in the [Table of R/Arrow mappings](https://arrow.apache.org/docs/r/articles/arrow.html#mapping-of-r-arrow-types) shown in the **arrow** documentation. I didn't quite get there in the end, and there are a few missing cases. I'll briefly mention them here:
@@ -1175,6 +1276,19 @@ As with any story told by humans, this one is incomplete. When I started writing
 - I haven't talked about factors at all, and frankly I probably should have. My only excuse is exhaustion. The post was getting very long and I ran out of energy. The analog of factors in Arrow is the "dictionary" type. They're not exact mirrors of each other so it's worth reading the documentation, but it's close enough that factors are mapped to dictionaries and vice versa. 
 
 - R and Arrow both allow more complicated data structures to be included as columns within a data frame (or table). For example, in R each element of a column can itself be a data frame. In such cases, the default in **arrow** is to map each R data frame onto an Arrow struct. Again, this is one where it's worth reading the documentation, because there are some subtleties with how things like list columns are handled. 
+
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_47_4784.jpg", dpi = 100)
+```
+
+<br><br>
+
 
 ## The magic goes away
 
