@@ -16,7 +16,7 @@ author:
     affiliation: Voltron Data
     affiliation_url: https://voltrondata.com
     orcid_id: 0000-0001-7648-6578
-date: 2022-01-27
+date: 2022-03-04
 preview: img/cover.jpg  # <---- UPDATE ME 
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/data-types-in-arrow-and-r 
@@ -27,7 +27,7 @@ output:
     toc: true
 params:
   slug: data-types-in-arrow-and-r
-  date: 2022-01-27
+  date: 2022-03-04
   repo: djnavarro/distill-blog
   site: https://blog.djnavarro.net/
 ---
