@@ -649,6 +649,8 @@ As a final note before moving on, it is (of course!!!) the case that fixed-point
 
 ## Character types
 
+Our journey continues. We now leave behind the world of number and enter the domain of text. Such times we shall have! What sights we shall see! (And what terrors lie within?)
+
 Strings are an interesting case. R uses a single data type to represent strings (character vectors) but Arrow has two types, known as strings and large strings. When using the **arrow** package, Arrow strings are specified using the `utf8()` function, and large strings correspond to the `large_utf8()` type. The default mapping is to assume that an R character vector maps onto the Arrow `utf8()` type, as shown below:
 
 ```{r}
@@ -1018,19 +1020,29 @@ unclass(hedy_age)
 
 ### [Arrow] The duration type
 
-The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not *exactly* equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing 0.23 as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of 0.23 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
+The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not *exactly* equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing `r round(rmd_time, 2)` as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of `r round(rmd_time, 2)` seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
 
 ```{r}
 rmd_time_arrow <- scalar(rmd_time)
 rmd_time_arrow
+```
+
+Hm. Zero seconds was not exactly the answer I was looking for. It helps a little to take a peek at the data type and see what precisely it is that I have just created: 
+
+```{r}
 rmd_time_arrow$type
 ```
 
-What I really needed to is specify a higher level of precision. If I want to import a duration into Arrow rounded to the nearest microsecond, I could do this:
+This reveals my mistake. I've encoded the time rounded to the nearest second, which is not very useful in this instance. What I really should have done is specify a higher level of precision. To import a duration into Arrow rounded to the nearest microsecond, I can do this:
 
 ```{r}
 rmd_time_arrow <- scalar(rmd_time, duration(unit = "us"))
 rmd_time_arrow
+```
+
+That's a little better! Again, I can inspect the data type and see that the unit of encoding is now set to microseconds:
+
+```{r}
 rmd_time_arrow$type
 ```
 
@@ -1069,10 +1081,15 @@ Because of this, Arrow supplies two data types that are roughly analogous to the
 ```{r}
 hms_time32_s <- scalar(hms_time)
 hms_time32_s
+```
+
+As usual, let's just verify that the encoding unit is as expected:
+
+```{r}
 hms_time32_s$type
 ```
 
-To switch to milliseconds, I would use a command like this:
+Yep, we're all good! To switch to milliseconds, I would use a command like this:
 
 ```{r}
 hms_time32_ms <- scalar(hms_time, time32(unit = "ms"))
@@ -1090,8 +1107,15 @@ If you need to represent the time of day at a higher degree of precision, you'll
 ```{r}
 hms_time64_us <- scalar(hms_time, time64())
 hms_time64_us
+```
+
+The display is showing more trailing zeros, so you can already be sure that the encoding unit has changed. So the only real question you might have pertains to the author. Will she be tediously predictable and check the data type yet again to verify that the encoding unit is nanoseconds, just like she has done every time before? Yes. Yes she will:
+
+```{r}
 hms_time64_us$type
 ```
+
+She is quite tiresome at times.
 
 In essence, the **arrow** defaults are set up such that if you choose `time32()` when going from R to Arrow without specifying a unit, you will end up with the lowest precision representation of time (rounded to the nearest second), whereas if you do the same with `time64()` you end up with the highest precision (nanosecond level) representation. When going the other way, **arrow** will map time32 types and time64 types to hms objects, and the end result is that the time of day will be stored as a 32-bit double. 
 
