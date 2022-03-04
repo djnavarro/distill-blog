@@ -118,7 +118,7 @@ This is of course a toy example, as are all the other examples you'll encounter 
 
 ## Why mapping languages is hard
 
-Blah blah I used to teach categorisation and mental representation. Organising the world into concepts (or data structures) is hard. We define ontologies that impose order on a chaotic world. A famous attempt to do this in 1668 by John Wilkins in [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1). A small snippet taken from the section "On Beasts":
+Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.]  We define ontologies that impose order on a chaotic world. A famous attempt to do this in 1668 by John Wilkins in [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1). A small snippet taken from the section "On Beasts":
 
 > BEASTS, may be distinguished by their several shapes, properties, uses, food, their tameness or wildness, etc. into such as are either
 > 
