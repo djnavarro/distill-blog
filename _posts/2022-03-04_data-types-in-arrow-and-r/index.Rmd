@@ -111,7 +111,16 @@ collect(arrowmagicks)
 
 In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we *want* in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
 
-That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about schemas.
+That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about schemas. Schemas are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see a diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Illustration of the graphical convention used in the later   diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background)."
+
+knitr::include_graphics("img/visual-convention.png", dpi = 100)
+```
+
 
 ## Defining schemas
 
@@ -140,8 +149,6 @@ arrowmagicks2
 
 This is of course a toy example, as are all the other examples you'll encounter in this post. But the underlying issues are important ones! 
 
-
-
 <br><br>
 
 ```{r}
@@ -155,6 +162,8 @@ knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
 
 
 ## Why mapping languages is hard
+
+<!--
 
 > BEASTS, may be distinguished by their several shapes, properties, uses, food, their tameness or wildness, etc. into such as are either
 > 
@@ -174,75 +183,56 @@ knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
 >
 > -- John Wilkins, 1668, [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1)
 
+-->
 
-Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.] We define structures that impose order on a chaotic world. The quirky little ontology at the start of this section is a small snippet taken from a very long monograph written by John Wilkins in 1668 in which he made a valiant (but doomed... oh so doomed) attempt to organise all the categories of thing and propose a mechanism by which we could describe them within a single universal language.
+Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.] We define [ontologies](https://en.wikipedia.org/wiki/Ontology_(information_science)) that impose order on a chaotic world, but those structures are rarely adequate to describe the world as it is. While doing background research for this post I spent a little time reading various sections from [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1), a monograph written by John Wilkins in 1668 that makes a valiant (but doomed... oh so doomed) attempt to organise all the categories of thing and propose a mechanism by which we could describe them within a single universal language. The classification systems he came up with were... not great. For example, he divided BEASTS into two categories: VIVIPAROUS beasts are those that bear live young, whereas OVIPAROUS beasts are those that lay eggs. The viviparous ones could be subdivided into WHOLE-FOOTED ones and CLOVEN-FOOTED ones. The cloven-footed beasts could be subdivided into those that were RAPACIOUS and those that were not. RAPACIOUS types could be of the CAT-KIND or the DOG-KIND.
 
-The idea of a universal language has a certain abstract appeal, but these things are constructed by humans, and humans have quite distinctive perspectives on the world. As a 17th century English gentleman, John Wilkins was no exception. As a 21st century Australian lady I'm noticing that there's no distinction between placental and marsupial mammals here, and... well, there's a marked lack of biological plausibility to any of this.
+Suffice it to say the poor man had never encountered a kangaroo.
+
+The problem with trying to construct universal ontologies is that these things are made by humans, and humans have a perspective that is tied to their own experience and history. As a 17th century English gentleman, Wilkins saw the world in a particular way, and the structure of the language he tried to construct reflected that fact. 
 
 I am of course hardly the first person to notice this. In 1952 the Argentinian author Jorge Luis Borges published a wonderful essay called [The Analytical Language of John Wilkins](https://ccrma.stanford.edu/courses/155/assignment/ex1/Borges.pdf) that both praises Wilkins' ambition and then carefully illustrates why it is necessarily doomed to fail. Borges' essay describes a classification system from an fictitious "Celestial Emporium of Benevolent Knowledge" which carves up the beasts as follows:
 
 > In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies
 
-Now, it's pretty unlikely that any human language would produce a classification system quite as ... um, chaotic ... as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. Michel Foucault actually refers to this Borges passage in the preface to his famous work [The Order of Things: An Archaeology of the Human Sciences](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay 
+Now, it's pretty unlikely that any human language would produce a classification system quite as chaotic as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. It's a pretty fundamental point, and I think it applies to programming languages too.^[At this point I feel compelled to point out that while I may *appear* to be a bright young thing with little experience of the world, I am in fact a 44 year old woman and former academic who has read quite a few papers on algorithmic information theory and related fields. So, if you happen to be thinking thoughts along the lines of "aha, she doesn't know about Turing equivalence!" and are considering explaining it to me... please don't. This is one of those situations where that pesky little "finite length" prefix code required to allow machine P to simulate machine Q actually matters, and sometimes "finite" includes values like "staggeringly, painfully large". As I used to wearily tell my students, in real life you can't ignore the $O(1)$ terms.] Every language carries with it a set of assumptions and structures that it considers "natural", and translation across the boundaries between languages is necessarily a tricky business.^[As an aside, Michel Foucault actually refers to this Borges passage in the preface to his famous work [The Order of Things: An Archaeology of the Human Sciences](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay "shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things". Seems fair to say that Borges' essay was not without its admirers.]
 
-> shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things
+## A little bit of big picture
 
-Universal languages are a myth. 
+Before we get to "moving data around" part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. 
 
-## Translating machine objects
+### Object oriented programming in **arrow**
 
-Ontologies in natural languages are more complicated things than their equivalents in a programming language, but nevertheless the same principles hold. Every language comes with a collection of data structures, rules, and assumptions about how things "are supposed to work". Just like human languages, machine languages carve the world up into boxes, and those boxes don't always match up with one another. Some concepts just don't translate properly.^[To all the would be enthusiasts considering: I am begging you, please *do not* attempt to come at me with a "Turing-completeness" style gotcha, as if I were a first year undergraduate who just encountered algorithmic information theory for the first time. Do not. This post is not the place for a long discussion, so I will very quietly mention that the finite-length prefix required to specify the translation between languages is an $O(1)$ term (if I recall correctly), and when you leave the textbooks and encounter the world, $O(1)$ terms can be very, very big. Let it rest. Seriously. Writing a real world transpiler turns out to be actually quite tricky. Sheesh.]
+One of ways in which C++ and R differ is in how each language approaches object oriented programming (OOP). The approach taken in C++ is [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. Anyone coming from outside R is probably most familiar with this style of OOP.
 
-So how do we construct data structures in Arrow that are appropriate translations of data structures in R, and vice versa? For the moment, let's keep things simple and assume that the mapping we're interested in has the same format as the one described at the start of the post: in R we want to encode the data as a data frame, and in Arrow we want to encode it as a Table. If so, the translation question is "simply"^[You know that something awful is coming right? I mean, the moment the author says it is "simply" a matter of doing blah blah blah in the first act, it always means there will be at least one open hellmouth spawning eldritch horrors left and right sometime around the second act.] a matter of how we encode the columns.
+The approach taken in R is... chaotic. R has several different OOP systems that have different philosophies, and each system has its own strengths and weaknesses.^[This "let a thousand OOP systems bloom" philosophy has made me cry many times.] The most commonly used system is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. Most R users will be comfortable with S3 because it's what we see most often. That being said, there are several other systems out there, some of which adopt the more conventional encapsulated OOP paradigm. One of the most popular ones is [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
 
-Well... sort of.
+The **arrow** package uses both S3 and R6, but it uses them for quite different things. Whenever **arrow** does something in an "R-native" way, S3 methods get used a lot. For example, in my earlier post on [dplyr bindings for Arrow](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/) I talked about how **arrow** supplies a **dplyr** engine: this works in part by supplying S3 methods for various **dplyr** functions that are called whenever a suitable Arrow object gets passed to **dplyr**. The interface between **arrow** and **dplyr** uses S3 because this context is "R like". However, this isn't a post about that aspect to **arrow**, so we won't need to talk about S3 again in this post.
 
-Not really.
+However, **arrow** has a second task, which is to interact with the Arrow C++ library. Because the data structures there all use encapsulated OOP as is conventional in C++, it is convenient to do the adhere to those conventions within the **arrow** package. Whenever **arrow** has to interact with Arrow, it's useful to be as "C++ like" as possible, and this in turn means that the interface between **arrow** and Arrow is accomplished using R6. So we will be seeing R6 objects appear quite often in this post. 
 
-Actually... we're not quite ready to start moving data around yet.
 
 ### Table, ChunkedArray, and Scalar
 
-Before we get to "moving data around" part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. Specifically, C++ and R take different approaches to object oriented programming (OOP).
-
-The approach taken in C++ is [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. In contrast, the approach taken in R is to have lots of different OOP systems that all work differently.^[This "let a thousand OOP systems bloom" philosophy has made me cry many times.] The most common one is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. However there are also encapsulated OOP systems like [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
-
-The **arrow** package uses both S3 and R6, but it uses them for quite different things. Whenever **arrow** does something in an "R-native" way, S3 methods get used a lot. For example, in my earlier post on [dplyr bindings for Arrow](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/) I talked about how **arrow** supplies a **dplyr** engine: this works in part by supplying S3 methods for various **dplyr** functions that are called whenever a suitable Arrow object gets passed to **dplyr**. The interface between **arrow** and **dplyr** uses S3 because this context is "R-like". 
-
-However, **arrow** has a second task, which is to interact with the Arrow C++ library, in which all the data structures are objects that use... encapsulated OOP. So... when **arrow** has to interact with Arrow, it's useful to be as "C++ like" as possible. That means using encapsulated OOP, and that in turn means that the interface between **arrow** and Arrow is accomplished using R6. 
-
-What does that mean, in practice?
-
-Well, among other things, it means that a lot of the "normal" R functions that **arrow** supplies are actually wrappers around an R6 method. To make it concrete, let's think about the `arrow_table()` function. At the start of the post I used this function to translate an R data frame into an Arrow Table, like this:
+You may be wondering what I mean when I say that R6 objects are used to supply the interface between R and Arrow. I'll try to give some concrete examples. Let's think about the `arrow_table()` function. At the start of the post I used this function to translate an R data frame into an Arrow Table, like this:
 
 ```{r, results='hide'}
 arrow_table(magicians)
 ```
 
-This is a natural way of thinking about things in R, but the `arrow_table()` function doesn't actually do the work. Instead, there is an R6 object called `Table`. I could have done the same thing like this:
+This is a natural way of thinking about things in R, but the `arrow_table()` function doesn't actually do the work. It's actually just a wrapper function. Within the **arrow** package is an R6 object called `Table`, and its job is to create tables, modify tables, and so on. You can create a table by using the `create()` method for `Table`. In other words, instead of calling `arrow_table()` I could have done this:
 
 ```{r, results='hide'}
 Table$create(magicians)
 ```
 
-It's literally the same thing. And when I used the `schema()` function to create a schema? Well, there's an R6 object called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. There are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these corresponds to a data structure in Arrow, and these R6 objects are the primary points of contact between R and Arrow. I will only talk about a few of these in this post because -- as you'll see -- the post gets very long even when I restrict myself to a few of them. 
+and I would have ended up with the same result. 
 
-Interacting with R6 objects is something that took me a while to get the hang of, and it's not something that feels "native" to most R programmers because we're used to functional OOP rather than encapsulated OOP. So to make your life easier, the **arrow** developers often provide handy wrapper functions that have names suspiciously similar to the R6 objects. You can use `chunked_array()` to call `ChunkedArray$create`, `schema()` to call `Schema$create()`, and `arrow_table()` to call `Table$create()`.^[In general R6 classes use [UpperCamelCase](https://en.wikipedia.org/wiki/Camel_case), and the [snake_case](https://en.wikipedia.org/wiki/Snake_case) functions with the same name provide an interface to the R6 class that feels more familiar to an R user. The `arrow_table()` function breaks the convention, but that's only because `table()` is already a base R function that does something very different.] However, there won't always be a wrapper function to solve your particular problem, so you'll often find yourself needing to use R6 methods. As the post goes on, you'll see me doing that from time to time. 
+The same pattern appears throughout the **arrow** package. When I used the `schema()` function earlier, the same pattern was in play. There is an R6 object called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. 
 
-Right. Enough of that. Time to move on...
+I could go on like this for some time. Though I won't talk about all of them in this post, there are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these provides an interface to a data structure in Arrow, and while you can often solve all your problems without ever interacting with these objects, it's very handy to know about them and feel comfortable using them. As the post goes on, you'll see me doing that from time to time. 
 
-### Visual conventions
-
-In the rest of this post I'll use a lot of diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), as shown below:
-
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Illustration of the graphical convention used in the later   diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background)."
-
-knitr::include_graphics("img/visual-convention.png", dpi = 100)
-```
-
+But enough of that! Time to start moving data around...
 
 <br><br>
 
