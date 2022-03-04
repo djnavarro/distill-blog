@@ -150,7 +150,7 @@ knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
 >             
 > - OVIPAROUS; breeding *Eggs*. VI.
 >
-> &nbsp; &nbsp; -- John Wilkins, 1668, [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1)
+> -- John Wilkins, 1668, [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1)
 
 
 Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.] We define structures that impose order on a chaotic world. The quirky little ontology at the start of this section is a small snippet taken from a very long monograph written by John Wilkins in 1668 in which he made a valiant (but doomed... oh so doomed) attempt to organise all the categories of thing and propose a mechanism by which we could describe them within a single universal language.
@@ -175,9 +175,13 @@ So how do we construct data structures in Arrow that are appropriate translation
 
 Well... sort of.
 
+Not really.
+
+Actually... we're not quite ready to start moving data around yet.
+
 ### Table, ChunkedArray, and Scalar
 
-I mean, before we even get to that part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. Specifically, C++ and R take different approaches to object oriented programming (OOP).
+Before we get to "moving data around" part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. Specifically, C++ and R take different approaches to object oriented programming (OOP).
 
 The approach taken in C++ is [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. In contrast, the approach taken in R is to have lots of different OOP systems that all work differently.^[This "let a thousand OOP systems bloom" philosophy has made me cry many times.] The most common one is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. However there are also encapsulated OOP systems like [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
 
@@ -1292,6 +1296,14 @@ knitr::include_graphics("art/pollen_47_4784.jpg", dpi = 100)
 
 ## The magic goes away
 
+> "Being in love ruins my judgement. It takes my mind off what I'm doing, and I ruin spells" <br>
+> &nbsp;&nbsp; -- Mirandee, from [The Magic Goes Away](https://en.wikipedia.org/wiki/The_Magic_Goes_Away) by Larry Niven
+
+When I first started using **arrow**, the it was the magic I loved most. Everything just worked. I could move data between R and Arrow without having to think, I could manipulate enormous data sets using **dplyr** syntax that I'd never even be able to load into R, and I never had to look under the hood. Magic is always compelling. It is delightful. It makes the user feel joy, and it's the experience the developer wants to provide. 
+
+But as any teacher will tell you, the magic always goes away. There comes a time when you have to sit down and read the manuals. You have to understand how the magic works, and when you do understand you realise there is no magic. At best, there is design. A system can work using all the default settings because it has been thoughtfully designed, but you will eventually encounter situations when the defaults don't apply to you. It's taken me some time to piece all this  together, and at the end of the process I feel a lot more confident in my judgment. Having a deeper understanding of data types in Arrow and R is useful to me, even if I'm only using the default schemas.
+
+I hope the post is helpful for anyone else following a similar path. 
 
 <!--
 - https://arrow.apache.org/docs/r/articles/arrow.html
