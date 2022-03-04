@@ -320,72 +320,74 @@ These are the cases where it is easy.
 
 ### When integer translation is hard
 
-Other integer types are messier. To keep things nice and simple, what we'd *like* to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that's possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that's what **arrow** does by default. However, if there are values that "overflow" this range, then **arrow** will import the data as a different type, as shown below:
+Other integer types are messier. To keep things nice and simple, what we'd *like* to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that's possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that's what **arrow** does by default. However, if there are values that "overflow" this range, then **arrow** will import the data as a different type. That leads to a rather messy diagram, I'm afraid:
 
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "Default mappings for other integer types"
+#| fig.cap = "Default mappings for other integer types. The asterisk notation here is intended to indicate that the path **arrow** follows can depend on the data values and other settings."
 
 knitr::include_graphics("img/integer-types-02.png", dpi = 100)
 ```
 
-If this diagram looks ugly and unhelpful, well... yeah, I agree. Translations become messy when the boxes in one language don't quite match up to the content expressed in another. Sometimes it's just easier to see the system in action, so let's write a little helper function:
+
+Translations become messy when the boxes in one language don't quite match up to the content expressed in another. Sometimes it's just easier to see the system in action, so let's write a little helper function:
 
 ```{r}
 translate_integer <- function(value, type) {
-  value_arrow <- scalar(value, type)
-  value_r <- value_arrow$as_vector()
-  return(c(
-    arrow = value_arrow$type$name,
-    r = class(value_r)
-  ))
+  fn <- function(value, type) {
+    tibble(
+      value = value,
+      arrow_type = scalar(value, type)$type$name,
+      r_class = class(scalar(value, type)$as_vector())
+    )
+  }
+  purrr::map2_dfr(value, type, fn)
 }
 ```
 
-The `translate_integer()` function takes an integer `value` and an `type` as input, and it returns a vector that tells you what Arrow type was created (this should be identical to `type`), and what R class gets returned when we import that Arrow object back into R. 
-
-To illustrate, let's encode the number 10 as an unsigned 8-bit integer in Arrow and then see what happens when that gets pulled back into R. This is an easy case because uint8 always maps back to integer:
+The `translate_integer()` function takes a `value` vector and a `type` list as input, and it returns a tibble that tells you what Arrow type was created from each input, and what R class gets returned when we import that Arrow object back into R. I'll pass the inputs in as doubles originally, but as you'll see they always get imported to Arrow as integers because that's what I'm telling **arrow** to do. So let's start with an easy case. The number 10 is unproblematic because it's very small, and **arrow** never encounters any problem trying to pull it back as an R integer:
 
 ```{r}
-translate_integer(value = 10, type = uint8())
+translate_integer(
+  value = c(10, 10, 10, 10), 
+  type = list(uint8(), uint32(), uint64(), int64())
+)
 ```
 
-Next, let's see how **arrow** handles the three types that are a little awkward for R to represent as integers. First, let's see what happens when all the values are small enough that R actually *can* represent them as integers:
+Okay, that makes sense. If the numbers *can* be represented using the R integer class then that's what **arrow** will do. Why make life unnecessarily difficult for the user?
+
+Now let's increase the number to a value that is too big to store as a signed 32-bit integer. This is a value that R cannot represent as an integer, but Arrow can store as a uint32, uint64 or int64. What happens when we try to pull that object back into R?
 
 ```{r}
-translate_integer(value = 10, type = uint32())
-translate_integer(value = 10, type = uint64())
-translate_integer(value = 10, type = int64())
+translate_integer(
+  value = c(3000000000, 3000000000, 3000000000), 
+  type = list(uint32(), uint64(), int64())
+)
 ```
 
-Okay, that makes sense. If the numbers *can* be represented using the R integer class then that's what **arrow** will do. 
-
-Now let's increase the number to something that R cannot represent as an integer, and see what happens:
-
-```{r}
-translate_integer(value = 3000000000, type = uint32())
-translate_integer(value = 3000000000, type = uint64())
-translate_integer(value = 3000000000, type = int64())
-```
-
-The last result might be a little surprising to many R users. The integer64 class is supplied by the **bit64** package, and provides an R class that behaves like 64-bit integers in R. 
-
-Just to complicate matters, there's a special option for uint64 that you can use to force **arrow** to always return integer64:
+The first two rows seem intuitive. In base R, whenever an integer overflows and becomes to large to store, R will coerce it to a double. This is exactly the same behaviour we'd observe if the data had never left R at all. The third row, however, might come as a bit of a surprise. It certainly surprised me the first time I encountered it. Until very recently I did not know that R even *had* an integer64 class. This class is supplied by the **bit64** package, and although I'm not going to talk about it in any detail here, it provides a mechanism to represent signed 64-bit integers in R. However, the one thing I will mention is the fact that the existence of the integer64 class opens up the possibility of forcing **arrow** to always map the integer64 class to the int64 type and vice versa. If you set
 
 ```{r}
 options(arrow.int64_downcast = FALSE)
-translate_integer(value = 10, type = int64())
 ```
 
-Anyway. That's the whole story. Just need to make it coherent!
+it will change the **arrow** default so that int64 types are always returned as integer64 classes, even when the values are small enough that the data could have been mapped to a regular R integer. This can be helpful in situations where you need to guarantee type stability when working with int64 data. Now that I've altered the global options, I can repeat my earlier command with the number 10.
 
-Before moving on, allow me to clean up state:
+```{r}
+translate_integer(
+  value = c(10, 10, 10, 10), 
+  type = list(uint8(), uint32(), uint64(), int64())
+)
+```
+
+Notice that the results change for the int64 type only. The "int64_downcast" option pertains only to the int64 type, and does not affect the other integer types. 
+
+And that's it for integers. Next up we'll talk about numeric types, but first I'll be a good girl and restore my options to their previous state:
 
 ```{r}
 options(arrow.int64_downcast = NULL)
 ```
-
 
 
 ## Numeric types

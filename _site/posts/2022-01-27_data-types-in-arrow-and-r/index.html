@@ -2919,95 +2919,91 @@ Figure 4: Default mappings for some integer types
 </div>
 <p>These are the cases where it is easy.</p>
 <h3 id="when-integer-translation-is-hard">When integer translation is hard</h3>
-<p>Other integer types are messier. To keep things nice and simple, what we’d <em>like</em> to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that’s possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that’s what <strong>arrow</strong> does by default. However, if there are values that “overflow” this range, then <strong>arrow</strong> will import the data as a different type, as shown below:</p>
+<p>Other integer types are messier. To keep things nice and simple, what we’d <em>like</em> to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that’s possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that’s what <strong>arrow</strong> does by default. However, if there are values that “overflow” this range, then <strong>arrow</strong> will import the data as a different type. That leads to a rather messy diagram, I’m afraid:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
-<img src="img/integer-types-02.png" alt="Default mappings for other integer types" width="960" />
+<img src="img/integer-types-02.png" alt="Default mappings for other integer types. The asterisk notation here is intended to indicate that the path **arrow** follows can depend on the data values and other settings." width="960" />
 <p class="caption">
-Figure 5: Default mappings for other integer types
+Figure 5: Default mappings for other integer types. The asterisk notation here is intended to indicate that the path <strong>arrow</strong> follows can depend on the data values and other settings.
 </p>
 </div>
 </div>
-<p>If this diagram looks ugly and unhelpful, well… yeah, I agree. Translations become messy when the boxes in one language don’t quite match up to the content expressed in another. Sometimes it’s just easier to see the system in action, so let’s write a little helper function:</p>
+<p>Translations become messy when the boxes in one language don’t quite match up to the content expressed in another. Sometimes it’s just easier to see the system in action, so let’s write a little helper function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>translate_integer</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>value_arrow</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span>
-  <span class='va'>value_r</span> <span class='op'>&lt;-</span> <span class='va'>value_arrow</span><span class='op'>$</span><span class='fu'>as_vector</span><span class='op'>(</span><span class='op'>)</span>
-  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>
-    arrow <span class='op'>=</span> <span class='va'>value_arrow</span><span class='op'>$</span><span class='va'>type</span><span class='op'>$</span><span class='va'>name</span>,
-    r <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='va'>value_r</span><span class='op'>)</span>
-  <span class='op'>)</span><span class='op'>)</span>
+  <span class='va'>fn</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='fu'><a href='https://tibble.tidyverse.org/reference/tibble.html'>tibble</a></span><span class='op'>(</span>
+      value <span class='op'>=</span> <span class='va'>value</span>,
+      arrow_type <span class='op'>=</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span><span class='op'>$</span><span class='va'>type</span><span class='op'>$</span><span class='va'>name</span>,
+      r_class <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span><span class='op'>(</span><span class='fu'>scalar</span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span><span class='op'>)</span><span class='op'>$</span><span class='fu'>as_vector</span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+    <span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='fu'>purrr</span><span class='fu'>::</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map2.html'>map2_dfr</a></span><span class='op'>(</span><span class='va'>value</span>, <span class='va'>type</span>, <span class='va'>fn</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
 </div>
 </div>
-<p>The <code>translate_integer()</code> function takes an integer <code>value</code> and an <code>type</code> as input, and it returns a vector that tells you what Arrow type was created (this should be identical to <code>type</code>), and what R class gets returned when we import that Arrow object back into R.</p>
-<p>To illustrate, let’s encode the number 10 as an unsigned 8-bit integer in Arrow and then see what happens when that gets pulled back into R. This is an easy case because uint8 always maps back to integer:</p>
+<p>The <code>translate_integer()</code> function takes a <code>value</code> vector and a <code>type</code> list as input, and it returns a tibble that tells you what Arrow type was created from each input, and what R class gets returned when we import that Arrow object back into R. I’ll pass the inputs in as doubles originally, but as you’ll see they always get imported to Arrow as integers because that’s what I’m telling <strong>arrow</strong> to do. So let’s start with an easy case. The number 10 is unproblematic because it’s very small, and <strong>arrow</strong> never encounters any problem trying to pull it back as an R integer:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint8</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>
+  value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>10</span><span class='op'>)</span>, 
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint8</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>    arrow         r 
-  &quot;uint8&quot; &quot;integer&quot; </code></pre>
+<pre><code># A tibble: 4 × 3
+  value arrow_type r_class
+  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;  
+1    10 uint8      integer
+2    10 uint32     integer
+3    10 uint64     integer
+4    10 int64      integer</code></pre>
 </div>
-<p>Next, let’s see how <strong>arrow</strong> handles the three types that are a little awkward for R to represent as integers. First, let’s see what happens when all the values are small enough that R actually <em>can</em> represent them as integers:</p>
+<p>Okay, that makes sense. If the numbers <em>can</em> be represented using the R integer class then that’s what <strong>arrow</strong> will do. Why make life unnecessarily difficult for the user?</p>
+<p>Now let’s increase the number to a value that is too big to store as a signed 32-bit integer. This is a value that R cannot represent as an integer, but Arrow can store as a uint32, uint64 or int64. What happens when we try to pull that object back into R?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>
+  value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3000000000</span>, <span class='fl'>3000000000</span>, <span class='fl'>3000000000</span><span class='op'>)</span>, 
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>    arrow         r 
- &quot;uint32&quot; &quot;integer&quot; </code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
+<pre><code># A tibble: 3 × 3
+       value arrow_type r_class  
+       &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;    
+1 3000000000 uint32     numeric  
+2 3000000000 uint64     numeric  
+3 3000000000 int64      integer64</code></pre>
 </div>
-<pre><code>    arrow         r 
- &quot;uint64&quot; &quot;integer&quot; </code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>    arrow         r 
-  &quot;int64&quot; &quot;integer&quot; </code></pre>
-</div>
-<p>Okay, that makes sense. If the numbers <em>can</em> be represented using the R integer class then that’s what <strong>arrow</strong> will do.</p>
-<p>Now let’s increase the number to something that R cannot represent as an integer, and see what happens:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>    arrow         r 
- &quot;uint32&quot; &quot;numeric&quot; </code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>    arrow         r 
- &quot;uint64&quot; &quot;numeric&quot; </code></pre>
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>3000000000</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>      arrow           r 
-    &quot;int64&quot; &quot;integer64&quot; </code></pre>
-</div>
-<p>The last result might be a little surprising to many R users. The integer64 class is supplied by the <strong>bit64</strong> package, and provides an R class that behaves like 64-bit integers in R.</p>
-<p>Just to complicate matters, there’s a special option for uint64 that you can use to force <strong>arrow</strong> to always return integer64:</p>
+<p>The first two rows seem intuitive. In base R, whenever an integer overflows and becomes to large to store, R will coerce it to a double. This is exactly the same behaviour we’d observe if the data had never left R at all. The third row, however, might come as a bit of a surprise. It certainly surprised me the first time I encountered it. Until very recently I did not know that R even <em>had</em> an integer64 class. This class is supplied by the <strong>bit64</strong> package, and although I’m not going to talk about it in any detail here, it provides a mechanism to represent signed 64-bit integers in R. However, the one thing I will mention is the fact that the existence of the integer64 class opens up the possibility of forcing <strong>arrow</strong> to always map the integer64 class to the int64 type and vice versa. If you set</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>arrow.int64_downcast <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-<span class='fu'>translate_integer</span><span class='op'>(</span>value <span class='op'>=</span> <span class='fl'>10</span>, type <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>      arrow           r 
-    &quot;int64&quot; &quot;integer64&quot; </code></pre>
 </div>
-<p>Anyway. That’s the whole story. Just need to make it coherent!</p>
-<p>Before moving on, allow me to clean up state:</p>
+<p>it will change the <strong>arrow</strong> default so that int64 types are always returned as integer64 classes, even when the values are small enough that the data could have been mapped to a regular R integer. This can be helpful in situations where you need to guarantee type stability when working with int64 data. Now that I’ve altered the global options, I can repeat my earlier command with the number 10.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>translate_integer</span><span class='op'>(</span>
+  value <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>10</span>, <span class='fl'>10</span><span class='op'>)</span>, 
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint8</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint32</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>uint64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int64</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 4 × 3
+  value arrow_type r_class  
+  &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;    
+1    10 uint8      integer  
+2    10 uint32     integer  
+3    10 uint64     integer  
+4    10 int64      integer64</code></pre>
+</div>
+<p>Notice that the results change for the int64 type only. The “int64_downcast” option pertains only to the int64 type, and does not affect the other integer types.</p>
+<p>And that’s it for integers. Next up we’ll talk about numeric types, but first I’ll be a good girl and restore my options to their previous state:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span><span class='op'>(</span>arrow.int64_downcast <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>
@@ -3416,7 +3412,7 @@ Figure 10: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 12:43:52 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 13:38:19 AEDT&quot;</code></pre>
 </div>
 <p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3424,7 +3420,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646358232</code></pre>
+<pre><code>[1] 1646361499</code></pre>
 </div>
 <p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time. However, it doesn’t necessarily have to be this way: a POSIXct object is permitted to have a “tzone” attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt.</p>
 <p>Nevertheless, when I created the <code>now</code> object by calling <code>Sys.time()</code>, no timezone information was stored in the object. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
@@ -3433,7 +3429,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 02:43:52 CET&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 03:38:19 CET&quot;</code></pre>
 </div>
 <p>If you want to record the timezone as part of your POSIXct object rather than relying on the print method to do the work, you can do so by setting the <code>tzone</code> attribute. To illustrate this, let’s pretend I’m in Tokyo:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3442,7 +3438,7 @@ Figure 10: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 10:43:52 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 11:38:19 JST&quot;</code></pre>
 </div>
 <p>The important thing here is that the timezone is metadata used to change the how the time is displayed. Changing the timezone does not alter the number of seconds stored in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3450,7 +3446,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646358232
+<pre><code>[1] 1646361499
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -3462,7 +3458,7 @@ attr(,&quot;tzone&quot;)
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 10:43:52 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 11:38:19 JST&quot;</code></pre>
 </div>
 <p>It <em>looks</em> the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3471,13 +3467,13 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>$sec
-[1] 52.45098
+[1] 19.06373
 
 $min
-[1] 43
+[1] 38
 
 $hour
-[1] 10
+[1] 11
 
 $mday
 [1] 4
@@ -3567,7 +3563,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-1646358232450</code></pre>
+1646361499063</code></pre>
 </div>
 <p>This isn’t a count of the number of days since the unix epoch, it’s a count of the number of milliseconds. It is essentially the same number, divided by 1000, as the one we obtained when I typed <code>unclass(now)</code>. However, there’s a puzzle here that we need to solve. Let’s take another look at <code>unclass(now)</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3575,7 +3571,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646358232
+<pre><code>[1] 1646361499
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -3586,7 +3582,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span><span class='op'>$</span><span class='va'>sec</span>
 </code></pre>
 </div>
-<pre><code>[1] 52.45098</code></pre>
+<pre><code>[1] 19.06373</code></pre>
 </div>
 <p>Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in <code>now_date64</code>. The data was there all along. Even though <code>unclass(now)</code> produces an output that has been rounded to the nearest second, the original <code>now</code> variable is indeed a double, and it <em>does</em> store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times.</p>
 <p>Because of this, the default behaviour in <strong>arrow</strong> is to convert date64 types (64-bit integers interpreted as counts of milliseconds) to POSIXct classes (which are secretly 32-bit doubles interpreted as counts of seconds).</p>
@@ -3600,9 +3596,9 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-04 01:43:52.450975
+2022-03-04 02:38:19.063730
 Scalar
-2022-03-04 01:43:52.450975</code></pre>
+2022-03-04 02:38:19.063730</code></pre>
 </div>
 <p>Alternatively, we could use seconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3611,7 +3607,7 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-04 01:43:52</code></pre>
+2022-03-04 02:38:19</code></pre>
 </div>
 <p>It’s important to recognise that changing the unit does more than change the precision at which the timestamp is printed. It changes “the thing that is counted”, so the numbers that get stored in the timestamp are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3621,9 +3617,9 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-1646358232
+1646361499
 Scalar
-1646358232450975232</code></pre>
+1646361499063730432</code></pre>
 </div>
 <p>Okay, what about timezone. Recall that <code>now</code> has a timezone attached to it, because I explicitly recorded the <code>tzone</code> attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3631,7 +3627,7 @@ Scalar
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 10:43:52 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 11:38:19 JST&quot;</code></pre>
 </div>
 <p>When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn’t do that: the time <em>as displayed</em> is shown in UTC. However, that doesn’t mean that the metadata isn’t there:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3652,7 +3648,7 @@ timestamp[us, tz=Asia/Tokyo]</code></pre>
 <span class='va'>new_now</span>               <span class='co'># ... but appears to!</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 12:43:52 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 13:38:19 AEDT&quot;</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># an Arrow timestamp with no timezone</span>
 <span class='va'>new_now_timestamp</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>new_now</span><span class='op'>)</span>
@@ -3671,7 +3667,7 @@ timestamp[us]</code></pre>
 </code></pre>
 </div>
 <pre><code>StructScalar
-{sec:double = 52.45097517967224, min:int32 = 43, hour:int32 = 10, mday:int32 = 4, mon:int32 = 2, year:int32 = 122, wday:int32 = 5, yday:int32 = 62, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
+{sec:double = 19.063730478286743, min:int32 = 38, hour:int32 = 11, mday:int32 = 4, mon:int32 = 2, year:int32 = 122, wday:int32 = 5, yday:int32 = 62, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
 </div>
 <p>The struct object contains named fields that are identical to their POSIXlt equivalents, and whose types have been translated according to the default mappings: <code>sec</code> is a double, <code>min</code> is an int32, <code>hour</code> is an int32, <code>zone</code> is a string, and so on.</p>
 <p>This arrangement, where POSIXct maps to timestamp and POSIXlt maps to struct, makes perfect sense when you think about the underlying data structures that POSIXct and POSIXlt encode. Where things can be tricky for the R user is in the “mental account keeping”. In order to be helpful, R displays POSIXct and POSIXlt objects in exactly the same way:</p>
@@ -3681,8 +3677,8 @@ timestamp[us]</code></pre>
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 10:43:52 JST&quot;
-[1] &quot;2022-03-04 10:43:52 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 11:38:19 JST&quot;
+[1] &quot;2022-03-04 11:38:19 JST&quot;</code></pre>
 </div>
 <p>Not only that, because POSIXct and POSIXlt are both subclasses of the POSIXt class, R allows you to perform temporal arithmetic on objects of different types:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3712,7 +3708,7 @@ Figure 11: Default mappings for duration types
 <span class='va'>rmd_time</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 0.2726099 secs</code></pre>
+<pre><code>Time difference of 0.2749767 secs</code></pre>
 </div>
 <p>Now let’s take a look at how it’s actually stored:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3720,7 +3716,7 @@ Figure 11: Default mappings for duration types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.2726099
+<pre><code>[1] 0.2749767
 attr(,&quot;units&quot;)
 [1] &quot;secs&quot;</code></pre>
 </div>
@@ -3732,7 +3728,7 @@ attr(,&quot;units&quot;)
 <span class='va'>hedy_age</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 39196.3 days</code></pre>
+<pre><code>Time difference of 39196.34 days</code></pre>
 </div>
 <p>I would learn that it has been 39196 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn16" class="footnote-ref" id="fnref16" role="doc-noteref"><sup>16</sup></a> More to the point, R has guessed that the length of time is sufficiently long that seconds aren’t the appropriate encoding unit:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3740,7 +3736,7 @@ attr(,&quot;units&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>hedy_age</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 39196.3
+<pre><code>[1] 39196.34
 attr(,&quot;units&quot;)
 [1] &quot;days&quot;</code></pre>
 </div>
@@ -3769,7 +3765,7 @@ duration[s]</code></pre>
 </code></pre>
 </div>
 <pre><code>Scalar
-272609</code></pre>
+274976</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rmd_time_arrow</span><span class='op'>$</span><span class='va'>type</span>
 </code></pre>
@@ -3905,7 +3901,7 @@ Figure 15: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-04 12:43:53 AEDT</p>
+<p>2022-03-04 13:38:19 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -3913,7 +3909,7 @@ Figure 15: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
