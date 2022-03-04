@@ -63,6 +63,8 @@ source("unpack_double.R")
 > &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
 
 
+## Regarding magic
+
 Consider this piece of magic
 
 ```{r}
@@ -1173,6 +1175,9 @@ As with any story told by humans, this one is incomplete. When I started writing
 - I haven't talked about factors at all, and frankly I probably should have. My only excuse is exhaustion. The post was getting very long and I ran out of energy. The analog of factors in Arrow is the "dictionary" type. They're not exact mirrors of each other so it's worth reading the documentation, but it's close enough that factors are mapped to dictionaries and vice versa. 
 
 - R and Arrow both allow more complicated data structures to be included as columns within a data frame (or table). For example, in R each element of a column can itself be a data frame. In such cases, the default in **arrow** is to map each R data frame onto an Arrow struct. Again, this is one where it's worth reading the documentation, because there are some subtleties with how things like list columns are handled. 
+
+## The magic goes away
+
 
 <!--
 - https://arrow.apache.org/docs/r/articles/arrow.html
