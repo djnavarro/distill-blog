@@ -151,11 +151,41 @@ Now, it's pretty unlikely that any human language would produce a classification
 
 Universal languages are a myth. 
 
-## Translating data types
+## Translating machine objects
 
-Ontologies in natural languages are more complicated things than their equivalents in a programming language, but nevertheless the same principles hold. Every language comes with a collection of data structures, rules, and assumptions about how things "are supposed to work". Just like human languages, machine languages carve the world up into boxes, and those boxes don't always match up with one another. Some concepts just don't translate properly.^[To all the would be enthusiasts: I am begging you, please *do not* attempt to come at me with a "Turing-completeness" style gotcha, as if I were a first year undergraduate who just encountered algorithmic information theory for the first time. Do not. This post is not the place for a long discussion, so I will very quietly mention that the finite-length prefix required to specify the translation between languages is an $O(1)$ term (if I recall correctly), and when you leave the textbooks and encounter the world, $O(1)$ terms can be very, very big. Let it rest. Seriously. Writing a real world transpiler turns out to be actually quite tricky. Sheesh.]
+Ontologies in natural languages are more complicated things than their equivalents in a programming language, but nevertheless the same principles hold. Every language comes with a collection of data structures, rules, and assumptions about how things "are supposed to work". Just like human languages, machine languages carve the world up into boxes, and those boxes don't always match up with one another. Some concepts just don't translate properly.^[To all the would be enthusiasts considering: I am begging you, please *do not* attempt to come at me with a "Turing-completeness" style gotcha, as if I were a first year undergraduate who just encountered algorithmic information theory for the first time. Do not. This post is not the place for a long discussion, so I will very quietly mention that the finite-length prefix required to specify the translation between languages is an $O(1)$ term (if I recall correctly), and when you leave the textbooks and encounter the world, $O(1)$ terms can be very, very big. Let it rest. Seriously. Writing a real world transpiler turns out to be actually quite tricky. Sheesh.]
 
-So how do we construct data structures in Arrow that are appropriate translations of data structures in R, and vice versa? For the moment, let's keep things simple and assume that the mapping we're interested in has the same format as the one described at the start of the post: in R we want to encode the data as a data frame, and in Arrow we want to encode it as a Table. If so, the translation question is really a matter of how we encode the columns.
+So how do we construct data structures in Arrow that are appropriate translations of data structures in R, and vice versa? For the moment, let's keep things simple and assume that the mapping we're interested in has the same format as the one described at the start of the post: in R we want to encode the data as a data frame, and in Arrow we want to encode it as a Table. If so, the translation question is "simply"^[You know that something awful is coming right? I mean, the moment the author says it is "simply" a matter of doing blah blah blah in the first act, it always means there will be at least one open hellmouth spawning eldritch horrors left and right sometime around the second act.] a matter of how we encode the columns.
+
+Well... sort of.
+
+I mean, before we even get to that part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. Specifically, C++ and R take different approaches to object oriented programming (OOP).
+
+The approach taken in C++ is [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. In contrast, the approach taken in R is to have lots of different OOP systems that all work differently.^[This "let a thousand OOP systems bloom" philosophy has made me cry many times.] The most common one is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. However there are also encapsulated OOP systems like [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
+
+The **arrow** package uses both S3 and R6, but it uses them for quite different things. Whenever **arrow** does something in an "R-native" way, S3 methods get used a lot. For example, in my earlier post on [dplyr bindings for Arrow](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/) I talked about how **arrow** supplies a **dplyr** engine: this works in part by supplying S3 methods for various **dplyr** functions that are called whenever a suitable Arrow object gets passed to **dplyr**. The interface between **arrow** and **dplyr** uses S3 because this context is "R-like". 
+
+However, **arrow** has a second task, which is to interact with the Arrow C++ library, in which all the data structures are objects that use... encapsulated OOP. So... when **arrow** has to interact with Arrow, it's useful to be as "C++ like" as possible. That means using encapsulated OOP, and that in turn means that the interface between **arrow** and Arrow is accomplished using R6. 
+
+What does that mean, in practice?
+
+Well, among other things, it means that a lot of the "normal" R functions that **arrow** supplies are actually wrappers around an R6 method. To make it concrete, let's think about the `arrow_table()` function. At the start of the post I used this function to translate an R data frame into an Arrow Table, like this:
+
+```{r, results='hide'}
+arrow_table(magicians)
+```
+
+This is a natural way of thinking about things in R, but the `arrow_table()` function doesn't actually do the work. Instead, there is an R6 object called `Table`. I could have done the same thing like this:
+
+```{r, results='hide'}
+Table$create(magicians)
+```
+
+It's literally the same thing. And when I used the `schema()` function to create a schema? Well, there's an R6 object called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. There are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these corresponds to a data structure in Arrow, and these R6 objects are the primary points of contact between R and Arrow. I will only talk about a few of these in this post because -- as you'll see -- the post gets very long even when I restrict myself to a few of them.
+
+Interacting with R6 objects is something that took me a while to get the hang of, and it's not something that feels "native" to most R programmers because we're used to functional OOP rather than encapsulated OOP. So to make your life easier, the **arrow** developers often provide handy wrapper functions that have names suspiciously similar to the R6 objects. You can use `chunked_array()` to call `ChunkedArray$create`, `schema()` to call `Schema$create()`, and `arrow_table()` to call `Table$create()`.^[In general R6 classes use [UpperCamelCase](https://en.wikipedia.org/wiki/Camel_case), and the [snake_case](https://en.wikipedia.org/wiki/Snake_case) functions with the same name provide an interface to the R6 class that feels more familiar to an R user. The `arrow_table()` function breaks the convention, but that's only because `table()` is already a base R function that does something very different.] However, there won't always be a wrapper function to solve your particular problem, so you'll often find yourself needing to use R6 methods. As the post goes on, you'll see me doing that from time to time. 
+
+Right. Enough of that. Time to move on...
 
 In the rest of this post I'll use a lot of diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), as shown below:
 
@@ -208,7 +238,7 @@ values <- c(TRUE, FALSE, NA)
 chunked_array(values)
 ```
 
-In fact, I could have done this in an even more primitive way and passed a scalar value to Arrow. That's not something you usually find yourself needing to do, so the **arrow** package doesn't have an equivalent of `chunked_array()` that applies to scalars. However, most of the heavy lifting for `chunked_array()` is actually being done by the R6 object `ChunkedArray`.^[In general R6 classes use [UpperCamelCase](https://en.wikipedia.org/wiki/Camel_case), and the [snake_case](https://en.wikipedia.org/wiki/Snake_case) functions with the same name provide an interface to the R6 class that feels more familiar to an R user.] There is a `Scalar` R6 object that we can use to import scalars:
+In fact, I could have done this in an even more primitive way and passed a scalar value to Arrow. That's not something you usually find yourself needing to do, so the **arrow** package doesn't have an equivalent of `chunked_array()` that applies to scalars. However, most of the heavy lifting for `chunked_array()` is actually being done by the R6 object `ChunkedArray`. There is a `Scalar` R6 object that we can use to import scalars:
 
 ```{r}
 Scalar$create(TRUE, type = boolean())
