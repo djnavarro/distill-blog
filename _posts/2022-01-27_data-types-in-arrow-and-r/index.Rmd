@@ -719,22 +719,30 @@ Sheesh. That was long. Let's give ourselves a small round of applause for surviv
 ```{r}
 jung_talent_arrow <- chunked_array(jung_talent)
 jung_talent_arrow
+```
+
+That certainly looks like text to me! Let's take a look at the data type:
+
+```{r}
 jung_talent_arrow$type
 ```
 
+Yep. Definitely text! 
+
 ### [Arrow] The large_utf8 type
 
-Okay, so as I mentioned, Arrow has two different string types.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for the underlying C++ library you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".]
+Okay, so as I mentioned, Arrow has two different string types: utf8 and large_utf8.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for the underlying C++ library you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".] The default in **arrow** is to translate character data in R to the utf8 data type in Arrow, but we can override this if we want to. In order to help you make an informed choice, I'll dig a little deeper into the difference between the two types.
 
-okay, so why do I care? well, if you're using 32-bit integers to encode the offset, that imposes a limit on the total number of characters that can be included. The total size of the string array is capped at 2GiB because you don't have a way of referring to positions in the string larger than that. if you use 64-bit integers to encode the offset, that limit goes away (I mean technically there is a limit of course because 64-bit is still finite precision but it's *quite* a lot bigger). 
+The first thing to recognise is that the nature of the data buffer is the same for utf8 and large_utf8: the difference between the two lies in how the offset buffers are encoded. When character data are encoded as utf8 type, every offset value is stored as an unsigned 32-bit integer. That means that -- as shown in the table of integer types earlier in the post -- you cannot store an offset value larger than 4294967295. This constrain places a practical cap on the total length of the data buffer: if total amount of text stored in the data buffer is greater than about 2GiB, the offset buffer can't encode the locations within it! Switching to large_utf8 means that the offset buffer will store every offset value as an unsigned 64-bit integer. This means that the offset buffer now takes up twice as much space, but it allows you to encode offset values up to... um... 18446744073709551615. And if you've got enough text in your data buffer that you're going to exceed that limit, well, frankly you have bigger problems. 
 
+In short, if you're not going to exceed 2GiB of text in your array, you don't need large_utf8. Once you start getting near that limit, you might want to think about switching:
 
 ```{r}
 jung_talent_arrow_big <- chunked_array(jung_talent, type = large_utf8())
-jung_talent_arrow_big
 jung_talent_arrow_big$type
 ```
 
+Before moving on, I'll mention one additional complexity. This is a situation where the distinction between arrays and chunked arrays begins to matter. Strictly speaking, I lied earlier when I said there's only one data buffer. A more precise statement would be to say that there is one data buffer per *chunk*. Chunked arrays are designed to allow a block (or "chunk") of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that^[No I am not going to talk about them in this post I am not *that* much of a masochist. You will have to wait for a later post!], but they aren't immediately relevant. What matters is to recognise that in a chunked array, the 2GiB limit on utf8 type data applies on a per-chunk basis.  
 
 ## Date/time types
 
@@ -754,8 +762,6 @@ Despite agreeing on fundamentals, there are some oddities in the particulars. Ba
 #| fig.cap = "Default mappings for date/time types"
 knitr::include_graphics("img/date-types.png", dpi = 100)
 ```
-
-
 
 
 ### [R] The Date class
