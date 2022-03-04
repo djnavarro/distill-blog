@@ -519,7 +519,7 @@ This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are *not* rea
 
 ### [R] The numeric class
 
-To give you a better feel for what a double looks like when represented as a set of bits, I've written a little extractor function called `unpack_double()` that decomposes the object into its constituent bits and prints it out in a visually helpful way (ADD LINK TO SOURCE). In truth, it's just a wrapper around the `numTobits()` function provided by base R, but one that gives slighly prettier output. Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
+To give you a better feel for what a double looks like when represented as a set of bits, I've written a little extractor function called `unpack_double()` that decomposes the object into its constituent bits and prints it out in a visually helpful way ([source code here](https://github.com/djnavarro/distill-blog/blob/master/_posts/2022-03-04_data-types-in-arrow-and-r/unpack_double.R)). In truth, it's just a wrapper around the `numTobits()` function provided by base R, but one that gives slighly prettier output. Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
 
 ```{r}
 unpack_double(0)
