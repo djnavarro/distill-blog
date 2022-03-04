@@ -1,8 +1,14 @@
 ---
-title: "Data types in Arrow and R" # <---- UPDATE ME
+title: "Data types in Arrow and R" 
 description:
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit # <---- UPDATE ME
+  A post describing fundamental data types in R and 
+  Apache Arrow, and how data is exchanged between the two systems.
+  It covers conversion of logicals, integers, floats, decimals, 
+  strings, date, and times, among other things. It talks about 
+  higher level structures like tables, data frames, and so on
+  For reasons that now escape me, esoteric authors are quoted, and 
+  I try to bribe the audience into reading the whole thing by 
+  adding artwork. This post is, um... long  
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
@@ -733,7 +739,7 @@ Yep. Definitely text!
 
 Okay, so as I mentioned, Arrow has two different string types: utf8 and large_utf8.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for the underlying C++ library you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".] The default in **arrow** is to translate character data in R to the utf8 data type in Arrow, but we can override this if we want to. In order to help you make an informed choice, I'll dig a little deeper into the difference between the two types.
 
-The first thing to recognise is that the nature of the data buffer is the same for utf8 and large_utf8: the difference between the two lies in how the offset buffers are encoded. When character data are encoded as utf8 type, every offset value is stored as an unsigned 32-bit integer. That means that -- as shown in the table of integer types earlier in the post -- you cannot store an offset value larger than 4294967295. This constrain places a practical cap on the total length of the data buffer: if total amount of text stored in the data buffer is greater than about 2GiB, the offset buffer can't encode the locations within it! Switching to large_utf8 means that the offset buffer will store every offset value as an unsigned 64-bit integer. This means that the offset buffer now takes up twice as much space, but it allows you to encode offset values up to... um... 18446744073709551615. And if you've got enough text in your data buffer that you're going to exceed that limit, well, frankly you have bigger problems. 
+The first thing to recognise is that the nature of the data buffer is the same for utf8 and large_utf8: the difference between the two lies in how the offset buffers are encoded. When character data are encoded as utf8 type, every offset value is stored as an unsigned 32-bit integer. That means that -- as shown in the table of integer types earlier in the post -- you cannot store an offset value larger than 4294967295. This constrain places a practical cap on the total length of the data buffer: if total amount of text stored in the data buffer is greater than about 2GiB, the offset buffer can't encode the locations within it! Switching to large_utf8 means that the offset buffer will store every offset value as an unsigned 64-bit integer. This means that the offset buffer now takes up twice as much space, but it allows you to encode offset values up to... um... 18446744073709551615. And if you've got so much text that your data buffer is going to exceed that limit, well, frankly you have bigger problems. 
 
 In short, if you're not going to exceed 2GiB of text in your array, you don't need large_utf8. Once you start getting near that limit, you might want to think about switching:
 

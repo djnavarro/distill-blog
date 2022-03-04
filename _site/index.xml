@@ -11,7 +11,7 @@
       <title>Data types in Arrow and R</title>
       <dc:creator>Danielle Navarro</dc:creator>
       <link>https://blog.djnavarro.net/posts/2022-01-27_data-types-in-arrow-and-r</link>
-      <description>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</description>
+      <description>A post describing fundamental data types in R and Apache Arrow, and how data is exchanged between the two systems. It covers conversion of logicals, integers, floats, decimals, strings, date, and times, among other things. It talks about higher level structures like tables, data frames, and so on For reasons that now escape me, esoteric authors are quoted, and I try to bribe the audience into reading the whole thing by adding artwork. This post is, um... long</description>
       <guid>https://blog.djnavarro.net/posts/2022-01-27_data-types-in-arrow-and-r</guid>
       <pubDate>Thu, 27 Jan 2022 00:00:00 +0000</pubDate>
       <media:content url="https://blog.djnavarro.net/posts/2022-01-27_data-types-in-arrow-and-r/img/cover.jpg" medium="image" type="image/jpeg"/>
