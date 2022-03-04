@@ -44,7 +44,11 @@ tz <- .sys.timezone
 .sys.timezone <- "UTC"
 knitr::opts_chunk$set(echo = TRUE)
 refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+
+# load helper functions
+source("unpack_double.R")
 ```
+
 
 
 <!--------------- post ----------------->
@@ -372,56 +376,62 @@ Stepping away from the mathematics for a moment, most of us already know how pro
 0.1 + 0.2 == 0.3
 ```
 
-This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are *not* real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig into the IEEE standard, but it does help a lot to have a general sense of *how* a floating point number (approximately) encodes a real number. 
+This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are *not* real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig all the way into the IEEE standard, but it does help a lot to have a general sense of *how* a floating point number (approximately) encodes a real number, so in the next section I'm going to take a look under the hood of R doubles. I'll show you how they're represented as binary objects, and why they misbehave sometimes. I'm doing this for two reasons: firstly it's just a handy thing to know, but secondly, understanding the misbehaviour of the "standard" binary floating point number representation used in R helps motivate why Arrow and some other platforms expose a wider variety of options to the user.
 
 ### [R] The numeric class
 
-To that end, I'll quickly write a `unpack_double()` function that extracts the raw 64-bit binary representation of a numeric value in R, and a print method that will allow me to display the results in a (fairly) clean way: 
-
-```{r}
-unpack_double <- function(x) {
-  binary <- numToBits(x)    # little-endian binary representation
-  structure(
-    list(
-      sign = binary[64],        # 1-bit sign
-      exponent = binary[63:53], # 11-bit exponent
-      mantissa = binary[52:1]   # 52-bit mantissa
-    ),
-    class = "unpacked_double"
-  )
-}
-
-print.unpacked_double <- function(x, ...) {
-  sign <- as.character(as.integer(x$sign))
-  exponent <- paste(as.character(as.integer(x$exponent)), collapse = "")
-  mantissa <- paste(as.character(as.integer(x$mantissa)), collapse = "")
-  cat(sign, exponent, mantissa, "\n")
-}
-```  
-
-Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
+To give you a better feel for what a double looks like when represented as a set of bits, I've written a little extractor function called `unpack_double()` that decomposes the object into its constituent bits and prints it out in a visually helpful way (ADD LINK TO SOURCE). In truth, it's just a wrapper around the `numTobits()` function provided by base R, but one that gives slighly prettier output. Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
 
 ```{r}
 unpack_double(0)
 ```
 
-Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the *sign*: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an *exponent*: you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.]. The remaining 53 bits are used to represent a binary mantissa. 
+Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the *sign*: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an *exponent*: you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.] The remaining 53 bits are used to represent the *mantissa*. 
 
-To see this in action, let's see how `16` and `-8` are encoded. These are both whole numbers in binary, and they're both powers of two. One is positive and the other is negative, so you can see that the sign bit is different; and they're different powers of two so you can see that the exponent is different. But since they're both *exact* powers of 2 (in the same way that 10, 100, and 1000 are all exact powers of 10), there's nothing in the mantissa component at all:
+These three components carve up a real number by using this this decomposition:
 
-```{r, results='hold'}
-unpack_double(16)
-unpack_double(-8)
+$$
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
+$$
+Any real number can decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don't). But the neat thing is about using it is that we can describe very large numbers this way and very small numbers this way. As an example, let's take a look at the partial decimal expansion of `-9.832`, which I am told is the approximate rate of acceleration experienced by a falling object in the Earth's polar regions:
+
+```{r}
+polar_g <- unpack_double(-9.832)
+polar_g
 ```
 
-In a binary representation these are "round numbers". The same is true for numbers like `.25` and `.0625` which are exact *negative* powers of 2 (i.e. $2^{-2} = .25$ and $2^{-4} = .0625$). These are also round numbers in a binary encoding:
+I wrote some extractor functions that convert those binary components to the sign, exponent, and mantissa values that they represent, so let's take a look at those:
 
 ```{r, results='hold'}
-unpack_double(.25)
-unpack_double(.0625)
+extract_sign(polar_g)
+extract_exponent(polar_g)
+extract_mantissa(polar_g)
 ```
 
-Now look what happens when I try the numbers in the famous example:
+Notice that the sign is always represented exactly: it can only be -1 or 1. The exponent is also represented exactly, as long as it's not too large or too small: the number is always an integer value between -1022 and 1023. The mantissa, however, is a fractional value. When you encounter floating point errors it's generally going to be because the stored mantissa doesn't represent the true mantissa with sufficient precision.^[In fact, one of the shitty things about the reals (which are uncountably infinite) is that almost all reals have infinitely long mantissas. Even if you had a infinite number of digits to work with (a countably infinite set) you're still in trouble. Everything sucks, real numbers are almost surely uncomputable (yes that's an actual result), and I don't want to think about it any more and I need a lie down.] In any case, let's check that the formula works:
+
+```{r}
+sign <- extract_sign(polar_g)
+exponent <- extract_exponent(polar_g)
+mantissa <- extract_mantissa(polar_g)
+
+sign * mantissa * 2 ^ exponent
+```
+
+Yay!
+
+Just to prove to you that this isn't a fluke, I also included a `repack_double()` function automates this calculation. It takes the deconstructed representation of an R double and packs it up again, so `repack_double(unpack_double(x))` should return `x`. Here are a few examples: 
+
+```{r, results='hold'}
+sanity_check <- function(x) {
+  x == repack_double(unpack_double(x))
+}
+sanity_check(12)
+sanity_check(1345234623462342)
+sanity_check(0.000000002345345234523)
+```
+
+Now that we have some deeper knowledge of what doubles in R actually *are*, let's return to the numbers in the famous example of floating point numbers misbehaving:
 
 ```{r, results='hold'}
 unpack_double(.1)
@@ -429,38 +439,42 @@ unpack_double(.2)
 unpack_double(.3)
 ```
 
-Although these are clean numbers with a simple, finite *decimal* expansion, they are a lot messier in binary! Because of that, these numbers aren't represented exactly, and truncation errors occur. The errors are very small, but they exist:
+Although these are clean numbers with a very simple decimal expansion, they are not at all simple when written in a binary floating point representation. In particular, notice that `0.1` and `0.2` share the same mantissa but `0.3` has a different mantissa, and that's where the truncation errors occur. Let's take a peek at `0.6` and `0.9`:
+
+```{r, results='hold'}
+unpack_double(.6)
+unpack_double(.8)
+unpack_double(.9)
+```
+
+So it turns out that `0.6` has the same mantissa as `0.3`, and `0.8` has the same mantissa as `0.1` and `0.2`, but  `0.9` has a different mantissa from all of them. So what we might expect is that floating point errors can happen for these cases:
+
+```{r, results='hold'}
+0.1 + 0.2 == 0.3
+0.3 + 0.6 == 0.9
+```
+
+but not these ones:
+
+```{r, results='hold'}
+0.1 + 0.1 == 0.2
+0.3 + 0.3 == 0.6
+0.2 + 0.6 == 0.8
+```
+
+Okay that checks out! Now, it's important to recognise that these errors are very small. Floating point arithmetic doesn't *actually* work, but it's very close:
 
 ```{r}
 0.1 + 0.2 - 0.3
 ```
 
-Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one because they allow us to "cover" a very wide span of numbers across the real line, at a pretty high level of precision, without using too much memory. The trickery works by using this decomposition:
+Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one because they allow us to "cover" a very wide span of numbers across the real line, at a pretty high level of precision, without using too much memory. 
 
-$$
-(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
-$$
-
-Any real number can decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don't). But the neat thing is about using it is that we can describe very large numbers this way and very small numbers this way. And just to prove to you that there is no magic in this simulation, this function takes the deconstructed representation of an R double and packs it up again:
-
-```{r, results='hold'}
-repack_double <- function(x) {
-  s <- ifelse(as.integer(x$sign) == 0, 1, -1)
-  p <- sum(as.integer(x$exponent) * 2^(10:0)) - 2^10 + 1
-  v <- sum(as.integer(x$mantissa) * (2^(-1:(-52)))) + 1
-  s * v * 2 ^ p
-}
-
-repack_double(unpack_double(12))
-repack_double(unpack_double(1345234623462342))
-repack_double(unpack_double(0.000000002345345234523))
-```
-
-We pretend that machines can do arithmetic. They can't, but it's a surprisingly powerful lie. 
+We pretend that machines can do arithmetic on the reals. They can't, but it's a *very* powerful lie. 
 
 ### [Arrow] The float64 type
 
-Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story -- even the weird Baudrillard bit -- and it's time we switched back over to the Arrow side of things to think about what happens there.
+Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story and it's time we switched back over to the Arrow side of things to think about what happens there.
 
 By now you're probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.^[Some precision is needed here: in this post I am using the names that appear in the [documentation to the **arrow** R package](https://arrow.apache.org/docs/r/reference/data-type.html). I'm doing this because the intended audience is an R user who wants to use the **arrow** package to interact with Arrow. However, you should be aware that these types are given slightly different names in the [documentation to the Arrow C++ library](https://arrow.apache.org/docs/cpp/api/datatype.html) to which **arrow** provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.] The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.^[They are both little-endian too.] Because the data structures are so similar, the default behaviour in **arrow** is to translate an R double into an Arrow float64 and vice versa. 
 
@@ -515,24 +529,28 @@ Yay! It works!
 
 Earlier in this section I promised that the Baudrillard quote from *Simulacra and Simulation* was going to be relevant? Well, that time has arrived. It's also the moment at which the quote from *Word and Object* by Quine that opened this blog post becomes painfully relevant. Stripped of their fancy language, here's what the two authors are telling us in these passages:
 
-- The Baudrillard quote emphasises that floating point numbers are a *simulation*. They are the mechanism by which we pretend that we have access to real numbers on computers. We don't, but it's a lie that almost works.
-- The Quine quote emphasises that translation (and, I would argue, simulation also) is underdetermined. For any complicated thing there are many ways to simulate, or translate, or approximate it: all of them can be extremely good approximations, and they can *also* be inconsistent with one another. As it happens, this truism applies to floating point numbers too.
+- The Baudrillard quote emphasises that floating point numbers are a *simulation*. They are the mechanism by which we pretend to encode real numbers on computers. It's a lie, but it's a powerful lie that almost works.
+- The Quine quote emphasises that translation (and, I would argue, simulation also) is *underdetermined*. For any complicated thing there are many ways to simulate, or translate, or approximate it. These approximations can be extremely accurate and still be inconsistent with each other. 
 
-Remember when I was talking about floating point numbers and how they rely on a representation that looks like this:
+Quine's truism applies to floating point numbers, and it is the reason why we have "decimal floating point" numbers as well as "binary floating point" numbers. All floating point systems are simulations in the Baudrillard sense of the term: lies, strictly speaking, but close enough to true that the distinction between lies and truth gets a little blurry. 
 
-$$
-(\mbox{real number}) = (\mbox{sign}) \times (\mbox{significand}) \times 2 ^ {\mbox{(exponent)}}
-$$
-
-Why do we use 2 here? Programmers have a tendency to like using 2 as the base unit for everything because it lines up nicely with binary representations, and that's often a good instinct when dealing with machines. Unfortunately, it's an enormous problem for floating point arithmetic because *humans* write numbers in decimal notation (in the arabic number system anyway). Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a "simple" decimal number like 0.1 doesn't have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.
-
-The solution? Easy: Just use a floating point number system that uses 10 as the base:
+Let's see how that plays out with floating point numbers. When discussing doubles in R, I mentioned that they represent the real numbers using a decomposition that looks like this:
 
 $$
-(\mbox{real number}) = (\mbox{sign}) \times (\mbox{significand}) \times 10 ^ {\mbox{(exponent)}}
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
 $$
-This is the core idea behind [decimal floating point](https://en.wikipedia.org/wiki/Decimal_floating_point) numbers. 
 
+The number "2" pops out here, doesn't it? Is there any reason to think that "2" is a pre-ordained necessity when approximating the real numbers on a finite-precision machine? Programmers have a tendency to like using "2" as the base unit for everything because it lines up nicely with binary representations, and that's often a good instinct when dealing with machines.
+
+Unfortunately, life consists of more than machines.
+
+In particular, binary representations create problems for floating point arithmetic because the world contains *humans* who write numbers in decimal notation^[That's assuming we're writing numbers in Arabic number system. I suppose it would be different if our orthographic representations adopted the [Sumerian sexagesimal notation](http://www.mathematicsmagazine.com/Articles/TheSumerianMathematicalSystem.php). Admittedly, neither R nor Arrow existed at the time, so it's a moot point. All I'm really saying is that decimal systems are no less arbitrary than binary ones. The problem arises because of the mismatch, not because one encoding is inherently better than the other.]. Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a "simple" decimal number like 0.1 doesn't have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.
+
+A natural solution to this is to design floating point data types that use other bases. Arrow, like Python, includes  [decimal floating point](https://en.wikipedia.org/wiki/Decimal_floating_point) types that are essentially equivalent to the more familiar binary floating point numbers, but they rely on a base 10 decomposition:
+
+$$
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 10 ^ {\mbox{(exponent)}}
+$$
 Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. However, R doesn't have any analog of a decimal so I can't import an "R decimal object" to Arrow. However, what I can do is take the Arrow float64 objects I defined earlier and explicitly cast them to decimal format:
 
 ```{r}
@@ -736,7 +754,7 @@ It *looks* the same, but this is an illusion produced by the `print()` method. I
 unclass(now_lt)
 ```
 
-As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.^[A little counterintuitively, the value of `sec` ranges from 0 to 61, presumably because leap seconds are a thing. I am *not* going to torture myself with that one today.] The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time. 
+As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.^[A little counterintuitively, the value of `sec` ranges from 0 to 61, presumably because [leap seconds](https://en.wikipedia.org/wiki/Leap_second) are a thing. I am *not* going to torture myself with that one today.] The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time. 
 
 It is not a compact representation, and it's useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a "timestamp".
 

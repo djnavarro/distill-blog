@@ -2989,33 +2989,9 @@ Figure 5: Default mappings for other integer types
 </div>
 <pre><code>[1] FALSE</code></pre>
 </div>
-<p>This is not a bug in R. It happens because <code>0.1</code>, <code>0.2</code>, and <code>0.3</code> are <em>not</em> real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the <a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</a> standard. It’s a bit beyond the scope of this post to dig into the IEEE standard, but it does help a lot to have a general sense of <em>how</em> a floating point number (approximately) encodes a real number.</p>
+<p>This is not a bug in R. It happens because <code>0.1</code>, <code>0.2</code>, and <code>0.3</code> are <em>not</em> real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the <a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</a> standard. It’s a bit beyond the scope of this post to dig all the way into the IEEE standard, but it does help a lot to have a general sense of <em>how</em> a floating point number (approximately) encodes a real number, so in the next section I’m going to take a look under the hood of R doubles. I’ll show you how they’re represented as binary objects, and why they misbehave sometimes. I’m doing this for two reasons: firstly it’s just a handy thing to know, but secondly, understanding the misbehaviour of the “standard” binary floating point number representation used in R helps motivate why Arrow and some other platforms expose a wider variety of options to the user.</p>
 <h3 id="r-the-numeric-class">[R] The numeric class</h3>
-<p>To that end, I’ll quickly write a <code>unpack_double()</code> function that extracts the raw 64-bit binary representation of a numeric value in R, and a print method that will allow me to display the results in a (fairly) clean way:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>unpack_double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>binary</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rawConversion.html'>numToBits</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>    <span class='co'># little-endian binary representation</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span><span class='op'>(</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
-      sign <span class='op'>=</span> <span class='va'>binary</span><span class='op'>[</span><span class='fl'>64</span><span class='op'>]</span>,        <span class='co'># 1-bit sign</span>
-      exponent <span class='op'>=</span> <span class='va'>binary</span><span class='op'>[</span><span class='fl'>63</span><span class='op'>:</span><span class='fl'>53</span><span class='op'>]</span>, <span class='co'># 11-bit exponent</span>
-      mantissa <span class='op'>=</span> <span class='va'>binary</span><span class='op'>[</span><span class='fl'>52</span><span class='op'>:</span><span class='fl'>1</span><span class='op'>]</span>   <span class='co'># 52-bit mantissa</span>
-    <span class='op'>)</span>,
-    class <span class='op'>=</span> <span class='st'>"unpacked_double"</span>
-  <span class='op'>)</span>
-<span class='op'>}</span>
-
-<span class='va'>print.unpacked_double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>sign</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>sign</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='va'>exponent</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>exponent</span><span class='op'>)</span><span class='op'>)</span>, collapse <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
-  <span class='va'>mantissa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>mantissa</span><span class='op'>)</span><span class='op'>)</span>, collapse <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='va'>sign</span>, <span class='va'>exponent</span>, <span class='va'>mantissa</span>, <span class='st'>"\n"</span><span class='op'>)</span>
-<span class='op'>}</span>
-</code></pre>
-</div>
-</div>
-<p>Armed with this, let’s take a look at the format. To start out, I’ll do the most boring thing possible and show you the binary representation of <code>0</code> as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:</p>
+<p>To give you a better feel for what a double looks like when represented as a set of bits, I’ve written a little extractor function called <code>unpack_double()</code> that decomposes the object into its constituent bits and prints it out in a visually helpful way (ADD LINK TO SOURCE). In truth, it’s just a wrapper around the <code>numTobits()</code> function provided by base R, but one that gives slighly prettier output. Armed with this, let’s take a look at the format. To start out, I’ll do the most boring thing possible and show you the binary representation of <code>0</code> as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
@@ -3023,28 +2999,60 @@ Figure 5: Default mappings for other integer types
 </div>
 <pre><code>0 00000000000 0000000000000000000000000000000000000000000000000000 </code></pre>
 </div>
-<p>Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> represents the <em>sign</em>: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an <em>exponent</em>: you can think of these bits as if they describe a signed “int11” type, and can be used to store any number between -1022 and 1023.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>. The remaining 53 bits are used to represent a binary mantissa.</p>
-<p>To see this in action, let’s see how <code>16</code> and <code>-8</code> are encoded. These are both whole numbers in binary, and they’re both powers of two. One is positive and the other is negative, so you can see that the sign bit is different; and they’re different powers of two so you can see that the exponent is different. But since they’re both <em>exact</em> powers of 2 (in the same way that 10, 100, and 1000 are all exact powers of 10), there’s nothing in the mantissa component at all:</p>
+<p>Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a> represents the <em>sign</em>: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an <em>exponent</em>: you can think of these bits as if they describe a signed “int11” type, and can be used to store any number between -1022 and 1023.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> The remaining 53 bits are used to represent the <em>mantissa</em>.</p>
+<p>These three components carve up a real number by using this this decomposition:</p>
+<p><span class="math display">\[
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
+\]</span> Any real number can decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don’t). But the neat thing is about using it is that we can describe very large numbers this way and very small numbers this way. As an example, let’s take a look at the partial decimal expansion of <code>-9.832</code>, which I am told is the approximate rate of acceleration experienced by a falling object in the Earth’s polar regions:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>16</span><span class='op'>)</span>
-<span class='fu'>unpack_double</span><span class='op'>(</span><span class='op'>-</span><span class='fl'>8</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>polar_g</span> <span class='op'>&lt;-</span> <span class='fu'>unpack_double</span><span class='op'>(</span><span class='op'>-</span><span class='fl'>9.832</span><span class='op'>)</span>
+<span class='va'>polar_g</span>
 </code></pre>
 </div>
-<pre><code>0 10000000011 0000000000000000000000000000000000000000000000000000 
-1 10000000010 0000000000000000000000000000000000000000000000000000 </code></pre>
+<pre><code>1 10000000010 0011101010011111101111100111011011001000101101000100 </code></pre>
 </div>
-<p>In a binary representation these are “round numbers”. The same is true for numbers like <code>.25</code> and <code>.0625</code> which are exact <em>negative</em> powers of 2 (i.e. <span class="math inline">\(2^{-2} = .25\)</span> and <span class="math inline">\(2^{-4} = .0625\)</span>). These are also round numbers in a binary encoding:</p>
+<p>I wrote some extractor functions that convert those binary components to the sign, exponent, and mantissa values that they represent, so let’s take a look at those:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>.25</span><span class='op'>)</span>
-<span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>.0625</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>extract_sign</span><span class='op'>(</span><span class='va'>polar_g</span><span class='op'>)</span>
+<span class='fu'>extract_exponent</span><span class='op'>(</span><span class='va'>polar_g</span><span class='op'>)</span>
+<span class='fu'>extract_mantissa</span><span class='op'>(</span><span class='va'>polar_g</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>0 01111111101 0000000000000000000000000000000000000000000000000000 
-0 01111111011 0000000000000000000000000000000000000000000000000000 </code></pre>
+<pre><code>[1] -1
+[1] 3
+[1] 1.229</code></pre>
 </div>
-<p>Now look what happens when I try the numbers in the famous example:</p>
+<p>Notice that the sign is always represented exactly: it can only be -1 or 1. The exponent is also represented exactly, as long as it’s not too large or too small: the number is always an integer value between -1022 and 1023. The mantissa, however, is a fractional value. When you encounter floating point errors it’s generally going to be because the stored mantissa doesn’t represent the true mantissa with sufficient precision.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> In any case, let’s check that the formula works:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sign</span> <span class='op'>&lt;-</span> <span class='fu'>extract_sign</span><span class='op'>(</span><span class='va'>polar_g</span><span class='op'>)</span>
+<span class='va'>exponent</span> <span class='op'>&lt;-</span> <span class='fu'>extract_exponent</span><span class='op'>(</span><span class='va'>polar_g</span><span class='op'>)</span>
+<span class='va'>mantissa</span> <span class='op'>&lt;-</span> <span class='fu'>extract_mantissa</span><span class='op'>(</span><span class='va'>polar_g</span><span class='op'>)</span>
+
+<span class='va'>sign</span> <span class='op'>*</span> <span class='va'>mantissa</span> <span class='op'>*</span> <span class='fl'>2</span> <span class='op'>^</span> <span class='va'>exponent</span>
+</code></pre>
+</div>
+<pre><code>[1] -9.832</code></pre>
+</div>
+<p>Yay!</p>
+<p>Just to prove to you that this isn’t a fluke, I also included a <code>repack_double()</code> function automates this calculation. It takes the deconstructed representation of an R double and packs it up again, so <code>repack_double(unpack_double(x))</code> should return <code>x</code>. Here are a few examples:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sanity_check</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>x</span> <span class='op'>==</span> <span class='fu'>repack_double</span><span class='op'>(</span><span class='fu'>unpack_double</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>sanity_check</span><span class='op'>(</span><span class='fl'>12</span><span class='op'>)</span>
+<span class='fu'>sanity_check</span><span class='op'>(</span><span class='fl'>1345234623462342</span><span class='op'>)</span>
+<span class='fu'>sanity_check</span><span class='op'>(</span><span class='fl'>0.000000002345345234523</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] TRUE
+[1] TRUE
+[1] TRUE</code></pre>
+</div>
+<p>Now that we have some deeper knowledge of what doubles in R actually <em>are</em>, let’s return to the numbers in the famous example of floating point numbers misbehaving:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>.1</span><span class='op'>)</span>
@@ -3056,7 +3064,41 @@ Figure 5: Default mappings for other integer types
 0 01111111100 1001100110011001100110011001100110011001100110011010 
 0 01111111101 0011001100110011001100110011001100110011001100110011 </code></pre>
 </div>
-<p>Although these are clean numbers with a simple, finite <em>decimal</em> expansion, they are a lot messier in binary! Because of that, these numbers aren’t represented exactly, and truncation errors occur. The errors are very small, but they exist:</p>
+<p>Although these are clean numbers with a very simple decimal expansion, they are not at all simple when written in a binary floating point representation. In particular, notice that <code>0.1</code> and <code>0.2</code> share the same mantissa but <code>0.3</code> has a different mantissa, and that’s where the truncation errors occur. Let’s take a peek at <code>0.6</code> and <code>0.9</code>:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>.6</span><span class='op'>)</span>
+<span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>.8</span><span class='op'>)</span>
+<span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>.9</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>0 01111111110 0011001100110011001100110011001100110011001100110011 
+0 01111111110 1001100110011001100110011001100110011001100110011010 
+0 01111111110 1100110011001100110011001100110011001100110011001101 </code></pre>
+</div>
+<p>So it turns out that <code>0.6</code> has the same mantissa as <code>0.3</code>, and <code>0.8</code> has the same mantissa as <code>0.1</code> and <code>0.2</code>, but <code>0.9</code> has a different mantissa from all of them. So what we might expect is that floating point errors can happen for these cases:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fl'>0.1</span> <span class='op'>+</span> <span class='fl'>0.2</span> <span class='op'>==</span> <span class='fl'>0.3</span>
+<span class='fl'>0.3</span> <span class='op'>+</span> <span class='fl'>0.6</span> <span class='op'>==</span> <span class='fl'>0.9</span>
+</code></pre>
+</div>
+<pre><code>[1] FALSE
+[1] FALSE</code></pre>
+</div>
+<p>but not these ones:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fl'>0.1</span> <span class='op'>+</span> <span class='fl'>0.1</span> <span class='op'>==</span> <span class='fl'>0.2</span>
+<span class='fl'>0.3</span> <span class='op'>+</span> <span class='fl'>0.3</span> <span class='op'>==</span> <span class='fl'>0.6</span>
+<span class='fl'>0.2</span> <span class='op'>+</span> <span class='fl'>0.6</span> <span class='op'>==</span> <span class='fl'>0.8</span>
+</code></pre>
+</div>
+<pre><code>[1] TRUE
+[1] TRUE
+[1] TRUE</code></pre>
+</div>
+<p>Okay that checks out! Now, it’s important to recognise that these errors are very small. Floating point arithmetic doesn’t <em>actually</em> work, but it’s very close:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fl'>0.1</span> <span class='op'>+</span> <span class='fl'>0.2</span> <span class='op'>-</span> <span class='fl'>0.3</span>
@@ -3064,36 +3106,14 @@ Figure 5: Default mappings for other integer types
 </div>
 <pre><code>[1] 5.551115e-17</code></pre>
 </div>
-<p>Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one because they allow us to “cover” a very wide span of numbers across the real line, at a pretty high level of precision, without using too much memory. The trickery works by using this decomposition:</p>
-<p><span class="math display">\[
-(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
-\]</span></p>
-<p>Any real number can decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don’t). But the neat thing is about using it is that we can describe very large numbers this way and very small numbers this way. And just to prove to you that there is no magic in this simulation, this function takes the deconstructed representation of an R double and packs it up again:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>repack_double</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>s</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>sign</span><span class='op'>)</span> <span class='op'>==</span> <span class='fl'>0</span>, <span class='fl'>1</span>, <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span>
-  <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>exponent</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>2</span><span class='op'>^</span><span class='op'>(</span><span class='fl'>10</span><span class='op'>:</span><span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>2</span><span class='op'>^</span><span class='fl'>10</span> <span class='op'>+</span> <span class='fl'>1</span>
-  <span class='va'>v</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sum.html'>sum</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/integer.html'>as.integer</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>$</span><span class='va'>mantissa</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>2</span><span class='op'>^</span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span><span class='op'>:</span><span class='op'>(</span><span class='op'>-</span><span class='fl'>52</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span> <span class='fl'>1</span>
-  <span class='va'>s</span> <span class='op'>*</span> <span class='va'>v</span> <span class='op'>*</span> <span class='fl'>2</span> <span class='op'>^</span> <span class='va'>p</span>
-<span class='op'>}</span>
-
-<span class='fu'>repack_double</span><span class='op'>(</span><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>12</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>repack_double</span><span class='op'>(</span><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>1345234623462342</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>repack_double</span><span class='op'>(</span><span class='fu'>unpack_double</span><span class='op'>(</span><span class='fl'>0.000000002345345234523</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>[1] 12
-[1] 1.345235e+15
-[1] 2.345345e-09</code></pre>
-</div>
-<p>We pretend that machines can do arithmetic. They can’t, but it’s a surprisingly powerful lie.</p>
+<p>Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one because they allow us to “cover” a very wide span of numbers across the real line, at a pretty high level of precision, without using too much memory.</p>
+<p>We pretend that machines can do arithmetic on the reals. They can’t, but it’s a <em>very</em> powerful lie.</p>
 <h3 id="arrow-the-float64-type">[Arrow] The float64 type</h3>
-<p>Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story – even the weird Baudrillard bit – and it’s time we switched back over to the Arrow side of things to think about what happens there.</p>
-<p>By now you’re probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> Because the data structures are so similar, the default behaviour in <strong>arrow</strong> is to translate an R double into an Arrow float64 and vice versa.</p>
+<p>Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story and it’s time we switched back over to the Arrow side of things to think about what happens there.</p>
+<p>By now you’re probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a> The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> Because the data structures are so similar, the default behaviour in <strong>arrow</strong> is to translate an R double into an Arrow float64 and vice versa.</p>
 <p>As always, I’ve got a little diagram summarising all the default mappings:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-31"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-34"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
 Figure 6: Default mappings for numeric types
@@ -3158,19 +3178,21 @@ float</code></pre>
 <h3 id="arrow-the-decimal-type">[Arrow] The decimal type</h3>
 <p>Earlier in this section I promised that the Baudrillard quote from <em>Simulacra and Simulation</em> was going to be relevant? Well, that time has arrived. It’s also the moment at which the quote from <em>Word and Object</em> by Quine that opened this blog post becomes painfully relevant. Stripped of their fancy language, here’s what the two authors are telling us in these passages:</p>
 <ul>
-<li>The Baudrillard quote emphasises that floating point numbers are a <em>simulation</em>. They are the mechanism by which we pretend that we have access to real numbers on computers. We don’t, but it’s a lie that almost works.</li>
-<li>The Quine quote emphasises that translation (and, I would argue, simulation also) is underdetermined. For any complicated thing there are many ways to simulate, or translate, or approximate it: all of them can be extremely good approximations, and they can <em>also</em> be inconsistent with one another. As it happens, this truism applies to floating point numbers too.</li>
+<li>The Baudrillard quote emphasises that floating point numbers are a <em>simulation</em>. They are the mechanism by which we pretend to encode real numbers on computers. It’s a lie, but it’s a powerful lie that almost works.</li>
+<li>The Quine quote emphasises that translation (and, I would argue, simulation also) is <em>underdetermined</em>. For any complicated thing there are many ways to simulate, or translate, or approximate it. These approximations can be extremely accurate and still be inconsistent with each other.</li>
 </ul>
-<p>Remember when I was talking about floating point numbers and how they rely on a representation that looks like this:</p>
+<p>Quine’s truism applies to floating point numbers, and it is the reason why we have “decimal floating point” numbers as well as “binary floating point” numbers. All floating point systems are simulations in the Baudrillard sense of the term: lies, strictly speaking, but close enough to true that the distinction between lies and truth gets a little blurry.</p>
+<p>Let’s see how that plays out with floating point numbers. When discussing doubles in R, I mentioned that they represent the real numbers using a decomposition that looks like this:</p>
 <p><span class="math display">\[
-(\mbox{real number}) = (\mbox{sign}) \times (\mbox{significand}) \times 2 ^ {\mbox{(exponent)}}
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
 \]</span></p>
-<p>Why do we use 2 here? Programmers have a tendency to like using 2 as the base unit for everything because it lines up nicely with binary representations, and that’s often a good instinct when dealing with machines. Unfortunately, it’s an enormous problem for floating point arithmetic because <em>humans</em> write numbers in decimal notation (in the arabic number system anyway). Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a “simple” decimal number like 0.1 doesn’t have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.</p>
-<p>The solution? Easy: Just use a floating point number system that uses 10 as the base:</p>
+<p>The number “2” pops out here, doesn’t it? Is there any reason to think that “2” is a pre-ordained necessity when approximating the real numbers on a finite-precision machine? Programmers have a tendency to like using “2” as the base unit for everything because it lines up nicely with binary representations, and that’s often a good instinct when dealing with machines.</p>
+<p>Unfortunately, life consists of more than machines.</p>
+<p>In particular, binary representations create problems for floating point arithmetic because the world contains <em>humans</em> who write numbers in decimal notation<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a>. Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a “simple” decimal number like 0.1 doesn’t have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.</p>
+<p>A natural solution to this is to design floating point data types that use other bases. Arrow, like Python, includes <a href="https://en.wikipedia.org/wiki/Decimal_floating_point">decimal floating point</a> types that are essentially equivalent to the more familiar binary floating point numbers, but they rely on a base 10 decomposition:</p>
 <p><span class="math display">\[
-(\mbox{real number}) = (\mbox{sign}) \times (\mbox{significand}) \times 10 ^ {\mbox{(exponent)}}
-\]</span> This is the core idea behind <a href="https://en.wikipedia.org/wiki/Decimal_floating_point">decimal floating point</a> numbers.</p>
-<p>Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. However, R doesn’t have any analog of a decimal so I can’t import an “R decimal object” to Arrow. However, what I can do is take the Arrow float64 objects I defined earlier and explicitly cast them to decimal format:</p>
+(\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 10 ^ {\mbox{(exponent)}}
+\]</span> Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. However, R doesn’t have any analog of a decimal so I can’t import an “R decimal object” to Arrow. However, what I can do is take the Arrow float64 objects I defined earlier and explicitly cast them to decimal format:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>decimal_01</span> <span class='op'>&lt;-</span> <span class='va'>float_01</span><span class='op'>$</span><span class='fu'>cast</span><span class='op'>(</span><span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>decimal128</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
@@ -3210,7 +3232,7 @@ true</code></pre>
 <h2 id="character-types">Character types</h2>
 <p>Strings are an interesting case. R uses a single data type to represent strings (character vectors) but Arrow has two types, known as strings and large strings. When using the <strong>arrow</strong> package, Arrow strings are specified using the <code>utf8()</code> function, and large strings correspond to the <code>large_utf8()</code> type. The default mapping is to assume that an R character vector maps onto the Arrow <code>utf8()</code> type, as shown below:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-40"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-43"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
 Figure 7: Default mappings for character types
@@ -3231,23 +3253,23 @@ Samantha Fox</code></pre>
 </code></pre>
 </div>
 </div>
-<p>Each element of the <code>jung_talent</code> vector is a variable-length string, and is stored internally by R as an array of individual characters<a href="#fn9" class="footnote-ref" id="fnref9" role="doc-noteref"><sup>9</sup></a> So, to a first approximation, your mental model of how R stores the <code>jung_talent</code> variable might look something like this:</p>
+<p>Each element of the <code>jung_talent</code> vector is a variable-length string, and is stored internally by R as an array of individual characters<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a> So, to a first approximation, your mental model of how R stores the <code>jung_talent</code> variable might look something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-42"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-45"></span>
 <img src="img/character-types-02.png" alt="Simplified representation of how character vectors are represented in R" width="2400" />
 <p class="caption">
 Figure 8: Simplified representation of how character vectors are represented in R
 </p>
 </div>
 </div>
-<p>Here, the <code>jung_talent</code> variable is an object<a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a> that contains five elements shown as the orange boxes. Internally, each of those orange boxes is itself an array of individual characters shown as the purple boxes. As a description of what R actually does this is a bit of an oversimplification because it ignores the <a href="https://adv-r.hadley.nz/names-values.html#character-vectors">global string pool</a>, but it will be sufficient for the current purposes.</p>
+<p>Here, the <code>jung_talent</code> variable is an object<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> that contains five elements shown as the orange boxes. Internally, each of those orange boxes is itself an array of individual characters shown as the purple boxes. As a description of what R actually does this is a bit of an oversimplification because it ignores the <a href="https://adv-r.hadley.nz/names-values.html#character-vectors">global string pool</a>, but it will be sufficient for the current purposes.</p>
 <p>The key thing to understand conceptually is that R treats the elements of a character vector as the fundamental unit. The <code>jung_talent</code> vector is constructed from five distinct strings, <code>"Newton"</code>, <code>"Cyrus"</code>, etc. The <code>"Newton"</code> string is assigned to position 1, the <code>"Cyrus"</code> string is assigned to position 2, and so on.</p>
 <h3 id="arrow-the-utf8-type">[Arrow] The utf8 type</h3>
 <p>The approach taken in Arrow is rather different. Instead of carving up the character vector into strings (and internally treating the strings as character arrays), it concatenates everything into one long buffer. The text itself is dumped into one long string, like this:</p>
 <pre><code>NewtonCyrusCapperGellerFox</code></pre>
 <p>The first element of this buffer – the letter <code>"N"</code> – is stored at “offset 0” (indexing in Arrow starts at 0), the second element is stored at offset 1, and so on. This long array of text is referred to as the data buffer, and it does not specify where the boundaries between array elements are. Those are stored separately. If I were to create an Arrow string array called <code>jung_talent_arrow</code>, it would be comprised of a data buffer, and an “offset buffer” that specifies the positions at which each element of the string array begins. In other words, we’d have a mental model that looks a bit like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-43"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-46"></span>
 <img src="img/character-types-03.png" alt="Simplified representation of how character vectors are represented in Arrow" width="1331" />
 <p class="caption">
 Figure 9: Simplified representation of how character vectors are represented in Arrow
@@ -3284,7 +3306,7 @@ Figure 9: Simplified representation of how character vectors are represented in 
 string</code></pre>
 </div>
 <h3 id="arrow-the-large_utf8-type">[Arrow] The large_utf8 type</h3>
-<p>Okay, so as I mentioned, Arrow has two types.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
+<p>Okay, so as I mentioned, Arrow has two types.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a></p>
 <p>okay, so why do I care? well, if you’re using 32-bit integers to encode the offset, that imposes a limit on the total number of characters that can be included. The total size of the string array is capped at 2GiB because you don’t have a way of referring to positions in the string larger than that. if you use 64-bit integers to encode the offset, that limit goes away (I mean technically there is a limit of course because 64-bit is still finite precision but it’s <em>quite</em> a lot bigger).</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3317,7 +3339,7 @@ Quine has a smartarse quote about time being lingustically special
 <p>Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch</a>. The unix epoch is the time 00:00:00 UTC on 1 January 1970. It was a Thursday.</p>
 <p>Despite agreeing on fundamentals, there are some oddities in the particulars. Base R has three date/time classes (Date, POSIXct, and POSIXlt), and while Arrow also has three date/time classes (date32, date64, and timestamp), the default mappings between them are a little puzzling unless you are deeply familiar with what all these data types are and what they represent. I’ll do the deep dive in a moment, but to give you the big picture here’s how the mapping works:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-46"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-49"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
 Figure 10: Default mappings for date/time types
@@ -3332,7 +3354,7 @@ Figure 10: Default mappings for date/time types
 <span class='va'>today</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04&quot;</code></pre>
 </div>
 <p>If I use <code>unclass()</code> to see what it looks like under the hood:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3340,7 +3362,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 19054</code></pre>
+<pre><code>[1] 19055</code></pre>
 </div>
 <p>Fundamentally, a Date object is just a number: it counts the number of days that have elapsed since a fixed date. It does not care what the year is, what the month is, or what day of the month it is. It does not care how the date is displayed to the user. All those things are supplied by the <code>print()</code> method, and are not part of the Date itself.</p>
 <h3 id="r-the-posixct-class">[R] The POSIXct class</h3>
@@ -3352,7 +3374,7 @@ Figure 10: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 16:17:12 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 11:37:43 AEDT&quot;</code></pre>
 </div>
 <p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3360,7 +3382,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646284633</code></pre>
+<pre><code>[1] 1646354263</code></pre>
 </div>
 <p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time. However, it doesn’t necessarily have to be this way: a POSIXct object is permitted to have a “tzone” attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt.</p>
 <p>Nevertheless, when I created the <code>now</code> object by calling <code>Sys.time()</code>, no timezone information was stored in the object. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
@@ -3369,7 +3391,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 06:17:12 CET&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 01:37:43 CET&quot;</code></pre>
 </div>
 <p>If you want to record the timezone as part of your POSIXct object rather than relying on the print method to do the work, you can do so by setting the <code>tzone</code> attribute. To illustrate this, let’s pretend I’m in Tokyo:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3378,7 +3400,7 @@ Figure 10: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 14:17:12 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 09:37:43 JST&quot;</code></pre>
 </div>
 <p>The important thing here is that the timezone is metadata used to change the how the time is displayed. Changing the timezone does not alter the number of seconds stored in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3386,7 +3408,7 @@ Figure 10: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646284633
+<pre><code>[1] 1646354263
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -3398,7 +3420,7 @@ attr(,&quot;tzone&quot;)
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 14:17:12 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 09:37:43 JST&quot;</code></pre>
 </div>
 <p>It <em>looks</em> the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3407,16 +3429,16 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>$sec
-[1] 12.74974
+[1] 43.3286
 
 $min
-[1] 17
+[1] 37
 
 $hour
-[1] 14
+[1] 9
 
 $mday
-[1] 3
+[1] 4
 
 $mon
 [1] 2
@@ -3425,10 +3447,10 @@ $year
 [1] 122
 
 $wday
-[1] 4
+[1] 5
 
 $yday
-[1] 61
+[1] 62
 
 $isdst
 [1] 0
@@ -3442,7 +3464,7 @@ $gmtoff
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot; &quot;JST&quot;        &quot;JDT&quot;       </code></pre>
 </div>
-<p>As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a> The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time.</p>
+<p>As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a> The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time.</p>
 <p>It is not a compact representation, and it’s useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a “timestamp”.</p>
 <h3 id="arrow-the-date32-type">[Arrow] The date32 type</h3>
 <p>Okay, now let’s pivot over to the Arrow side and see what we have to work with. The date32 type is similar – but not identical – to the R Date class. Just like the R Date class, it counts the number of days since 1970-01-01. To see this, let’s create an analog of the <code>today</code> Date object inside Arrow, and represent it as a date32 type:</p>
@@ -3453,7 +3475,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-03</code></pre>
+2022-03-04</code></pre>
 </div>
 <p>We can expose the internal structure of this object by casting it to an integer:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3462,7 +3484,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-19054</code></pre>
+19055</code></pre>
 </div>
 <p>This is the same answer we got earlier when I used <code>unclass()</code> to take a peek at the internals of the <code>today</code> object. That being said, there is a subtle difference: in Arrow, the date32 type is explicitly a 32-bit integer. If you read through the help documentation for date/time classes in R you’ll see that R has something a little more complicated going on. The details don’t matter for this post, but you should be aware that Dates (and POSIXct objects) are stored as doubles. Unlike Arrow, they aren’t stored as integers:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3484,7 +3506,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-03</code></pre>
+2022-03-04</code></pre>
 </div>
 <p>…but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I’m doing is storing the date? Although POSIXct and date64 aren’t exact matches, they’re more closely related to each other than Date and date64. So let’s create an Arrow analog of <code>now</code> as a date64 object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3494,7 +3516,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-03</code></pre>
+2022-03-04</code></pre>
 </div>
 <p>The output is <em>printed</em> as a date, but it is a little bit misleading because it doesn’t give you a good sense of the level of precision in the data. Again we can peek under the hood by explicitly casting this to a 64-bit integer:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3503,7 +3525,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-1646284632749</code></pre>
+1646354263328</code></pre>
 </div>
 <p>This isn’t a count of the number of days since the unix epoch, it’s a count of the number of milliseconds. It is essentially the same number, divided by 1000, as the one we obtained when I typed <code>unclass(now)</code>. However, there’s a puzzle here that we need to solve. Let’s take another look at <code>unclass(now)</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3511,7 +3533,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646284633
+<pre><code>[1] 1646354263
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -3522,7 +3544,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span><span class='op'>$</span><span class='va'>sec</span>
 </code></pre>
 </div>
-<pre><code>[1] 12.74974</code></pre>
+<pre><code>[1] 43.3286</code></pre>
 </div>
 <p>Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in <code>now_date64</code>. The data was there all along. Even though <code>unclass(now)</code> produces an output that has been rounded to the nearest second, the original <code>now</code> variable is indeed a double, and it <em>does</em> store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times.</p>
 <p>Because of this, the default behaviour in <strong>arrow</strong> is to convert date64 types (64-bit integers interpreted as counts of milliseconds) to POSIXct classes (which are secretly 32-bit doubles interpreted as counts of seconds).</p>
@@ -3536,9 +3558,9 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-03 05:17:12.749738
+2022-03-04 00:37:43.328595
 Scalar
-2022-03-03 05:17:12.749738</code></pre>
+2022-03-04 00:37:43.328595</code></pre>
 </div>
 <p>Alternatively, we could use seconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3547,7 +3569,7 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-03 05:17:12</code></pre>
+2022-03-04 00:37:43</code></pre>
 </div>
 <p>It’s important to recognise that changing the unit does more than change the precision at which the timestamp is printed. It changes “the thing that is counted”, so the numbers that get stored in the timestamp are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3557,9 +3579,9 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-1646284632
+1646354263
 Scalar
-1646284632749737984</code></pre>
+1646354263328595200</code></pre>
 </div>
 <p>Okay, what about timezone. Recall that <code>now</code> has a timezone attached to it, because I explicitly recorded the <code>tzone</code> attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3567,7 +3589,7 @@ Scalar
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 14:17:12 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 09:37:43 JST&quot;</code></pre>
 </div>
 <p>When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn’t do that: the time <em>as displayed</em> is shown in UTC. However, that doesn’t mean that the metadata isn’t there:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3588,7 +3610,7 @@ timestamp[us, tz=Asia/Tokyo]</code></pre>
 <span class='va'>new_now</span>               <span class='co'># ... but appears to!</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 16:17:12 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 11:37:43 AEDT&quot;</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># an Arrow timestamp with no timezone</span>
 <span class='va'>new_now_timestamp</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>new_now</span><span class='op'>)</span>
@@ -3607,7 +3629,7 @@ timestamp[us]</code></pre>
 </code></pre>
 </div>
 <pre><code>StructScalar
-{sec:double = 12.749737977981567, min:int32 = 17, hour:int32 = 14, mday:int32 = 3, mon:int32 = 2, year:int32 = 122, wday:int32 = 4, yday:int32 = 61, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
+{sec:double = 43.32859516143799, min:int32 = 37, hour:int32 = 9, mday:int32 = 4, mon:int32 = 2, year:int32 = 122, wday:int32 = 5, yday:int32 = 62, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
 </div>
 <p>The struct object contains named fields that are identical to their POSIXlt equivalents, and whose types have been translated according to the default mappings: <code>sec</code> is a double, <code>min</code> is an int32, <code>hour</code> is an int32, <code>zone</code> is a string, and so on.</p>
 <p>This arrangement, where POSIXct maps to timestamp and POSIXlt maps to struct, makes perfect sense when you think about the underlying data structures that POSIXct and POSIXlt encode. Where things can be tricky for the R user is in the “mental account keeping”. In order to be helpful, R displays POSIXct and POSIXlt objects in exactly the same way:</p>
@@ -3617,8 +3639,8 @@ timestamp[us]</code></pre>
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-03 14:17:12 JST&quot;
-[1] &quot;2022-03-03 14:17:12 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 09:37:43 JST&quot;
+[1] &quot;2022-03-04 09:37:43 JST&quot;</code></pre>
 </div>
 <p>Not only that, because POSIXct and POSIXlt are both subclasses of the POSIXt class, R allows you to perform temporal arithmetic on objects of different types:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3632,7 +3654,7 @@ timestamp[us]</code></pre>
 <h2 id="duration-types">Duration types</h2>
 <p>Any discussion of temporal data is incomplete without a discussion of duration types, which are used to describe a length of time without reference to any fixed origin. The figure below shows the default mappings used by <strong>arrow</strong>:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-73"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-76"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
 Figure 11: Default mappings for duration types
@@ -3648,7 +3670,7 @@ Figure 11: Default mappings for duration types
 <span class='va'>rmd_time</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 0.2843323 secs</code></pre>
+<pre><code>Time difference of 0.2651985 secs</code></pre>
 </div>
 <p>Now let’s take a look at how it’s actually stored:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3656,7 +3678,7 @@ Figure 11: Default mappings for duration types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.2843323
+<pre><code>[1] 0.2651985
 attr(,&quot;units&quot;)
 [1] &quot;secs&quot;</code></pre>
 </div>
@@ -3668,15 +3690,15 @@ attr(,&quot;units&quot;)
 <span class='va'>hedy_age</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 39195.45 days</code></pre>
+<pre><code>Time difference of 39196.26 days</code></pre>
 </div>
-<p>I would learn that it has been 39195 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a> More to the point, R has guessed that the length of time is sufficiently long that seconds aren’t the appropriate encoding unit:</p>
+<p>I would learn that it has been 39196 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a> More to the point, R has guessed that the length of time is sufficiently long that seconds aren’t the appropriate encoding unit:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>hedy_age</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 39195.45
+<pre><code>[1] 39196.26
 attr(,&quot;units&quot;)
 [1] &quot;days&quot;</code></pre>
 </div>
@@ -3705,7 +3727,7 @@ duration[s]</code></pre>
 </code></pre>
 </div>
 <pre><code>Scalar
-284332</code></pre>
+265198</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rmd_time_arrow</span><span class='op'>$</span><span class='va'>type</span>
 </code></pre>
@@ -3799,7 +3821,7 @@ time64[ns]</code></pre>
 <p>In essence, the <strong>arrow</strong> defaults are set up such that if you choose <code>time32()</code> when going from R to Arrow without specifying a unit, you will end up with the lowest precision representation of time (rounded to the nearest second), whereas if you do the same with <code>time64()</code> you end up with the highest precision (nanosecond level) representation. When going the other way, <strong>arrow</strong> will map time32 types and time64 types to hms objects, and the end result is that the time of day will be stored as a 32-bit double.</p>
 <h2 id="other-types">Other types</h2>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-87"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-90"></span>
 <img src="img/null-types.png" alt="Default mappings for null types" width="960" />
 <p class="caption">
 Figure 12: Default mappings for null types
@@ -3807,7 +3829,7 @@ Figure 12: Default mappings for null types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-88"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-91"></span>
 <img src="img/raw-types.png" alt="Default mappings for raw types" width="960" />
 <p class="caption">
 Figure 13: Default mappings for raw types
@@ -3815,7 +3837,7 @@ Figure 13: Default mappings for raw types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-89"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-92"></span>
 <img src="img/factor-types.png" alt="Default mappings for factor types" width="960" />
 <p class="caption">
 Figure 14: Default mappings for factor types
@@ -3823,7 +3845,7 @@ Figure 14: Default mappings for factor types
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-90"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-93"></span>
 <img src="img/dataframe-types.png" alt="Default mappings for data frame types" width="960" />
 <p class="caption">
 Figure 15: Default mappings for data frame types
@@ -3841,7 +3863,7 @@ Figure 15: Default mappings for data frame types
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-03 16:17:13 AEDT</p>
+<p>2022-03-04 11:37:43 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-01-27_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-01-27_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -3849,7 +3871,7 @@ Figure 15: Default mappings for data frame types
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
@@ -3859,13 +3881,15 @@ Figure 15: Default mappings for data frame types
 <li id="fn4" role="doc-endnote"><p>The “desert of the real” phrase in the title of the section refers to the real numbers, but it’s also a quote from <em>Simulacra and Simulation</em> and <em>The Matrix</em>. Obviously I encountered it in The Matrix first because, all appearances to the contrary, I am uncultured swine.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn5" role="doc-endnote"><p>Sigh. Technically, this is the last bit. R uses a <a href="https://en.wikipedia.org/wiki/Endianness">little endian</a> representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn6" role="doc-endnote"><p>Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it’s not is that those to values are reserved for “special” numbers.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7" role="doc-endnote"><p>Some precision is needed here: in this post I am using the names that appear in the <a href="https://arrow.apache.org/docs/r/reference/data-type.html">documentation to the <strong>arrow</strong> R package</a>. I’m doing this because the intended audience is an R user who wants to use the <strong>arrow</strong> package to interact with Arrow. However, you should be aware that these types are given slightly different names in the <a href="https://arrow.apache.org/docs/cpp/api/datatype.html">documentation to the Arrow C++ library</a> to which <strong>arrow</strong> provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8" role="doc-endnote"><p>They are both little-endian too.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn9" role="doc-endnote"><p>As noted in the R internals manual, the specific data structure is referred to as a <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Encodings-for-CHARSXPs">CHARSXP</a>. For the purposes of the current post I’m pretending that character strings are always encoded as UTF-8 because there’s no need to complicate matters by talking about things like Latin-1, but be aware that R does support those things. If you’re looking for a good overview of what UTF-8 encoding is all about, this blog post on <a href="https://deliciousbrains.com/how-unicode-works/">how unicode works</a> is helpful.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn10" role="doc-endnote"><p>More strictly, it is a symbol that points to an object. R makes a distinction between the symbol and the object to which it links, and allows multiple labels to point at the same object. There’s an excellent discussion of this in <a href="https://adv-r.hadley.nz/names-values.html">Chapter 3 of Advanced R</a><a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn11" role="doc-endnote"><p>Once again, there’s a little terminology to explain because there’s some inconsistency in how the types are referred to in the Arrow C++ documentation and the <strong>arrow</strong> R package documentation. In the <a href="https://arrow.apache.org/docs/cpp/api/datatype.html">list of data types</a> for the underlying C++ library you’ll find references to “string” types and “large_string”. However, in <a href="https://arrow.apache.org/docs/r/reference/data-type.html">list of data types</a> documentation for the <strong>arrow</strong> R package you’ll see the same data types referred to as “utf8” and “large_utf8”.<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn12" role="doc-endnote"><p>A little counterintuitively, the value of <code>sec</code> ranges from 0 to 61, presumably because leap seconds are a thing. I am <em>not</em> going to torture myself with that one today.<a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn13" role="doc-endnote"><p>Yes, I looked up her <a href="https://www.astro.com/astro-databank/Lamarr,_Hedy">time and location of birth</a> on an astrology website. I am, after all, queer. It is one of the traditions of our people.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7" role="doc-endnote"><p>In fact, one of the shitty things about the reals (which are uncountably infinite) is that almost all reals have infinitely long mantissas. Even if you had a infinite number of digits to work with (a countably infinite set) you’re still in trouble. Everything sucks, real numbers are almost surely uncomputable (yes that’s an actual result), and I don’t want to think about it any more and I need a lie down.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn8" role="doc-endnote"><p>Some precision is needed here: in this post I am using the names that appear in the <a href="https://arrow.apache.org/docs/r/reference/data-type.html">documentation to the <strong>arrow</strong> R package</a>. I’m doing this because the intended audience is an R user who wants to use the <strong>arrow</strong> package to interact with Arrow. However, you should be aware that these types are given slightly different names in the <a href="https://arrow.apache.org/docs/cpp/api/datatype.html">documentation to the Arrow C++ library</a> to which <strong>arrow</strong> provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.<a href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9" role="doc-endnote"><p>They are both little-endian too.<a href="#fnref9" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10" role="doc-endnote"><p>That’s assuming we’re writing numbers in Arabic number system. I suppose it would be different if our orthographic representations adopted the <a href="http://www.mathematicsmagazine.com/Articles/TheSumerianMathematicalSystem.php">Sumerian sexagesimal notation</a>. Admittedly, neither R nor Arrow existed at the time, so it’s a moot point. All I’m really saying is that decimal systems are no less arbitrary than binary ones. The problem arises because of the mismatch, not because one encoding is inherently better than the other.<a href="#fnref10" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn11" role="doc-endnote"><p>As noted in the R internals manual, the specific data structure is referred to as a <a href="https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Encodings-for-CHARSXPs">CHARSXP</a>. For the purposes of the current post I’m pretending that character strings are always encoded as UTF-8 because there’s no need to complicate matters by talking about things like Latin-1, but be aware that R does support those things. If you’re looking for a good overview of what UTF-8 encoding is all about, this blog post on <a href="https://deliciousbrains.com/how-unicode-works/">how unicode works</a> is helpful.<a href="#fnref11" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn12" role="doc-endnote"><p>More strictly, it is a symbol that points to an object. R makes a distinction between the symbol and the object to which it links, and allows multiple labels to point at the same object. There’s an excellent discussion of this in <a href="https://adv-r.hadley.nz/names-values.html">Chapter 3 of Advanced R</a><a href="#fnref12" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn13" role="doc-endnote"><p>Once again, there’s a little terminology to explain because there’s some inconsistency in how the types are referred to in the Arrow C++ documentation and the <strong>arrow</strong> R package documentation. In the <a href="https://arrow.apache.org/docs/cpp/api/datatype.html">list of data types</a> for the underlying C++ library you’ll find references to “string” types and “large_string”. However, in <a href="https://arrow.apache.org/docs/r/reference/data-type.html">list of data types</a> documentation for the <strong>arrow</strong> R package you’ll see the same data types referred to as “utf8” and “large_utf8”.<a href="#fnref13" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn14" role="doc-endnote"><p>A little counterintuitively, the value of <code>sec</code> ranges from 0 to 61, presumably because <a href="https://en.wikipedia.org/wiki/Leap_second">leap seconds</a> are a thing. I am <em>not</em> going to torture myself with that one today.<a href="#fnref14" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn15" role="doc-endnote"><p>Yes, I looked up her <a href="https://www.astro.com/astro-databank/Lamarr,_Hedy">time and location of birth</a> on an astrology website. I am, after all, queer. It is one of the traditions of our people.<a href="#fnref15" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->
