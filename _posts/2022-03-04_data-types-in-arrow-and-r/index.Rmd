@@ -59,31 +59,41 @@ source("unpack_double.R")
 
 <!--------------- post ----------------->
 
-> Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>
-> &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
-
-
-## Regarding magic
-
-Consider this piece of magic
+*[Author note]* This post is the third in a series I have been writing on Apache Arrow and R, and probably works best if you've read the previous two. The first one is a [getting started post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/), and the second one talks about the [arrow dplyr backend](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/). I've tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the **arrow** package does. If that's you, read on! If you're not at that point yet, hopefully the first two posts will get you there!
 
 ```{r}
 library(tibble)
 library(dplyr)
 library(arrow)
-
-magicians <- read_csv_arrow("magicians.csv")
-magicians
-
-arrowmagicks <- arrow_table(magicians)
-arrowmagicks
 ```
 
 ```{r, echo=FALSE, message=FALSE}
 conflicted::conflict_prefer("timestamp", "arrow")
 ```
 
-The `magicians` data set is a "data frame" (a tibble, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a "Table" object. Arrow Tables are roughly analogous to data frames -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of *translation* has occurred. Similarly when we look at the individual columns we see that something similar has happened. "Integer" columns in R are mapped to "int32" columns in Arrow, "Date" columns in R become "date32" columns in Arrow, and so on. Even without knowing much about the data types in the two languages, you can infer a lot from the names! In this case you can reasonably (and correctly) infer that the translation from R to Arrow is a sensible one. Better yet, in this case, when we pull the `arrowmagicks` data back into R we recover the original data:
+## Regarding magic
+
+> Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>
+> &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
+
+
+Consider this piece of magic. I have a csv file storing a data set. I import the data set into R using whatever my favourite csv reader function happens to be:
+
+```{r}
+magicians <- read_csv_arrow("magicians.csv")
+magicians
+```
+
+Then I decide to "copy the data into Arrow". I do that in a very predictable way using the `arrow_table()` function supplied by the **arrow** package: 
+
+```{r}
+arrowmagicks <- arrow_table(magicians)
+arrowmagicks
+```
+
+This is exactly the output I should expect, but the longer I think about it the more it seems to me that something quite remarkable is going on. Some magic is in play here, and I want to know how it works.
+
+To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a "data frame" (a tibble, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a "Table" object. Arrow Tables are roughly analogous to data frames -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of *translation* has occurred. Similarly when we look at the individual columns we see that something similar has happened. "Integer" columns in R are mapped to "int32" columns in Arrow, "Date" columns in R become "date32" columns in Arrow, and so on. Even without knowing much about the data types in the two languages, you can infer a lot from the names! In this case you can reasonably (and correctly) infer that the translation from R to Arrow is a sensible one. Better yet, in this case, when we pull the `arrowmagicks` data back into R we recover the original data:
 
 ```{r}
 collect(arrowmagicks)
