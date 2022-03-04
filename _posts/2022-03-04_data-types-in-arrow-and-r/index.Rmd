@@ -118,8 +118,6 @@ This is of course a toy example, as are all the other examples you'll encounter 
 
 ## Why mapping languages is hard
 
-Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.]  We define ontologies that impose order on a chaotic world. A famous attempt to do this in 1668 by John Wilkins in [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1). A small snippet taken from the section "On Beasts":
-
 > BEASTS, may be distinguished by their several shapes, properties, uses, food, their tameness or wildness, etc. into such as are either
 > 
 > - VIVIPAROUS; producing living young.
@@ -135,18 +133,27 @@ Organising the world into concepts (or data structures) is hard.^[Back my former
 >             - DOG-KIND; whose *heads* are *more oblong*. V.
 >             
 > - OVIPAROUS; breeding *Eggs*. VI.
+>
+> &nbsp; &nbsp; -- John Wilkins, 1668, [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1)
 
-It goes on to elaborate. As a scientific taxonomy it's... interesting. But even psychologically it betrays the peculiarities of the author. Wilkins had the noble ambition of defining a "universal language", but as a 17th century English gentleman there are certain deficiencies! I note as an Australian that there's no distinction between placental and marsupial mammals here! But of course the problems are more general. In 1952 the Argentinian author Jorge Luis Borges published an essay called [The Analytical Language of John Wilkins](https://ccrma.stanford.edu/courses/155/assignment/ex1/Borges.pdf) and describes a classification system from an fictitious "Celestial Emporium of Benevolent Knowledge":
+
+Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.] We define structures that impose order on a chaotic world. The quirky little ontology at the start of this section is a small snippet taken from a very long monograph written by John Wilkins in 1668 in which he made a valiant (but doomed... oh so doomed) attempt to organise all the categories of thing and propose a mechanism by which we could describe them within a single universal language.
+
+The idea of a universal language has a certain abstract appeal, but these things are constructed by humans, and humans have quite distinctive perspectives on the world. As a 17th century English gentleman, John Wilkins was no exception. As a 21st century Australian lady I'm noticing that there's no distinction between placental and marsupial mammals here, and... well, there's a marked lack of biological plausibility to any of this.
+
+I am of course hardly the first person to notice this. In 1952 the Argentinian author Jorge Luis Borges published a wonderful essay called [The Analytical Language of John Wilkins](https://ccrma.stanford.edu/courses/155/assignment/ex1/Borges.pdf) that both praises Wilkins' ambition and then carefully illustrates why it is necessarily doomed to fail. Borges' essay describes a classification system from an fictitious "Celestial Emporium of Benevolent Knowledge" which carves up the beasts as follows:
 
 > In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies
 
-It's pretty unlikely that any human language would produce a classification system quite as chaotic as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. Michel Foucault actually refers to this Borges passage in the preface to his famous work [The Order of Things: An Archaeology of the Human Sciences](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay 
+Now, it's pretty unlikely that any human language would produce a classification system quite as ... um, chaotic ... as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. Michel Foucault actually refers to this Borges passage in the preface to his famous work [The Order of Things: An Archaeology of the Human Sciences](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay 
 
 > shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things
 
-
+Universal languages are a myth. 
 
 ## Translating data types
+
+Ontologies in natural languages are more complicated things than their equivalents in a programming language, but nevertheless the same principles hold. Every language comes with a collection of data structures, rules, and assumptions about how things "are supposed to work". Just like human languages, machine languages carve the world up into boxes, and those boxes don't always match up with one another. Some concepts just don't translate properly.^[To all the would be enthusiasts: I am begging you, please *do not* attempt to come at me with a "Turing-completeness" style gotcha, as if I were a first year undergraduate who just encountered algorithmic information theory for the first time. Do not. This post is not the place for a long discussion, so I will very quietly mention that the finite-length prefix required to specify the translation between languages is an $O(1)$ term (if I recall correctly), and when you leave the textbooks and encounter the world, $O(1)$ terms can be very, very big. Let it rest. Seriously. Writing a real world transpiler turns out to be actually quite tricky. Sheesh.]
 
 So how do we construct data structures in Arrow that are appropriate translations of data structures in R, and vice versa? For the moment, let's keep things simple and assume that the mapping we're interested in has the same format as the one described at the start of the post: in R we want to encode the data as a data frame, and in Arrow we want to encode it as a Table. If so, the translation question is really a matter of how we encode the columns.
 
