@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:distill="https://distill.pub/journal/" version="2.0">
+  <channel>
+    <title>Notes from a data witch</title>
+    <link>https://blog.djnavarro.net</link>
+    <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
+    <description/>
+    <generator>Distill</generator>
+    <lastBuildDate>Fri, 04 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Data types in Arrow and R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-03-04_data-types-in-arrow-and-r</link>
+      <description>A post describing fundamental data types in R and Apache Arrow, and how data is exchanged between the two systems. It covers conversion of logicals, integers, floats, decimals, strings, date, and times, among other things. It talks about higher level structures like tables, data frames, and so on For reasons that now escape me, esoteric authors are quoted, and I try to bribe the audience into reading the whole thing by adding artwork. This post is, um... long</description>
+      <guid>https://blog.djnavarro.net/posts/2022-03-04_data-types-in-arrow-and-r</guid>
+      <pubDate>Fri, 04 Mar 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-03-04_data-types-in-arrow-and-r/img/cover.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>R scripts for twitter mutes and blocks</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-02-11_r-scripts-for-twitter-blocks</link>
+      <description>Social media safety tools like muting and blocking are often misused, but for people who are targeted for harassment they are powerful and important. This is a brief tutorial illustrating how to partially automate twitter mutes and blocks from R. The intended use is defensive, to help people minimise the impact if they are targeted by large scale harassment.</description>
+      <guid>https://blog.djnavarro.net/posts/2022-02-11_r-scripts-for-twitter-blocks</guid>
+      <pubDate>Fri, 11 Feb 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-02-11_r-scripts-for-twitter-blocks/img/jeremy-bezanger-Nh1tBGgEcG4-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Binding Apache Arrow to R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r</link>
+      <description>I've been learning how to program with Apache Arrow inside R, and also I have been watching the SyFy show "The Magicians" obsessively. For no sensible reason I wrote a blog post that combines these two fixations</description>
+      <guid>https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r</guid>
+      <pubDate>Tue, 18 Jan 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/img/magicians_hard_glossy_armour.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Setting CRAN repository options</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-01-10_setting-cran-repositories</link>
+      <description>A quick post on how to use RStudio public package manager instead of a standard CRAN mirror, and an example of why that can be useful sometimes.</description>
+      <guid>https://blog.djnavarro.net/posts/2022-01-10_setting-cran-repositories</guid>
+      <pubDate>Mon, 10 Jan 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-01-10_setting-cran-repositories/img/rasa-kasparaviciene-0TFxOkhFt14-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Getting started with Apache Arrow</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r</link>
+      <description>I've been wanting to learn the basics of Apache Arrow a while: this is the story of how an R user learned to stop worrying and love a standardised in-memory columnar data format</description>
+      <guid>https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r</guid>
+      <pubDate>Fri, 19 Nov 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/img/frank-busch-LpYcecGTifI-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Data serialisation in R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds</link>
+      <description>A terrifying descent into madness, or, an explanation of how R serialises an in-memory data structure to summon a sequence of bytes that can be saved or transmitted. Eldritch horrors are unleashed by reading occult texts such as the R internals manual, SEXPTYPE codes are extracted from RDS with bitwise logic, and in the dark conclusion the R source code is consulted</description>
+      <guid>https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds</guid>
+      <pubDate>Mon, 15 Nov 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-15_serialisation-with-rds/preview-image.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Unpredictable paintings</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-11-01_unpredictable-paintings</link>
+      <description>An example showing how to build a generative art system in R. The post walks through some of the creative and design choices that are involved, and highlights how much of a trial-and-error process generative art can be</description>
+      <guid>https://blog.djnavarro.net/posts/2021-11-01_unpredictable-paintings</guid>
+      <pubDate>Mon, 01 Nov 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-11-01_unpredictable-paintings/featured.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
+    <item>
+      <title>Generative art resources in R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</link>
+      <description>An extremely incomplete (and probably biased) list of resources to
+help an aspiring generative artist get started making pretty pictures
+in R</description>
+      <guid>https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts</guid>
+      <pubDate>Tue, 19 Oct 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-10-19_rtistry-posts/preview-image.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
+    <item>
+      <title>On blogging reproducibly with renv</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-30_on-blogging-reproducibly</link>
+      <description>Some initial thoughts on how to deploy a distill blog in a reproducible fashion. It's a little harder than it looks and I am still working out all the details. To make my life a little easier, I started writing a small package called "refinery", which uses the renv package to manage a separate R environment for every post, and aims to prevent conflicts between renv and distill. I'm not sure it's useful to anyone except me, but it makes me happy.</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-30_on-blogging-reproducibly</guid>
+      <pubDate>Thu, 30 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-30_on-blogging-reproducibly/preview-image.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>How to mint digital art on HEN</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-26_setting-up-on-hic-et-nunc</link>
+      <description>Not every artist wants to make cryptoart, and that's okay. Others do, and that's okay too. But if you want to try it out in a socially responsible way, it takes a bit of effort to get started. This post attempts to make the process a little easier by walking you through the whole thing, on the assumption that you are an artist who (like me) has very little interest in blockchain or cryptocurrency but would like to get paid and pay the rent</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-26_setting-up-on-hic-et-nunc</guid>
+      <pubDate>Sun, 26 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-26_setting-up-on-hic-et-nunc/preview-image.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Visualising the hits of Queen Britney</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard</link>
+      <description>A gentle walkthrough of a few data wrangling and visualisation tools using the Billboard 100 data for this weeks Tidy Tuesday. Pitched at beginners looking to refresh their knowledge and maybe get some pointers at intermediate level tools</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard</guid>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-14_tidy-tuesday-billboard/britney.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Art, jasmines, and the water colours</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-09-07_water-colours</link>
+      <description>An essay and tutorial covering a few useful art techniques in R</description>
+      <guid>https://blog.djnavarro.net/posts/2021-09-07_water-colours</guid>
+      <pubDate>Tue, 07 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-09-07_water-colours/jasmine-recollected.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
+    <item>
+      <title>Managing GitHub credentials from R, difficulty level linux</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers</link>
+      <description>A sick sad story in which a humble R user was forced to learn something about
+how linux stores passwords and, more importantly, got R to use her GitHub
+credentials properly</description>
+      <guid>https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers</guid>
+      <pubDate>Sun, 08 Aug 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-08-08_git-credential-helpers/credentials.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Generative art in R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-07-08_generative-art-in-r</link>
+      <description>Comments on an exhibit I contributed to as part of useR!2021</description>
+      <guid>https://blog.djnavarro.net/posts/2021-07-08_generative-art-in-r</guid>
+      <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-07-08_generative-art-in-r/turmite59-in-red.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Bootstrap cards in distill</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-04-19_bs4cards-in-distill</link>
+      <description>How to enable bootstrap 4 on a distill website, even though you probably 
+don't need to. I like it though because I get to add pretty bootstrap cards</description>
+      <guid>https://blog.djnavarro.net/posts/2021-04-19_bs4cards-in-distill</guid>
+      <pubDate>Mon, 19 Apr 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-04-19_bs4cards-in-distill/bs4cards-logo.png" medium="image" type="image/png" width="2820" height="1620"/>
+    </item>
+    <item>
+      <title>Pretty little CLIs</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-04-18_pretty-little-clis</link>
+      <description>How to make a gorgeous command line interface in R using the cli package.
+Somewhere along the way I accidentally learned about ANSI control codes,
+which strikes me as unfortunate</description>
+      <guid>https://blog.djnavarro.net/posts/2021-04-18_pretty-little-clis</guid>
+      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-04-18_pretty-little-clis/pretty-little-clis.jpg" medium="image" type="image/jpeg"/>
+    </item>
+    <item>
+      <title>Welcome to the jungle</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2021-04-05_welcome</link>
+      <description>I have reluctantly decided to create a new blog. Some thoughts on 
+what I hope to achieve, having tried my hand at blogging so very many times 
+before</description>
+      <guid>https://blog.djnavarro.net/posts/2021-04-05_welcome</guid>
+      <pubDate>Mon, 05 Apr 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2021-04-05_welcome/welcome.jpg" medium="image" type="image/jpeg"/>
+    </item>
+  </channel>
+</rss>
