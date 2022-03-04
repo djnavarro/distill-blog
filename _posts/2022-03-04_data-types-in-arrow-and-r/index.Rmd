@@ -159,6 +159,8 @@ So how do we construct data structures in Arrow that are appropriate translation
 
 Well... sort of.
 
+### Table, ChunkedArray, and Scalar
+
 I mean, before we even get to that part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. Specifically, C++ and R take different approaches to object oriented programming (OOP).
 
 The approach taken in C++ is [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. In contrast, the approach taken in R is to have lots of different OOP systems that all work differently.^[This "let a thousand OOP systems bloom" philosophy has made me cry many times.] The most common one is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. However there are also encapsulated OOP systems like [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
@@ -181,11 +183,22 @@ This is a natural way of thinking about things in R, but the `arrow_table()` fun
 Table$create(magicians)
 ```
 
-It's literally the same thing. And when I used the `schema()` function to create a schema? Well, there's an R6 object called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. There are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these corresponds to a data structure in Arrow, and these R6 objects are the primary points of contact between R and Arrow. I will only talk about a few of these in this post because -- as you'll see -- the post gets very long even when I restrict myself to a few of them.
+It's literally the same thing. And when I used the `schema()` function to create a schema? Well, there's an R6 object called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. There are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these corresponds to a data structure in Arrow, and these R6 objects are the primary points of contact between R and Arrow. I will only talk about a few of these in this post because -- as you'll see -- the post gets very long even when I restrict myself to a few of them. The important thing right now is to get a sense of how the parts fit together:
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term 'element' to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns (encoded as Chunked Arrays), and within each element of a chunked array there is a Scalar. The data structure that translates one into the other is called a Schema."
+
+knitr::include_graphics("img/data-types-overview.png", dpi = 100)
+```
+
 
 Interacting with R6 objects is something that took me a while to get the hang of, and it's not something that feels "native" to most R programmers because we're used to functional OOP rather than encapsulated OOP. So to make your life easier, the **arrow** developers often provide handy wrapper functions that have names suspiciously similar to the R6 objects. You can use `chunked_array()` to call `ChunkedArray$create`, `schema()` to call `Schema$create()`, and `arrow_table()` to call `Table$create()`.^[In general R6 classes use [UpperCamelCase](https://en.wikipedia.org/wiki/Camel_case), and the [snake_case](https://en.wikipedia.org/wiki/Snake_case) functions with the same name provide an interface to the R6 class that feels more familiar to an R user. The `arrow_table()` function breaks the convention, but that's only because `table()` is already a base R function that does something very different.] However, there won't always be a wrapper function to solve your particular problem, so you'll often find yourself needing to use R6 methods. As the post goes on, you'll see me doing that from time to time. 
 
 Right. Enough of that. Time to move on...
+
+### Visual conventions
 
 In the rest of this post I'll use a lot of diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), as shown below:
 
