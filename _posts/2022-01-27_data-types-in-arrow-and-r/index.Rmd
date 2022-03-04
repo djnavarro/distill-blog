@@ -560,7 +560,7 @@ float32_01$as_vector()
 
 Yay! It works!
 
-### [Arrow] The decimal type
+### Decimal floating point numbers?
 
 Earlier in this section I promised that the Baudrillard quote from *Simulacra and Simulation* was going to be relevant? Well, that time has arrived. It's also the moment at which the quote from *Word and Object* by Quine that opened this blog post becomes painfully relevant. Stripped of their fancy language, here's what the two authors are telling us in these passages:
 
@@ -581,34 +581,71 @@ Unfortunately, life consists of more than machines.
 
 In particular, binary representations create problems for floating point arithmetic because the world contains *humans* who write numbers in decimal notation^[That's assuming we're writing numbers in Arabic number system. I suppose it would be different if our orthographic representations adopted the [Sumerian sexagesimal notation](http://www.mathematicsmagazine.com/Articles/TheSumerianMathematicalSystem.php). Admittedly, neither R nor Arrow existed at the time, so it's a moot point. All I'm really saying is that decimal systems are no less arbitrary than binary ones. The problem arises because of the mismatch, not because one encoding is inherently better than the other.]. Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a "simple" decimal number like 0.1 doesn't have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.
 
-A natural solution to this is to design floating point data types that use other bases. Arrow, like Python, includes  [decimal floating point](https://en.wikipedia.org/wiki/Decimal_floating_point) types that are essentially equivalent to the more familiar binary floating point numbers, but they rely on a base 10 decomposition:
+A natural solution to this is to design floating point data types that use other bases. It is entirely possible to adopt [decimal floating point](https://en.wikipedia.org/wiki/Decimal_floating_point) types that are essentially equivalent to the more familiar binary floating point numbers, but they rely on a base 10 decomposition:
 
 $$
 (\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 10 ^ {\mbox{(exponent)}}
 $$
-Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. However, R doesn't have any analog of a decimal so I can't import an "R decimal object" to Arrow. However, what I can do is take the Arrow float64 objects I defined earlier and explicitly cast them to decimal format:
+
+As we'll see in the next section, what Arrow actually does is slightly different to this. Instead of using floating-point decimals, it supplies fixed-point decimal types. In a floating-point representation, the exponent is chosen automatically, and is a property of the value itself. The number `-9.832` will always have an exponent of 3 when encoded as a binary floating-point number (as we saw in the `polar_g` example earlier), and that exponent will never be influenced by the values of other numbers stored in the same data set. 
+
+A fixed-point representation is different. The exponent -- and in a decimal representation, remember that the exponent is just "the location of the decimal point" -- is chosen by the user. You have to specify where the decimal point is located manually, and this location will be applied to each value stored in the object. In other words, the exponent -- which is now called the "scale", and is parameterised slightly differently -- becomes a property of the type, not the value. 
+
+Sigh. Nothing in life is simple, is it? It'll become a little clearer in the next section, I promise!
+
+### [Arrow] The decimal fixed-point types
+
+Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. As usual **arrow** package supplies type functions `decimal128()` and `decimal256()` that allow you to specify decimal types. Both functions have two arguments that you must supply:
+
+- `precision` specifies the number of significant digits to store, similar to setting the length of the mantissa in a floating-point representation. 
+
+- `scale` specifies the number of digits that should be stored after the decimal point. If you set `scale = 2`, exactly two digits will be stored after the decimal point. If you set `scale = 0`, values will be rounded to the nearest whole number. Negative scales are also permitted (handy when dealing with extremely large numbers), so `scale = -2` stores the value to the nearest 100.
+
+One convenience that exists both in the **arrow** R package and within the underlying Arrow C++ library is that it can automatically decide whether you need a decimal128 or a decimal256 simply by looking at the value of the `precision` argument. If the `precision` is 38 or less, you can encode the data with a decimal128 type. Larger values require a decimal256. If you would like to take advantage of this -- as I will do in this post -- you can use the `decimal()` type function which will automatically create the appropriate type based on the specified precision. 
+
+One inconvenience that I have in this post, however, is that R doesn't have any analog of a fixed-point decimal, and consequently I don't have any way to create an "R decimal" that I can then import into Arrow. What I'll do instead is create a floating point array in Arrow, and then explicitly cast it to a decimal type. Step one, create the floating point numbers in Arrow:
 
 ```{r}
-decimal_01 <- float_01$cast(decimal128(5, 5))
-decimal_01
-decimal_01$type
+floats <- chunked_array(c(.01, .1, 1, 10, 100), type = float32())
+floats
 ```
 
-When we use the decimal floating point type, we no longer encounter the bizarre problem of discovering that .1 + .2 is apparently not equal to .3. Everything works out nicely:
+Step two, cast the floats to decimals: 
 
 ```{r}
-decimal_02 <- float_02$cast(decimal128(5, 5))
-decimal_03 <- float_03$cast(decimal128(5, 5))
-decimal_01 + decimal_02 - decimal_03
+decimals <- floats$cast(decimal(precision = 5, scale = 2))
+decimals
 ```
 
-The logical tests work out nicely too:
+These two arrays look almost the same (especially because I chose the `scale` judiciously!), but the underlying encoding is different. The original `floats` array is a familiar float32 type, but if we have a look at the `decimals` object we see that it adopts a quite different encoding:
 
 ```{r}
-decimal_01 + decimal_02 == decimal_03
+decimals$type
 ```
 
-What's important to keep in mind here, though, is that decimal types don't make floating point errors disappear. Decimal floating point numbers are still subject to all the weirdness of binary floating point numbers. However, what it does means is that the weirdness of the *machine-level* representation (decimal floating point) is neatly aligned with the weirdness of the *human-level* representation (decimal numbers). That comes in handy sometimes.
+To illustrate that these do behave differently, let's have fun making floating point numbers misbehave again:
+
+```{r}
+sad_floats <- chunked_array(c(.1, .2, .3))
+sum(sad_floats)
+```
+
+Oh noes. Okay, let's take a sad float and turn it into a happy decimal. I'll store it as a high precision decimal to make it a little easier to compare the results:
+
+```{r}
+happy_decimals <- sad_floats$cast(decimal(20, 16))
+```
+
+Now let's look at the two sums side by side:
+
+```{r, results='hold'}
+sum(sad_floats)
+sum(happy_decimals)
+```
+
+Yay!
+
+As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren't a universal solution to the problems of binary floating-point numbers. They have severe limitations of their own and there are very good reasons why floats remain the default almost everywhere. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as to fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.
 
 ## Character types
 
@@ -685,7 +722,7 @@ jung_talent_arrow$type
 
 ### [Arrow] The large_utf8 type
 
-Okay, so as I mentioned, Arrow has two types.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for the underlying C++ library you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".]
+Okay, so as I mentioned, Arrow has two different string types.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for the underlying C++ library you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".]
 
 okay, so why do I care? well, if you're using 32-bit integers to encode the offset, that imposes a limit on the total number of characters that can be included. The total size of the string array is capped at 2GiB because you don't have a way of referring to positions in the string larger than that. if you use 64-bit integers to encode the offset, that limit goes away (I mean technically there is a limit of course because 64-bit is still finite precision but it's *quite* a lot bigger). 
 
