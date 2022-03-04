@@ -240,17 +240,13 @@ scalar(TRUE, type = boolean())
 
 ## Integer types
 
-Integers are a little more complicated: where base R provides just the one integer type, Arrow provides eight. 
+When translating R logicals to Arrow booleans, there aren't a lot of conceptual difficulties. R has one data structure and Arrow has one data structure, and they're basically identical. This is easy. Integers, however, are a little trickier because there's no longer an exact mapping between the two languages. Base R provides one kind of integer data, but Arrow provides eight distinct integer types. As a consequence it will no longer be possible to provide one-to-one mappings between R and Arrow, and some choices have to be made. As we'll see in this section, the **arrow** package tries very hard to set sensible default choices, and in most cases these will work seamlessly. It's not something you actually have to think about much. But, as my friend Dan Simpson reminds me over and over, God is in the sweeping gestures but the Devil is in the details. 
+
+It is wise to look carefully at the details, so let's do that. 
+
+### [Arrow] Eight types of integer
 
 To make sense of the different types, it helps to take a moment to think about how integers are represented in a binary format. Let's suppose we allocate 8 bits to specify an integer. If we do that, then there are $2^8 = 256$ unique binary patterns we can create with these bits. Because of this, there is a fundamental constraint: no matter how we choose to set it up, 8-bit integers can only represent 256 distinct numbers. Technically, we could choose any 256 numbers we like, but in practice there are only two schemes used for 8-bit integers: *unsigned* 8-bit integers ("uint8") use those bits to represent integers from 0 to 255, whereas *signed* 8-bit integers ("int8") can represent integers from -128 to 127. 
-
-<!-- 
-TODO:
-
-Mathematically: 
-signed = the integers, Z
-unsigned = the naturals, N
--->
 
 More generally, an unsigned n-bit integer can represent integers from 0 to $2^n - 1$, whereas a signed n-bit integer can represent integers from $-2^{n-1}$ to $2^{n-1} - 1$. Here's what that looks like for all the integer types supported by Arrow:
 
@@ -265,7 +261,40 @@ More generally, an unsigned n-bit integer can represent integers from 0 to $2^n 
 | 32 bit signed   | int32  | -2147483648          |           2147483647 |
 | 64 bit signed   | int64  | -9223372036854775808 |  9223372036854775807 |
 
-On the R side, the integer type supplied by base R is a 32 bit signed integer, and has a natural one-to-one mapping to the Arrow int32 type. Because of this, the **arrow** default is to convert an R integer to an Arrow int32 and vice versa. 
+### [R] One integer class
+
+On the R side, the integer type supplied by base R is a 32 bit signed integer, and has a natural one-to-one mapping to the Arrow int32 type. Because of this, the **arrow** default is to convert an R integer to an Arrow int32 and vice versa. Here's an example. I've been watching [Snowpiercer](https://en.wikipedia.org/wiki/Snowpiercer_(TV_series)) lately, and the train is currently 1029 cars long so let's pass the integer `1029L` from R over to Arrow
+
+```{r}
+snowpiercer <- scalar(1029L)
+snowpiercer
+```
+
+Let's inspect the `type` field of the `snowpiercer` object in order to determine what type of object has arrived in Arrow:
+
+```{r}
+snowpiercer$type
+```
+
+Similarly, we can use the `as_vector()` method of the `snowpiercer` object to pull the data back into R, and hopefully it comes as no surprise to see that we get the same number back:
+
+```{r}
+snowpiercer$as_vector()
+```
+
+We can take this one step further to check that the returned object is actually an R integer by checking its `class()`, and again there are no surprises:
+
+```{r}
+class(snowpiercer$as_vector())
+```
+
+As you can see, the default behaviour in **arrow** is to translate an R integer into an Arrow int32, and vice versa. That part, at least, is not too complicated.
+
+That being said, it's worth unpacking some of the mechanics of what I'm doing with the code here. Everything I've shown above is R code, so it's important to keep it firmly in mind that when I create the `snowpiercer` object there are two different things happening: a *data* object is created inside Arrow, and a *pointer* to that object is created inside R. The `snowpiercer` object is that pointer (it's actually an R6 object). When I called `snowpiercer$type` in R, the output is telling me that the data object in Arrow has type "int32". There's a division of responsibility between R and Arrow that always needs to be kept in mind. 
+
+Now, in this particular example there's an element of silliness because my data object is so tiny. There was never a good reason to put the data in Arrow, and the only reason I'm doing it here is for explanatory purposes. But in real life (like in the TV shoe), `snowpiercer` might in fact be a gargantuan monstrosity over which you have perilously little control due to it's staggering size. In that case it makes a big difference where the data object is stored. Placing the data object in Arrow is a little bit like powering your 1029-car long train using the fictitious perpetual motion engine from the show: it is a really, really good idea when you have gargantuan data.^[Okay that was a tortured metaphor and one that I probably don't want to push too far given that *Snowpiercer* is a terrifyingly dark show filled with horrible, horrible people. I'm nice though. Honest! Would I lie to you?]
+
+### When integer translation is easy
 
 What about the other seven Arrow types? This is where it gets a little trickier. The table above illustrates that some integer types are fully contained within others: unsurprisingly, every number representable by int16 can also be represented by int32, so we can say that the int16 numbers are fully "contained" by (i.e. are a proper subset of) the int32 numbers. Similarly, uint16 is contained by unit32. There are many cases where an unsigned type is contained by a signed type: for instance, int32 contains all the uint16 numbers. However, because the unsigned integers cannot represent negative numbers, the reverse is never true. So we can map out the relationships between the different types like this: 
 
@@ -286,6 +315,10 @@ Whenever type A contains type B, it's possible to transform an object of type B 
 
 knitr::include_graphics("img/integer-types-01.png", dpi = 100)
 ```
+
+These are the cases where it is easy. 
+
+### When integer translation is hard
 
 Other integer types are messier. To keep things nice and simple, what we'd *like* to do is to map the Arrow uint32, uint64, and int64 types onto the R integer type. Sometimes that's possible: if all the stored values fall within the range of values representable by R integers (i.e., are between -2147483648 and 2147483647) then we can do this, and that's what **arrow** does by default. However, if there are values that "overflow" this range, then **arrow** will import the data as a different type, as shown below:
 
