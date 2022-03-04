@@ -103,7 +103,7 @@ In this example the translation back and forth "just works". You really don't ha
 
 That being said, it's also valuable to give the data analyst flexibility. The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no "single" rulebook that tells you how to translate between R and Arrow: there can't be. 
 
-Suppose that I knew that there would in fact be a "Season 5.1648" coming, consisting of a single episode whose title corresponded to the full text of the [Treaty of Westphalia](https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf) or several gigabytes worth of Wikipedia text.^[I mean, if this were a Fiona Apple discography this would be a real possibility right?] Knowing that this new data point is coming, I'd perhaps want my Arrow data to encode `season` as a numeric variable, and I'd probably want to recognise that the text in the `title` field can be quite long. To do that I can specify an explicit *schema* that tells the **arrow** package how to translate my R data set into Arrow. I can do this with the `schema()` function:
+Suppose that I knew that there would in fact be a "Season 5.1648" coming, consisting of a single episode whose title corresponded to the full text of the [Treaty of Westphalia](https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf) or, worse, several gigabytes worth of Wikipedia text.^[I mean, if my data set were a [Fiona Apple discography](https://en.wikipedia.org/wiki/When_the_Pawn...) this would be a real possibility right?] Knowing that this new data point is coming, I'd perhaps want my Arrow data to encode `season` as a numeric variable, and I'd probably want to recognise that the text in the `title` field can be quite long. To do that I can specify an explicit *schema* that tells the **arrow** package how to translate my R data set into Arrow. I can do this with the `schema()` function:
 
 ```{r}
 translation <- schema(
@@ -399,7 +399,7 @@ The problem, though, is that there are *a lot* of integers. It's a tad inconveni
 ### Floating point numbers and the desert of the reals
 
 > To dissimulate is to pretend not to have what one has. To simulate is to feign to have what one doesn't have. One implies a presence, the other an absence. But it is more complicated than that because simulating is not pretending: "Whoever fakes an illness can simply stay in bed and make everyone believe he is ill. Whoever simulates an illness produces in himself some of the symptoms" (Littré). Therefore, pretending, or dissimulating, leaves the principle of reality intact: the difference is always clear, it is simply masked, whereas simulation threatens the difference between the "true" and the "false," the "real" and the "imaginary." <br>
-> &nbsp; &nbsp; -- Jean Baudrillard, 1981, [Simulacra and Simulation](https://en.wikipedia.org/wiki/Simulacra_and_Simulation)^[The "desert of the real" phrase in the title of the section refers to the real numbers, but it's also a quote from *Simulacra and Simulation* and *The Matrix*. Obviously I encountered it in The Matrix first because, all appearances to the contrary, I am uncultured swine.]
+> &nbsp; &nbsp; -- Jean Baudrillard, 1981, [Simulacra and Simulation](https://en.wikipedia.org/wiki/Simulacra_and_Simulation)^[The "desert of the real" phrase in the title of the section refers to the real numbers, but it's also a quote from *Simulacra and Simulation* and *The Matrix*. Obviously I encountered it in *The Matrix* first because, all appearances to the contrary, I am uncultured swine.]
 
 The real numbers correspond to our intuitive concept of the continuous number line. Just like the integers, the real line extends infinitely far in both directions, but unlike the integers the reals are continuous: for any two real numbers -- no matter how close they are to each other -- there is *always* another real number in between. This, quite frankly, sucks. Because the moment you accept that this is true, something ugly happens. If I accept that there must exist a number between 1.01 and 1.02, which I'll call 1.015, then I have to accept that there is a number between 1.01 and 1.015, which I'll call 1.0075, and then I have to accept that... oh shit this is going to go on forever. In other words, the reals have the obnoxious property that there between any two real numbers there are an infinity of other real numbers. 
 
@@ -973,7 +973,7 @@ hedy_age <- now - hedy_lamarr
 hedy_age
 ```
 
-I would learn that it has been `r round(c(hedy_age))` days since [Hedy Lamarr](https://en.wikipedia.org/wiki/Hedy_Lamarr) was born.^[Yes, I looked up her [time and location of birth](https://www.astro.com/astro-databank/Lamarr,_Hedy) on an astrology website. I am, after all, queer. It is one of the traditions of our people.] More to the point, R has guessed that the length of time is sufficiently long that seconds aren't the appropriate encoding unit:
+I would learn that it has been `r round(c(hedy_age))` days since [Hedy Lamarr](https://en.wikipedia.org/wiki/Hedy_Lamarr) was born.^[Yes, I looked up her [time and location of birth](https://www.astro.com/astro-databank/Lamarr,_Hedy) on an astrology website. I am, after all, a queer. It is one of the traditions of our people.] More to the point, R has guessed that the length of time is sufficiently long that seconds aren't the appropriate encoding unit:
 
 ```{r}
 unclass(hedy_age)
@@ -1060,35 +1060,15 @@ In essence, the **arrow** defaults are set up such that if you choose `time32()`
 
 ## Other types
 
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Default mappings for null types"
-knitr::include_graphics("img/null-types.png", dpi = 100)
-```
+As with any story told by humans, this one is incomplete. When I started writing this post I had the ambition to cover every single line in the [Table of R/Arrow mappings](https://arrow.apache.org/docs/r/articles/arrow.html#mapping-of-r-arrow-types) shown in the **arrow** documentation. I didn't quite get there in the end, and there are a few missing cases. I'll briefly mention them here:
 
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Default mappings for raw types"
-knitr::include_graphics("img/raw-types.png", dpi = 100)
-```
+- Arrow possesses a "null" value used to represent missing data, and behaves similarly to `NA` in R. In base R there are several different `NA` values, corresponding to the different atomic types: `NA_logical`, `NA_character`. The way this is handled in **arrow** is to rely on the **vctrs** package. Specifically, in **vctrs** there is a "vctrs_unspecified" class that works very well here, so Arrow nulls map to vctrs_unspecified and vice versa. In practice, this is where `NA` values enter into the picture.
 
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Default mappings for factor types"
-knitr::include_graphics("img/factor-types.png", dpi = 100)
-```
+- In R there is the concept of the "raw" type used to represent bytes. Arrow doesn't have a natural equivalent of this, but the closest is an unsigned 8-bit integer, so the default is to map raw to uint8.
 
+- I haven't talked about factors at all, and frankly I probably should have. My only excuse is exhaustion. The post was getting very long and I ran out of energy. The analog of factors in Arrow is the "dictionary" type. They're not exact mirrors of each other so it's worth reading the documentation, but it's close enough that factors are mapped to dictionaries and vice versa. 
 
-```{r}
-#| echo = FALSE,
-#| fig.align = "center",
-#| fig.cap = "Default mappings for data frame types"
-knitr::include_graphics("img/dataframe-types.png", dpi = 100)
-```
-
+- R and Arrow both allow more complicated data structures to be included as columns within a data frame (or table). For example, in R each element of a column can itself be a data frame. In such cases, the default in **arrow** is to map each R data frame onto an Arrow struct. Again, this is one where it's worth reading the documentation, because there are some subtleties with how things like list columns are handled. 
 
 ## Resources
 
