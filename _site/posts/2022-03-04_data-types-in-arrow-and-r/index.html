@@ -2546,6 +2546,7 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
+<p><em>[Author note]</em> This post is technically still a draft. I’ve made it public to get feedback from friends and colleagues, but it’s not quite finished and I haven’t done all the checking to make sure there aren’t errors. I don’t mind if anyone reads it in the current state, but until this note disappears please don’t share on social media etc!</p>
 <p><em>[Author note]</em> This post is the third in a series I have been writing on Apache Arrow and R, and probably works best if you’ve read the previous two. The first one is a <a href="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/">getting started post</a>, and the second one talks about the <a href="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/">arrow dplyr backend</a>. I’ve tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the <strong>arrow</strong> package does. If that’s you, read on! If you’re not at that point yet, hopefully the first two posts will get you there!</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3527,7 +3528,7 @@ Figure 17: Default mappings for date/time types
 <span class='va'>today</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-05&quot;</code></pre>
 </div>
 <p>If I use <code>unclass()</code> to see what it looks like under the hood:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3535,7 +3536,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 19055</code></pre>
+<pre><code>[1] 19056</code></pre>
 </div>
 <p>Fundamentally, a Date object is just a number: it counts the number of days that have elapsed since a fixed date. It does not care what the year is, what the month is, or what day of the month it is. It does not care how the date is displayed to the user. All those things are supplied by the <code>print()</code> method, and are not part of the Date itself.</p>
 <h3 id="r-the-posixct-class">[R] The POSIXct class</h3>
@@ -3547,7 +3548,7 @@ Figure 17: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 23:35:21 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-05 00:39:09 AEDT&quot;</code></pre>
 </div>
 <p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3555,7 +3556,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646397322</code></pre>
+<pre><code>[1] 1646401150</code></pre>
 </div>
 <p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time. However, it doesn’t necessarily have to be this way: a POSIXct object is permitted to have a “tzone” attribute, a character string that specifies the timezone that is used when printing the object will be preserved when it is converted to a POSIXlt.</p>
 <p>Nevertheless, when I created the <code>now</code> object by calling <code>Sys.time()</code>, no timezone information was stored in the object. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for POSIXct objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
@@ -3564,7 +3565,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 13:35:21 CET&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 14:39:09 CET&quot;</code></pre>
 </div>
 <p>If you want to record the timezone as part of your POSIXct object rather than relying on the print method to do the work, you can do so by setting the <code>tzone</code> attribute. To illustrate this, let’s pretend I’m in Tokyo:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3573,7 +3574,7 @@ Figure 17: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 21:35:21 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 22:39:09 JST&quot;</code></pre>
 </div>
 <p>The important thing here is that the timezone is metadata used to change the how the time is displayed. Changing the timezone does not alter the number of seconds stored in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3581,7 +3582,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646397322
+<pre><code>[1] 1646401150
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -3593,7 +3594,7 @@ attr(,&quot;tzone&quot;)
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 21:35:21 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 22:39:09 JST&quot;</code></pre>
 </div>
 <p>It <em>looks</em> the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3602,13 +3603,13 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>$sec
-[1] 21.57165
+[1] 9.859393
 
 $min
-[1] 35
+[1] 39
 
 $hour
-[1] 21
+[1] 22
 
 $mday
 [1] 4
@@ -3648,7 +3649,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-04</code></pre>
+2022-03-05</code></pre>
 </div>
 <p>We can expose the internal structure of this object by casting it to an integer:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3657,7 +3658,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-19055</code></pre>
+19056</code></pre>
 </div>
 <p>This is the same answer we got earlier when I used <code>unclass()</code> to take a peek at the internals of the <code>today</code> object. That being said, there is a subtle difference: in Arrow, the date32 type is explicitly a 32-bit integer. If you read through the help documentation for date/time classes in R you’ll see that R has something a little more complicated going on. The details don’t matter for this post, but you should be aware that Dates (and POSIXct objects) are stored as doubles. Unlike Arrow, they aren’t stored as integers:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3679,7 +3680,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-04</code></pre>
+2022-03-05</code></pre>
 </div>
 <p>…but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I’m doing is storing the date? Although POSIXct and date64 aren’t exact matches, they’re more closely related to each other than Date and date64. So let’s create an Arrow analog of <code>now</code> as a date64 object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3698,7 +3699,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-1646397321571</code></pre>
+1646401149859</code></pre>
 </div>
 <p>This isn’t a count of the number of days since the unix epoch, it’s a count of the number of milliseconds. It is essentially the same number, divided by 1000, as the one we obtained when I typed <code>unclass(now)</code>. However, there’s a puzzle here that we need to solve. Let’s take another look at <code>unclass(now)</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3706,7 +3707,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646397322
+<pre><code>[1] 1646401150
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -3717,7 +3718,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span><span class='op'>$</span><span class='va'>sec</span>
 </code></pre>
 </div>
-<pre><code>[1] 21.57165</code></pre>
+<pre><code>[1] 9.859393</code></pre>
 </div>
 <p>Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in <code>now_date64</code>. The data was there all along. Even though <code>unclass(now)</code> produces an output that has been rounded to the nearest second, the original <code>now</code> variable is indeed a double, and it <em>does</em> store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times.</p>
 <p>Because of this, the default behaviour in <strong>arrow</strong> is to convert date64 types (64-bit integers interpreted as counts of milliseconds) to POSIXct classes (which are secretly 32-bit doubles interpreted as counts of seconds).</p>
@@ -3731,9 +3732,9 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-04 12:35:21.571647
+2022-03-04 13:39:09.859393
 Scalar
-2022-03-04 12:35:21.571647</code></pre>
+2022-03-04 13:39:09.859393</code></pre>
 </div>
 <p>Alternatively, we could use seconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3742,7 +3743,7 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-04 12:35:21</code></pre>
+2022-03-04 13:39:09</code></pre>
 </div>
 <p>It’s important to recognise that changing the unit does more than change the precision at which the timestamp is printed. It changes “the thing that is counted”, so the numbers that get stored in the timestamp are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3752,9 +3753,9 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-1646397321
+1646401149
 Scalar
-1646397321571646976</code></pre>
+1646401149859392768</code></pre>
 </div>
 <p>Okay, what about timezone. Recall that <code>now</code> has a timezone attached to it, because I explicitly recorded the <code>tzone</code> attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3762,7 +3763,7 @@ Scalar
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 21:35:21 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 22:39:09 JST&quot;</code></pre>
 </div>
 <p>When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn’t do that: the time <em>as displayed</em> is shown in UTC. However, that doesn’t mean that the metadata isn’t there:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3783,7 +3784,7 @@ timestamp[us, tz=Asia/Tokyo]</code></pre>
 <span class='va'>new_now</span>               <span class='co'># ... but appears to!</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 23:35:21 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-05 00:39:10 AEDT&quot;</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># an Arrow timestamp with no timezone</span>
 <span class='va'>new_now_timestamp</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>new_now</span><span class='op'>)</span>
@@ -3802,7 +3803,7 @@ timestamp[us]</code></pre>
 </code></pre>
 </div>
 <pre><code>StructScalar
-{sec:double = 21.57164692878723, min:int32 = 35, hour:int32 = 21, mday:int32 = 4, mon:int32 = 2, year:int32 = 122, wday:int32 = 5, yday:int32 = 62, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
+{sec:double = 9.859392881393433, min:int32 = 39, hour:int32 = 22, mday:int32 = 4, mon:int32 = 2, year:int32 = 122, wday:int32 = 5, yday:int32 = 62, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
 </div>
 <p>The struct object contains named fields that are identical to their POSIXlt equivalents, and whose types have been translated according to the default mappings: <code>sec</code> is a double, <code>min</code> is an int32, <code>hour</code> is an int32, <code>zone</code> is a string, and so on.</p>
 <p>This arrangement, where POSIXct maps to timestamp and POSIXlt maps to struct, makes perfect sense when you think about the underlying data structures that POSIXct and POSIXlt encode. Where things can be tricky for the R user is in the “mental account keeping”. In order to be helpful, R displays POSIXct and POSIXlt objects in exactly the same way:</p>
@@ -3812,8 +3813,8 @@ timestamp[us]</code></pre>
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-04 21:35:21 JST&quot;
-[1] &quot;2022-03-04 21:35:21 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-04 22:39:09 JST&quot;
+[1] &quot;2022-03-04 22:39:09 JST&quot;</code></pre>
 </div>
 <p>Not only that, because POSIXct and POSIXlt are both subclasses of the POSIXt class, R allows you to perform temporal arithmetic on objects of different types:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3853,7 +3854,7 @@ Figure 19: Default mappings for duration types
 <span class='va'>rmd_time</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 0.2885227 secs</code></pre>
+<pre><code>Time difference of 0.6976154 secs</code></pre>
 </div>
 <p>Now let’s take a look at how it’s actually stored:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3861,7 +3862,7 @@ Figure 19: Default mappings for duration types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.2885227
+<pre><code>[1] 0.6976154
 attr(,&quot;units&quot;)
 [1] &quot;secs&quot;</code></pre>
 </div>
@@ -3873,7 +3874,7 @@ attr(,&quot;units&quot;)
 <span class='va'>hedy_age</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 39196.75 days</code></pre>
+<pre><code>Time difference of 39196.8 days</code></pre>
 </div>
 <p>I would learn that it has been 39197 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn23" class="footnote-ref" id="fnref23" role="doc-noteref"><sup>23</sup></a> More to the point, R has guessed that the length of time is sufficiently long that seconds aren’t the appropriate encoding unit:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3881,12 +3882,12 @@ attr(,&quot;units&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>hedy_age</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 39196.75
+<pre><code>[1] 39196.8
 attr(,&quot;units&quot;)
 [1] &quot;days&quot;</code></pre>
 </div>
 <h3 id="arrow-the-duration-type">[Arrow] The duration type</h3>
-<p>The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not <em>exactly</em> equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing 0.29 as the value and setting the units to be seconds. This doesn’t work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of 0.29 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don’t, things can go a little awry:</p>
+<p>The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not <em>exactly</em> equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing 0.7 as the value and setting the units to be seconds. This doesn’t work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of 0.7 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don’t, things can go a little awry:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rmd_time_arrow</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
@@ -3913,7 +3914,7 @@ duration[s]</code></pre>
 </code></pre>
 </div>
 <pre><code>Scalar
-288522</code></pre>
+697615</code></pre>
 </div>
 <p>That’s a little better! Again, I can inspect the data type and see that the unit of encoding is now set to microseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -4060,7 +4061,7 @@ Figure 21: Art
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-04 23:35:22 AEDT</p>
+<p>2022-03-05 00:39:11 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-04_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-04_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>

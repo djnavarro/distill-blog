@@ -59,6 +59,8 @@ source("unpack_double.R")
 
 <!--------------- post ----------------->
 
+*[Author note]* This post is technically still a draft. I've made it public to get feedback from friends and colleagues, but it's not quite finished and I haven't done all the checking to make sure there aren't errors. I don't mind if anyone reads it in the current state, but until this note disappears please don't share on social media etc! 
+
 *[Author note]* This post is the third in a series I have been writing on Apache Arrow and R, and probably works best if you've read the previous two. The first one is a [getting started post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/), and the second one talks about the [arrow dplyr backend](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/). I've tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the **arrow** package does. If that's you, read on! If you're not at that point yet, hopefully the first two posts will get you there!
 
 ```{r}
