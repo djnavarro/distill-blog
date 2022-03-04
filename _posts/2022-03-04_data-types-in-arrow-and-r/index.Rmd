@@ -199,14 +199,16 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 
 ## Logical types
 
-I'll start with the simplest possible case: a data frame with one column of logical data. Logical data in R can take on three possible values: `TRUE` and `FALSE` are the two allowed truth values, and `NA` is used to denote missing data.^[Should I take this opportunity to discuss the fact that this means that what R actually implements is a [three valued logic](https://en.wikipedia.org/wiki/Three-valued_logic)? No. No I should not. I am going to *think* it very loudly though.]
+At long last we arrive at the point where I'm talking about the data values themselves, and the simplest kind of data to talk about are logical data. In R, logical data can take on three possible values: `TRUE` and `FALSE` are the two truth values, and `NA` is used to denote missing data.^[Should I take this opportunity to discuss the fact that this means that what R actually implements is a [three valued logic](https://en.wikipedia.org/wiki/Three-valued_logic)? No. No I should not. I am going to *think* it very loudly though.] In a moment I'll show you how to directly pass individual values from R to Arrow, but for the moment let's stick to what we know and pass an entire data frame across. Here's a tiny data frame, with one column of logical values:
 
 ```{r}
-df <- tibble(values = c(TRUE, FALSE, NA))
-df
+dat <- tibble(values = c(TRUE, FALSE, NA))
+dat
 ```
 
-Arrow has an analogous "boolean" type, which has truth values `true` and `false`. Just like R, missing values are allowed, and are represented as `null`. Arrow booleans and R logicals are essentially equivalent to one another, so by default the **arrow** package will map an R logical to an Arrow boolean and vice versa.
+We're going to pass this across to Arrow using `arrow_table()` but before we do let's talk about what we expect to happen when the data arrive at the other side. 
+
+In this case, it's quite straightforward. Arrow has an "boolean" type that has truth values `true` and `false` that behave the same way as their cousins in R. Just like R, Arrow allows missing values, though they're called `null` values in Arrow. Unlike basically every other example we're going to see in this post, this one actually is straightforward because the mapping is perfect. Unless you do something to override it, the **arrow** package will map an R logical to an Arrow boolean and vice versa. Here's the diagram I use to describe it:
 
 ```{r}
 #| echo = FALSE,
@@ -216,44 +218,55 @@ Arrow has an analogous "boolean" type, which has truth values `true` and `false`
 knitr::include_graphics("img/logical-types.png", dpi = 100)
 ```
 
-So let's do it:
+Seems to make sense, right? So let's stop talking about it and create the corresponding table in Arrow:
 
 ```{r}
-tb <- arrow_table(df)
-tb
+tbl <- arrow_table(dat)
+tbl
 ```
 
-It's mildly annoying this doesn't print out the actual values. Happily the **arrow** package supplies a `$` operator for Arrow Table objects so we can do this:
+Hm. Okay that's a little underwhelming as output goes? I'd like to see the actual values please. Happily the **arrow** package supplies a `$` operator for Arrow Table objects so we can extract an individual column from `tbl` the same way we can from the original R object `dat`. Let's try that:
 
 ```{r}
-tb$values
+tbl$values
 ```
 
-Okay, that makes sense. The "ChunkedArray" bit might seem a little unfamiliar to R users -- and I'll come back to it later -- but for now we can imagine it's something similar to an R vector. 
+The output looks a little different to what we'd get when printing out a single column of a data frame, but it's pretty clear that we've extracted the right thing. A single column inside an Arrow table is stored as a chunked array, so this looks right. 
 
-This also tells us a little more about the relationship between R data frames and Arrow Tables. In R, a data frame is a collection of equal-length vectors; in Arrow, a Table is a collection of equal-length chunked arrays. This is convenient for me because I can use the `chunked_array()` function for the rest of this section. Instead of going through that elaborate process of creating a tibble and then calling `arrow_table()` I could have just done this:
+Yay us! 
+
+At this point, it's handy to remember that the `arrow_table()` function that I used to move the data into Arrow is really just a wrapper that allows you to access some of the `Table` functionality without having to think about R6 objects. And I also mentioned there's a `ChunkedArray` object... and a `chunked_array()` wrapper function. In hindsight, I probably didn't need to bother creating the whole data frame. I could have created the chunked array directly:
 
 ```{r}
 values <- c(TRUE, FALSE, NA)
 chunked_array(values)
 ```
 
-In fact, I could have done this in an even more primitive way and passed a scalar value to Arrow. That's not something you usually find yourself needing to do, so the **arrow** package doesn't have an equivalent of `chunked_array()` that applies to scalars. However, most of the heavy lifting for `chunked_array()` is actually being done by the R6 object `ChunkedArray`. There is a `Scalar` R6 object that we can use to import scalars:
+That's a cleaner way of doing things. If you want a table, use `Table` and its wrappers. If you want a chunked array, use `ChunkedArray` and its wrappers. There's no need to over-complicate things. 
+
+Speaking of which... later in the post, I'll often want to send single values to Arrow. In those cases I don't even want to create a chunked array, I just want to pass a scalar value across. And if what you want is a scalar, the right thing to do is use the `Scalar` object. There aren't any wrapper functions for `Scalar`, so I'll have to use `Scalar$create()` directly:
 
 ```{r}
 Scalar$create(TRUE, type = boolean())
 ```
 
-In the same way that `chunked_array()` is an alias for `ChunkedArray$create()`, for the purpose of this post I'm going to define `scalar()` as an alias for `Scalar$create()`
+In this example I didn't really need to explicitly specify that I wanted to import the data as `type = boolean()`. The value `TRUE` is an R logical, and the **arrow** default is to map logicals onto booleans. I only included it here because I wanted to call attention to the `type` argument. Any time that you want to import data as a non-default type, you need to specify the `type` argument. If you look at the list of [Apache Arrow data types](https://arrow.apache.org/docs/dev/r/reference/data-type.html) on the **arrow** documentation page, you'll see quite a lot of options. For now, the key thing to note is that the `type` argument expects you to call one of these functions. 
+
+Anyway, that's everything I had to say about logicals. Before moving on though, I'm going to write my own wrapper function, and define `scalar()` as an alias for `Scalar$create()`:
 
 ```{r}
 scalar <- function(x, type = NULL) {
   Scalar$create(x, type)
 }
-
-scalar(TRUE, type = boolean())
 ```
 
+The main reason I'm doing that is for convenience, because in this post I'm actually going to need this wrapper function a lot. So I should probably check... does it work?
+
+```{r}
+scalar(TRUE)
+```
+
+Awesome!
 
 ## Integer types
 
