@@ -103,6 +103,10 @@ Okay, I'm going to start adding things. This is just a completely unstructured l
 
 - [The art in randomness](https://medium.com/@dorit.geifman_38625/the-art-in-randomness-f236a3663cb) by [Dorit Geifman](https://twitter.com/GenerativeaRt4)
 
+- [Generative art galleries](https://art.jacquietran.com/) by [Jacquie Tran](https://twitter.com/jacquietran)
+
+- [Art portfolio site](https://ijeamaka.art/portfolio/) by [Ijeamaka Anyene](https://twitter.com/ijeamaka_a)
+
 ### More general
 
 - [thatcreativecode.page](https://thatcreativecode.page/) is a great general resource
