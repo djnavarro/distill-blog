@@ -95,9 +95,9 @@ arrowmagicks
 
 This is exactly the output I should expect, but the longer I think about it the more it seems to me that something quite remarkable is going on. Some magic is in play here, and I want to know how it works.
 
-To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a "data frame" (a tibble, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a "Table" object. Arrow Tables are roughly analogous to data frames -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of translation has occurred, illustrated below: 
+To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a _data frame_ (a _tibble_, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a _Table_ object. _Table_ objects in Arrow are roughly analogous to _data frames_ -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of translation has occurred, illustrated below: 
 
-<aside>Throughout the post, variable names like `arrowmagicks` and function calls like `arrow_table()` will be shown in monospace typewriter font</aside>
+<aside>It's not standard, but since this is a post about data types, I'll italicise the names of data types in both R and Arrow (e.g., <i>data.frame</i>, <i>Table</i>). It gets a bit tiresome, but I think it's helpful</aside>
 
 ```{r}
 #| echo = FALSE,
@@ -107,7 +107,10 @@ To understand why I'm so curious, consider the two objects I now have. The `magi
 knitr::include_graphics("img/data-types-overview.png", dpi = 100)
 ```
 
-Not only has the data frame itself been translated, the values stored in each of the columns have been translated. "Integer" columns in R are mapped to "int32" columns in Arrow, "Date" columns in R become "date32" columns in Arrow, and so on. There is a structure (labelled a "schema" in the image above) that instructs the **arrow** package how to control this translation, and the longer I think about it the more I realise there must be quite a lot going on here. Yet it all seems to work seamlessly, and it works both ways. I can pull the `arrowmagicks` data back into R and recover the original data:
+Not only has the data frame itself been translated, the values stored in each of the columns have been translated. The _integer_ columns in R are mapped to _int32_ columns in Arrow, _Date_ columns in R become _date32_ columns in Arrow, and so on. There is a structure (labelled a _Schema_ in the image above) that instructs the **arrow** package how to control this translation, and the longer I think about it the more I realise there must be quite a lot going on here. Yet it all seems to work seamlessly, and it works both ways. I can pull the `arrowmagicks` data back into R and recover the original data:
+
+<aside>Variable names like `arrowmagicks` and function calls like `arrow_table()` are shown in monospace typewriter font</aside>
+
 
 ```{r}
 collect(arrowmagicks)
@@ -115,7 +118,7 @@ collect(arrowmagicks)
 
 In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we want in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
 
-That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about schemas. Schemas are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
+That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about _Schemas_. _Schemas_ are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
 
 <aside>Boldfaced text is used to denote the names of R packages such as **arrow** and **dplyr**, as well as C++ library such as **libarrow**</aside>
 
@@ -130,7 +133,7 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 
 
 
-## Defining schemas
+## Defining Schemas
 
 The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no single rulebook that tells you how to translate between R and Arrow: there can't be.^[Early in the writing process for this post I talked to the very lovely Jon Keane about this, and they pointed out that there's a big difference in the "read" functions in **arrow** and the "translate" functions. The code in the `read_*()` functions is complicated: it handles everything for you because "reading the data" is a constrained task and the developers can optimise almost everything for you, including the strange edge cases. Translation is harder, and there's less the developers can do to support it. As a consequence, the code underpinning `schema()` is much simpler. It takes care of choices for you when those choices are "obvious", but it leaves all the edge cases for you to deal with. There are a lot of weird edge cases because "translating between languages" is under-determined. Edge cases are left to the user because only the user knows the context.]
 
@@ -215,22 +218,22 @@ Before we get to "moving data around" part it's helpful to step back a little an
 
 One of ways in which C++ and R differ is in how each language approaches object oriented programming (OOP). The approach taken in C++ is an [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. Anyone coming from outside R is probably most familiar with this style of OOP.
 
-The approach taken in R is... chaotic. R has several different OOP systems that have different philosophies, and each system has its own strengths and weaknesses.^[Much like the Honourable Member for Kennedy, this ["let a thousand OOP systems bloom"](https://www.youtube.com/watch?v=1i739SyCu9I) philosophy has made me cry many times: sometimes from joy, often from frustration.] The most commonly used system is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. Most R users will be comfortable with S3 because it's what we see most often. That being said, there are several other systems out there, some of which adopt the more conventional encapsulated OOP paradigm. One of the most popular ones is [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
+The approach taken in R is... chaotic. R has several different OOP systems that have different philosophies, and each system has its own strengths and weaknesses.^[Much like the Honourable Member for Kennedy, this ["let a thousand OOP systems bloom"](https://www.youtube.com/watch?v=1i739SyCu9I) philosophy has made me cry many times: sometimes from joy, often from frustration.] The most commonly used system is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. Most R users will be comfortable with S3 because it's what we see most often. That being said, there are several other systems out there, some of which adopt the more conventional encapsulated OOP paradigm. One of the most popular ones is [R6](https://r6.r-lib.org/), and it works more like the OOP systems seen in other languages. 
 
 The **arrow** package uses both S3 and R6, but it uses them for quite different things. Whenever **arrow** does something in an "R-native" way, S3 methods get used a lot. For example, in my earlier post on [dplyr bindings for Arrow](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/) I talked about how **arrow** supplies a **dplyr** engine: this works in part by supplying S3 methods for various **dplyr** functions that are called whenever a suitable Arrow object gets passed to **dplyr**. The interface between **arrow** and **dplyr** uses S3 because this context is "R like". However, this isn't a post about that aspect of **arrow**, so we won't need to talk about S3 again in this post.
 
-However, **arrow** has a second task, which is to interact with **libarrow**, the Arrow C++ library. Because the data structures there all use encapsulated OOP as is conventional in C++, it is convenient to adhere to those conventions within the **arrow** package. Whenever **arrow** has to interact with Arrow, it's useful to be as "C++ like" as possible, and this in turn means that the interface between **arrow** and **libarrow** is accomplished using R6. So we will be seeing R6 objects appear quite often in this post. 
+However, **arrow** has a second task, which is to interact with **libarrow**, the Arrow C++ library. Because the data structures there all use encapsulated OOP as is conventional in C++, it is convenient to adhere to those conventions within the **arrow** package. Whenever **arrow** has to interact with **libarrow**, it's useful to be as "C++ like" as possible, and this in turn means that the interface between **arrow** and **libarrow** is accomplished using R6. So we will be seeing _R6_ objects appear quite often in this post.^[The typographical notation for R6 varies because the term can be used to refer to the OOP system itself (which I denote as R6), but could also refer to the **R6** package or the _R6_ object type.]
 
 
 ### Table, ChunkedArray, and Scalar
 
-You may be wondering what I mean when I say that R6 objects are used to supply the interface between R and Arrow. I'll try to give some concrete examples. Let's think about the `arrow_table()` function. At the start of the post I used this function to translate an R data frame into an Arrow Table, like this:
+You may be wondering what I mean when I say that _R6_ objects are used to supply the interface between R and Arrow. I'll try to give some concrete examples. Let's think about the `arrow_table()` function. At the start of the post I used this function to translate an R data frame into an Arrow _Table_, like this:
 
 ```{r, results='hide'}
 arrow_table(magicians)
 ```
 
-This is a natural way of thinking about things in R, but the `arrow_table()` function doesn't actually do the work. It's actually just a wrapper function. Within the **arrow** package is an R6 object called `Table`, and its job is to create tables, modify tables, and so on. You can create a table by using the `create()` method for `Table`. In other words, instead of calling `arrow_table()` I could have done this:
+This is a natural way of thinking about things in R, but the `arrow_table()` function doesn't actually do the work. It's actually just a wrapper function. Within the **arrow** package is an R6 class generator object called `Table`,^[Note that the `Table` object is not a _Table_: it is the class prototype for _Table_ objects, and is therefore classed _R6ClassGenerator_. The same is true for `Scalar`, `Schema`, `ChunkedArray`, etc.] and its job is to create tables, modify tables, and so on. You can create a table by using the `create()` method for `Table`. In other words, instead of calling `arrow_table()` I could have done this:
 
 ```{r, results='hide'}
 Table$create(magicians)
@@ -238,7 +241,7 @@ Table$create(magicians)
 
 and I would have ended up with the same result. 
 
-The same pattern appears throughout the **arrow** package. When I used the `schema()` function earlier, the same pattern was in play. There is an R6 object called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. 
+The same pattern appears throughout the **arrow** package. When I used the `schema()` function earlier, the same pattern was in play. There is an R6 class generator called `Schema`, and it too has a `create()` method. I could have accomplished the same thing by calling `Schema$create()`. 
 
 I could go on like this for some time. Though I won't talk about all of them in this post, there are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these provides an interface to a data structure in Arrow, and while you can often solve all your problems without ever interacting with these objects, it's very handy to know about them and feel comfortable using them. As the post goes on, you'll see me doing that from time to time. 
 
@@ -258,7 +261,7 @@ knitr::include_graphics("art/pollen_47_4893.jpg", dpi = 100)
 
 ## Logical types
 
-At long last we arrive at the point where I'm talking about the data values themselves, and the simplest kind of data to talk about are logical data. In R, logical data can take on three possible values: `TRUE` and `FALSE` are the two truth values, and `NA` is used to denote missing data.^[Should I take this opportunity to discuss the fact that this means that what R actually implements is a [three valued logic](https://en.wikipedia.org/wiki/Three-valued_logic)? No. No I should not. I am going to *think* it very loudly though.] In a moment I'll show you how to directly pass individual values from R to Arrow, but for the moment let's stick to what we know and pass an entire data frame across. Here's a tiny data frame, with one column of logical values:
+At long last we arrive at the point where I'm talking about the data values themselves, and the simplest kind of data to talk about are those used to represent truth values. In R, these are called _logical_ data and can take on three possible values: `TRUE` and `FALSE` are the two truth values, and `NA` is used to denote missing data.^[Should I take this opportunity to discuss the fact that this means that what R actually implements is a [three valued logic](https://en.wikipedia.org/wiki/Three-valued_logic)? No. No I should not. I am going to think it very loudly though.] In a moment I'll show you how to directly pass individual values from R to Arrow, but for the moment let's stick to what we know and pass the data across as part of a tabular data structure. Here's a tiny *tibble*, with one column of *logical* values:
 
 ```{r}
 dat <- tibble(values = c(TRUE, FALSE, NA))
@@ -267,7 +270,7 @@ dat
 
 We're going to pass this across to Arrow using `arrow_table()` but before we do let's talk about what we expect to happen when the data arrive at the other side. 
 
-In this case, it's quite straightforward. Arrow has an "boolean" type that has truth values `true` and `false` that behave the same way as their cousins in R. Just like R, Arrow allows missing values, though they're called `null` values in Arrow. Unlike basically every other example we're going to see in this post, this one actually is straightforward because the mapping is perfect. Unless you do something to override it, the **arrow** package will map an R logical to an Arrow boolean and vice versa. Here's the diagram I use to describe it:
+In this case, it's quite straightforward. Arrow has a *boolean* type that has truth values `true` and `false` that behave the same way as their cousins in R. Just like R, Arrow allows missing values, though they're called `null` values in Arrow. Unlike basically every other example we're going to see in this post, this one is straightforward because the mapping is perfect. Unless you do something to override it, the **arrow** package will map an R *logical* to an Arrow *boolean* and vice versa. Here's the diagram I use to describe it:
 
 ```{r}
 #| echo = FALSE,
@@ -277,41 +280,45 @@ In this case, it's quite straightforward. Arrow has an "boolean" type that has t
 knitr::include_graphics("img/logical-types.png", dpi = 100)
 ```
 
-Seems to make sense, right? So let's stop talking about it and create the corresponding table in Arrow:
+Seems to make sense, right? So let's stop talking about it and create the corresponding *Table* in Arrow:
 
 ```{r}
 tbl <- arrow_table(dat)
 tbl
 ```
 
-Hm. Okay that's a little underwhelming as output goes? I'd like to see the actual values please. Happily the **arrow** package supplies a `$` operator for Arrow Table objects so we can extract an individual column from `tbl` the same way we can from the original R object `dat`. Let's try that:
+Hm. Okay that's a little underwhelming as output goes? I'd like to see the actual values please. Happily the **arrow** package supplies a `$` operator for *Table* objects so we can extract an individual column from `tbl` the same way we can from the original R object `dat`. Let's try that:
 
 ```{r}
 tbl$values
 ```
 
-The output looks a little different to what we'd get when printing out a single column of a data frame, but it's pretty clear that we've extracted the right thing. A single column inside an Arrow table is stored as a chunked array, so this looks right. 
+The output looks a little different to what we'd get when printing out a single column of a *tibble* (or *data frame*), but it's pretty clear that we've extracted the right thing. A single column inside an Arrow *Table* is stored as a *ChunkedArray*, so this looks right. 
 
 Yay us! 
 
-At this point, it's handy to remember that the `arrow_table()` function that I used to move the data into Arrow is really just a wrapper that allows you to access some of the `Table` functionality without having to think about R6 objects. And I also mentioned there's a `ChunkedArray` object... and a `chunked_array()` wrapper function. In hindsight, I probably didn't need to bother creating the whole data frame. I could have created the chunked array directly:
+At this point, it's handy to remember that the `arrow_table()` function that I used to move the data into Arrow is really just a wrapper that allows you to access some of the `Table` functionality without having to think about R6 too much. I also mentioned there's a class generator called `ChunkedArray` object and a `chunked_array()` wrapper function. In hindsight, I probably didn't need to bother creating the *tibble* and porting that over as a *Table*. I could have created a *logical vector* in R and port that over as a _ChunkedArray_ directly:
 
 ```{r}
 values <- c(TRUE, FALSE, NA)
 chunked_array(values)
 ```
 
-That's a cleaner way of doing things. If you want a table, use `Table` and its wrappers. If you want a chunked array, use `ChunkedArray` and its wrappers. There's no need to over-complicate things. 
+That's a cleaner way of doing things. If you want a _Table_, use `Table` and its wrappers. If you want a _ChunkedArray_, use `ChunkedArray` and its wrappers. There's no need to over-complicate things. 
 
-Speaking of which... later in the post, I'll often want to send single values to Arrow. In those cases I don't even want to create a chunked array, I just want to pass a scalar value across. And if what you want is a scalar, the right thing to do is use the `Scalar` object. There aren't any wrapper functions for `Scalar`, so I'll have to use `Scalar$create()` directly:
+Speaking of which... later in the post, I'll often want to send single values to Arrow. In those cases I don't want to create a _ChunkedArray_, or even the simpler unchunked _Array_ type. What I want to pass is a _Scalar_. 
+
+It's worth unpacking this a little. Unlike some languages, R doesn't really make a strong distinction between "vectors" and "scalars": an R "scalar" is just a vector of length one. Arrow is stricter, however. A _ChunkedArray_ is a container object with one or more _Arrays_, and an _Array_ is also a container object with one or more _Scalars_. If it helps, you can think of it a little bit like working with _lists_ in R: if I have a list `lst`, then `lst[1]` is still a list. It doesn't return the contents of the list. If I want to extract the contents I have to use `lst[[1]]` to pull them out. Arrow _Arrays_ contain _Scalars_ in a fashion that we would call "list-like" in R.
+
+In any case, the important thing to recognise is that **arrow** contains a class generator object called `Scalar`, and it works the same way as the other ones. The one difference is that there aren't any wrapper functions for `Scalar`, so I'll have to use `Scalar$create()` directly:
 
 ```{r}
 Scalar$create(TRUE, type = boolean())
 ```
 
-In this example I didn't really need to explicitly specify that I wanted to import the data as `type = boolean()`. The value `TRUE` is an R logical, and the **arrow** default is to map logicals onto booleans. I only included it here because I wanted to call attention to the `type` argument. Any time that you want to import data as a non-default type, you need to specify the `type` argument. If you look at the list of [Apache Arrow data types](https://arrow.apache.org/docs/dev/r/reference/data-type.html) on the **arrow** documentation page, you'll see quite a lot of options. For now, the key thing to note is that the `type` argument expects you to call one of these functions. 
+In this example I didn't really need to explicitly specify that I wanted to import the data as `type = boolean()`. The value `TRUE` is an R _logical_, and the **arrow** default is to map _logicals_ onto _booleans_. I only included it here because I wanted to call attention to the `type` argument. Any time that you want to import data as a non-default type, you need to specify the `type` argument. If you look at the list of [Apache Arrow data types](https://arrow.apache.org/docs/dev/r/reference/data-type.html) on the **arrow** documentation page, you'll see quite a lot of options. For now, the key thing to note is that the `type` argument expects you to call one of these functions. 
 
-Anyway, that's everything I had to say about logicals. Before moving on though, I'm going to write my own wrapper function, and define `scalar()` as an alias for `Scalar$create()`:
+Anyway, that's everything I had to say about _logicals_. Before moving on though, I'm going to write my own wrapper function, and define `scalar()` as an alias for `Scalar$create()`:
 
 ```{r}
 scalar <- function(x, type = NULL) {
