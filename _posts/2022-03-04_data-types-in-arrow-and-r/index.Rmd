@@ -86,7 +86,7 @@ magicians <- read_csv_arrow("magicians.csv")
 magicians
 ```
 
-Then I decide to "copy the data into Arrow". I do that in a very predictable way using the `arrow_table()` function supplied by the **arrow** package: 
+Then I decide to "copy the data into Arrow". I do that in a very predictable way using the `arrow_table()` function supplied by the **arrow** package:
 
 ```{r}
 arrowmagicks <- arrow_table(magicians)
@@ -95,7 +95,9 @@ arrowmagicks
 
 This is exactly the output I should expect, but the longer I think about it the more it seems to me that something quite remarkable is going on. Some magic is in play here, and I want to know how it works.
 
-To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a "data frame" (a tibble, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a "Table" object. Arrow Tables are roughly analogous to data frames -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of *translation* has occurred, as is illustrated below: 
+To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a "data frame" (a tibble, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a "Table" object. Arrow Tables are roughly analogous to data frames -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of translation has occurred, illustrated below: 
+
+<aside>Throughout the post, variable names like `arrowmagicks` and function calls like `arrow_table()` will be shown in monospace typewriter font</aside>
 
 ```{r}
 #| echo = FALSE,
@@ -111,9 +113,12 @@ Not only has the data frame itself been translated, the values stored in each of
 collect(arrowmagicks)
 ```
 
-In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we *want* in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
+In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we want in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
 
-That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about schemas. Schemas are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see a diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
+That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about schemas. Schemas are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
+
+<aside>Boldfaced text is used to denote the names of R packages such as **arrow** and **dplyr**, as well as C++ library such as **libarrow**</aside>
+
 
 ```{r}
 #| echo = FALSE,
@@ -124,10 +129,10 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 ```
 
 
+
 ## Defining schemas
 
-The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no "single" rulebook that tells you how to translate between R and Arrow: there can't be.^[Early in the writing process for this post I talked to the very lovely Jon Keane about this, and they pointed out that there's a big difference in the "read" functions in **arrow** and the "translate" functions. The code in the `read_*()` functions is complicated: it handles everything for you because "reading the data" is a constrained task and the developers can optimise almost everything for you, including the strange edge cases. Translation is harder, and there's less the developers can do to support it. As a consequence, the code underpinning `schema()` is much simpler. It takes care of choices for you when those choices are "obvious", but it leaves all the edge cases for you to deal with. There are a lot of weird edge cases because 
-"translating between languages" is under-determined. Edge cases are left to the user because only the user knows the context.]
+The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no single rulebook that tells you how to translate between R and Arrow: there can't be.^[Early in the writing process for this post I talked to the very lovely Jon Keane about this, and they pointed out that there's a big difference in the "read" functions in **arrow** and the "translate" functions. The code in the `read_*()` functions is complicated: it handles everything for you because "reading the data" is a constrained task and the developers can optimise almost everything for you, including the strange edge cases. Translation is harder, and there's less the developers can do to support it. As a consequence, the code underpinning `schema()` is much simpler. It takes care of choices for you when those choices are "obvious", but it leaves all the edge cases for you to deal with. There are a lot of weird edge cases because "translating between languages" is under-determined. Edge cases are left to the user because only the user knows the context.]
 
 Suppose that I knew that there would in fact be a "Season 5.1648" coming, consisting of a single episode whose title corresponded to the full text of the [Treaty of Westphalia](https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf) or, worse, several gigabytes worth of Wikipedia text.^[I mean, if my data set were a [Fiona Apple discography](https://en.wikipedia.org/wiki/When_the_Pawn...) this would be a real possibility right?] Knowing that this new data point is coming, I'd perhaps want my Arrow data to encode `season` as a numeric variable, and I'd probably want to recognise that the text in the `title` field can be quite long. To do that I can specify an explicit schema that tells the **arrow** package how to translate my R data set into Arrow. I can do this with the `schema()` function:
 
@@ -160,6 +165,9 @@ This is of course a toy example, as are all the other examples you'll encounter 
 knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
 ```
 
+<aside><br>All the images in this post are my own, including the artwork, and though I haven't formally released the art as part of series (and hence not specified a licence for the series as a whole), these specific pieces are covered by the same CC-BY licence that applies to the rest of the post</aside>
+
+
 <br><br>
 
 
@@ -187,7 +195,7 @@ knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
 
 -->
 
-Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.] We define [ontologies](https://en.wikipedia.org/wiki/Ontology_(information_science)) that impose order on a chaotic world, but those structures are rarely adequate to describe the world as it is. While doing background research for this post I spent a little time reading various sections from [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1), a monograph written by John Wilkins in 1668 that makes a valiant (but doomed... oh so doomed) attempt to organise all the categories of thing and propose a mechanism by which we could describe them within a single universal language. The classification systems he came up with were... not great. For example, he divided BEASTS into two categories: VIVIPAROUS beasts are those that bear live young, whereas OVIPAROUS beasts are those that lay eggs. The viviparous ones could be subdivided into WHOLE-FOOTED ones and CLOVEN-FOOTED ones. The cloven-footed beasts could be subdivided into those that were RAPACIOUS and those that were not. RAPACIOUS types could be of the CAT-KIND or the DOG-KIND.
+Organising the world into concepts (or data structures) is hard.^[Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an [absurd number of academic papers](https://djnavarro.net/papers/) on how people learn and represent categories. What I *wanted* to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I *actually* learned is that humans and machines are both super weird.] We define [ontologies](https://en.wikipedia.org/wiki/Ontology_(information_science)) that impose order on a chaotic world, but those structures are rarely adequate to describe the world as it is. While doing background research for this post I spent a little time reading various sections from [An Essay Towards a Real Character, and a Philosophical Language](https://www.google.com.au/books/edition/_/BCCtZjBtiEYC?hl=en&gbpv=1), a monograph written by John Wilkins in 1668 that makes a valiant (but doomed... oh so doomed) attempt to organise all the categories of things and propose a mechanism by which we could describe them within a single universal language. The classification systems he came up with were... not great. For example, he divided BEASTS into two categories: VIVIPAROUS beasts are those that bear live young, whereas OVIPAROUS beasts are those that lay eggs. The viviparous ones could be subdivided into WHOLE-FOOTED ones and CLOVEN-FOOTED ones. The cloven-footed beasts could be subdivided into those that were RAPACIOUS and those that were not. RAPACIOUS types could be of the CAT-KIND or the DOG-KIND.
 
 Suffice it to say the poor man had never encountered a kangaroo.
 
@@ -197,21 +205,21 @@ I am of course hardly the first person to notice this. In 1952 the Argentinian a
 
 > In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies
 
-Now, it's pretty unlikely that any human language would produce a classification system quite as chaotic as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. It's a pretty fundamental point, and I think it applies to programming languages too.^[At this point I feel compelled to point out that while I may *appear* to be a bright young thing with little experience of the world, I am in fact a 44 year old woman and former academic who has read quite a few papers on algorithmic information theory and related fields. So, if you happen to be thinking thoughts along the lines of "aha, she doesn't know about Turing equivalence!" and are considering explaining it to me... please don't. This is one of those situations where that pesky little "finite length" prefix code required to allow machine P to simulate machine Q actually matters, and sometimes "finite" includes values like "staggeringly, painfully large". As I used to wearily tell my students, in real life you can't ignore the $O(1)$ terms.] Every language carries with it a set of assumptions and structures that it considers "natural", and translation across the boundaries between languages is necessarily a tricky business.^[As an aside, Michel Foucault actually refers to this Borges passage in the preface to his famous work [The Order of Things: An Archaeology of the Human Sciences](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay "shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things". Seems fair to say that Borges' essay was not without its admirers.]
+Now, it's pretty unlikely that any human language would produce a classification system quite as chaotic as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. It's a pretty fundamental point, and I think it applies to programming languages too.^[At this point I feel compelled to point out that while I may *appear* to be a bright young thing with little experience of the world, I am in fact a 44 year old woman and former academic who has read quite a few papers on algorithmic information theory and related fields. So, if you happen to be thinking thoughts along the lines of "aha, she doesn't know about Turing equivalence!" and are considering explaining it to me... please don't. This is one of those situations where that pesky little "finite length" prefix code required to allow machine P to simulate machine Q actually matters, and sometimes "finite" includes values like "staggeringly, painfully large". As I used to wearily tell my students, in real life you can't ignore the $O(1)$ terms.] Every language carries with it a set of assumptions and structures that it considers "natural", and translation across the boundaries between languages is necessarily a tricky business.^[As an aside, Michel Foucault actually refers to this Borges passage in the preface to his famous work [*The Order of Things: An Archaeology of the Human Sciences*](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay "shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things". Seems fair to say that Borges' essay was not without its admirers.]
 
 ## A little bit of big picture
 
-Before we get to "moving data around" part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the underlying library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. 
+Before we get to "moving data around" part it's helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the **libarrow** library to which the **arrow** package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that's actually the natural place to start because it influences a lot of things in the design of **arrow**. 
 
 ### Object oriented programming in **arrow**
 
-One of ways in which C++ and R differ is in how each language approaches object oriented programming (OOP). The approach taken in C++ is [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. Anyone coming from outside R is probably most familiar with this style of OOP.
+One of ways in which C++ and R differ is in how each language approaches object oriented programming (OOP). The approach taken in C++ is an [encapsulated OOP](https://adv-r.hadley.nz/oo.html) model that is common to many programming languages: methods belong to objects. Anyone coming from outside R is probably most familiar with this style of OOP.
 
-The approach taken in R is... chaotic. R has several different OOP systems that have different philosophies, and each system has its own strengths and weaknesses.^[This "let a thousand OOP systems bloom" philosophy has made me cry many times.] The most commonly used system is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. Most R users will be comfortable with S3 because it's what we see most often. That being said, there are several other systems out there, some of which adopt the more conventional encapsulated OOP paradigm. One of the most popular ones is [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
+The approach taken in R is... chaotic. R has several different OOP systems that have different philosophies, and each system has its own strengths and weaknesses.^[Much like the Honourable Member for Kennedy, this ["let a thousand OOP systems bloom"](https://www.youtube.com/watch?v=1i739SyCu9I) philosophy has made me cry many times: sometimes from joy, often from frustration.] The most commonly used system is S3, which is a [functional OOP](https://adv-r.hadley.nz/oo.html) model: methods belong to generic functions like `print()`. Most R users will be comfortable with S3 because it's what we see most often. That being said, there are several other systems out there, some of which adopt the more conventional encapsulated OOP paradigm. One of the most popular ones is [R6](https://r6.r-lib.org/) that work more like the OOP systems seen in other languages. 
 
-The **arrow** package uses both S3 and R6, but it uses them for quite different things. Whenever **arrow** does something in an "R-native" way, S3 methods get used a lot. For example, in my earlier post on [dplyr bindings for Arrow](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/) I talked about how **arrow** supplies a **dplyr** engine: this works in part by supplying S3 methods for various **dplyr** functions that are called whenever a suitable Arrow object gets passed to **dplyr**. The interface between **arrow** and **dplyr** uses S3 because this context is "R like". However, this isn't a post about that aspect to **arrow**, so we won't need to talk about S3 again in this post.
+The **arrow** package uses both S3 and R6, but it uses them for quite different things. Whenever **arrow** does something in an "R-native" way, S3 methods get used a lot. For example, in my earlier post on [dplyr bindings for Arrow](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/) I talked about how **arrow** supplies a **dplyr** engine: this works in part by supplying S3 methods for various **dplyr** functions that are called whenever a suitable Arrow object gets passed to **dplyr**. The interface between **arrow** and **dplyr** uses S3 because this context is "R like". However, this isn't a post about that aspect of **arrow**, so we won't need to talk about S3 again in this post.
 
-However, **arrow** has a second task, which is to interact with the Arrow C++ library. Because the data structures there all use encapsulated OOP as is conventional in C++, it is convenient to do the adhere to those conventions within the **arrow** package. Whenever **arrow** has to interact with Arrow, it's useful to be as "C++ like" as possible, and this in turn means that the interface between **arrow** and Arrow is accomplished using R6. So we will be seeing R6 objects appear quite often in this post. 
+However, **arrow** has a second task, which is to interact with **libarrow**, the Arrow C++ library. Because the data structures there all use encapsulated OOP as is conventional in C++, it is convenient to adhere to those conventions within the **arrow** package. Whenever **arrow** has to interact with Arrow, it's useful to be as "C++ like" as possible, and this in turn means that the interface between **arrow** and **libarrow** is accomplished using R6. So we will be seeing R6 objects appear quite often in this post. 
 
 
 ### Table, ChunkedArray, and Scalar
@@ -234,7 +242,7 @@ The same pattern appears throughout the **arrow** package. When I used the `sche
 
 I could go on like this for some time. Though I won't talk about all of them in this post, there are R6 objects for `Dataset`, `RecordBatch`, `Array`, `ChunkedArray`, `Scalar`, and more. Each of these provides an interface to a data structure in Arrow, and while you can often solve all your problems without ever interacting with these objects, it's very handy to know about them and feel comfortable using them. As the post goes on, you'll see me doing that from time to time. 
 
-But enough of that! Time to start moving data around...
+But enough of that! It's time to start moving data around...
 
 <br><br>
 
@@ -334,7 +342,7 @@ knitr::include_graphics("art/pollen_47_4897.jpg", dpi = 100)
 
 ## Integer types
 
-When translating R logicals to Arrow booleans, there aren't a lot of conceptual difficulties. R has one data structure and Arrow has one data structure, and they're basically identical. This is easy. Integers, however, are a little trickier because there's no longer an exact mapping between the two languages. Base R provides one kind of integer data, but Arrow provides eight distinct integer types. As a consequence it will no longer be possible to provide one-to-one mappings between R and Arrow, and some choices have to be made. As we'll see in this section, the **arrow** package tries very hard to set sensible default choices, and in most cases these will work seamlessly. It's not something you actually have to think about much. But, as my dear friend Dan Simpson^[Lest anyone think I am too wanton in my use of footnotes in tech blogging, I will simply mention that Dan has a 77-footnote [blog post on Gaussian Processes](https://dansblog.netlify.app/posts/2021-11-24-getting-into-the-subspace/). I am the *nice* queer in the room.] reminds me over and over with all things technical, ["God is present in the sweeping gestures but the Devil is in the details"](https://statmodeling.stat.columbia.edu/2022/03/02/god-is-present-in-the-sweeping-gestures-but-the-devil-is-in-the-details/). 
+When translating R logicals to Arrow booleans, there aren't a lot of conceptual difficulties. R has one data structure and Arrow has one data structure, and they're basically identical. This is easy. Integers, however, are a little trickier because there's no longer an exact mapping between the two languages. Base R provides one kind of integer data, but Arrow provides eight distinct integer types that it inherits from C++. As a consequence it will no longer be possible to provide one-to-one mappings between R and Arrow, and some choices have to be made. As we'll see in this section, the **arrow** package tries very hard to set sensible default choices, and in most cases these will work seamlessly. It's not something you actually have to think about much. But, as my dear friend Dan Simpson^[Lest anyone think I am too wanton in my use of footnotes in tech blogging, I will simply mention that Dan has a 77-footnote [blog post on Gaussian Processes](https://dansblog.netlify.app/posts/2021-11-24-getting-into-the-subspace/). I am the *nice* queer in the room.] reminds me over and over with all things technical, ["God is present in the sweeping gestures but the Devil is in the details"](https://statmodeling.stat.columbia.edu/2022/03/02/god-is-present-in-the-sweeping-gestures-but-the-devil-is-in-the-details/). 
 
 It is wise to look carefully at the details, so let's do that. 
 
@@ -390,7 +398,7 @@ Now, in this particular example there's an element of silliness because my data 
 
 ### When integer translation is easy
 
-What about the other seven Arrow types? This is where it gets a little trickier. The table above illustrates that some integer types are fully contained within others: unsurprisingly, every number representable by int16 can also be represented by int32, so we can say that the int16 numbers are fully "contained" by (i.e. are a proper subset of) the int32 numbers. Similarly, uint16 is contained by unit32. There are many cases where an unsigned type is contained by a signed type: for instance, int32 contains all the uint16 numbers. However, because the unsigned integers cannot represent negative numbers, the reverse is never true. So we can map out the relationships between the different types like this: 
+What about the other seven Arrow types? This is where it gets a little trickier. The table above illustrates that some integer types are fully contained within others: unsurprisingly, every number representable by int16 can also be represented by int32, so we can say that the int16 numbers are fully "contained" by (i.e. are a proper subset of) the int32 numbers. Similarly, uint16 is contained by uint32. There are many cases where an unsigned type is contained by a signed type: for instance, int32 contains all the uint16 numbers. However, because the unsigned integers cannot represent negative numbers, the reverse is never true. So we can map out the relationships between the different types like this: 
 
 ```{r}
 #| echo = FALSE,
@@ -460,7 +468,7 @@ translate_integer(
 )
 ```
 
-The first two rows seem intuitive. In base R, whenever an integer overflows and becomes to large to store, R will coerce it to a double. This is exactly the same behaviour we'd observe if the data had never left R at all. The third row, however, might come as a bit of a surprise. It certainly surprised me the first time I encountered it. Until very recently I did not know that R even *had* an integer64 class. This class is supplied by the **bit64** package, and although I'm not going to talk about it in any detail here, it provides a mechanism to represent signed 64-bit integers in R. However, the one thing I will mention is the fact that the existence of the integer64 class opens up the possibility of forcing **arrow** to always map the integer64 class to the int64 type and vice versa. If you set
+The first two rows seem intuitive. In base R, whenever an integer overflows and becomes too large to store, R will coerce it to a double. This is exactly the same behaviour we'd observe if the data had never left R at all. The third row, however, might come as a bit of a surprise. It certainly surprised me the first time I encountered it. Until very recently I did not know that R even *had* an integer64 class. This class is supplied by the **bit64** package, and although I'm not going to talk about it in any detail here, it provides a mechanism to represent signed 64-bit integers in R. However, the one thing I will mention is the fact that the existence of the integer64 class opens up the possibility of forcing **arrow** to always map the integer64 class to the int64 type and vice versa. If you set
 
 ```{r}
 options(arrow.int64_downcast = FALSE)
@@ -498,26 +506,26 @@ knitr::include_graphics("art/pollen_46_4628.jpg", dpi = 100)
 
 ## Numeric types
 
-In the last section I talked about the rather extensive range of data types that Arrow has to represent integers. Sure, there's a practical benefit to having all these different data types, but at the same time its wild that we even *need* so many different data structures to represent something so simple. Integers aren't complicated things. We learn them as kids even before we go to school, and we get taught the arithmetic rules to operate on them very early in childhood. 
+In the last section I talked about the rather extensive range of data types that Arrow has to represent integers. Sure, there's a practical benefit to having all these different data types, but at the same time its wild that we even need so many different data structures to represent something so simple. Integers aren't complicated things. We learn them as kids even before we go to school, and we get taught the arithmetic rules to operate on them very early in childhood. 
 
-The problem, though, is that there are *a lot* of integers. It's a tad inconvenient sometimes, but the set of integers is infinite in size,^[Rest assured, dear reader, while I am entirely aware of the distinction between countably and uncountably infinite sets, and have been forced to learn more about the cardinality of transfinite numbers than any human deserves to endure, I will not be discussing any of that in this post. The word "infinite" is perfectly serviceable for our purposes, and if anyone even *tries* to discuss this with me further on twitter I will be forced to engage the services of a very unpleasant lawyer...] so it doesn't matter how many bits you allocate to your "int" type, there will always be integers that your machine cannot represent. But this is obvious, so why am I saying it? Mostly to foreshadow that things get worse when we encounter...
+The problem, though, is that there are A LOT of integers. It's a tad inconvenient sometimes, but the set of integers is infinite in size,^[Rest assured, dear reader, while I am entirely aware of the distinction between countably and uncountably infinite sets, and have been forced to learn more about the cardinality of transfinite numbers than any human deserves to endure, I will not be discussing any of that in this post. The word "infinite" is perfectly serviceable for our purposes, and if anyone even TRIES to discuss this with me further on twitter I will be forced to engage the services of a very unpleasant lawyer...] so it doesn't matter how many bits you allocate to your "int" type, there will always be integers that your machine cannot represent. But this is obvious, so why am I saying it? Mostly to foreshadow that things get worse when we encounter...
 
 ### Floating point numbers and the desert of the reals
 
 > To dissimulate is to pretend not to have what one has. To simulate is to feign to have what one doesn't have. One implies a presence, the other an absence. But it is more complicated than that because simulating is not pretending: "Whoever fakes an illness can simply stay in bed and make everyone believe he is ill. Whoever simulates an illness produces in himself some of the symptoms" (Littré). Therefore, pretending, or dissimulating, leaves the principle of reality intact: the difference is always clear, it is simply masked, whereas simulation threatens the difference between the "true" and the "false," the "real" and the "imaginary." <br>
 > &nbsp; &nbsp; -- Jean Baudrillard, 1981, [Simulacra and Simulation](https://en.wikipedia.org/wiki/Simulacra_and_Simulation)^[The "desert of the real" phrase in the title of the section refers to the real numbers, but it's also a quote from *Simulacra and Simulation* and [*The Matrix*](https://en.wikipedia.org/wiki/The_Matrix). Obviously I encountered it in *The Matrix* first because, all appearances to the contrary, I am uncultured swine.]
 
-The real numbers correspond to our intuitive concept of the continuous number line. Just like the integers, the real line extends infinitely far in both directions, but unlike the integers the reals are continuous: for any two real numbers -- no matter how close they are to each other -- there is *always* another real number in between. This, quite frankly, sucks. Because the moment you accept that this is true, something ugly happens. If I accept that there must exist a number between 1.01 and 1.02, which I'll call 1.015, then I have to accept that there is a number between 1.01 and 1.015, which I'll call 1.0075, and then I have to accept that... oh shit this is going to go on forever. In other words, the reals have the obnoxious property that there between any two real numbers there are an infinity of other real numbers. 
+The real numbers correspond to our intuitive concept of the continuous number line. Just like the integers, the real line extends infinitely far in both directions, but unlike the integers the reals are continuous: for any two real numbers -- no matter how close they are to each other -- there is always another real number in between. This, quite frankly, sucks. Because the moment you accept that this is true, something ugly happens. If I accept that there must exist a number between 1.01 and 1.02, which I'll call 1.015, then I have to accept that there is a number between 1.01 and 1.015, which I'll call 1.0075, and then I have to accept that... oh shit this is going to go on forever. In other words, the reals have the obnoxious property that there between any two real numbers there are an infinity of other real numbers. 
 
-Try shoving all *that* into your finite-precision machine. 
+Try shoving all that into your finite-precision machine. 
 
-Stepping away from the mathematics for a moment, most of us already know how programming languages attempt to solve the problem. They use [floating point numbers](https://en.wikipedia.org/wiki/Floating-point_arithmetic) as a crude tool to approximate the real numbers using a finite-precision machine, and it... sort of works, as long as you you never forget that floating point numbers don't always obey the normal rules of arithmetic. I imagine most people reading this post already know this but for those that don't, I'll show you the most famous example:
+Stepping away from the mathematics for a moment, most of us already know how programming languages attempt to solve the problem. They use [floating point numbers](https://en.wikipedia.org/wiki/Floating-point_arithmetic) as a crude tool to approximate the real numbers using a finite-precision machine, and it... sort of works, as long as you never forget that floating point numbers don't always obey the normal rules of arithmetic. I imagine most people reading this post already know this but for those that don't, I'll show you the most famous example:
 
 ```{r}
 0.1 + 0.2 == 0.3
 ```
 
-This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are *not* real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig all the way into the IEEE standard, but it does help a lot to have a general sense of *how* a floating point number (approximately) encodes a real number, so in the next section I'm going to take a look under the hood of R doubles. I'll show you how they're represented as binary objects, and why they misbehave sometimes. I'm doing this for two reasons: firstly it's just a handy thing to know, but secondly, understanding the misbehaviour of the "standard" binary floating point number representation used in R helps motivate why Arrow and some other platforms expose a wider variety of options to the user.
+This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are not real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig all the way into the IEEE standard, but it does help a lot to have a general sense of how a floating point number (approximately) encodes a real number, so in the next section I'm going to take a look under the hood of R doubles. I'll show you how they're represented as binary objects, and why they misbehave sometimes. I'm doing this for two reasons: firstly it's just a handy thing to know, but secondly, understanding the misbehaviour of the "standard" binary floating point number representation used in R helps motivate why Arrow and some other platforms expose a wider variety of options to the user.
 
 ### [R] The numeric class
 
@@ -527,14 +535,16 @@ To give you a better feel for what a double looks like when represented as a set
 unpack_double(0)
 ```
 
-Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the *sign*: is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an *exponent*: you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.] The remaining 53 bits are used to represent the *mantissa*. 
+Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the "sign": is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an "exponent": you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.] The remaining 53 bits are used to represent the "mantissa". 
 
 These three components carve up a real number by using this this decomposition:
 
 $$
 (\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
 $$
-Any real number can decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don't). But the neat thing is about using it is that we can describe very large numbers this way and very small numbers this way. As an example, let's take a look at the partial decimal expansion of `-9.832`, which I am told is the approximate rate of acceleration experienced by a falling object in the Earth's polar regions:
+Any real number can be decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don't). But the neat thing about adopting the decomposed format is that we can describe very large magnitudes and very small magnitudes with a fixed-length mantissa. 
+
+To give a concrete example of how floating point works, let's take a look at the partial decimal expansion of `-9.832`, which I am told is the approximate rate of acceleration experienced by a falling object in the Earth's polar regions:
 
 ```{r}
 polar_g <- unpack_double(-9.832)
@@ -561,7 +571,7 @@ sign * mantissa * 2 ^ exponent
 
 Yay!
 
-Just to prove to you that this isn't a fluke, I also included a `repack_double()` function automates this calculation. It takes the deconstructed representation of an R double and packs it up again, so `repack_double(unpack_double(x))` should return `x`. Here are a few examples: 
+Just to prove to you that this isn't a fluke, I also included a `repack_double()` function that automates this calculation. It takes the deconstructed representation of an R double and packs it up again, so `repack_double(unpack_double(x))` should return `x`. Here are a few examples: 
 
 ```{r, results='hold'}
 sanity_check <- function(x) {
@@ -572,7 +582,7 @@ sanity_check(1345234623462342)
 sanity_check(0.000000002345345234523)
 ```
 
-Now that we have some deeper knowledge of what doubles in R actually *are*, let's return to the numbers in the famous example of floating point numbers misbehaving:
+Now that we have some deeper knowledge of how R doubles are represented internally, let's return to the numbers in the famous example of floating point numbers misbehaving:
 
 ```{r, results='hold'}
 unpack_double(.1)
@@ -603,7 +613,7 @@ but not these ones:
 0.2 + 0.6 == 0.8
 ```
 
-Okay that checks out! Now, it's important to recognise that these errors are very small. Floating point arithmetic doesn't *actually* work, but it's very close:
+Okay that checks out! Now, it's important to recognise that these errors are very small. Floating point arithmetic doesn't actually "work", but it's very close:
 
 ```{r}
 0.1 + 0.2 - 0.3
@@ -611,13 +621,13 @@ Okay that checks out! Now, it's important to recognise that these errors are ver
 
 Ultimately, floating point numbers are a simulation in the sense described by Baudrillard at the start of this section. They are a pretense, an attempt to act as if we can encode a thing (the reals) that we cannot encode. Floating point numbers are a fiction, but they are an extraordinarily useful one because they allow us to "cover" a very wide span of numbers across the real line, at a pretty high level of precision, without using too much memory. 
 
-We pretend that machines can do arithmetic on the reals. They can't, but it's a *very* powerful lie. 
+We pretend that machines can do arithmetic on the reals. They can't, but it's a very powerful lie. 
 
 ### [Arrow] The float64 type
 
 Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story and it's time we switched back over to the Arrow side of things to think about what happens there.
 
-By now you're probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.^[Some precision is needed here: in this post I am using the names that appear in the [documentation to the **arrow** R package](https://arrow.apache.org/docs/r/reference/data-type.html). I'm doing this because the intended audience is an R user who wants to use the **arrow** package to interact with Arrow. However, you should be aware that these types are given slightly different names in the [documentation to the Arrow C++ library](https://arrow.apache.org/docs/cpp/api/datatype.html) to which **arrow** provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.] The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.^[They are both little-endian too.] Because the data structures are so similar, the default behaviour in **arrow** is to translate an R double into an Arrow float64 and vice versa. 
+By now you're probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.^[Some precision is needed here: in this post I am using the names that appear in the [documentation to the **arrow** R package](https://arrow.apache.org/docs/r/reference/data-type.html). I'm doing this because the intended audience is an R user who wants to use the **arrow** package to interact with Arrow. However, you should be aware that these types are given slightly different names in the C++ [documentation to **libarrow**](https://arrow.apache.org/docs/cpp/api/datatype.html) to which **arrow** provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.] The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.^[They are both little-endian too.] Because the data structures are so similar, the default behaviour in **arrow** is to translate an R double into an Arrow float64 and vice versa. 
 
 As always, I've got a little diagram summarising all the default mappings:
 
@@ -670,8 +680,8 @@ Yay! It works!
 
 Earlier in this section I promised that the Baudrillard quote from *Simulacra and Simulation* was going to be relevant? Well, that time has arrived. It's also the moment at which the quote from *Word and Object* by Quine that opened this blog post becomes painfully relevant. Stripped of their fancy language, here's what the two authors are telling us in these passages:
 
-- The Baudrillard quote emphasises that floating point numbers are a *simulation*. They are the mechanism by which we pretend to encode real numbers on computers. It's a lie, but it's a powerful lie that almost works.
-- The Quine quote emphasises that translation (and, I would argue, simulation also) is *underdetermined*. For any complicated thing there are many ways to simulate, or translate, or approximate it. These approximations can be extremely accurate and still be inconsistent with each other. 
+- The Baudrillard quote emphasises that floating point numbers are a simulation. They are the mechanism by which we pretend to encode real numbers on computers. It's a lie, but it's a powerful lie that almost works.
+- The Quine quote emphasises that translation (and, I would argue, simulation also) is underdetermined. For any complicated thing there are many ways to simulate, or translate, or approximate it. These approximations can be extremely accurate and still be inconsistent with each other. 
 
 Quine's truism applies to floating point numbers, and it is the reason why we have "decimal floating point" numbers as well as "binary floating point" numbers. All floating point systems are simulations in the Baudrillard sense of the term: lies, strictly speaking, but close enough to true that the distinction between lies and truth gets a little blurry. 
 
@@ -685,7 +695,7 @@ The number "2" pops out here, doesn't it? Is there any reason to think that "2" 
 
 Unfortunately, life consists of more than machines.
 
-In particular, binary representations create problems for floating point arithmetic because the world contains *humans* who write numbers in decimal notation^[That's assuming we're writing numbers in Arabic number system. I suppose it would be different if our orthographic representations adopted the [Sumerian sexagesimal notation](http://www.mathematicsmagazine.com/Articles/TheSumerianMathematicalSystem.php). Admittedly, neither R nor Arrow existed at the time, so it's a moot point. All I'm really saying is that decimal systems are no less arbitrary than binary ones. The problem arises because of the mismatch, not because one encoding is inherently better than the other.]. Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a "simple" decimal number like 0.1 doesn't have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.
+In particular, binary representations create problems for floating point arithmetic because the world contains entities known as "humans", who have a habit of writing numbers in decimal notation^[That's assuming we're writing numbers in Arabic number system. I suppose it would be different if our orthographic representations adopted the [Sumerian sexagesimal notation](http://www.mathematicsmagazine.com/Articles/TheSumerianMathematicalSystem.php). Admittedly, neither R nor Arrow existed at the time, so it's a moot point. All I'm really saying is that decimal systems are no less arbitrary than binary ones. The problem arises because of the mismatch, not because one encoding is inherently better than the other.]. Numbers that look simple in decimal notation often look complicated in binary notation and vice versa. As we saw earlier, a "simple" decimal number like 0.1 doesn't have a short binary expansion and so cannot be represented cleanly in a finite-precision binary floating point number system. Rounding errors are introduced every time a machine uses (base 2) floating point to encode data that were originally stored as a (base 10) number in human text.
 
 A natural solution to this is to design floating point data types that use other bases. It is entirely possible to adopt [decimal floating point](https://en.wikipedia.org/wiki/Decimal_floating_point) types that are essentially equivalent to the more familiar binary floating point numbers, but they rely on a base 10 decomposition:
 
@@ -707,7 +717,7 @@ Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits t
 
 - `scale` specifies the number of digits that should be stored after the decimal point. If you set `scale = 2`, exactly two digits will be stored after the decimal point. If you set `scale = 0`, values will be rounded to the nearest whole number. Negative scales are also permitted (handy when dealing with extremely large numbers), so `scale = -2` stores the value to the nearest 100.
 
-One convenience that exists both in the **arrow** R package and within the underlying Arrow C++ library is that it can automatically decide whether you need a decimal128 or a decimal256 simply by looking at the value of the `precision` argument. If the `precision` is 38 or less, you can encode the data with a decimal128 type. Larger values require a decimal256. If you would like to take advantage of this -- as I will do in this post -- you can use the `decimal()` type function which will automatically create the appropriate type based on the specified precision. 
+One convenience that exists both in the **arrow** R package and within **libarrow** itself is that it can automatically decide whether you need a decimal128 or a decimal256 simply by looking at the value of the `precision` argument. If the `precision` is 38 or less, you can encode the data with a decimal128 type. Larger values require a decimal256. If you would like to take advantage of this -- as I will do in this post -- you can use the `decimal()` type function which will automatically create the appropriate type based on the specified precision. 
 
 One inconvenience that I have in this post, however, is that R doesn't have any analog of a fixed-point decimal, and consequently I don't have any way to create an "R decimal" that I can then import into Arrow. What I'll do instead is create a floating point array in Arrow, and then explicitly cast it to a decimal type. Step one, create the floating point numbers in Arrow:
 
@@ -780,7 +790,7 @@ Strings are an interesting case. R uses a single data type to represent strings 
 knitr::include_graphics("img/character-types.png", dpi = 100)
 ```
 
-There's a little more than meets the eye here though, and you might be wondering about the difference between "strings" and "large strings" in Arrow, and when you might prefer one to the other. As you might expect, the large string type is suitable when you're storing large amounts of text, but to understand it properly I need to talk in more depth about how R and Arrow store strings, and I'll use this partial list of people that -- according to the lyrics of [Jung Talent Time](https://genius.com/Tism-jung-talent-time-lyrics) by TISM -- were perhaps granted slightly more fame than they had earned on merit
+There's a little more than meets the eye here though, and you might be wondering about the difference between "strings" and "large strings" in Arrow, and when you might prefer one to the other. As you might expect, the large string type is suitable when you're storing large amounts of text, but to understand it properly I need to talk in more depth about how R and Arrow store strings, and I'll use this partial list of people that -- according to the lyrics of [Jung Talent Time](https://genius.com/Tism-jung-talent-time-lyrics) by TISM -- were perhaps granted slightly more fame than they had earned on merit:
 
 ```
 Bert Newton
@@ -807,7 +817,7 @@ Each element of the `jung_talent` vector is a variable-length string, and is sto
 knitr::include_graphics("img/character-types-02.png", dpi = 100)
 ```
 
-Here, the `jung_talent` variable is an object^[More strictly, it is a symbol that points to an object. R makes a distinction between the symbol and the object to which it links, and allows multiple labels to point at the same object. There's an excellent discussion of this in [Chapter 3 of Advanced R](https://adv-r.hadley.nz/names-values.html)] that contains five elements shown as the orange boxes. Internally, each of those orange boxes is itself an array of individual characters shown as the purple boxes. As a description of what R actually does this is a bit of an oversimplification because it ignores the [global string pool](https://adv-r.hadley.nz/names-values.html#character-vectors), but it will be sufficient for the current purposes. 
+Here, the `jung_talent` variable is an object^[More strictly, it is a symbol that points to an object. R makes a distinction between the symbol and the object to which it links, and allows multiple labels to point at the same object. There's an excellent discussion of this in [Chapter 3 of *Advanced R*](https://adv-r.hadley.nz/names-values.html)] that contains five elements shown as the orange boxes. Internally, each of those orange boxes is itself an array of individual characters shown as the purple boxes. As a description of what R actually does this is a bit of an oversimplification because it ignores the [global string pool](https://adv-r.hadley.nz/names-values.html#character-vectors), but it will be sufficient for the current purposes. 
 
 The key thing to understand conceptually is that R treats the elements of a character vector as the fundamental unit. The `jung_talent` vector is constructed from five distinct strings, `"Newton"`, `"Cyrus"`, etc. The `"Newton"` string is assigned to position 1, the `"Cyrus"` string is assigned to position 2, and so on. 
 
@@ -834,7 +844,7 @@ How are each of these buffers encoded?
 
 - The contents of the offset buffer are stored as unsigned integers, either 32 bit or 64 bit, depending on which of the two Arrow string array types you're using. I'll unpack this in the next section.
 
-Sheesh. That was long. Let's give ourselves a small round of applause for surviving, and now actually *do* something. We'll port the `jung_talent` vector over to Arrow. 
+Sheesh. That was long. Let's give ourselves a small round of applause for surviving, and now actually DO something. We'll port the `jung_talent` vector over to Arrow. 
 
 ```{r}
 jung_talent_arrow <- chunked_array(jung_talent)
@@ -851,7 +861,7 @@ Yep. Definitely text!
 
 ### [Arrow] The large_utf8 type
 
-Okay, so as I mentioned, Arrow has two different string types: utf8 and large_utf8.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for the underlying C++ library you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".] The default in **arrow** is to translate character data in R to the utf8 data type in Arrow, but we can override this if we want to. In order to help you make an informed choice, I'll dig a little deeper into the difference between the two types.
+Okay, so as I mentioned, Arrow has two different string types: utf8 and large_utf8.^[Once again, there's a little terminology to explain because there's some inconsistency in how the types are referred to in the Arrow C++ documentation and the **arrow** R package documentation. In the [list of data types](https://arrow.apache.org/docs/cpp/api/datatype.html) for **libarrow** you'll find references to "string" types and "large_string". However, in [list of data types](https://arrow.apache.org/docs/r/reference/data-type.html) documentation for the **arrow** R package you'll see the same data types referred to as "utf8" and "large_utf8".] The default in **arrow** is to translate character data in R to the utf8 data type in Arrow, but we can override this if we want to. In order to help you make an informed choice, I'll dig a little deeper into the difference between the two types.
 
 The first thing to recognise is that the nature of the data buffer is the same for utf8 and large_utf8: the difference between the two lies in how the offset buffers are encoded. When character data are encoded as utf8 type, every offset value is stored as an unsigned 32-bit integer. That means that -- as shown in the table of integer types earlier in the post -- you cannot store an offset value larger than 4294967295. This constrain places a practical cap on the total length of the data buffer: if total amount of text stored in the data buffer is greater than about 2GiB, the offset buffer can't encode the locations within it! Switching to large_utf8 means that the offset buffer will store every offset value as an unsigned 64-bit integer. This means that the offset buffer now takes up twice as much space, but it allows you to encode offset values up to... um... 18446744073709551615. And if you've got so much text that your data buffer is going to exceed that limit, well, frankly you have bigger problems. 
 
@@ -862,7 +872,7 @@ jung_talent_arrow_big <- chunked_array(jung_talent, type = large_utf8())
 jung_talent_arrow_big$type
 ```
 
-Before moving on, I'll mention one additional complexity. This is a situation where the distinction between arrays and chunked arrays begins to matter. Strictly speaking, I lied earlier when I said there's only one data buffer. A more precise statement would be to say that there is one data buffer per *chunk*. Chunked arrays are designed to allow a block (or "chunk") of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that^[No I am not going to talk about them in this post. Masochist though I may be, nobody loves that much pain. If you are curious you will simply have to wait for a later post!], but they aren't immediately relevant. What matters is to recognise that in a chunked array, the 2GiB limit on utf8 type data applies on a per-chunk basis.  
+Before moving on, I'll mention one additional complexity. This is a situation where the distinction between arrays and chunked arrays begins to matter. Strictly speaking, I lied earlier when I said there's only one data buffer. A more precise statement would be to say that there is one data buffer per chunk. Chunked arrays are designed to allow a block (or "chunk") of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that^[No I am not going to talk about them in this post. Masochist though I may be, nobody loves that much pain. If you are curious you will simply have to wait for a later post!], but they aren't immediately relevant. What matters is to recognise that in a chunked array, the 2GiB limit on utf8 type data applies on a per-chunk basis.  
 
 
 <br><br>
@@ -909,7 +919,7 @@ Fundamentally, a Date object is just a number: it counts the number of days that
 
 ### [R] The POSIXct class
 
-A date is a comparatively simple thing. When we want to represent dates and time together, we nee we need to know the time of day, and we might need to store information about the timezone as well (more on that later). Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. [POSIX](https://en.wikipedia.org/wiki/POSIX) stands for "portable operating system interface", and it's a set of standards used to help operating systems remain compatible with each other. In this context though, it's not very meaningful: all it says "yup we use unix time." 
+A date is a comparatively simple thing. When we want to represent dates and time together, we need to know the time of day, and we might need to store information about the timezone as well (more on that later). Base R has two different classes for representing this, POSIXct and POSIXlt. These names used to confuse me a lot. [POSIX](https://en.wikipedia.org/wiki/POSIX) stands for "portable operating system interface", and it's a set of standards used to help operating systems remain compatible with each other. In this context though, it's not very meaningful: all it says "yup we use unix time." 
 
 The more important part of the name is actually the ["ct" versus "lt"](https://stackoverflow.com/questions/44778721/what-do-ct-and-lt-in-posixct-and-posixlt-mean) part. Let's start with POSIXct. The "ct" in POSIXct stands for "calendar time": internally, R stores the number of seconds that have elapsed since 1970-01-01 00:00 UTC.
 
@@ -954,13 +964,13 @@ now_lt <- as.POSIXlt(now)
 now_lt
 ```
 
-It *looks* the same, but this is an illusion produced by the `print()` method. Internally, the `now_lt` object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:
+It looks exactly the same, but this is an illusion produced by the `print()` method. Internally, the `now_lt` object is a very different kind of thing. To see this, lets see what happens if we print it as if it were a regular list:
 
 ```{r}
 unclass(now_lt)
 ```
 
-As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.^[A little counterintuitively, the value of `sec` ranges from 0 to 61, presumably because [leap seconds](https://en.wikipedia.org/wiki/Leap_second) are a thing. I am *not* going to torture myself with that one today.] The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time. 
+As you can see, this object separately stores the year (counted from 1900), the month (where January is month 0 and December is month 11), the day of the month (starting at day 1), etc.^[A little counterintuitively, the value of `sec` ranges from 0 to 61, presumably because [leap seconds](https://en.wikipedia.org/wiki/Leap_second) are a thing. I am NOT going to torture myself with that one today. My life has quite enough torture in it already.] The timezone is stored, as is the day of the week (Sunday is day 0), it specifies whether daylight savings time is in effect, and so on. Time, as represented in the POSIXlt class, uses a collection of categories that are approximately the same as those that humans use when we talk about time. 
 
 It is not a compact representation, and it's useful for quite different things than POSIXct. What matters for the current purposes is that POSIXlt is, fundamentally, a list structure, and is not in any sense a "timestamp".
 
@@ -993,7 +1003,7 @@ In any case, given that the Arrow date32 type and the R Date class are so simila
 
 The date64 type is similar to the date32 type, but instead of storing the number of days since 1970-01-01 as a 32-bit integer, it stores the number of milliseconds since 1970-01-01 00:00:00 UTC as a 64-bit integer. It's similar to the POSIXct class in R, except that (1) it uses milliseconds instead of seconds; (2) the internal storage is a 64-bit integer, not a 32-bit double; and (3) it does not have metadata and cannot represent timezones.
 
-As you might have guessed, the date64 type in Arrow isn't very similar to the Date class in R. Because it represents time at the millisecond level, the intended use of the date64 class is in situations where you want to keep track of units of time smaller than one day. Sure, I *can* create date64 objects from R Date objects if I want to...
+As you might have guessed, the date64 type in Arrow isn't very similar to the Date class in R. Because it represents time at the millisecond level, the intended use of the date64 class is in situations where you want to keep track of units of time smaller than one day. Sure, I CAN create date64 objects from R Date objects if I want to...
 
 ```{r}
 scalar(today, date64())
@@ -1006,7 +1016,7 @@ now_date64 <- scalar(now, date64())
 now_date64
 ```
 
-The output is *printed* as a date, but it is a little bit misleading because it doesn't give you a good sense of the level of precision in the data. Again we can peek under the hood by explicitly casting this to a 64-bit integer:
+The output is printed as a date, but this is a little bit misleading because it doesn't give you a good sense of the level of precision in the data. Again we can peek under the hood by explicitly casting this to a 64-bit integer:
 
 ```{r}
 now_date64$cast(int64())
@@ -1026,7 +1036,7 @@ Not really. R is playing tricks here. Remember how I said that POSIXct objects a
 as.POSIXlt(now)$sec
 ```
 
-Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in `now_date64`. The data was there all along. Even though `unclass(now)` produces an output that has been rounded to the nearest second, the original `now` variable is indeed a double, and it *does* store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to not here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times. 
+Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in `now_date64`. The data was there all along. Even though `unclass(now)` produces an output that has been rounded to the nearest second, the original `now` variable is indeed a double, and it does store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to know here is that even though POSIXct times are almost always displayed to the nearest second, they do have the ability to represent more precise times. 
 
 Because of this, the default behaviour in **arrow** is to convert date64 types (64-bit integers interpreted as counts of milliseconds) to POSIXct classes (which are secretly 32-bit doubles interpreted as counts of seconds). 
 
@@ -1060,7 +1070,7 @@ Okay, what about timezone. Recall that `now` has a timezone attached to it, beca
 now
 ```
 
-When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn't do that: the time *as displayed* is shown in UTC. However, that doesn't mean that the metadata isn't there:
+When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn't do that: the time as displayed is shown in UTC. However, that doesn't mean that the metadata isn't there:
 
 ```{r}
 now_timestamp <- scalar(now)
@@ -1069,7 +1079,7 @@ now_timestamp$type
 
 I mention this because this caused me a considerable amount of panic at one point when I thought my timezone information had been lost when importing data from POSIXct into Arrow. Nothing was lost, it is simply that the **arrow** R package prints all timestamps in the corresponding UTC time regardless of what timezone is specified in the metadata. 
 
-There is, however, a catch. This worked last time *because* I was diligent and ensured that my `now` variable encoded the timezone. By default, a POSIXct object created by `Sys.time()` will not include the timezone. It's easy to forget this because the `print()` method for POSIXct objects will inspect the system timezone if the POSIXct object doesn't contain any timezone information, so it can often *look* like you have a timezone stored in your POSIXct object when actually you don't. When that happens, Arrow can't help you. Because the POSIXct object does not have a timezone (all appearances to the contrary), the object that arrives in Arrow won't have a timezone either. Here's what I mean:
+There is, however, a catch. This worked last time because I was diligent and ensured that my `now` variable encoded the timezone. By default, a POSIXct object created by `Sys.time()` will not include the timezone. It's easy to forget this because the `print()` method for POSIXct objects will inspect the system timezone if the POSIXct object doesn't contain any timezone information, so it can often look like you have a timezone stored in your POSIXct object when actually you don't. When that happens, Arrow can't help you. Because the POSIXct object does not have a timezone (all appearances to the contrary), the object that arrives in Arrow won't have a timezone either. Here's what I mean:
 
 ```{r}
 # a POSIXct object with no timezone
@@ -1106,7 +1116,7 @@ Not only that, because POSIXct and POSIXlt are both subclasses of the POSIXt cla
 now - now_lt
 ```
 
-This is very convenient from a data analysis perspective, since calculations performed with date/time classes "just work" even though POSIXct objects are secretly doubles and POSIXlt objects are secretly lists. However, all this happens invisibly. In much the same way that it's easy to forget that POSIXct objects may not encode a timezone even though they *look* like they do, it can be easy to forget that POSIXct and POSIXlt are fundamentally different objects, and they map onto quite different data structures in Arrow. 
+This is very convenient from a data analysis perspective, since calculations performed with date/time classes "just work" even though POSIXct objects are secretly doubles and POSIXlt objects are secretly lists. However, all this happens invisibly. In much the same way that it's easy to forget that POSIXct objects may not encode a timezone even though they look like they do, it can be easy to forget that POSIXct and POSIXlt are fundamentally different objects, and they map onto quite different data structures in Arrow. 
 
 <br><br>
 
@@ -1155,7 +1165,7 @@ hedy_age <- now - hedy_lamarr
 hedy_age
 ```
 
-I would learn that it has been `r round(c(hedy_age))` days since [Hedy Lamarr](https://en.wikipedia.org/wiki/Hedy_Lamarr) was born.^[Yes, I looked up her [time and location of birth](https://www.astro.com/astro-databank/Lamarr,_Hedy) on an astrology website. I am, after all, a queer. I have been quite clear on this, and it is one of the traditions of our people.] More to the point, R has guessed that the length of time is sufficiently long that seconds aren't the appropriate encoding unit:
+I would learn that it has been `r round(c(hedy_age))` days since [Hedy Lamarr](https://en.wikipedia.org/wiki/Hedy_Lamarr) was born.^[Yes, I looked up her [time and location of birth](https://www.astro.com/astro-databank/Lamarr,_Hedy) on an astrology website. I am, after all, a queer. I feel that I have been quite clear on this, and being weird about astrology it is one of the fine traditions of our people.] More to the point, R has guessed that the length of time is sufficiently long that seconds aren't the appropriate encoding unit:
 
 ```{r}
 unclass(hedy_age)
@@ -1163,7 +1173,7 @@ unclass(hedy_age)
 
 ### [Arrow] The duration type
 
-The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not *exactly* equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing `r round(rmd_time, 2)` as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of `r round(rmd_time, 2)` seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
+The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not exactly equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing `r round(rmd_time, 2)` as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of `r round(rmd_time, 2)` seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
 
 ```{r}
 rmd_time_arrow <- scalar(rmd_time)
@@ -1304,12 +1314,11 @@ knitr::include_graphics("art/pollen_47_4784.jpg", dpi = 100)
 > "Being in love ruins my judgement. It takes my mind off what I'm doing, and I ruin spells" <br>
 > &nbsp;&nbsp; -- Mirandee, from [The Magic Goes Away](https://en.wikipedia.org/wiki/The_Magic_Goes_Away) by Larry Niven
 
-When I first started using **arrow**, the it was the magic I loved most. Everything just worked. I could move data between R and Arrow without having to think, I could manipulate enormous data sets using **dplyr** syntax that I'd never even be able to load into R, and I never had to look under the hood. Magic is always compelling. It is delightful. It makes the user feel joy, and it's the experience the developer wants to provide. 
+When I first started using **arrow**, it was the magic I loved most. Everything just worked. I could move data between R and Arrow without having to think, I could manipulate enormous data sets using **dplyr** syntax that I'd never even be able to load into R, and I never had to look under the hood. Magic is always compelling. It is delightful. It makes the user feel joy, and it's the experience the developer wants to provide. 
 
 But as any teacher will tell you, the magic always goes away. There comes a time when you have to sit down and read the manuals. You have to understand how the magic works, and when you do understand you realise there is no magic. At best, there is design. A system can work using all the default settings because it has been thoughtfully designed, but you will eventually encounter situations when the defaults don't apply to you. It's taken me some time to piece all this  together, and at the end of the process I feel a lot more confident in my judgment. Having a deeper understanding of data types in Arrow and R is useful to me, even if I'm only using the default schemas.
 
-I hope the post is helpful for anyone else following a similar path. 
-
+I hope the post is helpful for anyone else following a similar path.^[A thank you to Jon Keane, Steph Hazlitt, and Neal Richardson for helpful conversations, encouragement, and feedback that have greatly improved the post.]
 <!--
 - https://arrow.apache.org/docs/r/articles/arrow.html
 - https://arrow.apache.org/docs/cpp/api/datatype.html
