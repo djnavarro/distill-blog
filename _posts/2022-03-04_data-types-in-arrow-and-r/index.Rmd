@@ -385,16 +385,18 @@ Let's inspect the `type` field of the `snowpiercer` object in order to determine
 snowpiercer$type
 ```
 
-Similarly, we can use the `as_vector()` method of the `snowpiercer` object to pull the data back into R, and hopefully it comes as no surprise to see that we get the same number back:
+We can apply the S3 generic function `as.vector()` to `snowpiercer` to pull the data back into R,^[There is also an R6 method you could use here. `snowpiercer$as_vector()` would produce exactly the same answer.] and hopefully it comes as no surprise to see that we get the same number back:
 
 ```{r}
-snowpiercer$as_vector()
+as.vector(snowpiercer)
 ```
 
 We can take this one step further to check that the returned object is actually an R _integer_ by checking its `class()`, and again there are no surprises:
 
 ```{r}
-class(snowpiercer$as_vector())
+snowpiercer %>% 
+  as.vector() %>% 
+  class()
 ```
 
 As you can see, the default behaviour in **arrow** is to translate an R _integer_ into an Arrow _int32_, and vice versa. That part, at least, is not too complicated.
@@ -448,7 +450,7 @@ translate_integer <- function(value, type) {
     tibble(
       value = value,
       arrow_type = scalar(value, type)$type$name,
-      r_class = class(scalar(value, type)$as_vector())
+      r_class = scalar(value, type) %>% as.vector() %>% class()
     )
   }
   purrr::map2_dfr(value, type, fn)
@@ -682,7 +684,7 @@ float32_01$type
 And now let's pull it back into R where it will be, once again, encoded as a _double_:
 
 ```{r}
-float32_01$as_vector()
+as.vector(float32_01)
 ```
 
 Yay! It works!
