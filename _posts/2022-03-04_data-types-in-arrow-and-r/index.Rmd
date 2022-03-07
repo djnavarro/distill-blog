@@ -1164,7 +1164,7 @@ knitr::include_graphics("img/duration-types.png", dpi = 100)
 
 ### [R] The difftime class
 
-In base R, the difference between two date/time objects is stored as a difftime object. To give a better illustration of a difftime object, let's create `diff`, a variable that stores the amount of time elapsed between executing the R markdown chunk that first computed the `now` variable, and executing the R markdown chunk below:
+In base R, the difference between two date/time objects is stored as a *difftime* object. To give a better illustration of a *difftime* object, let's create `diff`, a variable that stores the amount of time elapsed between executing the R markdown chunk that first computed the `now` variable, and executing the R markdown chunk below:
 
 ```{r}
 new_now <- Sys.time()
@@ -1178,7 +1178,7 @@ Now let's take a look at how it's actually stored:
 unclass(rmd_time)
 ```
 
-The duration is represented as a numeric variable, and the `"units"` attribute is used to specify the time unit that it represents: "secs", "mins", "hours", "days" or "weeks". Unless the user specifies exactly which unit is to be used, R will attempt to make a sensible choice. For instance, if I were to do this,
+The duration is represented as a *double* variable, and the `"units"` attribute is used to specify the time unit that it represents: "secs", "mins", "hours", "days" or "weeks". Unless the user specifies exactly which unit is to be used, R will attempt to make a sensible choice. For instance, if I were to do this,
 
 ```{r}
 hedy_lamarr <- as.POSIXct("1914-11-09 19:30:00", tz = "Europe/Vienna")
@@ -1186,7 +1186,7 @@ hedy_age <- now - hedy_lamarr
 hedy_age
 ```
 
-I would learn that it has been `r round(c(hedy_age))` days since [Hedy Lamarr](https://en.wikipedia.org/wiki/Hedy_Lamarr) was born.^[Yes, I looked up her [time and location of birth](https://www.astro.com/astro-databank/Lamarr,_Hedy) on an astrology website. I am, after all, a queer. I feel that I have been quite clear on this, and being weird about astrology it is one of the fine traditions of our people.] More to the point, R has guessed that the length of time is sufficiently long that seconds aren't the appropriate encoding unit:
+I would learn that it has been `r round(c(hedy_age))` days since [Hedy Lamarr](https://en.wikipedia.org/wiki/Hedy_Lamarr) was born.^[Yes, I looked up her [time and location of birth](https://www.astro.com/astro-databank/Lamarr,_Hedy) on an astrology website. I am, after all, a queer. I feel that I have been quite clear on this, and being weird about astrology it is one of the fine traditions of our people.] More to the point, R has guessed that the length of time is sufficiently long that "seconds" aren't the appropriate encoding unit:
 
 ```{r}
 unclass(hedy_age)
@@ -1194,7 +1194,7 @@ unclass(hedy_age)
 
 ### [Arrow] The duration type
 
-The difftime class in R has a natural analog in Arrow, the duration type. As usual though, they are not exactly equivalent to one another. An R difftime object stores the value as a double, so it has no problems storing `r round(rmd_time, 2)` as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (int64), and a value of `r round(rmd_time, 2)` seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
+The *difftime* class in R has a natural analog in Arrow, the *duration* type. As usual though, they are not exactly equivalent to one another. An R *difftime* object stores the value as a *double*, so it has no problems storing `r round(rmd_time, 2)` as the value and setting the units to be seconds. This doesn't work very well in Arrow because the value is stored as a signed 64 bit integer (*int64*), and a value of `r round(rmd_time, 2)` seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don't, things can go a little awry:
 
 ```{r}
 rmd_time_arrow <- scalar(rmd_time)
@@ -1207,7 +1207,7 @@ Hm. Zero seconds was not exactly the answer I was looking for. It helps a little
 rmd_time_arrow$type
 ```
 
-This reveals my mistake. I've encoded the time rounded to the nearest second, which is not very useful in this instance. What I really should have done is specify a higher level of precision. To import a duration into Arrow rounded to the nearest microsecond, I can do this:
+This reveals my mistake. I've encoded the time rounded to the nearest second, which is not very useful in this instance. What I really should have done is specify a higher level of precision. To import a *duration* into Arrow rounded to the nearest microsecond, I can do this:
 
 ```{r}
 rmd_time_arrow <- scalar(rmd_time, duration(unit = "us"))
@@ -1223,22 +1223,22 @@ rmd_time_arrow$type
 
 ### [R] The hms::hms class
 
-So where are we up to in our voyage through the world of dates, times, and durations in the R world? We've talked about situations where you can specify a fixed date (with the Date class) and situations where you can specify a fixed moment in time (with POSIXct and POSIXlt classes). We've also talked about situations where you can specify an amount of time without fixing it to a specific date or time (with the difftime class). What we haven't talked about is how to store the time of day. In base R you can talk about a date without needing to specify a time, or you can talk about times and dates together, but what you can't do is specify a time on its own without a date. 
+So where are we up to in our voyage through the world of dates, times, and durations in the R world? We've talked about situations where you can specify a fixed date (with the *Date* class) and situations where you can specify a fixed moment in time (with *POSIXct* and *POSIXlt* classes). We've also talked about situations where you can specify an amount of time without fixing it to a specific date or time (with the *difftime* class). What we haven't talked about is how to store the time of day. In base R you can talk about a date without needing to specify a time, or you can talk about times and dates together, but what you can't do is specify a time on its own without a date. 
 
-The **hms** package fixes this by supplying the hms class. Internally, it's just a difftime object that counts the number of seconds elapsed since midnight. As I type these words the current time is 14:05:25, and I could create an hms object representing this like so:
+The **hms** package fixes this by supplying the *hms* class. Internally, it's just a *difftime* object that counts the number of seconds elapsed since midnight. As I type these words the current time is 14:05:25, and I could create an *hms* object representing this like so:
 
 ```{r}
 hms_time <- hms::hms(seconds = 25, minutes = 5, hours = 14)
 hms_time
 ```
 
-The nice thing about hms times is that they inherit from difftime, which we can see by checking the class vector for our `hms_time` object
+The nice thing about *hms* times is that they inherit from *difftime*, which we can see by checking the class vector for our `hms_time` object
 
 ```{r}
 class(hms_time)
 ```
 
-Just to show that there really isn't anything fancy going on, let's strip the class attribute away and let R print out the raw object. As the output here shows, an hms object has the same underlying structure as a regular difftime object:
+Just to show that there really isn't anything fancy going on, let's strip the class attribute away and let R print out the raw object. As the output here shows, an *hms* object has the same underlying structure as a regular *difftime* object:
 
 ```{r}
 unclass(hms_time)
@@ -1248,9 +1248,9 @@ unclass(hms_time)
 
 What about Arrow? 
 
-At a technical level, it would be perfectly possible to translate an hms object in R into an Arrow duration object, but that feels slightly unnatural. The entire reason why the hms class exists in R is that we -- the human users -- attach special meaning to the "duration of time that has elapsed since midnight on an arbitrary day". We call it the time of day, and while technically it is possible to represent the time of day as a duration (or an hms as a difftime), human beings like to treat special things as special for a reason. 
+At a technical level, it would be perfectly possible to translate an *hms* object in R into an Arrow *duration* object, but that feels slightly unnatural. The entire reason why the *hms* class exists in R is that we -- the human users -- attach special meaning to the "duration of time that has elapsed since midnight on an arbitrary day". We call it the time of day, and while technically it is possible to represent the time of day as a duration (or an *hms* as a *difftime*), human beings like to treat special things as special for a reason. 
 
-Because of this, Arrow supplies two data types that are roughly analogous to the hms class in R, called time32 and time64. The time32 type stores the time of day as a signed 32-bit integer, which represents the number of seconds (or alternatively, milliseconds) since midnight. By default, the **arrow** package will translate an hms object to a time32 type, using seconds as the unit:
+Because of this, Arrow supplies two data types that are roughly analogous to the *hms* class in R, called *time32* and *time64*. The *time32* type stores the time of day as a signed 32-bit integer, which represents the number of seconds (or alternatively, milliseconds) since midnight. By default, the **arrow** package will translate an *hms* object to a *time32* type, using seconds as the unit:
 
 ```{r}
 hms_time32_s <- scalar(hms_time)
@@ -1276,7 +1276,7 @@ Notice that the output shows the time in a little more resolution. I find this a
 hms_time32_ms$type
 ```
 
-If you need to represent the time of day at a higher degree of precision, you'll want to use the time64 type, which (shockingly!) represents the time of day as a signed 64-bit integer. When using the time64 class you can choose microseconds (`unit = "us"`) or nanoseconds (the default, `unit = "ns"`) as the unit:
+If you need to represent the time of day at a higher degree of precision, you'll want to use the *time64* type, which (shockingly!) represents the time of day as a signed 64-bit integer. When using the *time64* class you can choose microseconds (`unit = "us"`) or nanoseconds (the default, `unit = "ns"`) as the unit:
 
 ```{r}
 hms_time64_us <- scalar(hms_time, time64())
@@ -1291,7 +1291,7 @@ hms_time64_us$type
 
 She is quite tiresome at times.
 
-In essence, the **arrow** defaults are set up such that if you choose `time32()` when going from R to Arrow without specifying a unit, you will end up with the lowest precision representation of time (rounded to the nearest second), whereas if you do the same with `time64()` you end up with the highest precision (nanosecond level) representation. When going the other way, **arrow** will map time32 types and time64 types to hms objects, and the end result is that the time of day will be stored as a 32-bit double. 
+In essence, the **arrow** defaults are set up such that if you choose `time32()` when going from R to Arrow without specifying a unit, you will end up with the lowest precision representation of time (rounded to the nearest second), whereas if you do the same with `time64()` you end up with the highest precision (nanosecond level) representation. When going the other way, **arrow** will map *time32* types and *time64* types to hms objects, and the end result is that the time of day will be stored as a *double*. 
 
 <br><br>
 
@@ -1309,13 +1309,13 @@ knitr::include_graphics("art/pollen_47_4783.jpg", dpi = 100)
 
 As with any story told by humans, this one is incomplete. When I started writing this post I had the ambition to cover every single line in the [Table of R/Arrow mappings](https://arrow.apache.org/docs/r/articles/arrow.html#mapping-of-r-arrow-types) shown in the **arrow** documentation. I didn't quite get there in the end, and there are a few missing cases. I'll briefly mention them here:
 
-- Arrow possesses a "null" value used to represent missing data, and behaves similarly to `NA` in R. In base R there are several different `NA` values, corresponding to the different atomic types: `NA_logical`, `NA_character`. The way this is handled in **arrow** is to rely on the **vctrs** package. Specifically, in **vctrs** there is a "vctrs_unspecified" class that works very well here, so Arrow nulls map to vctrs_unspecified and vice versa. In practice, this is where `NA` values enter into the picture.
+- Arrow possesses a "null" value used to represent missing data, and behaves similarly to `NA` in R. In base R there are several different `NA` values, corresponding to the different atomic types: `NA_logical`, `NA_character`. The way this is handled in **arrow** is to rely on the **vctrs** package. Specifically, in **vctrs** there is a *vctrs_unspecified* class that works very well here, so Arrow *nulls* map to *vctrs_unspecified* and vice versa. In practice, this is where `NA` values enter into the picture.
 
-- In R there is the concept of the "raw" type used to represent bytes. Arrow doesn't have a natural equivalent of this, but the closest is an unsigned 8-bit integer, so the default is to map raw to uint8.
+- In R there is the concept of the *raw* type used to represent bytes. Arrow doesn't have a natural equivalent of this, but the closest is an unsigned 8-bit integer, so the default is to map *raw* to *uint8*.
 
-- I haven't talked about factors at all, and frankly I probably should have. My only excuse is exhaustion. The post was getting very long and I ran out of energy. The analog of factors in Arrow is the "dictionary" type. They're not exact mirrors of each other so it's worth reading the documentation, but it's close enough that factors are mapped to dictionaries and vice versa. 
+- I haven't talked about *factors* at all, and frankly I probably should have. My only excuse is exhaustion. The post was getting very long and I ran out of energy. The analog of *factors* in Arrow is the *dictionary* type. They're not exact mirrors of each other so it's worth reading the documentation, but it's close enough that *factors* are mapped to *dictionaries* and vice versa. 
 
-- R and Arrow both allow more complicated data structures to be included as columns within a data frame (or table). For example, in R each element of a column can itself be a data frame. In such cases, the default in **arrow** is to map each R data frame onto an Arrow struct. Again, this is one where it's worth reading the documentation, because there are some subtleties with how things like list columns are handled. 
+- R and Arrow both allow more complicated data structures to be included as columns within a *data frame* (or *Table*). For example, in R each element of a column can itself be a *data frame*. In such cases, the default in **arrow** is to map each R *data frame* onto an Arrow *struct*. Again, this is one where it's worth reading the documentation, because there are some subtleties with how things like *list* columns are handled. 
 
 
 <br><br>
