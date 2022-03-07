@@ -522,7 +522,7 @@ The problem, though, is that there are A LOT of integers. It's a tad inconvenien
 > To dissimulate is to pretend not to have what one has. To simulate is to feign to have what one doesn't have. One implies a presence, the other an absence. But it is more complicated than that because simulating is not pretending: "Whoever fakes an illness can simply stay in bed and make everyone believe he is ill. Whoever simulates an illness produces in himself some of the symptoms" (Littré). Therefore, pretending, or dissimulating, leaves the principle of reality intact: the difference is always clear, it is simply masked, whereas simulation threatens the difference between the "true" and the "false," the "real" and the "imaginary." <br>
 > &nbsp; &nbsp; -- Jean Baudrillard, 1981, [Simulacra and Simulation](https://en.wikipedia.org/wiki/Simulacra_and_Simulation)^[The "desert of the real" phrase in the title of the section refers to the real numbers, but it's also a quote from *Simulacra and Simulation* and [*The Matrix*](https://en.wikipedia.org/wiki/The_Matrix). Obviously I encountered it in *The Matrix* first because, all appearances to the contrary, I am uncultured swine.]
 
-The real numbers correspond to our intuitive concept of the continuous number line. Just like the integers, the real line extends infinitely far in both directions, but unlike the integers the reals are continuous: for any two real numbers -- no matter how close they are to each other -- there is always another real number in between. This, quite frankly, sucks. Because the moment you accept that this is true, something ugly happens. If I accept that there must exist a number between 1.01 and 1.02, which I'll call 1.015, then I have to accept that there is a number between 1.01 and 1.015, which I'll call 1.0075, and then I have to accept that... oh shit this is going to go on forever. In other words, the reals have the obnoxious property that there between any two real numbers there are an infinity of other real numbers. 
+The real numbers correspond to our intuitive concept of the continuous number line. Just like the integers, the real line extends infinitely far in both directions, but unlike the integers the reals are continuous: for any two real numbers -- no matter how close they are to each other -- there is always another real number in between. This, quite frankly, sucks. Because the moment you accept that this is true, something ugly happens. If I accept that there must exist a number between 1.01 and 1.02, which I'll call 1.015, then I have to accept that there is a number between 1.01 and 1.015, which I'll call 1.0075, and then I have to accept that... oh shit this is going to go on forever. In other words, the reals have the obnoxious property that there between any two real numbers there are an infinity of other real numbers.^[At this point it is traditional to make a joke about Zeno's paradox of [Achilles and the Tortoise](https://en.wikipedia.org/wiki/Zeno%27s_paradoxes#Achilles_and_the_tortoise) and honestly I did try, but to come up with a good joke I first had to get half an idea, and then I had to refine it half way to being a better idea, and then I had to refine that half way and... I guess I never quite got there in the end. Sorry.] 
 
 Try shoving all that into your finite-precision machine. 
 
@@ -532,26 +532,28 @@ Stepping away from the mathematics for a moment, most of us already know how pro
 0.1 + 0.2 == 0.3
 ```
 
-This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are not real numbers in the mathematical sense. Rather, they are encoded in R as objects of type double, and a double is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig all the way into the IEEE standard, but it does help a lot to have a general sense of how a floating point number (approximately) encodes a real number, so in the next section I'm going to take a look under the hood of R doubles. I'll show you how they're represented as binary objects, and why they misbehave sometimes. I'm doing this for two reasons: firstly it's just a handy thing to know, but secondly, understanding the misbehaviour of the "standard" binary floating point number representation used in R helps motivate why Arrow and some other platforms expose a wider variety of options to the user.
+This is not a bug in R. It happens because `0.1`, `0.2`, and `0.3` are not real numbers in the mathematical sense. Rather, they are encoded in R as objects of type _double_, and a _double_ is a 64-bit floating point number that adheres to the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard. It's a bit beyond the scope of this post to dig all the way into the IEEE standard, but it does help a lot to have a general sense of how a floating point number (approximately) encodes a real number, so in the next section I'm going to take a look under the hood of R _doubles_. I'll show you how they're represented as binary objects, and why they misbehave sometimes. I'm doing this for two reasons: firstly it's just a handy thing to know, but secondly, understanding the misbehaviour of the "standard" binary floating point number representation used in R helps motivate why Arrow and some other platforms expose other options to the user.
 
 ### [R] The numeric class
 
-To give you a better feel for what a double looks like when represented as a set of bits, I've written a little extractor function called `unpack_double()` that decomposes the object into its constituent bits and prints it out in a visually helpful way ([source code here](https://github.com/djnavarro/distill-blog/blob/master/_posts/2022-03-04_data-types-in-arrow-and-r/unpack_double.R)). In truth, it's just a wrapper around the `numTobits()` function provided by base R, but one that gives slighly prettier output. Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
+To give you a better feel for what a _double_ looks like when represented as a set of bits, I've written a little extractor function called `unpack_double()` that decomposes the object into its constituent bits and prints it out in a visually helpful way ([source code here](https://github.com/djnavarro/distill-blog/blob/master/_posts/2022-03-04_data-types-in-arrow-and-r/unpack_double.R)). In truth, it's just a wrapper around the `numTobits()` function provided by base R, but one that gives slightly prettier output. Armed with this, let's take a look at the format. To start out, I'll do the most boring thing possible and show you the binary representation of `0` as a floating point number. You will, I imagine, be entirely unshocked to discover that it is in fact a sequence of 64 zeros:
 
 ```{r}
 unpack_double(0)
 ```
 
-Truly amazing. Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The first bit^[Sigh. Technically, this is the last bit. R uses a [little endian](https://en.wikipedia.org/wiki/Endianness) representation here, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the "sign": is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an "exponent": you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.] The remaining 53 bits are used to represent the "mantissa". 
+Truly amazing. 
+
+Really, the only thing that matters here is to notice the spacing. The sequence of 64 bits are divided into three meaningful chunks. The "first" bit^[Sigh. Technically, this is the last bit. R uses a [little-endian](https://en.wikipedia.org/wiki/Endianness) representation here which I have flipped to a big-endian format so that it can be read from left to right, but for the love of all that is good and precious in this world please let me simplify a few things okay?] represents the "sign": is this a positive number (first bit equals 0) or a negative number (first bit equals 1), where zero is treated as if it were a positive number. The next 11 bits are used to specify an "exponent": you can think of these bits as if they describe a signed "int11" type, and can be used to store any number between -1022 and 1023.^[Okay, if you were reading closely earlier you might be thinking this is wrong and the range should be -1023 to 1024. The reason it's not is that those to values are reserved for "special" numbers.] The remaining 53 bits are used to represent the "mantissa".^[I still think "Man Tissa" would make a good drag king name, though I've been unreliably informed that it may sound odd to Norwegians.] 
 
 These three components carve up a real number by using this this decomposition:
 
 $$
 (\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 2 ^ {\mbox{(exponent)}}
 $$
-Any real number can be decomposed in this way, so long as you have enough digits to express your mantissa and your exponent (which, of course, we don't). But the neat thing about adopting the decomposed format is that we can describe very large magnitudes and very small magnitudes with a fixed-length mantissa. 
+Any real number can be decomposed in this way, so long as you have enough digits to express your mantissa and your exponent. Of course, on a finite precision machine we won't always have enough digits, and this representation doesn't allow us to fit "more" numbers into the machine: there's a fundamental limit on what you can accomplish with 64 bits. What it can do for you, however, is let you use your limited resources wisely. The neat thing about adopting the decomposed format that floating-point relies on is that we can describe very large magnitudes and very small magnitudes with a fixed-length mantissa. 
 
-To give a concrete example of how floating point works, let's take a look at the partial decimal expansion of `-9.832`, which I am told is the approximate rate of acceleration experienced by a falling object in the Earth's polar regions:
+To give a concrete example of how floating point works, let's take a look at the internal representation of `-9.832`, which I am told is the approximate rate of acceleration experienced by a falling object in the Earth's polar regions:
 
 ```{r}
 polar_g <- unpack_double(-9.832)
@@ -578,7 +580,7 @@ sign * mantissa * 2 ^ exponent
 
 Yay!
 
-Just to prove to you that this isn't a fluke, I also included a `repack_double()` function that automates this calculation. It takes the deconstructed representation of an R double and packs it up again, so `repack_double(unpack_double(x))` should return `x`. Here are a few examples: 
+Just to prove to you that this isn't a fluke, I also included a `repack_double()` function that automates this calculation. It takes the deconstructed representation of an R _double_ and packs it up again, so `repack_double(unpack_double(x))` should return `x`. Here are a few examples: 
 
 ```{r, results='hold'}
 sanity_check <- function(x) {
@@ -589,7 +591,7 @@ sanity_check(1345234623462342)
 sanity_check(0.000000002345345234523)
 ```
 
-Now that we have some deeper knowledge of how R doubles are represented internally, let's return to the numbers in the famous example of floating point numbers misbehaving:
+Now that we have some deeper knowledge of how R _doubles_ are represented internally, let's return to the numbers in the famous example of floating point numbers misbehaving:
 
 ```{r, results='hold'}
 unpack_double(.1)
@@ -605,7 +607,7 @@ unpack_double(.8)
 unpack_double(.9)
 ```
 
-So it turns out that `0.6` has the same mantissa as `0.3`, and `0.8` has the same mantissa as `0.1` and `0.2`, but  `0.9` has a different mantissa from all of them. So what we might expect is that floating point errors can happen for these cases:
+So it turns out that `0.6` has the same mantissa as `0.3`, and `0.8` has the same mantissa as `0.1` and `0.2`, but `0.9` has a different mantissa from all of them. So what we might expect is that floating point errors can happen for these cases:
 
 ```{r, results='hold'}
 0.1 + 0.2 == 0.3
@@ -620,7 +622,7 @@ but not these ones:
 0.2 + 0.6 == 0.8
 ```
 
-Okay that checks out! Now, it's important to recognise that these errors are very small. Floating point arithmetic doesn't actually "work", but it's very close:
+Okay that checks out! Now, it's important to recognise that these errors are very small. So when I say that floating point arithmetic doesn't actually "work", a little care is needed. It does am impressively good job of approximating something very complicated using a quite limited tool:
 
 ```{r}
 0.1 + 0.2 - 0.3
@@ -634,7 +636,9 @@ We pretend that machines can do arithmetic on the reals. They can't, but it's a 
 
 Okay. That was terribly long-winded, and I do apologise. Nevertheless, I promise there is a point to this story and it's time we switched back over to the Arrow side of things to think about what happens there.
 
-By now you're probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as numeric but sometimes called double. In contrast, Arrow has four: float64, float32, float16, and decimal.^[Some precision is needed here: in this post I am using the names that appear in the [documentation to the **arrow** R package](https://arrow.apache.org/docs/r/reference/data-type.html). I'm doing this because the intended audience is an R user who wants to use the **arrow** package to interact with Arrow. However, you should be aware that these types are given slightly different names in the C++ [documentation to **libarrow**](https://arrow.apache.org/docs/cpp/api/datatype.html) to which **arrow** provides bindings. In that documentation the terminology is as follows: float64 is called double, float32 is called float, and float16 is called half-float. The decimal type is the same in both versions.] The easiest of these to discuss is float64, because it adopts the same conventions as the R double class. Just like R, it uses 64 bits to represent a floating point number.^[They are both little-endian too.] Because the data structures are so similar, the default behaviour in **arrow** is to translate an R double into an Arrow float64 and vice versa. 
+By now you're probably getting used to the fact that Arrow tends to have more primitive types than R in most situations. Floating point numbers are no exception. R has only a single class, usually referred to as _numeric_ but sometimes called _double_. In contrast, Arrow has three: _float64_, _float32_ and _float16_.^[Some precision is needed here: in this post I am using the names that appear in the [documentation to the **arrow** R package](https://arrow.apache.org/docs/r/reference/data-type.html). I'm doing this because the intended audience is an R user who wants to use the **arrow** package to interact with Arrow. However, you should be aware that these types are given slightly different names in the C++ [documentation to **libarrow**](https://arrow.apache.org/docs/cpp/api/datatype.html) to which **arrow** provides bindings. In that documentation the terminology is as follows: _float64_ is called _double_, _float32_ is called _float_, and _float16_ is called _half-float_.]  It also has another numeric type called _decimal_ that I'll discuss later. 
+
+The easiest of these to discuss is _float64_, because it adopts the same conventions as the R _double_ class. Just like R, it uses 64 bits to represent a floating point number.^[They are both little-endian too.] Because the data structures are so similar, the default behaviour in **arrow** is to translate an R _double_ into an Arrow _float64_ and vice versa. 
 
 As always, I've got a little diagram summarising all the default mappings:
 
@@ -660,9 +664,9 @@ float_01 + float_02 - float_03
 
 ### [Arrow] The float32 and float16 types
 
-The float64 type provides an excellent, high precision floating point representation of numeric data. As data types go it is a good type. However, it is a 64-bit type, and sometimes you don't need to store your data at a high degree of precision. With that in mind, because Arrow places a strong emphasis on both scalability and efficiency, it also provides the float32 and float16 types. Encoding numeric data in these formats will save space, but will come at a cost of precision. As always, the decision of what encoding works best for your application will depend on what your needs are. 
+The _float64_ type provides an excellent, high precision floating point representation of numeric data. As data types go it is a good type. However, it is a 64-bit type, and sometimes you don't need to store your data at a high degree of precision. With that in mind, because Arrow places a strong emphasis on both scalability and efficiency, it also provides the _float32_ type and the _float16_ type (though _float16_ hasn't really been implemented yet, as far as I know). Encoding numeric data in these formats will save space, but will come at a cost of precision. As always, the decision of what encoding works best for your application will depend on what your needs are. 
 
-As far as the **arrow** package is concerned, there are no difficulties in passing data back and forth between R doubles and Arrow float32 types, but due to the drastic differences in precision it's not really possible to do this with float16. Still, we can briefly take a look at how it works for float32. Here's an example of me passing an R double to Arrow:
+As far as the **arrow** package is concerned, there are no difficulties in passing data back and forth between R _doubles_ and Arrow _float32_ types, but at present it's not really possible to do this with _float16_ because this isn't implemented. Still, we can briefly take a look at how it works for _float32_. Here's an example of me passing an R _double_ to Arrow:
 
 ```{r}
 float32_01 <- scalar(.1, type = float32())
@@ -675,7 +679,7 @@ Let's quickly verify that it is in fact a 32-bit float:
 float32_01$type
 ```
 
-And now let's pull it back into R where it will be, once again, encoded as a double:
+And now let's pull it back into R where it will be, once again, encoded as a _double_:
 
 ```{r}
 float32_01$as_vector()
@@ -685,12 +689,16 @@ Yay! It works!
 
 ### Decimal floating point numbers?
 
+It's time to talk about decimals. This is a fun topic, but I need to start with a warning: I mentioned that Arrow has a _decimal_ type, and your first instinct as an R programmer might be to assume that this is another variation of floating point numbers. Fight this instinct: it's not quite right. 
+
+Okay, ready?
+
 Earlier in this section I promised that the Baudrillard quote from *Simulacra and Simulation* was going to be relevant? Well, that time has arrived. It's also the moment at which the quote from *Word and Object* by Quine that opened this blog post becomes painfully relevant. Stripped of their fancy language, here's what the two authors are telling us in these passages:
 
 - The Baudrillard quote emphasises that floating point numbers are a simulation. They are the mechanism by which we pretend to encode real numbers on computers. It's a lie, but it's a powerful lie that almost works.
 - The Quine quote emphasises that translation (and, I would argue, simulation also) is underdetermined. For any complicated thing there are many ways to simulate, or translate, or approximate it. These approximations can be extremely accurate and still be inconsistent with each other. 
 
-Quine's truism applies to floating point numbers, and it is the reason why we have "decimal floating point" numbers as well as "binary floating point" numbers. All floating point systems are simulations in the Baudrillard sense of the term: lies, strictly speaking, but close enough to true that the distinction between lies and truth gets a little blurry. 
+Quine's truism applies to floating point numbers, and it is the reason why "decimal floating point" numbers exist in addition "binary floating point" numbers. All floating point systems are simulations in the Baudrillard sense of the term: lies, strictly speaking, but close enough to true that the distinction between lies and truth gets a little blurry. 
 
 Let's see how that plays out with floating point numbers. When discussing doubles in R, I mentioned that they represent the real numbers using a decomposition that looks like this:
 
@@ -710,7 +718,9 @@ $$
 (\mbox{real number}) = (\mbox{sign}) \times (\mbox{mantissa}) \times 10 ^ {\mbox{(exponent)}}
 $$
 
-As we'll see in the next section, what Arrow actually does is slightly different to this. Instead of using floating-point decimals, it supplies fixed-point decimal types. In a floating-point representation, the exponent is chosen automatically, and is a property of the value itself. The number `-9.832` will always have an exponent of 3 when encoded as a binary floating-point number (as we saw in the `polar_g` example earlier), and that exponent will never be influenced by the values of other numbers stored in the same data set. 
+The virtues of decimal floating point seem enticing, and it's tempting to think that this must be what Arrow implements. However, as we'll see in the next section, that's not true.
+
+Instead of using floating-point decimals, it supplies "fixed-point" decimal types. In a floating-point representation, the exponent is chosen automatically, and it is a property of the value itself. The number `-9.832` will always have an exponent of 3 when encoded as a binary floating-point number (as we saw in the `polar_g` example earlier), and that exponent will never be influenced by the values of other numbers stored in the same data set. 
 
 A fixed-point representation is different. The exponent -- and in a decimal representation, remember that the exponent is just "the location of the decimal point" -- is chosen by the user. You have to specify where the decimal point is located manually, and this location will be applied to each value stored in the object. In other words, the exponent -- which is now called the "scale", and is parameterised slightly differently -- becomes a property of the type, not the value. 
 
@@ -718,29 +728,29 @@ Sigh. Nothing in life is simple, is it? It'll become a little clearer in the nex
 
 ### [Arrow] The decimal fixed-point types
 
-Arrow has two decimal types, a decimal128 type that (shockingly) uses 128 bits to store a floating point decimal number, and a decimal256 type that uses 256 bits. As usual **arrow** package supplies type functions `decimal128()` and `decimal256()` that allow you to specify decimal types. Both functions have two arguments that you must supply:
+Arrow has two decimal types, a _decimal128_ type that (shockingly) uses 128 bits to store a floating point decimal number, and a _decimal256_ type that uses 256 bits. As usual **arrow** package supplies type functions `decimal128()` and `decimal256()` that allow you to specify decimal types. Both functions have two arguments that you must supply:
 
 - `precision` specifies the number of significant digits to store, similar to setting the length of the mantissa in a floating-point representation. 
 
 - `scale` specifies the number of digits that should be stored after the decimal point. If you set `scale = 2`, exactly two digits will be stored after the decimal point. If you set `scale = 0`, values will be rounded to the nearest whole number. Negative scales are also permitted (handy when dealing with extremely large numbers), so `scale = -2` stores the value to the nearest 100.
 
-One convenience that exists both in the **arrow** R package and within **libarrow** itself is that it can automatically decide whether you need a decimal128 or a decimal256 simply by looking at the value of the `precision` argument. If the `precision` is 38 or less, you can encode the data with a decimal128 type. Larger values require a decimal256. If you would like to take advantage of this -- as I will do in this post -- you can use the `decimal()` type function which will automatically create the appropriate type based on the specified precision. 
+One convenience that exists both in the **arrow** R package and within **libarrow** itself is that it can automatically decide whether you need a _decimal128_ or a _decimal256_ simply by looking at the value of the `precision` argument. If the `precision` is 38 or less, you can encode the data with a _decimal128_ type. Larger values require a _decimal256_. If you would like to take advantage of this -- as I will do in this post -- you can use the `decimal()` type function which will automatically create the appropriate type based on the specified precision. 
 
-One inconvenience that I have in this post, however, is that R doesn't have any analog of a fixed-point decimal, and consequently I don't have any way to create an "R decimal" that I can then import into Arrow. What I'll do instead is create a floating point array in Arrow, and then explicitly cast it to a decimal type. Step one, create the floating point numbers in Arrow:
+One inconvenience that I have in this post, however, is that R doesn't have any analog of a fixed-point _decimal_, and consequently I don't have any way to create an "R decimal" that I can then import into Arrow. What I'll do instead is create a floating point array in Arrow, and then explicitly cast it to a _decimal_ type. Step one, create the floating point numbers in Arrow:
 
 ```{r}
 floats <- chunked_array(c(.01, .1, 1, 10, 100), type = float32())
 floats
 ```
 
-Step two, cast the floats to decimals: 
+Step two, cast the _float32_ numbers to _decimals_: 
 
 ```{r}
 decimals <- floats$cast(decimal(precision = 5, scale = 2))
 decimals
 ```
 
-These two arrays look almost the same (especially because I chose the `scale` judiciously!), but the underlying encoding is different. The original `floats` array is a familiar float32 type, but if we have a look at the `decimals` object we see that it adopts a quite different encoding:
+These two arrays look almost the same (especially because I chose the `scale` judiciously!), but the underlying encoding is different. The original `floats` array is a familiar _float32_ type, but if we have a look at the `decimals` object we see that it adopts a quite different encoding:
 
 ```{r}
 decimals$type
@@ -753,7 +763,7 @@ sad_floats <- chunked_array(c(.1, .2, .3))
 sum(sad_floats)
 ```
 
-Oh noes. Okay, let's take a sad float and turn it into a happy decimal. I'll store it as a high precision decimal to make it a little easier to compare the results:
+Oh noes. Okay, let's take a sad _float32_ and turn it into a happy _decimal_. I'll store it as a high precision decimal to make it a little easier to compare the results:
 
 ```{r}
 happy_decimals <- sad_floats$cast(decimal(20, 16))
@@ -768,7 +778,7 @@ sum(happy_decimals)
 
 Yay!
 
-As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren't a universal solution to the problems of binary floating-point numbers. They have severe limitations of their own and there are very good reasons why floats remain the default almost everywhere. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as to fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.
+As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren't a universal solution to the problems of binary floating-point numbers. They have limitations of their own and there are good reasons why floats remain the default numeric type in most languages. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as to fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.
 
 
 <br><br>
