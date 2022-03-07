@@ -61,7 +61,43 @@ source("unpack_double.R")
 
 *[Author note]* This post is technically still a draft. I've made it public to get feedback from friends and colleagues, but it's not quite finished and I haven't done all the checking to make sure there aren't errors. I don't mind if anyone reads it in the current state, but until this note disappears please don't share on social media etc! 
 
-*[Author note]* This post is the third in a series I have been writing on Apache Arrow and R, and probably works best if you've read the previous two. The first one is a [getting started post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/), and the second one talks about the [arrow dplyr backend](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/). I've tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the **arrow** package does. If that's you, read on! If you're not at that point yet, hopefully the first two posts will get you there!
+<br><br><br>
+
+At the 2018 useR! conference in Brisbane, Roger Peng gave a fabulous keynote talk on [teaching R to new users](https://www.youtube.com/watch?v=5033jBHFiHE) in which he provided an overview of the history of the language and how it is used in the broader community. One thing that stood out to me in his talk -- and I've seen reflected in other data -- is that R is unusual as a language because it's not designed primarily for programmers. Software engineering practices have now become widespread in the R community, and that's a good thing. Nevertheless, a very large proportion of the R community don't have a traditional computer science background -- and that's okay! In fact, given the goals of the language that's a good thing too.
+
+R is a language designed with a practical goal in mind: it is a tool for statistical programming and data analysis. Because of this design focus, R users tend to care most deeply about *the tasks that make up their day to day jobs*. Few of us care about the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard for encoding floating point numbers. R users are not typically interested in the [big-endian/little-endian](https://en.wikipedia.org/wiki/Endianness) distinction. The purpose of R as a high level statistical programming environment is to abstract away from these things, and to allow users to focus on data cleaning, wrangling, and visualisation. R tries to make it easy for get to your data as easily as possible, build models for your data, report those models reliably, and so on. That's it's job.
+
+But. 
+
+There's always a "but", isn't there?
+
+
+<br><br>
+
+```{r}
+#| echo = FALSE,
+#| fig.align = "center",
+#| fig.cap = "Art"
+knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
+```
+
+<aside><br>All images in this post are my own, including the artwork, and though I haven't formally released the art as part of series (and hence not specified a licence for the series as a whole), these specific pieces are covered by the same CC-BY licence that applies to the rest of the post</aside>
+
+
+<br><br>
+
+
+
+One of the huge changes in the data science ecosystem in recent years is the change in scale of our data sets. Data sets can now easily encompass billions of rows, and surpass the ability of your machine (and R) to hold in memory. Another huge change in the ecosystem is the proliferation of tools. Data sets have to be passed from one system to another, and when those data sets are large, problems follow. [Apache Arrow](https://arrow.apache.org/) solves these problems by providing a multi-language toolbox for data exchange and data analysis. It's a toolbox designed for a big data environment, and a many-language environment. From the perspective of an R user, it supplies the **arrow** package that provides an interface to Apache Arrow, and through that package allows you to have access to all the other magic that Arrow exposes. It's an extremely powerful toolbox... but to use it effectively you do need to learn more of those low-level concepts that we as R users like to skim over.
+
+<aside>In this post I use boldfaced text to denote the names of R packages such as **arrow** and **dplyr**, as well as C++ library such as **libarrow**</aside>
+
+This post is an attempt to fill that gap for you!
+
+It's actually the third in a series I have been writing on Apache Arrow and R, and probably works best if you've read the previous two. The first one is a [getting started post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/), and the second one talks about the [arrow dplyr backend](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/). I've tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the **arrow** package does. If that's you, read on! If you're not at that point yet, hopefully the first two posts will get you there!
+
+
+
 
 ```{r}
 library(tibble)
@@ -72,6 +108,8 @@ library(arrow)
 ```{r, echo=FALSE, message=FALSE}
 conflicted::conflict_prefer("timestamp", "arrow")
 ```
+
+<br>
 
 ## Regarding magic
 
@@ -120,8 +158,6 @@ In this example the translation back and forth "just works". You really don't ha
 
 That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about _Schemas_. _Schemas_ are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
 
-<aside>Boldfaced text is used to denote the names of R packages such as **arrow** and **dplyr**, as well as C++ library such as **libarrow**</aside>
-
 
 ```{r}
 #| echo = FALSE,
@@ -132,6 +168,7 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 ```
 
 
+<br>
 
 ## Defining Schemas
 
@@ -165,11 +202,8 @@ This is of course a toy example, as are all the other examples you'll encounter 
 #| echo = FALSE,
 #| fig.align = "center",
 #| fig.cap = "Art"
-knitr::include_graphics("art/pollen_46_4699.jpg", dpi = 100)
+knitr::include_graphics("art/pollen_49_4937.jpg", dpi = 100)
 ```
-
-<aside><br>All the images in this post are my own, including the artwork, and though I haven't formally released the art as part of series (and hence not specified a licence for the series as a whole), these specific pieces are covered by the same CC-BY licence that applies to the rest of the post</aside>
-
 
 <br><br>
 
@@ -209,6 +243,9 @@ I am of course hardly the first person to notice this. In 1952 the Argentinian a
 > In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies
 
 Now, it's pretty unlikely that any human language would produce a classification system quite as chaotic as Borges' fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. It's a pretty fundamental point, and I think it applies to programming languages too.^[At this point I feel compelled to point out that while I may *appear* to be a bright young thing with little experience of the world, I am in fact a 44 year old woman and former academic who has read quite a few papers on algorithmic information theory and related fields. So, if you happen to be thinking thoughts along the lines of "aha, she doesn't know about Turing equivalence!" and are considering explaining it to me... please don't. This is one of those situations where that pesky little "finite length" prefix code required to allow machine P to simulate machine Q actually matters, and sometimes "finite" includes values like "staggeringly, painfully large". As I used to wearily tell my students, in real life you can't ignore the $O(1)$ terms.] Every language carries with it a set of assumptions and structures that it considers "natural", and translation across the boundaries between languages is necessarily a tricky business.^[As an aside, Michel Foucault actually refers to this Borges passage in the preface to his famous work [*The Order of Things: An Archaeology of the Human Sciences*](https://en.wikipedia.org/wiki/The_Order_of_Things) on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay "shattered ... all the familiar landmarks of thought --- our thought, the thought that bears the stamp of our age and our geography --- breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things". Seems fair to say that Borges' essay was not without its admirers.]
+
+<br>
+
 
 ## A little bit of big picture
 

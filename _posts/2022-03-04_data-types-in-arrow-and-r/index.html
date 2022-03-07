@@ -126,7 +126,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["art/pollen_46_4628.jpg","art/pollen_46_4699.jpg","art/pollen_47_4783.jpg","art/pollen_47_4784.jpg","art/pollen_47_4814.jpg","art/pollen_47_4815.jpg","art/pollen_47_4817.jpg","art/pollen_47_4822.jpg","art/pollen_47_4828.jpg","art/pollen_47_4836.jpg","art/pollen_47_4857.jpg","art/pollen_47_4868.jpg","art/pollen_47_4888.jpg","art/pollen_47_4893.jpg","art/pollen_47_4897.jpg","img/character-types-02.png","img/character-types-03.png","img/character-types.png","img/cover.jpg","img/cover.png","img/data-types-overview.png","img/dataframe-types.png","img/datatypes01.png","img/datatypes02.png","img/datatypes03.png","img/datatypes04.png","img/datatypes05.png","img/datatypes06.png","img/datatypes07.png","img/datatypes08.png","img/datatypes09.png","img/datatypes10.png","img/datatypes11.png","img/datatypes12.png","img/datatypes13.png","img/datatypes14.png","img/date-types.png","img/duration-types.png","img/factor-types.png","img/integer-types-01.png","img/integer-types-02.png","img/integer-types-03.png","img/logical-types.png","img/null-types.png","img/numeric-types.png","img/old_cover.jpg","img/raw-types.png","img/visual-convention.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","magicians.csv"]}
+  {"type":"character","attributes":{},"value":["art/pollen_46_4628.jpg","art/pollen_46_4699.jpg","art/pollen_47_4783.jpg","art/pollen_47_4784.jpg","art/pollen_47_4814.jpg","art/pollen_47_4815.jpg","art/pollen_47_4817.jpg","art/pollen_47_4822.jpg","art/pollen_47_4828.jpg","art/pollen_47_4836.jpg","art/pollen_47_4857.jpg","art/pollen_47_4868.jpg","art/pollen_47_4888.jpg","art/pollen_47_4893.jpg","art/pollen_47_4897.jpg","art/pollen_49_4937.jpg","img/character-types-02.png","img/character-types-03.png","img/character-types.png","img/cover.jpg","img/cover.png","img/data-types-overview.png","img/dataframe-types.png","img/datatypes01.png","img/datatypes02.png","img/datatypes03.png","img/datatypes04.png","img/datatypes05.png","img/datatypes06.png","img/datatypes07.png","img/datatypes08.png","img/datatypes09.png","img/datatypes10.png","img/datatypes11.png","img/datatypes12.png","img/datatypes13.png","img/datatypes14.png","img/date-types.png","img/duration-types.png","img/factor-types.png","img/integer-types-01.png","img/integer-types-02.png","img/integer-types-03.png","img/logical-types.png","img/null-types.png","img/numeric-types.png","img/old_cover.jpg","img/raw-types.png","img/visual-convention.png","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","magicians.csv"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1561,7 +1561,30 @@ checklist:
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
 <p><em>[Author note]</em> This post is technically still a draft. I’ve made it public to get feedback from friends and colleagues, but it’s not quite finished and I haven’t done all the checking to make sure there aren’t errors. I don’t mind if anyone reads it in the current state, but until this note disappears please don’t share on social media etc!</p>
-<p><em>[Author note]</em> This post is the third in a series I have been writing on Apache Arrow and R, and probably works best if you’ve read the previous two. The first one is a <a href="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/">getting started post</a>, and the second one talks about the <a href="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/">arrow dplyr backend</a>. I’ve tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the <strong>arrow</strong> package does. If that’s you, read on! If you’re not at that point yet, hopefully the first two posts will get you there!</p>
+<p><br><br><br></p>
+<p>At the 2018 useR! conference in Brisbane, Roger Peng gave a fabulous keynote talk on <a href="https://www.youtube.com/watch?v=5033jBHFiHE">teaching R to new users</a> in which he provided an overview of the history of the language and how it is used in the broader community. One thing that stood out to me in his talk – and I’ve seen reflected in other data – is that R is unusual as a language because it’s not designed primarily for programmers. Software engineering practices have now become widespread in the R community, and that’s a good thing. Nevertheless, a very large proportion of the R community don’t have a traditional computer science background – and that’s okay! In fact, given the goals of the language that’s a good thing too.</p>
+<p>R is a language designed with a practical goal in mind: it is a tool for statistical programming and data analysis. Because of this design focus, R users tend to care most deeply about <em>the tasks that make up their day to day jobs</em>. Few of us care about the <a href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754</a> standard for encoding floating point numbers. R users are not typically interested in the <a href="https://en.wikipedia.org/wiki/Endianness">big-endian/little-endian</a> distinction. The purpose of R as a high level statistical programming environment is to abstract away from these things, and to allow users to focus on data cleaning, wrangling, and visualisation. R tries to make it easy for get to your data as easily as possible, build models for your data, report those models reliably, and so on. That’s it’s job.</p>
+<p>But.</p>
+<p>There’s always a “but”, isn’t there?</p>
+<p><br><br></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-1"></span>
+<img src="art/pollen_46_4699.jpg" alt="Art"  />
+<p class="caption">
+Figure 1: Art
+</p>
+</div>
+</div>
+<aside>
+<br>All images in this post are my own, including the artwork, and though I haven’t formally released the art as part of series (and hence not specified a licence for the series as a whole), these specific pieces are covered by the same CC-BY licence that applies to the rest of the post
+</aside>
+<p><br><br></p>
+<p>One of the huge changes in the data science ecosystem in recent years is the change in scale of our data sets. Data sets can now easily encompass billions of rows, and surpass the ability of your machine (and R) to hold in memory. Another huge change in the ecosystem is the proliferation of tools. Data sets have to be passed from one system to another, and when those data sets are large, problems follow. <a href="https://arrow.apache.org/">Apache Arrow</a> solves these problems by providing a multi-language toolbox for data exchange and data analysis. It’s a toolbox designed for a big data environment, and a many-language environment. From the perspective of an R user, it supplies the <strong>arrow</strong> package that provides an interface to Apache Arrow, and through that package allows you to have access to all the other magic that Arrow exposes. It’s an extremely powerful toolbox… but to use it effectively you do need to learn more of those low-level concepts that we as R users like to skim over.</p>
+<aside>
+In this post I use boldfaced text to denote the names of R packages such as <strong>arrow</strong> and <strong>dplyr</strong>, as well as C++ library such as <strong>libarrow</strong>
+</aside>
+<p>This post is an attempt to fill that gap for you!</p>
+<p>It’s actually the third in a series I have been writing on Apache Arrow and R, and probably works best if you’ve read the previous two. The first one is a <a href="https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/">getting started post</a>, and the second one talks about the <a href="https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/">arrow dplyr backend</a>. I’ve tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the <strong>arrow</strong> package does. If that’s you, read on! If you’re not at that point yet, hopefully the first two posts will get you there!</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://tibble.tidyverse.org/'>tibble</a></span><span class='op'>)</span>
@@ -1573,6 +1596,7 @@ checklist:
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
+<p><br></p>
 <h2 id="regarding-magic">Regarding magic</h2>
 <blockquote>
 <p>Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>     – William Van Orman Quine, 1960, <a href="https://en.wikipedia.org/wiki/Word_and_Object">Word and Object</a></p>
@@ -1621,10 +1645,10 @@ $viewers &lt;double&gt;</code></pre>
 It’s not standard, but since this is a post about data types, I’ll italicise the names of data types in both R and Arrow (e.g., <i>data.frame</i>, <i>Table</i>). It gets a bit tiresome, but I think it’s helpful
 </aside>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-5"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-6"></span>
 <img src="img/data-types-overview.png" alt="A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term 'element' to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns (encoded as Chunked Arrays), and within each element of a chunked array there is a Scalar. The data structure that translates one into the other is called a Schema." width="960" />
 <p class="caption">
-Figure 1: A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term ‘element’ to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns (encoded as Chunked Arrays), and within each element of a chunked array there is a Scalar. The data structure that translates one into the other is called a Schema.
+Figure 2: A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term ‘element’ to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns (encoded as Chunked Arrays), and within each element of a chunked array there is a Scalar. The data structure that translates one into the other is called a Schema.
 </p>
 </div>
 </div>
@@ -1654,17 +1678,15 @@ Variable names like <code>arrowmagicks</code> and function calls like <code>arro
 </div>
 <p>In this example the translation back and forth “just works”. You really don’t have to think too much about the subtle differences in how Arrow and R “think about the world” and how their data structures are organised. And in general that’s what we want in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures!</p>
 <p>That being said, it’s also valuable to give the data analyst flexibility. And that means we’re going to need to talk about <em>Schemas</em>. <em>Schemas</em> are the data structure <strong>arrow</strong> uses to govern the translation between R and Arrow, and since I’m going to be talking about data “on the R side” and data “on the Arrow” side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you’ll see diagrams showing the default mappings that the <strong>arrow</strong> package uses when converting data columns from R to Arrow and vice versa. In each case I’ll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:</p>
-<aside>
-Boldfaced text is used to denote the names of R packages such as <strong>arrow</strong> and <strong>dplyr</strong>, as well as C++ library such as <strong>libarrow</strong>
-</aside>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-7"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-8"></span>
 <img src="img/visual-convention.png" alt="Illustration of the graphical convention used in the later   diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background)." width="960" />
 <p class="caption">
-Figure 2: Illustration of the graphical convention used in the later diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background).
+Figure 3: Illustration of the graphical convention used in the later diagrams, showing R on the left side (against a blue background) and Arrow on the right side (against an orange background).
 </p>
 </div>
 </div>
+<p><br></p>
 <h2 id="defining-schemas">Defining Schemas</h2>
 <p>The <strong>arrow</strong> package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the <a href="https://en.wikipedia.org/wiki/Indeterminacy_of_translation">indeterminacy of translation</a> at the top of this post was originally written about natural languages, but I think it applies in programming too. There’s no single rulebook that tells you how to translate between R and Arrow: there can’t be.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
 <p>Suppose that I knew that there would in fact be a “Season 5.1648” coming, consisting of a single episode whose title corresponded to the full text of the <a href="https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf">Treaty of Westphalia</a> or, worse, several gigabytes worth of Wikipedia text.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> Knowing that this new data point is coming, I’d perhaps want my Arrow data to encode <code>season</code> as a numeric variable, and I’d probably want to recognise that the text in the <code>title</code> field can be quite long. To do that I can specify an explicit schema that tells the <strong>arrow</strong> package how to translate my R data set into Arrow. I can do this with the <code>schema()</code> function:</p>
@@ -1700,16 +1722,13 @@ $viewers &lt;double&gt;</code></pre>
 <p>This is of course a toy example, as are all the other examples you’ll encounter in this post. But the underlying issues are important ones!</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-10"></span>
-<img src="art/pollen_46_4699.jpg" alt="Art"  />
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<img src="art/pollen_49_4937.jpg" alt="Art"  />
 <p class="caption">
-Figure 3: Art
+Figure 4: Art
 </p>
 </div>
 </div>
-<aside>
-<br>All the images in this post are my own, including the artwork, and though I haven’t formally released the art as part of series (and hence not specified a licence for the series as a whole), these specific pieces are covered by the same CC-BY licence that applies to the rest of the post
-</aside>
 <p><br><br></p>
 <h2 id="why-mapping-languages-is-hard">Why mapping languages is hard</h2>
 <!--
@@ -1741,6 +1760,7 @@ Figure 3: Art
 <p>In its remote pages it is written that the animals are divided into: (a) belonging to the emperor, (b) embalmed, (c) tame, (d) sucking pigs, (e) sirens, (f) fabulous, (g) stray dogs, (h) included in the present classification, (i) frenzied, (j) innumerable, (k) drawn with a very fine camelhair brush, (l) et cetera, (m) having just broken the water pitcher, (n) that from a long way off look like flies</p>
 </blockquote>
 <p>Now, it’s pretty unlikely that any human language would produce a classification system quite as chaotic as Borges’ fictional example, but the point is well made. Actual classification systems used in different languages and cultures are very different to one another and often feel very alien when translated. It’s a pretty fundamental point, and I think it applies to programming languages too.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a> Every language carries with it a set of assumptions and structures that it considers “natural”, and translation across the boundaries between languages is necessarily a tricky business.<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p><br></p>
 <h2 id="a-little-bit-of-big-picture">A little bit of big picture</h2>
 <p>Before we get to “moving data around” part it’s helpful to step back a little and recognise that R and Arrow are designed quite differently. For starters, the <strong>libarrow</strong> library to which the <strong>arrow</strong> package provides bindings is written in C++, and C++ is itself a different kind of language than R. And in a sense, that’s actually the natural place to start because it influences a lot of things in the design of <strong>arrow</strong>.</p>
 <h3 id="object-oriented-programming-in-arrow">Object oriented programming in <strong>arrow</strong></h3>
@@ -1769,10 +1789,10 @@ Figure 3: Art
 <p>But enough of that! It’s time to start moving data around…</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
 <img src="art/pollen_47_4893.jpg" alt="Art"  />
 <p class="caption">
-Figure 4: Art
+Figure 5: Art
 </p>
 </div>
 </div>
@@ -1795,10 +1815,10 @@ Figure 4: Art
 <p>We’re going to pass this across to Arrow using <code>arrow_table()</code> but before we do let’s talk about what we expect to happen when the data arrive at the other side.</p>
 <p>In this case, it’s quite straightforward. Arrow has a <em>boolean</em> type that has truth values <code>true</code> and <code>false</code> that behave the same way as their cousins in R. Just like R, Arrow allows missing values, though they’re called <code>null</code> values in Arrow. Unlike basically every other example we’re going to see in this post, this one is straightforward because the mapping is perfect. Unless you do something to override it, the <strong>arrow</strong> package will map an R <em>logical</em> to an Arrow <em>boolean</em> and vice versa. Here’s the diagram I use to describe it:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
 <img src="img/logical-types.png" alt="Default mappings for logical types" width="960" />
 <p class="caption">
-Figure 5: Default mappings for logical types
+Figure 6: Default mappings for logical types
 </p>
 </div>
 </div>
@@ -1880,10 +1900,10 @@ true</code></pre>
 <p>Awesome!</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-23"></span>
 <img src="art/pollen_47_4897.jpg" alt="Art"  />
 <p class="caption">
-Figure 6: Art
+Figure 7: Art
 </p>
 </div>
 </div>
@@ -1998,19 +2018,19 @@ int32</code></pre>
 <h3 id="when-integer-translation-is-easy">When integer translation is easy</h3>
 <p>What about the other seven C++ integer types? This is where it gets a little trickier. The table above illustrates that some integer types are fully contained within others: unsurprisingly, every number representable by <em>int16</em> can also be represented by <em>int32</em>, so we can say that the <em>int16</em> numbers are fully “contained” by (i.e. are a proper subset of) the <em>int32</em> numbers. Similarly, <em>uint16</em> is contained by <em>uint32</em>. There are many cases where an unsigned type is contained by a signed type: for instance, <em>int32</em> contains all the <em>uint16</em> numbers. However, because the unsigned integers cannot represent negative numbers, the reverse is never true. So we can map out the relationships between the different types like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-27"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-28"></span>
 <img src="img/integer-types-03.png" alt="Containment relationships between the integer types." width="274" />
 <p class="caption">
-Figure 7: Containment relationships between the integer types.
+Figure 8: Containment relationships between the integer types.
 </p>
 </div>
 </div>
 <p>Whenever type A contains type B, it’s possible to transform an object of type B into an object of type A without losing information or requiring any special handling. R <em>integers</em> are 32 bit signed integers, which means it’s possible to convert Arrow data of types <em>int32</em>, <em>int16</em>, <em>int8</em>, <em>uint16</em>, and <em>uint8</em> to R <em>integers</em> completely painlessly. So for these data types the <strong>arrow</strong> defaults give us this relationship:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-28"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-29"></span>
 <img src="img/integer-types-01.png" alt="Default mappings for some integer types" width="960" />
 <p class="caption">
-Figure 8: Default mappings for some integer types
+Figure 9: Default mappings for some integer types
 </p>
 </div>
 </div>
@@ -2018,10 +2038,10 @@ Figure 8: Default mappings for some integer types
 <h3 id="when-integer-translation-is-hard">When integer translation is hard</h3>
 <p>Other integer types are messier. To keep things nice and simple, what we’d like to do is to map the Arrow <em>uint32</em>, <em>uint64</em>, and <em>int64</em> types onto the R <em>integer</em> type. Sometimes that’s possible: if all the stored values fall within the range of values representable by R <em>integers</em> (i.e., are between -2147483648 and 2147483647) then we can do this, and that’s what <strong>arrow</strong> does by default. However, if there are values that “overflow” this range, then <strong>arrow</strong> will import the data as a different type. That leads to a rather messy diagram, I’m afraid:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-29"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-30"></span>
 <img src="img/integer-types-02.png" alt="Default mappings for other integer types. The asterisk notation here is intended to indicate that the path **arrow** follows can depend on the data values and other settings." width="960" />
 <p class="caption">
-Figure 9: Default mappings for other integer types. The asterisk notation here is intended to indicate that the path <strong>arrow</strong> follows can depend on the data values and other settings.
+Figure 10: Default mappings for other integer types. The asterisk notation here is intended to indicate that the path <strong>arrow</strong> follows can depend on the data values and other settings.
 </p>
 </div>
 </div>
@@ -2109,10 +2129,10 @@ Figure 9: Default mappings for other integer types. The asterisk notation here i
 </div>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-36"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-37"></span>
 <img src="art/pollen_46_4628.jpg" alt="Art"  />
 <p class="caption">
-Figure 10: Art
+Figure 11: Art
 </p>
 </div>
 </div>
@@ -2261,10 +2281,10 @@ Figure 10: Art
 <p>The easiest of these to discuss is <em>float64</em>, because it adopts the same conventions as the R <em>double</em> class. Just like R, it uses 64 bits to represent a floating point number.<a href="#fn21" class="footnote-ref" id="fnref21" role="doc-noteref"><sup>21</sup></a> Because the data structures are so similar, the default behaviour in <strong>arrow</strong> is to translate an R <em>double</em> into an Arrow <em>float64</em> and vice versa.</p>
 <p>As always, I’ve got a little diagram summarising all the default mappings:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-48"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-49"></span>
 <img src="img/numeric-types.png" alt="Default mappings for numeric types" width="960" />
 <p class="caption">
-Figure 11: Default mappings for numeric types
+Figure 12: Default mappings for numeric types
 </p>
 </div>
 </div>
@@ -2432,10 +2452,10 @@ Scalar
 <p>As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren’t a universal solution to the problems of binary floating-point numbers. They have limitations of their own and there are good reasons why floats remain the default numeric type in most languages. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as to fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-60"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-61"></span>
 <img src="art/pollen_47_4857.jpg" alt="Art"  />
 <p class="caption">
-Figure 12: Art
+Figure 13: Art
 </p>
 </div>
 </div>
@@ -2444,10 +2464,10 @@ Figure 12: Art
 <p>Our journey continues. We now leave behind the world of number and enter the domain of text. Such times we shall have! What sights we shall see! (And what terrors lie within?)</p>
 <p>Strings are an interesting case. R uses a single data type to represent strings (<em>character</em> vectors) but Arrow has two types, known as <em>strings</em> and <em>large_strings</em>. When using the <strong>arrow</strong> package, Arrow strings are specified using the <code>utf8()</code> function, and large strings correspond to the <code>large_utf8()</code> type. The default mapping is to assume that an R character vector maps onto the Arrow <code>utf8()</code> type, as shown below:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-61"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-62"></span>
 <img src="img/character-types.png" alt="Default mappings for character types" width="960" />
 <p class="caption">
-Figure 13: Default mappings for character types
+Figure 14: Default mappings for character types
 </p>
 </div>
 </div>
@@ -2467,10 +2487,10 @@ Samantha Fox</code></pre>
 </div>
 <p>Each element of the <code>jung_talent</code> vector is a variable-length string, and is stored internally by R as an array of individual characters<a href="#fn23" class="footnote-ref" id="fnref23" role="doc-noteref"><sup>23</sup></a> So, to a first approximation, your mental model of how R stores the <code>jung_talent</code> variable might look something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-63"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-64"></span>
 <img src="img/character-types-02.png" alt="Simplified representation of how character vectors are represented in R" width="2400" />
 <p class="caption">
-Figure 14: Simplified representation of how character vectors are represented in R
+Figure 15: Simplified representation of how character vectors are represented in R
 </p>
 </div>
 </div>
@@ -2481,10 +2501,10 @@ Figure 14: Simplified representation of how character vectors are represented in
 <pre><code>NewtonCyrusCapperGellerFox</code></pre>
 <p>The first element of this buffer – the letter <code>"N"</code> – is stored at “offset 0” (indexing in Arrow starts at 0), the second element is stored at offset 1, and so on. This long array of text is referred to as the “data buffer”, and it does not specify where the boundaries between array elements are. Those are stored separately. If I were to create an Arrow string array called <code>jung_talent_arrow</code>, it would be comprised of a data buffer, and an “offset buffer” that specifies the positions at which each element of the string array begins. In other words, we’d have a mental model that looks a bit like this:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-64"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-65"></span>
 <img src="img/character-types-03.png" alt="Simplified representation of how character vectors are represented in Arrow" width="1331" />
 <p class="caption">
-Figure 15: Simplified representation of how character vectors are represented in Arrow
+Figure 16: Simplified representation of how character vectors are represented in Arrow
 </p>
 </div>
 </div>
@@ -2537,10 +2557,10 @@ large_string</code></pre>
 <p>Before moving on, I’ll mention one additional complexity. This is a situation where the distinction between <em>Arrays</em> and <em>ChunkedArrays</em> begins to matter. Strictly speaking, I lied earlier when I said there’s only one data buffer. A more precise statement would be to say that there is one data buffer per chunk (recall that each chunk in a <em>ChunkedArray</em> is an <em>Array</em>). <em>ChunkedArrays</em> are designed to allow a block (or “chunk”) of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that<a href="#fn26" class="footnote-ref" id="fnref26" role="doc-noteref"><sup>26</sup></a>, but they aren’t immediately relevant. What matters is to recognise that in a <em>ChunkedArray</em>, the 2GiB limit on <em>utf8</em> type data applies on a per-chunk basis. The net result of this is that you probably don’t need <em>large_utf8</em> except in very specific cases.</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-68"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-69"></span>
 <img src="art/pollen_47_4828.jpg" alt="Art"  />
 <p class="caption">
-Figure 16: Art
+Figure 17: Art
 </p>
 </div>
 </div>
@@ -2549,10 +2569,10 @@ Figure 16: Art
 <p>Next up on our tour of data types are dates and times. Internally, R and Arrow both adopt the convention of measuring time in terms of the time elapsed since a specific moment in time known as the <a href="https://en.wikipedia.org/wiki/Unix_time">unix epoch</a>. The unix epoch is the time 00:00:00 UTC on 1 January 1970. It was a Thursday.</p>
 <p>Despite agreeing on fundamentals, there are some oddities in the particulars. Base R has three date/time classes (<em>Date</em>, <em>POSIXct</em>, and <em>POSIXlt</em>), and while Arrow also has three date/time classes (<em>date32</em>, <em>date64</em>, and <em>timestamp</em>), the default mappings between them are a little puzzling unless you are deeply familiar with what all these data types are and what they represent. I’ll do the deep dive in a moment, but to give you the big picture here’s how the mapping works:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-69"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-70"></span>
 <img src="img/date-types.png" alt="Default mappings for date/time types" width="960" />
 <p class="caption">
-Figure 17: Default mappings for date/time types
+Figure 18: Default mappings for date/time types
 </p>
 </div>
 </div>
@@ -2564,7 +2584,7 @@ Figure 17: Default mappings for date/time types
 <span class='va'>today</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08&quot;</code></pre>
 </div>
 <p>If I use <code>unclass()</code> to see what it looks like under the hood:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2572,7 +2592,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>today</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 19058</code></pre>
+<pre><code>[1] 19059</code></pre>
 </div>
 <p>Fundamentally, a <em>Date</em> object is a number:<a href="#fn27" class="footnote-ref" id="fnref27" role="doc-noteref"><sup>27</sup></a> it counts the number of days that have elapsed since a fixed date. It does not care what the year is, what the month is, or what day of the month it is. It does not care how the date is displayed to the user. All those things are supplied by the <code>print()</code> method, and are not part of the <em>Date</em> itself.</p>
 <h3 id="r-the-posixct-class">[R] The POSIXct class</h3>
@@ -2584,7 +2604,7 @@ Figure 17: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 16:37:23 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 10:39:35 AEDT&quot;</code></pre>
 </div>
 <p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2592,7 +2612,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646631443</code></pre>
+<pre><code>[1] 1646696375</code></pre>
 </div>
 <p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time. However, it doesn’t necessarily have to be this way: a <em>POSIXct</em> object is permitted to have a “tzone” attribute, a <em>character</em> string that specifies the timezone that is used when printing the object will be preserved when it is converted to a <em>POSIXlt</em>.</p>
 <p>Nevertheless, when I created the <code>now</code> object by calling <code>Sys.time()</code>, no timezone information was stored in the object. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for <em>POSIXct</em> objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
@@ -2601,7 +2621,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 06:37:23 CET&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 00:39:35 CET&quot;</code></pre>
 </div>
 <p>If you want to record the timezone as part of your <em>POSIXct</em> object rather than relying on the print method to do the work, you can do so by setting the <code>tzone</code> attribute. To illustrate this, let’s pretend I’m in Tokyo:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2610,7 +2630,7 @@ Figure 17: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 14:37:23 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 08:39:35 JST&quot;</code></pre>
 </div>
 <p>The important thing here is that the timezone is metadata used to change the how the time is displayed. Changing the timezone does not alter the number of seconds stored in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2618,7 +2638,7 @@ Figure 17: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646631443
+<pre><code>[1] 1646696375
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -2630,7 +2650,7 @@ attr(,&quot;tzone&quot;)
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 14:37:23 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 08:39:35 JST&quot;</code></pre>
 </div>
 <p>It looks exactly the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, let’s see what happens if we print it as if it were a regular <em>list</em>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2639,16 +2659,16 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>$sec
-[1] 23.23078
+[1] 35.21861
 
 $min
-[1] 37
+[1] 39
 
 $hour
-[1] 14
+[1] 8
 
 $mday
-[1] 7
+[1] 8
 
 $mon
 [1] 2
@@ -2657,10 +2677,10 @@ $year
 [1] 122
 
 $wday
-[1] 1
+[1] 2
 
 $yday
-[1] 65
+[1] 66
 
 $isdst
 [1] 0
@@ -2685,7 +2705,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-07</code></pre>
+2022-03-08</code></pre>
 </div>
 <p>We can expose the internal structure of this object by casting it to an <em>int32</em>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2694,7 +2714,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-19058</code></pre>
+19059</code></pre>
 </div>
 <p>This is the same answer we got earlier when I used <code>unclass()</code> to take a peek at the internals of the <code>today</code> object. That being said, there is a subtle difference: in Arrow, the <em>date32</em> type is explicitly a 32-bit integer. If you read through the help documentation for date/time classes in R you’ll see that R has something a little more complicated going on. The details don’t matter for this post, but you should be aware that <em>Dates</em> (and <em>POSIXct</em> objects) are stored as <em>doubles</em>. They aren’t stored as integers:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2716,7 +2736,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-07</code></pre>
+2022-03-08</code></pre>
 </div>
 <p>…but this is quite wasteful. Why use a 64-bit representation that tracks time at the millisecond level when all I’m doing is storing the date? Although <em>POSIXct</em> and <em>date64</em> aren’t exact matches, they’re more closely related to each other than <em>Date</em> and <em>date64</em>. So let’s create an Arrow analog of <code>now</code> as a <em>date64</em> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2735,7 +2755,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-1646631443230</code></pre>
+1646696375218</code></pre>
 </div>
 <p>This isn’t a count of the number of days since the unix epoch, it’s a count of the number of milliseconds. It is essentially the same number, divided by 1000, as the one we obtained when I typed <code>unclass(now)</code>.</p>
 <p>However, there’s a puzzle here that we need to solve. Let’s take another look at <code>unclass(now)</code>:</p>
@@ -2744,7 +2764,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646631443
+<pre><code>[1] 1646696375
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -2755,7 +2775,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span><span class='op'>$</span><span class='va'>sec</span>
 </code></pre>
 </div>
-<pre><code>[1] 23.23078</code></pre>
+<pre><code>[1] 35.21861</code></pre>
 </div>
 <p>Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in <code>now_date64</code>. The data was there all along. Even though <code>unclass(now)</code> produces an output that has been rounded to the nearest second, the original <code>now</code> variable is indeed a <em>double</em>, and it does store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to know here is that even though <em>POSIXct</em> times are almost always displayed to the nearest second, they do have the ability to represent more precise times.</p>
 <p>Because of this, the default behaviour in <strong>arrow</strong> is to convert <em>date64</em> types (64-bit integers interpreted as counts of milliseconds) to <em>POSIXct</em> classes (which are secretly 64-bit <em>doubles</em> interpreted as counts of seconds).</p>
@@ -2769,9 +2789,9 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-07 05:37:23.230778
+2022-03-07 23:39:35.218612
 Scalar
-2022-03-07 05:37:23.230778</code></pre>
+2022-03-07 23:39:35.218612</code></pre>
 </div>
 <p>Alternatively, we could use seconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2780,7 +2800,7 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-07 05:37:23</code></pre>
+2022-03-07 23:39:35</code></pre>
 </div>
 <p>It’s important to recognise that changing the unit does more than change the precision at which the <em>timestamp</em> is printed. It changes “the thing that is counted”, so the numbers that get stored in the <em>timestamp</em> are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2790,9 +2810,9 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-1646631443
+1646696375
 Scalar
-1646631443230778112</code></pre>
+1646696375218612736</code></pre>
 </div>
 <p>Okay, what about timezone?</p>
 <p>Recall that <code>now</code> has a timezone attached to it, because I explicitly recorded the <code>tzone</code> attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the <code>now</code> object:</p>
@@ -2801,7 +2821,7 @@ Scalar
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 14:37:23 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 08:39:35 JST&quot;</code></pre>
 </div>
 <p>When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn’t do that: the time as displayed is shown in UTC. However, that doesn’t mean that the metadata isn’t there:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2822,7 +2842,7 @@ timestamp[us, tz=Asia/Tokyo]</code></pre>
 <span class='va'>new_now</span>               <span class='co'># ... but appears to!</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 16:37:23 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 10:39:35 AEDT&quot;</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># an Arrow timestamp with no timezone</span>
 <span class='va'>new_now_timestamp</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>new_now</span><span class='op'>)</span>
@@ -2841,7 +2861,7 @@ timestamp[us]</code></pre>
 </code></pre>
 </div>
 <pre><code>StructScalar
-{sec:double = 23.230778217315674, min:int32 = 37, hour:int32 = 14, mday:int32 = 7, mon:int32 = 2, year:int32 = 122, wday:int32 = 1, yday:int32 = 65, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
+{sec:double = 35.21861267089844, min:int32 = 39, hour:int32 = 8, mday:int32 = 8, mon:int32 = 2, year:int32 = 122, wday:int32 = 2, yday:int32 = 66, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
 </div>
 <p>The <em>struct</em> object contains named fields that are identical to their <em>POSIXlt</em> equivalents, and whose types have been translated according to the default mappings: <code>sec</code> is a <em>double</em>, <code>min</code> is an <em>int32</em>, <code>hour</code> is an <em>int32</em>, <code>zone</code> is a <em>string</em>, and so on.</p>
 <p>This arrangement, where <em>POSIXct</em> maps to <em>timestamp</em> and <em>POSIXlt</em> maps to <em>struct</em>, makes perfect sense when you think about the underlying data structures that <em>POSIXct</em> and <em>POSIXlt</em> encode. Where things can be tricky for the R user is in the “mental account keeping”. In order to be helpful, R displays <em>POSIXct</em> and <em>POSIXlt</em> objects in exactly the same way:</p>
@@ -2851,8 +2871,8 @@ timestamp[us]</code></pre>
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-07 14:37:23 JST&quot;
-[1] &quot;2022-03-07 14:37:23 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 08:39:35 JST&quot;
+[1] &quot;2022-03-08 08:39:35 JST&quot;</code></pre>
 </div>
 <p>Not only that, because <em>POSIXct</em> and <em>POSIXlt</em> are both subclasses of the <em>POSIXt</em> class, R allows you to perform temporal arithmetic on objects of different types:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2865,10 +2885,10 @@ timestamp[us]</code></pre>
 <p>This is very convenient from a data analysis perspective, since calculations performed with date/time classes “just work” even though <em>POSIXct</em> objects are secretly <em>doubles</em> and <em>POSIXlt</em> objects are secretly <em>lists</em>. However, all this happens invisibly. In much the same way that it’s easy to forget that <em>POSIXct</em> objects may not encode a timezone even though they look like they do, it can be easy to forget that <em>POSIXct</em> and <em>POSIXlt</em> are fundamentally different objects, and they map onto quite different data structures in Arrow.</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-96"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-97"></span>
 <img src="art/pollen_47_4836.jpg" alt="Art"  />
 <p class="caption">
-Figure 18: Art
+Figure 19: Art
 </p>
 </div>
 </div>
@@ -2876,10 +2896,10 @@ Figure 18: Art
 <h2 id="duration-types">Duration types</h2>
 <p>Any discussion of temporal data is incomplete without a discussion of duration types, which are used to describe a length of time without reference to any fixed origin. The figure below shows the default mappings used by <strong>arrow</strong>:</p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-97"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-98"></span>
 <img src="img/duration-types.png" alt="Default mappings for duration types" width="960" />
 <p class="caption">
-Figure 19: Default mappings for duration types
+Figure 20: Default mappings for duration types
 </p>
 </div>
 </div>
@@ -2892,7 +2912,7 @@ Figure 19: Default mappings for duration types
 <span class='va'>rmd_time</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 0.2806571 secs</code></pre>
+<pre><code>Time difference of 0.3286374 secs</code></pre>
 </div>
 <p>Now let’s take a look at how it’s actually stored:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2900,7 +2920,7 @@ Figure 19: Default mappings for duration types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.2806571
+<pre><code>[1] 0.3286374
 attr(,&quot;units&quot;)
 [1] &quot;secs&quot;</code></pre>
 </div>
@@ -2912,20 +2932,20 @@ attr(,&quot;units&quot;)
 <span class='va'>hedy_age</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 39199.46 days</code></pre>
+<pre><code>Time difference of 39200.21 days</code></pre>
 </div>
-<p>I would learn that it has been 39199 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn30" class="footnote-ref" id="fnref30" role="doc-noteref"><sup>30</sup></a> More to the point, R has guessed that the length of time is sufficiently long that “seconds” aren’t the appropriate encoding unit:</p>
+<p>I would learn that it has been 39200 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn30" class="footnote-ref" id="fnref30" role="doc-noteref"><sup>30</sup></a> More to the point, R has guessed that the length of time is sufficiently long that “seconds” aren’t the appropriate encoding unit:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>hedy_age</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 39199.46
+<pre><code>[1] 39200.21
 attr(,&quot;units&quot;)
 [1] &quot;days&quot;</code></pre>
 </div>
 <h3 id="arrow-the-duration-type">[Arrow] The duration type</h3>
-<p>The <em>difftime</em> class in R has a natural analog in Arrow, the <em>duration</em> type. As usual though, they are not exactly equivalent to one another. An R <em>difftime</em> object stores the value as a <em>double</em>, so it has no problems storing 0.28 as the value and setting the units to be seconds. This doesn’t work very well in Arrow because the value is stored as a signed 64 bit integer (<em>int64</em>), and a value of 0.28 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don’t, things can go a little awry:</p>
+<p>The <em>difftime</em> class in R has a natural analog in Arrow, the <em>duration</em> type. As usual though, they are not exactly equivalent to one another. An R <em>difftime</em> object stores the value as a <em>double</em>, so it has no problems storing 0.33 as the value and setting the units to be seconds. This doesn’t work very well in Arrow because the value is stored as a signed 64 bit integer (<em>int64</em>), and a value of 0.33 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don’t, things can go a little awry:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rmd_time_arrow</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
@@ -2952,7 +2972,7 @@ duration[s]</code></pre>
 </code></pre>
 </div>
 <pre><code>Scalar
-280657</code></pre>
+328637</code></pre>
 </div>
 <p>That’s a little better! Again, I can inspect the data type and see that the unit of encoding is now set to microseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3056,10 +3076,10 @@ time64[ns]</code></pre>
 <p>In essence, the <strong>arrow</strong> defaults are set up such that if you choose <code>time32()</code> when going from R to Arrow without specifying a unit, you will end up with the lowest precision representation of time (rounded to the nearest second), whereas if you do the same with <code>time64()</code> you end up with the highest precision (nanosecond level) representation. When going the other way, <strong>arrow</strong> will map <em>time32</em> types and <em>time64</em> types to hms objects, and the end result is that the time of day will be stored as a <em>double</em>.</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-115"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-116"></span>
 <img src="art/pollen_47_4783.jpg" alt="Art"  />
 <p class="caption">
-Figure 20: Art
+Figure 21: Art
 </p>
 </div>
 </div>
@@ -3074,10 +3094,10 @@ Figure 20: Art
 </ul>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
-<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-116"></span>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-117"></span>
 <img src="art/pollen_47_4784.jpg" alt="Art"  />
 <p class="caption">
-Figure 21: Art
+Figure 22: Art
 </p>
 </div>
 </div>
@@ -3098,7 +3118,7 @@ Figure 21: Art
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-07 16:37:23 AEDT</p>
+<p>2022-03-08 10:39:35 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-04_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-04_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
