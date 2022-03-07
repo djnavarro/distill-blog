@@ -92,9 +92,20 @@ One of the huge changes in the data science ecosystem in recent years is the cha
 
 <aside>In this post I use boldfaced text to denote the names of R packages such as **arrow** and **dplyr**, as well as C++ library such as **libarrow**</aside>
 
-This post is an attempt to fill that gap for you!
+This post is an attempt to fill that gap for you! It's a long form post, closer to a full length article than a typical blog. My goals in this post are to:
 
-It's actually the third in a series I have been writing on Apache Arrow and R, and probably works best if you've read the previous two. The first one is a [getting started post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/), and the second one talks about the [arrow dplyr backend](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/). I've tried to make this one self-contained, but it does assume you have a little bit of knowledge about what the **arrow** package does. If that's you, read on! If you're not at that point yet, hopefully the first two posts will get you there!
+- Walk you through (some of!) the low level implementation details for basic data types: how R represents an integer or a numeric, or a date/time object, etc
+- Discuss how and why Arrow and R sometimes make different choices in these details
+- Show you how the **arrow** package translates between R and Arrow
+- Include lots of pretty art, because lets face it, this isn't an exciting topic!
+
+This post isn't intended to be read in isolation. It's the third part of a series I have been writing on Apache Arrow and R, and it probably works best if you've read the previous two. I've made every effort to make this post self-contained and self-explanatory, but it does assume you're comfortable in R and have a little bit of knowledge about what the **arrow** package does. If you're not at all familiar with **arrow**, you may find it valuable to read the first post in the series, which is a [getting started post](https://blog.djnavarro.net/posts/2021-11-19_starting-apache-arrow-in-r/), and possibly the second one that talks about the [arrow dplyr backend](https://blog.djnavarro.net/posts/2022-01-18_binding-arrow-to-r/).
+
+Still keen to read? I haven't scared you off? 
+
+No?
+
+Fabulous! Then read on, my loves!
 
 
 
