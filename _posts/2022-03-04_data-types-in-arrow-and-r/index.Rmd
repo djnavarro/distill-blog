@@ -206,7 +206,7 @@ arrowmagicks2 <- arrow_table(magicians, schema = translation)
 arrowmagicks2
 ```
 
-The output may not make complete sense at this point, but hopefull the gist of what I've done should be clear. The `season` is no longer stored as an integer (it's now a numeric type), and the `air_date` no longer uses "day" as the unit of encoding, it uses "ms" (i.e., millisecond). I've accomplished my goals. Yay! 
+The output may not make complete sense at this point, but hopefully the gist of what I've done should be clear. The `season` is no longer stored as an integer (it's now a numeric type), and the `air_date` no longer uses "day" as the unit of encoding, it uses "ms" (i.e., millisecond). I've accomplished my goals. Yay! 
 
 This is of course a toy example, as are all the other examples you'll encounter in this post. But the underlying issues are important ones! 
 
