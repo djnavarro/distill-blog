@@ -135,7 +135,7 @@ magicians <- read_csv_arrow("magicians.csv")
 magicians
 ```
 
-Then I decide to "copy the data into Arrow". I do that in a very predictable way using the `arrow_table()` function supplied by the **arrow** package:
+Then I decide to "copy the data into Arrow".^[To be honest, if my goal had been to read the data into Arrow, there was never a need to read it into R in the first place. The code `read_csv_arrow("magicians.csv", as_data_frame = FALSE)` would create the _Table_ object directly with no need for an intermediary in R. However, for the purposes of this post I'm pretending that I have data in R that I want to transfer to Arrow in order to talk about the translation process, so I'm doing things in a rather inefficient way. On top of that, there's a whole extra layer of complexity I'm hiding here that relates to ALTREP vectors backed by Arrow. However, that's a topic for a future post. We can only unravel the magical cloak one thread at a time!] I do that in a very predictable way using the `arrow_table()` function supplied by the **arrow** package:
 
 ```{r}
 arrowmagicks <- arrow_table(magicians)
