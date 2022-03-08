@@ -63,6 +63,11 @@ source("unpack_double.R")
 
 <br><br><br>
 
+> Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>
+> &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
+
+<br>
+
 At the 2018 useR! conference in Brisbane, Roger Peng gave a fabulous keynote talk on [teaching R to new users](https://www.youtube.com/watch?v=5033jBHFiHE) in which he provided an overview of the history of the language and how it is used in the broader community. One thing that stood out to me in his talk -- and I've seen reflected in other data -- is that R is unusual as a language because it's not designed primarily for programmers. Software engineering practices have now become widespread in the R community, and that's a good thing. Nevertheless, a very large proportion of the R community don't have a traditional computer science background -- and that's okay! In fact, given the goals of the language that's a good thing too.
 
 R is a language designed with a practical goal in mind: it is a tool for statistical programming and data analysis. Because of this design focus, R users tend to care most deeply about *the tasks that make up their day to day jobs*. Few of us care about the [IEEE 754](https://en.wikipedia.org/wiki/IEEE_754) standard for encoding floating point numbers. R users are not typically interested in the [big-endian/little-endian](https://en.wikipedia.org/wiki/Endianness) distinction. The purpose of R as a high level statistical programming environment is to abstract away from these things, and to allow users to focus on data cleaning, wrangling, and visualisation. R tries to make it easy for get to your data as easily as possible, build models for your data, report those models reliably, and so on. That's it's job.
@@ -124,10 +129,6 @@ conflicted::conflict_prefer("timestamp", "arrow")
 
 ## Regarding magic
 
-> Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>
-> &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
-
-
 Consider this piece of magic. I have a csv file storing a data set. I import the data set into R using whatever my favourite csv reader function happens to be:
 
 ```{r}
@@ -151,7 +152,7 @@ To understand why I'm so curious, consider the two objects I now have. The `magi
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term 'element' to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns, encoded as ChunkedArrays. Each ChunkedArray is comprised of one or more Arrays, and each Array contains one or more Scalars. The data structure that translates one into the other is called a Schema."
+#| fig.cap = "A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns. Each columns is an R vector. We use the term 'element' to refer to any length-1 constituent of a vector, even though it isn't really a distinct object in its own right. On the right is a Table in Arrow: it too is comprised of three columns, encoded as ChunkedArrays. Each ChunkedArray is comprised of one or more Arrays, and each Array contains one or more Scalars, which (unlike elements of R vectors) are distinct objects. The data structure that translates one into the other is called a Schema."
 
 knitr::include_graphics("img/data-types-overview.png", dpi = 100)
 ```
