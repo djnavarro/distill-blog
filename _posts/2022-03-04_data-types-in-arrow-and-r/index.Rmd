@@ -662,7 +662,7 @@ unpack_double(.8)
 unpack_double(.9)
 ```
 
-So it turns out that `0.6` has the same mantissa as `0.3`, and `0.8` has the same mantissa as `0.1` and `0.2`, but `0.9` has a different mantissa from all of them. So what we might expect is that floating point errors can happen for these cases:
+So it turns out that `0.6` has the same mantissa as `0.3`, and `0.8` has the same mantissa as `0.1` and `0.2`, but `0.9` has a different mantissa from all of them. So what we might expect is that floating point errors can happen for these cases:^[Okay, so contrary to my stated intentions we've actually ended up quite a long way down into the IEEE 754 standard, so I might as well make an extra observation while we're down here. Tests of floating point equality aren't tests of mathematical equality. They're really just checks that the absolute difference between two numbers is smaller than the [machine precision](https://en.wikipedia.org/wiki/Machine_epsilon). The value of the machine precision is stored in R as `.Machine$double.eps`.]
 
 ```{r, results='hold'}
 0.1 + 0.2 == 0.3
