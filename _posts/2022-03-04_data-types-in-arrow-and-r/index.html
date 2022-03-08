@@ -1701,14 +1701,14 @@ Figure 3: Illustration of the graphical convention used in the later diagrams, s
 <p><br></p>
 <h2 id="defining-schemas">Defining Schemas</h2>
 <p>The <strong>arrow</strong> package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the <a href="https://en.wikipedia.org/wiki/Indeterminacy_of_translation">indeterminacy of translation</a> at the top of this post was originally written about natural languages, but I think it applies in programming too. There’s no single rulebook that tells you how to translate between R and Arrow: there can’t be.<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
-<p>Suppose that I knew that there would in fact be a “Season 5.1648” coming, consisting of a single episode whose title corresponded to the full text of the <a href="https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf">Treaty of Westphalia</a> or, worse, several gigabytes worth of Wikipedia text.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> Knowing that this new data point is coming, I’d perhaps want my Arrow data to encode <code>season</code> as a numeric variable, and I’d probably want to recognise that the text in the <code>title</code> field can be quite long. To do that I can specify an explicit schema that tells the <strong>arrow</strong> package how to translate my R data set into Arrow. I can do this with the <code>schema()</code> function:</p>
+<p>Suppose that I knew that there would in fact be a “Season 5.1648” coming, consisting of a single episode that would air not only on a specific date, but at a specific time that would – for some bizarre reason<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> – be important to encode in the data. Knowing that this new data point is coming, I’d perhaps want my Arrow data to encode <code>season</code> as a numeric variable, and I’d need to encode the <code>air_date</code> field using a date type that implicitly encodes time of day. I can do this with the <code>schema()</code> function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>translation</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/Schema.html'>schema</a></span><span class='op'>(</span>
   season <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
   episode <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>int32</a></span><span class='op'>(</span><span class='op'>)</span>,
-  title <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>large_utf8</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
-  air_date <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>date32</a></span><span class='op'>(</span><span class='op'>)</span>,
+  title <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>utf8</a></span><span class='op'>(</span><span class='op'>)</span>, 
+  air_date <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>date64</a></span><span class='op'>(</span><span class='op'>)</span>, <span class='co'># not the default</span>
   rating <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>,
   viewers <span class='op'>=</span> <span class='fu'><a href='https://arrow.apache.org/docs/r/reference/data-type.html'>float64</a></span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>)</span>
@@ -1726,11 +1726,12 @@ Figure 3: Illustration of the graphical convention used in the later diagrams, s
 65 rows x 6 columns
 $season &lt;double&gt;
 $episode &lt;int32&gt;
-$title &lt;large_string&gt;
-$air_date &lt;date32[day]&gt;
+$title &lt;string&gt;
+$air_date &lt;date64[ms]&gt;
 $rating &lt;double&gt;
 $viewers &lt;double&gt;</code></pre>
 </div>
+<p>The output may not make complete sense at this point, but hopefull the gist of what I’ve done should be clear. The <code>season</code> is no longer stored as an integer (it’s now a numeric type), and the <code>air_date</code> no longer uses “day” as the unit of encoding, it uses “ms” (i.e., millisecond). I’ve accomplished my goals. Yay!</p>
 <p>This is of course a toy example, as are all the other examples you’ll encounter in this post. But the underlying issues are important ones!</p>
 <p><br><br></p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2664,7 +2665,7 @@ Figure 18: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 13:30:22 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 13:52:07 AEDT&quot;</code></pre>
 </div>
 <p>If I peek under the hood using <code>unclass()</code> here’s what I see:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2672,7 +2673,7 @@ Figure 18: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646706622</code></pre>
+<pre><code>[1] 1646707927</code></pre>
 </div>
 <p>There are no attributes attached to this object, it is simply a count of the number of seconds since that particular moment in time. However, it doesn’t necessarily have to be this way: a <em>POSIXct</em> object is permitted to have a “tzone” attribute, a <em>character</em> string that specifies the timezone that is used when printing the object will be preserved when it is converted to a <em>POSIXlt</em>.</p>
 <p>Nevertheless, when I created the <code>now</code> object by calling <code>Sys.time()</code>, no timezone information was stored in the object. The fact that it appears when I print out <code>now</code> occurs because the <code>print()</code> method for <em>POSIXct</em> objects prints the time with respect to a particular timezone. The default is to use the system timezone, which you can check by calling <code>Sys.timezone()</code>, but you can override this behaviour by specifying the timezone explicitly (for a list of timezone names, see <code>OlsonNames()</code>). So if I wanted to print the time in Berlin, I could do this:</p>
@@ -2681,7 +2682,7 @@ Figure 18: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>now</span>, tz <span class='op'>=</span> <span class='st'>"Europe/Berlin"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 03:30:22 CET&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 03:52:07 CET&quot;</code></pre>
 </div>
 <p>If you want to record the timezone as part of your <em>POSIXct</em> object rather than relying on the print method to do the work, you can do so by setting the <code>tzone</code> attribute. To illustrate this, let’s pretend I’m in Tokyo:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2690,7 +2691,7 @@ Figure 18: Default mappings for date/time types
 <span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 11:30:22 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 11:52:07 JST&quot;</code></pre>
 </div>
 <p>The important thing here is that the timezone is metadata used to change the how the time is displayed. Changing the timezone does not alter the number of seconds stored in the <code>now</code> object:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2698,7 +2699,7 @@ Figure 18: Default mappings for date/time types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646706622
+<pre><code>[1] 1646707927
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -2711,7 +2712,7 @@ attr(,&quot;tzone&quot;)
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 11:30:22 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 11:52:07 JST&quot;</code></pre>
 </div>
 <p>It looks exactly the same, but this is an illusion produced by the <code>print()</code> method. Internally, the <code>now_lt</code> object is a very different kind of thing. To see this, let’s see what happens if we print it as if it were a regular <em>list</em>:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2720,10 +2721,10 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>$sec
-[1] 22.16494
+[1] 7.47373
 
 $min
-[1] 30
+[1] 52
 
 $hour
 [1] 11
@@ -2818,7 +2819,7 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-1646706622164</code></pre>
+1646707927473</code></pre>
 </div>
 <p>This isn’t a count of the number of days since the unix epoch, it’s a count of the number of milliseconds. It is essentially the same number, divided by 1000, as the one we obtained when I typed <code>unclass(now)</code>.</p>
 <p>However, there’s a puzzle here that we need to solve. Let’s take another look at <code>unclass(now)</code>:</p>
@@ -2827,7 +2828,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 1646706622
+<pre><code>[1] 1646707927
 attr(,&quot;tzone&quot;)
 [1] &quot;Asia/Tokyo&quot;</code></pre>
 </div>
@@ -2838,7 +2839,7 @@ attr(,&quot;tzone&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/as.POSIXlt.html'>as.POSIXlt</a></span><span class='op'>(</span><span class='va'>now</span><span class='op'>)</span><span class='op'>$</span><span class='va'>sec</span>
 </code></pre>
 </div>
-<pre><code>[1] 22.16494</code></pre>
+<pre><code>[1] 7.47373</code></pre>
 </div>
 <p>Aha! The first few digits of the decimal expansion are the same ones stored as the least significant digits in <code>now_date64</code>. The data was there all along. Even though <code>unclass(now)</code> produces an output that has been rounded to the nearest second, the original <code>now</code> variable is indeed a <em>double</em>, and it does store the time a higher precision! Ultimately, the accuracy of the time depends on the system clock itself, but the key thing to know here is that even though <em>POSIXct</em> times are almost always displayed to the nearest second, they do have the ability to represent more precise times.</p>
 <p>Because of this, the default behaviour in <strong>arrow</strong> is to convert <em>date64</em> types (64-bit integers interpreted as counts of milliseconds) to <em>POSIXct</em> classes (which are secretly 64-bit <em>doubles</em> interpreted as counts of seconds).</p>
@@ -2853,9 +2854,9 @@ attr(,&quot;tzone&quot;)
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-08 02:30:22.164939
+2022-03-08 02:52:07.473730
 Scalar
-2022-03-08 02:30:22.164939</code></pre>
+2022-03-08 02:52:07.473730</code></pre>
 </div>
 <p>Alternatively, we could use seconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2864,7 +2865,7 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-2022-03-08 02:30:22</code></pre>
+2022-03-08 02:52:07</code></pre>
 </div>
 <p>It’s important to recognise that changing the unit does more than change the precision at which the <em>timestamp</em> is printed. It changes “the thing that is counted”, so the numbers that get stored in the <em>timestamp</em> are quite different depending on the unit. Compare the numbers that are stored when the units are seconds versus when the units are nanoseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2874,9 +2875,9 @@ Scalar
 </code></pre>
 </div>
 <pre><code>Scalar
-1646706622
+1646707927
 Scalar
-1646706622164939520</code></pre>
+1646707927473730048</code></pre>
 </div>
 <p>Okay, what about timezone?</p>
 <p>Recall that <code>now</code> has a timezone attached to it, because I explicitly recorded the <code>tzone</code> attribute earlier. Admittedly I lied and I said I was in Tokyo and not in Sydney, but still, that information is in the <code>now</code> object:</p>
@@ -2885,7 +2886,7 @@ Scalar
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>now</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 11:30:22 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 11:52:07 JST&quot;</code></pre>
 </div>
 <p>When I print the R object it displays the time in the relevant time zone. The output for the Arrow object doesn’t do that: the time as displayed is shown in UTC. However, that doesn’t mean that the metadata isn’t there:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2906,7 +2907,7 @@ timestamp[us, tz=Asia/Tokyo]</code></pre>
 <span class='va'>new_now</span>               <span class='co'># ... but appears to!</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 13:30:22 AEDT&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 13:52:07 AEDT&quot;</code></pre>
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># an Arrow timestamp with no timezone</span>
 <span class='va'>new_now_timestamp</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>new_now</span><span class='op'>)</span>
@@ -2926,7 +2927,7 @@ timestamp[us]</code></pre>
 </code></pre>
 </div>
 <pre><code>StructScalar
-{sec:double = 22.164939403533936, min:int32 = 30, hour:int32 = 11, mday:int32 = 8, mon:int32 = 2, year:int32 = 122, wday:int32 = 2, yday:int32 = 66, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
+{sec:double = 7.473730087280273, min:int32 = 52, hour:int32 = 11, mday:int32 = 8, mon:int32 = 2, year:int32 = 122, wday:int32 = 2, yday:int32 = 66, isdst:int32 = 0, zone:string = JST, gmtoff:int32 = 32400}</code></pre>
 </div>
 <p>The <em>struct</em> object contains named fields that are identical to their <em>POSIXlt</em> equivalents, and whose types have been translated according to the default mappings: <code>sec</code> is a <em>double</em>, <code>min</code> is an <em>int32</em>, <code>hour</code> is an <em>int32</em>, <code>zone</code> is a <em>string</em>, and so on.</p>
 <p>This arrangement, where <em>POSIXct</em> maps to <em>timestamp</em> and <em>POSIXlt</em> maps to <em>struct</em>, makes perfect sense when you think about the underlying data structures that <em>POSIXct</em> and <em>POSIXlt</em> encode. Where things can be tricky for the R user is in the “mental account keeping”. In order to be helpful, R displays <em>POSIXct</em> and <em>POSIXlt</em> objects in exactly the same way:</p>
@@ -2936,8 +2937,8 @@ timestamp[us]</code></pre>
 <span class='va'>now_lt</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;2022-03-08 11:30:22 JST&quot;
-[1] &quot;2022-03-08 11:30:22 JST&quot;</code></pre>
+<pre><code>[1] &quot;2022-03-08 11:52:07 JST&quot;
+[1] &quot;2022-03-08 11:52:07 JST&quot;</code></pre>
 </div>
 <p>Not only that, because <em>POSIXct</em> and <em>POSIXlt</em> are both subclasses of the <em>POSIXt</em> class, R allows you to perform temporal arithmetic on objects of different types:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2978,7 +2979,7 @@ Figure 20: Default mappings for duration types
 <span class='va'>rmd_time</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 0.2766361 secs</code></pre>
+<pre><code>Time difference of 0.3032784 secs</code></pre>
 </div>
 <p>Now let’s take a look at how it’s actually stored:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2986,7 +2987,7 @@ Figure 20: Default mappings for duration types
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 0.2766361
+<pre><code>[1] 0.3032784
 attr(,&quot;units&quot;)
 [1] &quot;secs&quot;</code></pre>
 </div>
@@ -2998,7 +2999,7 @@ attr(,&quot;units&quot;)
 <span class='va'>hedy_age</span>
 </code></pre>
 </div>
-<pre><code>Time difference of 39200.33 days</code></pre>
+<pre><code>Time difference of 39200.35 days</code></pre>
 </div>
 <p>I would learn that it has been 39200 days since <a href="https://en.wikipedia.org/wiki/Hedy_Lamarr">Hedy Lamarr</a> was born.<a href="#fn32" class="footnote-ref" id="fnref32" role="doc-noteref"><sup>32</sup></a> More to the point, R has guessed that the length of time is sufficiently long that “seconds” aren’t the appropriate encoding unit:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3006,13 +3007,13 @@ attr(,&quot;units&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/class.html'>unclass</a></span><span class='op'>(</span><span class='va'>hedy_age</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>[1] 39200.33
+<pre><code>[1] 39200.35
 attr(,&quot;units&quot;)
 [1] &quot;days&quot;</code></pre>
 </div>
 <p><br></p>
 <h3 id="arrow-the-duration-type">[Arrow] The duration type</h3>
-<p>The <em>difftime</em> class in R has a natural analog in Arrow, the <em>duration</em> type. As usual though, they are not exactly equivalent to one another. An R <em>difftime</em> object stores the value as a <em>double</em>, so it has no problems storing 0.28 as the value and setting the units to be seconds. This doesn’t work very well in Arrow because the value is stored as a signed 64 bit integer (<em>int64</em>), and a value of 0.28 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don’t, things can go a little awry:</p>
+<p>The <em>difftime</em> class in R has a natural analog in Arrow, the <em>duration</em> type. As usual though, they are not exactly equivalent to one another. An R <em>difftime</em> object stores the value as a <em>double</em>, so it has no problems storing 0.3 as the value and setting the units to be seconds. This doesn’t work very well in Arrow because the value is stored as a signed 64 bit integer (<em>int64</em>), and a value of 0.3 seconds will simply round down to a duration of zero seconds. When importing my duration data into Arrow, then, I should be careful to ensure I choose a higher precision unit. If I don’t, things can go a little awry:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>rmd_time_arrow</span> <span class='op'>&lt;-</span> <span class='fu'>scalar</span><span class='op'>(</span><span class='va'>rmd_time</span><span class='op'>)</span>
@@ -3039,7 +3040,7 @@ duration[s]</code></pre>
 </code></pre>
 </div>
 <pre><code>Scalar
-276636</code></pre>
+303278</code></pre>
 </div>
 <p>That’s a little better! Again, I can inspect the data type and see that the unit of encoding is now set to microseconds:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3187,7 +3188,7 @@ Figure 22: Art
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-08 13:30:22 AEDT</p>
+<p>2022-03-08 13:52:08 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-04_data-types-in-arrow-and-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-04_data-types-in-arrow-and-r/renv.lock">R environment</a></p>
 </div>
@@ -3201,7 +3202,7 @@ Figure 22: Art
 <ol>
 <li id="fn1" role="doc-endnote"><p>To be honest, if my goal had been to read the data into Arrow, there was never a need to read it into R in the first place. The code <code>read_csv_arrow("magicians.csv", as_data_frame = FALSE)</code> would create the <em>Table</em> object directly with no need for an intermediary in R. However, for the purposes of this post I’m pretending that I have data in R that I want to transfer to Arrow in order to talk about the translation process, so I’m doing things in a rather inefficient way. On top of that, there’s a whole extra layer of complexity I’m hiding here that relates to ALTREP vectors backed by Arrow. However, that’s a topic for a future post. We can only unravel the magical cloak one thread at a time!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2" role="doc-endnote"><p>Early in the writing process for this post I talked to the very lovely Jon Keane about this, and they pointed out that there’s a big difference in the “read” functions in <strong>arrow</strong> and the “translate” functions. The code in the <code>read_*()</code> functions is complicated: it handles everything for you because “reading the data” is a constrained task and the developers can optimise almost everything for you, including the strange edge cases. Translation is harder, and there’s less the developers can do to support it. As a consequence, the code underpinning <code>schema()</code> is much simpler. It takes care of choices for you when those choices are “obvious”, but it leaves all the edge cases for you to deal with. There are a lot of weird edge cases because “translating between languages” is under-determined. Edge cases are left to the user because only the user knows the context.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>I mean, if my data set were a <a href="https://en.wikipedia.org/wiki/When_the_Pawn...">Fiona Apple discography</a> this would be a real possibility right?<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>If you have never watched <em>The Magicians</em> I really need to emphasise that it was a really, really weird show and this is nowhere near as implausible as it might sound. I have literally scared off men who had previously been quite keen on me by making them watch this show. Not kidding.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4" role="doc-endnote"><p>Back my former life as an mathematical psychologist I studied this stuff for a living, and wrote an <a href="https://djnavarro.net/papers/">absurd number of academic papers</a> on how people learn and represent categories. What I <em>wanted</em> to understand was the relationship between human and machine learning, between natural and artificial intelligence, and so on. What I <em>actually</em> learned is that humans and machines are both super weird.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn5" role="doc-endnote"><p>At this point I feel compelled to point out that while I may <em>appear</em> to be a bright young thing with little experience of the world, I am in fact a 44 year old woman and former academic who has read quite a few papers on algorithmic information theory and related fields. So, if you happen to be thinking thoughts along the lines of “aha, she doesn’t know about Turing equivalence!” and are considering explaining it to me… please don’t. This is one of those situations where that pesky little “finite length” prefix code required to allow machine P to simulate machine Q actually matters, and sometimes “finite” includes values like “staggeringly, painfully large”. As I used to wearily tell my students, in real life you can’t ignore the <span class="math inline">\(O(1)\)</span> terms.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn6" role="doc-endnote"><p>As an aside, Michel Foucault actually refers to this Borges passage in the preface to his famous work <a href="https://en.wikipedia.org/wiki/The_Order_of_Things"><em>The Order of Things: An Archaeology of the Human Sciences</em></a> on how different cultures and historical periods viewed the world from fundamentally different perspectives. According to Foucault, Borges essay “shattered … all the familiar landmarks of thought — our thought, the thought that bears the stamp of our age and our geography — breaking up all the ordered surfaces and all the planes with which we are accustomed to tame the wild profusion of existing things”. Seems fair to say that Borges’ essay was not without its admirers.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>

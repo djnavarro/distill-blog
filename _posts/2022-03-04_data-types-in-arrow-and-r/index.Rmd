@@ -190,14 +190,14 @@ knitr::include_graphics("img/visual-convention.png", dpi = 100)
 
 The **arrow** package makes very sensible default choices about how to translate an R data structure into an Arrow data structure, but those choices can never be more than defaults because of the fundamental fact that the languages are inherently different. The quote about the [indeterminacy of translation](https://en.wikipedia.org/wiki/Indeterminacy_of_translation) at the top of this post was originally written about natural languages, but I think it applies in programming too. There's no single rulebook that tells you how to translate between R and Arrow: there can't be.^[Early in the writing process for this post I talked to the very lovely Jon Keane about this, and they pointed out that there's a big difference in the "read" functions in **arrow** and the "translate" functions. The code in the `read_*()` functions is complicated: it handles everything for you because "reading the data" is a constrained task and the developers can optimise almost everything for you, including the strange edge cases. Translation is harder, and there's less the developers can do to support it. As a consequence, the code underpinning `schema()` is much simpler. It takes care of choices for you when those choices are "obvious", but it leaves all the edge cases for you to deal with. There are a lot of weird edge cases because "translating between languages" is under-determined. Edge cases are left to the user because only the user knows the context.]
 
-Suppose that I knew that there would in fact be a "Season 5.1648" coming, consisting of a single episode whose title corresponded to the full text of the [Treaty of Westphalia](https://is.muni.cz/el/1423/podzim2008/MVZ430/um/Treaty-of-Westphalia.pdf) or, worse, several gigabytes worth of Wikipedia text.^[I mean, if my data set were a [Fiona Apple discography](https://en.wikipedia.org/wiki/When_the_Pawn...) this would be a real possibility right?] Knowing that this new data point is coming, I'd perhaps want my Arrow data to encode `season` as a numeric variable, and I'd probably want to recognise that the text in the `title` field can be quite long. To do that I can specify an explicit schema that tells the **arrow** package how to translate my R data set into Arrow. I can do this with the `schema()` function:
+Suppose that I knew that there would in fact be a "Season 5.1648" coming, consisting of a single episode that would air not only on a specific date, but at a specific time that would -- for some bizarre reason^[If you have never watched *The Magicians* I really need to emphasise that it was a really, really weird show and this is nowhere near as implausible as it might sound. I have literally scared off men who had previously been quite keen on me by making them watch this show. Not kidding.] -- be important to encode in the data. Knowing that this new data point is coming, I'd perhaps want my Arrow data to encode `season` as a numeric variable, and I'd need to encode the `air_date` field using a date type that implicitly encodes time of day. I can do this with the `schema()` function:
 
 ```{r}
 translation <- schema(
   season = float64(), # not the default
   episode = int32(),
-  title = large_utf8(), # not the default
-  air_date = date32(),
+  title = utf8(), 
+  air_date = date64(), # not the default
   rating = float64(),
   viewers = float64()
 )
@@ -209,6 +209,8 @@ Now I can use my schema to govern the translation:
 arrowmagicks2 <- arrow_table(magicians, schema = translation)
 arrowmagicks2
 ```
+
+The output may not make complete sense at this point, but hopefull the gist of what I've done should be clear. The `season` is no longer stored as an integer (it's now a numeric type), and the `air_date` no longer uses "day" as the unit of encoding, it uses "ms" (i.e., millisecond). I've accomplished my goals. Yay! 
 
 This is of course a toy example, as are all the other examples you'll encounter in this post. But the underlying issues are important ones! 
 
