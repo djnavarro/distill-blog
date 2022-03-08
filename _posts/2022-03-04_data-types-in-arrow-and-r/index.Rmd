@@ -5,7 +5,7 @@ description:
   Apache Arrow, and how data is exchanged between the two systems.
   It covers conversion of logicals, integers, floats, decimals, 
   strings, date, and times, among other things. It talks about 
-  higher level structures like tables, data frames, and so on
+  higher level structures like tables, data frames, and so on. 
   For reasons that now escape me, esoteric authors are quoted, and 
   I try to bribe the audience into reading the whole thing by 
   adding artwork. This post is, um... long  
