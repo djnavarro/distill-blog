@@ -144,22 +144,25 @@ arrowmagicks
 
 This is exactly the output I should expect, but the longer I think about it the more it seems to me that something quite remarkable is going on. Some magic is in play here, and I want to know how it works.
 
-To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a _data frame_ (a _tibble_, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a _Table_ object. _Table_ objects in Arrow are roughly analogous to _data frames_ -- both represent tabular data with columns that may be of different types -- but they are not the same. An act of translation has occurred, illustrated below: 
+To understand why I'm so curious, consider the two objects I now have. The `magicians` data set is a _data frame_ (a _tibble_, technically) stored in R. The `arrowmagicks` data set, however, is a pointer to a data structure stored in Arrow. That data structure is a _Table_ object. _Table_ objects in Arrow are roughly analogous to _data frames_ -- both represent tabular data with columns that may be of different types -- but they are not the same. The columns of a _Table_ are built from objects called _ChunkedArrays_ that are in turn constructed from _Arrays_, and those _Arrays_ can contain _Scalar_ objects. In other words, to move data from one language to another an act of translation is required, illustrated below: 
 
 <aside>It's not standard, but since this is a post about data types, I'll italicise the names of data types in both R and Arrow (e.g., <i>data.frame</i>, <i>Table</i>). It gets a bit tiresome, but I think it's helpful</aside>
 
 ```{r}
 #| echo = FALSE,
 #| fig.align = "center",
-#| fig.cap = "A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term 'element' to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns (encoded as Chunked Arrays), and within each element of a chunked array there is a Scalar. The data structure that translates one into the other is called a Schema."
+#| fig.cap = "A miniature translation guide. On the left a data frame in R is shown: it is comprised of three columns (called variables), and we use the term 'element' to refer to a constituent part of the column. On the right is a Table in Arrow: it too is comprised of three columns, encoded as ChunkedArrays. Each ChunkedArray is comprised of one or more Arrays, and each Array contains one or more Scalars. The data structure that translates one into the other is called a Schema."
 
 knitr::include_graphics("img/data-types-overview.png", dpi = 100)
 ```
 
-Not only has the data frame itself been translated, the values stored in each of the columns have been translated. The _integer_ columns in R are mapped to _int32_ columns in Arrow, _Date_ columns in R become _date32_ columns in Arrow, and so on. There is a structure (labelled a _Schema_ in the image above) that instructs the **arrow** package how to control this translation, and the longer I think about it the more I realise there must be quite a lot going on here. Yet it all seems to work seamlessly, and it works both ways. I can pull the `arrowmagicks` data back into R and recover the original data:
+In this post I'm not going to talk much about the difference between _Arrays_ and _ChunkedArrays_, or why Arrow organises _Tables_ this way (that will be the topic of a later post). For now it's enough to recognise that Arrow does have this additional structure: the _Table_ data type in Arrow is not equivalent to the _data frame_ class in R, so a little work is required to map one to the other. 
+
+A similar story applies when we look at the contents of the data set. The translation process doesn't just apply to the "container" object (i.e., the _data frame_ in R and the _Table_ in Arrow), it also applies to the values that the object contains. If we look at the how the columns of `magicians` and `arrowmagicks` are labelled, we see evidence of this translation. The _integer_ columns in R have been mapped to _int32_ columns in Arrow, _Date_ columns in R become _date32_ columns in Arrow, and so on. 
 
 <aside>Variable names like `arrowmagicks` and function calls like `arrow_table()` are shown in monospace typewriter font</aside>
 
+There's quite a lot of complexity to the translation process, yet it all seems to work seamlessly, and it works both ways. I can pull the `arrowmagicks` data back into R and recover the original data:
 
 ```{r}
 collect(arrowmagicks)
@@ -167,7 +170,8 @@ collect(arrowmagicks)
 
 In this example the translation back and forth "just works". You really don't have to think too much about the subtle differences in how Arrow and R "think about the world" and how their data structures are organised. And in general that's what we want in a multi-language toolbox: we want the data analyst to be thinking about the data, not the cross-linguistic subtleties of the data structures! 
 
-That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about _Schemas_. _Schemas_ are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
+
+That being said, it's also valuable to give the data analyst flexibility. And that means we're going to need to talk about _Schemas_. As shown in the "translation diagram" above, _Schemas_ are the data structure **arrow** uses to govern the translation between R and Arrow, and since I'm going to be talking about data "on the R side" and data "on the Arrow" side a lot, it will be helpful to have some visual conventions to make it a little clearer. Throughout the post you'll see diagrams showing the default mappings that the **arrow** package uses when converting data columns from R to Arrow and vice versa. In each case I'll show R data types on the left hand side (against a blue background) and Arrow data types on the right hand side (against an orange background), like this:
 
 
 ```{r}
