@@ -705,17 +705,49 @@ As always, I've got a little diagram summarising all the default mappings:
 knitr::include_graphics("img/numeric-types.png", dpi = 100)
 ```
 
+Let's have a look at the Arrow _float64_ type. It's a little anticlimactic in a sense, because it's the same data structure as the R _double_ type, so all we're going to "learn" is that it behaves the same way! First, let's create one:
+
 ```{r}
 float_01 <- scalar(0.1)
 float_01
+```
+
+As always, we'll verify that the created object has the type we're expecting...
+
+```{r}
 float_01$type
 ```
+
+... and it does, but you might be slightly puzzled by the output this time. What's going on with the top line and the bottom line? Why does one say "Float64" and the other say "double"?
+
+We've seen the "two lines of output" pattern earlier in the post when printing out an _int32_, but last time the two lines both said the same thing so I didn't bother to comment on it. This time, however, there's something to unpack. The distinction here refers to the name of the object type at the R level and and the C++ level. The first line of the output reads "Float64" because that's what this data structure is called at the R level (i.e., according to **arrow**). The second line reads "double" because that's what this data structure is called at the C++ level (i.e., in **libarrow**). There are a few cases where the **arrow** package adopts a slightly different naming scheme to **libarrow**, and so you'll see this happen from time to time later in the post. There are some good reasons for this difference in nomenclature, and it's nothing to be concerned about!
+
+Anyway, getting back to the main thread... since we've created the value `0.1` as a _float64_ in Arrow, let's go through the same exercise we did in R and show that Arrow floats produce the same floating point errors. We'll create new variables for `0.2` and `0.3`:
 
 ```{r}
 float_02 <- scalar(0.2)
 float_03 <- scalar(0.3)
+```
+
+Just like we saw in R, the logical test of equality gives a counterintuitive answer:
+
+```{r}
+float_01 + float_02 == float_03
+```
+
+... and just like we saw in R, the reason for it is that there's a very small rounding error:
+
+```{r}
 float_01 + float_02 - float_03
 ```
+
+Just so you don't have to scroll up to check, yes, the rounding error is the same as the one that R produces:
+
+```{r}
+0.1 + 0.2 - 0.3
+```
+
+R and Arrow implement the same standard for floating point arithmetic, and so they "fail" in the same way because the failure occurs at the level of the standard. But we don't blame IEEE 754 for that, because it's literally impossible to define any standard that will encode the real numbers in an error-free way on a finite-precision machine. 
 
 ### [Arrow] The float32 and float16 types
 
@@ -833,7 +865,7 @@ sum(happy_decimals)
 
 Yay!
 
-As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren't a universal solution to the problems of binary floating-point numbers. They have limitations of their own and there are good reasons why floats remain the default numeric type in most languages. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as to fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.
+As a final note before moving on, it is (of course!!!) the case that fixed-point decimals aren't a universal solution to the problems of binary floating-point numbers. They have limitations of their own and there are good reasons why floats remain the default numeric type in most languages. But they have their uses: binary and decimal systems provide different ways to simulate the reals, as do fixed and floating point systems. Each such system is a lie, of course: the reals are too big to be captured in any finite system we create. They are, however, useful.
 
 
 <br><br>
