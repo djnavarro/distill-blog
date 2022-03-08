@@ -59,10 +59,6 @@ source("unpack_double.R")
 
 <!--------------- post ----------------->
 
-*[Author note]* This post is technically still a draft. I've made it public to get feedback from friends and colleagues, but it's not quite finished and I haven't done all the checking to make sure there aren't errors. I don't mind if anyone reads it in the current state, but until this note disappears please don't share on social media etc! 
-
-<br><br>
-
 > Manuals for translating one language into another can be set up in divergent ways, all compatible with the totality of speech dispositions, yet incompatible with one another <br>
 > &nbsp; &nbsp; -- William Van Orman Quine, 1960, [Word and Object](https://en.wikipedia.org/wiki/Word_and_Object)
 
@@ -1007,7 +1003,7 @@ jung_talent_arrow_big <- chunked_array(jung_talent, type = large_utf8())
 jung_talent_arrow_big$type
 ```
 
-Before moving on, I'll mention one additional complexity. This is a situation where the distinction between _Arrays_ and _ChunkedArrays_ begins to matter. Strictly speaking, I lied earlier when I said there's only one data buffer. A more precise statement would be to say that there is one data buffer per chunk (recall that each chunk in a *ChunkedArray* is an *Array*). *ChunkedArrays* are designed to allow a block (or "chunk") of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that^[No I am not going to talk about them in this post. Masochist though I may be, nobody loves that much pain. If you are curious you will simply have to wait for a later post!], but they aren't immediately relevant. What matters is to recognise that in a *ChunkedArray*, the 2GiB limit on *utf8* type data applies on a per-chunk basis. The net result of this is that you probably don't need *large_utf8* except in very specific cases.
+Before moving on, I'll mention one additional complexity. This is a situation where the distinction between _Arrays_ and _ChunkedArrays_ begins to matter. Strictly speaking, I lied earlier when I said there's only one data buffer. A more precise statement would be to say that there is one data buffer per chunk (where each chunk in a *ChunkedArray* is an *Array*). *ChunkedArrays* are designed to allow a block (or "chunk") of contiguous rows in a table to be stored together in a single location (or file). There are good reasons for doing that^[No I am not going to talk about them in this post. Masochist though I may be, nobody loves that much pain. If you are curious you will simply have to wait for a later post!], but they aren't immediately relevant. What matters is to recognise that in a *ChunkedArray*, the 2GiB limit on *utf8* type data applies on a per-chunk basis. The net result of this is that you probably don't need *large_utf8* except in very specific cases.
 
 
 <br><br>
