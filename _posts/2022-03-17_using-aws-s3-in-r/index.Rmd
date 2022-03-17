@@ -1,5 +1,5 @@
 ---
-title: "Working with Amazon S3 within R -- it's surprisingly easy" # <---- UPDATE ME
+title: "Working with Amazon S3 within R - it's surprisingly easy" # <---- UPDATE ME
 description:
   Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
   consectetur, adipisci velit # <---- UPDATE ME
@@ -18,6 +18,7 @@ repository_url: https://github.com/djnavarro/distill-blog/
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
 params:
   slug: using-aws-s3-in-r
   date: 2022-03-17
@@ -39,14 +40,144 @@ checklist:
 <!--------------- setup post ----------------->
 
 ```{r setup, include=FALSE}
+renv::use(lockfile = here::here(
+  "_renv", "_posts", paste(params$date, params$slug, sep = "_"), "renv.lock")
+)
+#refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 knitr::opts_chunk$set(echo = TRUE)
-refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 ```
 
 
 <!--------------- post ----------------->
 
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+I have a shameful confession to make, one that may shock and surprise you. Although I am an R user, data scientist, and developer of many years experience, I've never used Amazon Web Services. I've never spun up a virtual machine on "Amazon EC2" (whatever _that_ is), I don't know what "AWS Lambda" is, and all I know about "Amazon S3" is that fancy data science people use it to stored data.^[Okay fine, I used "Amazon Mechanical Turk" a lot as part of my academic work, but that's hardly a core data science skill.] Or something. Every time people start talking about it my eyes glaze over and my impostor syndrome flares up to tell me that I am an incompetent fraud. A *true* data scientist is born knowing how to spin up EC2 instances,^[Again, I cannot stress how much I do not know about AWS. I guess that's the term for virtual machines. Whatever. This isn't a post about EC2] and if baby doesn't post her drawings on S3 then she's already falling behind, etc etc. My anxiety becomes too much, so I go do something girly like nonparametric Bayes instead. 
+
+My personal "tragedy"^[It's deeply important to me that you read this knowing that I was singing [*Tragedy*](https://www.youtube.com/watch?v=OiwDHHcHPh0) by Steps at the time I wrote this, complete with dramatic hand gestures] notwithstanding, I suspect my situation is not entirely uncommon. Back in my academic days, I knew very few people who used Amazon Web Services (a.k.a. AWS) for much of anything. It wasn't needed, so it wasn't knowledge that people acquired. Now that I'm working in an industry setting I'm finding that it's _so_ widely used that it's almost assumed knowledge. _Everyone_ knows this stuff, so there's not a lot said about why you might care, or how to get started using these tools if you decided that you do care. 
+
+Today I decided to do something about this, starting by teaching myself how to use Amazon's Simple Storage Service (a.k.a S3). With the help of the [**aws.s3** package](https://github.com/cloudyr/aws.s3) authored by Thomas Leeper and currently maintained by Simon Urbanek, it's surprisingly easy to do.
+
+In this post I'll walk you through the process.
+
+```{r}
+library(dplyr)
+library(tibble)
+library(aws.s3)
+```
+
+## What is S3 and why do I care?
+
+## Downloading public data from S3
+
+While browsing through the registry of open data sets listed on the S3 website I came across the [National Herbarium of NSW data set](https://registry.opendata.aws/nsw-herbarium/). As described on the website:
+
+> The National Herbarium of New South Wales is one of the most significant scientific, cultural and historical botanical resources in the Southern hemisphere. The 1.43 million preserved plant specimens have been captured as high-resolution images and the biodiversity metadata associated with each of the images captured in digital form. Botanical specimens date from year 1770 to today, and form voucher collections that document the distribution and diversity of the world's flora through time, particularly that of NSW, Austalia and the Pacific. The data is used in biodiversity assessment, systematic botanical research, ecosystem conservation and policy development. The data is used by scientists, students and the public.
+
+Okay I love this and I want to play with it. But how do I do that? The listing for the data set posts the following metadata:
+
+```
+Resources on AWS
+
+    Description
+        Herbarium Collection Image files
+    Resource type
+        S3 Bucket
+    Amazon Resource Name (ARN)
+        arn:aws:s3:::herbariumnsw-pds
+    AWS Region
+        ap-southeast-2
+    AWS CLI Access (No AWS account required)
+        aws s3 ls --no-sign-request s3://herbariumnsw-pds/
+```
+
+### Finding the bucket
+
+Okay, so is there a bucket? I'll use the `bucket_exists()` function to verify that there is in fact a public data set located on AWS at "s3://herbariumnsw-pds/", and of course there...
+
+```{r, eval=FALSE}
+bucket_exists("s3://herbariumnsw-pds/")
+```
+```{r, echo=FALSE, cache=TRUE}
+x <- bucket_exists("s3://herbariumnsw-pds/")
+attributes(x) <- NULL
+x
+```
+
+...isn't? What???? 
+
+I've made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon's Sydney data center: that's the "ap-southeast-2" region. Let's try that again:
+
+```{r, eval=FALSE}
+bucket_exists("s3://herbariumnsw-pds/", region = "ap-southeast-2")
+```
+```{r, echo=FALSE, cache=TRUE}
+x2 <- bucket_exists("s3://herbariumnsw-pds/", region = "ap-southeast-2")
+attributes(x2) <- NULL
+x2
+```
+
+Much better!
+
+Oh and one more thing. I lied slightly in the output... if you go do this yourself, you'll find that the results are a little bit more verbose than simply printing `TRUE` or `FALSE`. The actual output comes with a lot of additional metadata that get stored as attributes. So what you'll actually see is something like this:
+
+```{r, cache=TRUE}
+bucket_exists(
+  bucket = "s3://herbariumnsw-pds/", 
+  region = "ap-southeast-2")
+```
+
+### Listing bucket contents
+
+There are a lot of objects stored in this bucket, so I'll just download the first 20,000 records:
+
+```{r get-bucket, cache=TRUE}
+herbarium_files <- get_bucket_df(
+  bucket = "s3://herbariumnsw-pds/", 
+  region = "ap-southeast-2", 
+  max = 20000
+) %>% 
+  as_tibble()
+```
+
+Now let's take a peek:
+
+```{r inspect-herbarium-files}
+glimpse(herbarium_files)
+```
+
+### Downloading files
+
+```{r download-readme, cache=TRUE}
+save_object(
+  object = "ReadMe.txt",
+  bucket = "s3://herbariumnsw-pds/", 
+  region = "ap-southeast-2",
+  file = "herbarium/ReadMe.txt"
+)
+```
+
+As you might hope, the README does in fact tell you something about how it's organised:
+
+> Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI 
+https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2
+>
+A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at:
+https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip
+
+So the real place to start is with this metadata file, `dwca-nsw_avh-v1.0.zip`
+
+```{r download-metadata, cache=TRUE}
+save_object(
+  object = "dwca-nsw_avh-v1.0.zip",
+  bucket = "s3://herbariumnsw-pds/", 
+  region = "ap-southeast-2",
+  file = "herbarium/dwca-nsw_avh-v1.0.zip"
+)
+```
+
+
+## Signing up for an AWS account
+
+## Manipulating your S3 storage from R
 
 
 <!--------------- appendices ----------------->
