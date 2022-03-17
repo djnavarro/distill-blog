@@ -99,10 +99,13 @@ Still here? Cool.
 
 From the user perspective, Amazon's "Simple Storage Service" isn't particularly complicated. It's just a remote storage system that you can dump files into, kind of like a programmable Dropbox. Each file (and its accompanying metadata) is stored as an *object*, and collections of objects are grouped together into a *bucket*. If you want to store files on S3, all you need to do is open an account, create a new bucket, and upload your files. It's exactly that boring, and the only reason anyone cares (as far as I know) is that Amazon designed this to work at scale and it's fairly easy to write scripts that allow you to control the whole thing programmatically. Which is actually a pretty handy service, now that I think about it!
 
+<br>
 
 ## Downloading public data from S3
 
-While browsing through the registry of open data sets listed on the S3 website I came across the [National Herbarium of NSW data set](https://registry.opendata.aws/nsw-herbarium/). As described on the website:
+The first thing to understand about S3 is that there's many different ways of using it. Very often, you're not interested in storing your own data on S3. You might just want to download data that someone else has stored, and if that data has been made publicly accessible, then you don't even need an Amazon Web Services (AWS) account at all. You can download to your hearts content. For a data scientist it's a fun way to start, because you get to dive straight into playing with data insted of fiddling about with accounts and credentials and all those dull things. 
+
+So let's find a public data set to play with. While browsing through the registry of open data sets listed on the S3 website I came across the [National Herbarium of NSW data set](https://registry.opendata.aws/nsw-herbarium/). As described on the website:
 
 > The National Herbarium of New South Wales is one of the most significant scientific, cultural and historical botanical resources in the Southern hemisphere. The 1.43 million preserved plant specimens have been captured as high-resolution images and the biodiversity metadata associated with each of the images captured in digital form. Botanical specimens date from year 1770 to today, and form voucher collections that document the distribution and diversity of the world's flora through time, particularly that of NSW, Austalia and the Pacific. The data is used in biodiversity assessment, systematic botanical research, ecosystem conservation and policy development. The data is used by scientists, students and the public.
 
@@ -138,7 +141,7 @@ Using this information, I can get started. I know *what* the data is (an S3 buck
 
 ### Finding the bucket
 
-Okay, so is there a bucket? I'll use the `bucket_exists()` function to verify that there is in fact a public data set located on AWS at `"s3://herbariumnsw-pds/"`, and of course there...
+Okay, so let's see if we can find this bucket using R code. The **aws.s3** package contains a handy function called `bucket_exists()`, which returns `TRUE` when it finds an S3 bucket at the specified location (and using whatever credentials you currently have available), and `FALSE` when it does not. That seems relatively easy. We know the name of our bucket, specified more precisely as  `"s3://herbariumnsw-pds/"`, and we can verify that it exists. And of course when we do this it turns out that there...
 
 ```{r, eval=FALSE}
 bucket_exists("s3://herbariumnsw-pds/")
@@ -147,7 +150,7 @@ bucket_exists("s3://herbariumnsw-pds/")
 FALSE
 ```
 
-...isn't? What???? 
+...isn't? Wait, what???? 
 
 I've made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon's Sydney data center. In Amazon parlance, that's the `"ap-southeast-2"` region, but unless you've done something to set a different default (more on that later), everything you do will probably default to the `"us-east-1"` region. To override this default, we can explicitly specify the `region` that `bucket_exists()` should look in. So now let's try that again:
 
@@ -165,7 +168,7 @@ Much better!
 
 ### Okay, okay, I lied...
 
-One more thing. If you've been following along at home and trying out these commands, you've probably noticed that the output you're getting is a little more verbose than simply returning `TRUE` or `FALSE`. The actual output comes with a lot of additional metadata, stored as attributes. So what you'll actually see is something like this:
+One more thing. If you've been following along at home and trying out these commands, you've probably noticed that the output you're getting is a little more verbose than simply returning `TRUE` or `FALSE`. The actual output comes with a lot of additional metadata, stored as attributes. I didn't really want to clutter the output by showing all that stuff, so the examples above secretly removed the attributes before printing the results. What you'll *actually* see is something like this:
 
 ```{r, cache=TRUE}
 bucket_exists(
@@ -178,7 +181,7 @@ If you stare at this long enough this metadata all starts to make sense, especia
 
 ### Listing bucket contents
 
-There are a lot of objects stored in this bucket, so I'll just download the first 20,000 records:
+At this point in the journey we've located the bucket, but we have no idea what it contains. To get a list of the bucket contents, the `get_bucket_df()` function from **aws.s3** is our friend. The National Herbarium data set contains a lot of objects, so I'll be "frugal" and restrict myself to merely downloading `max = 20000` records:
 
 ```{r get-bucket, cache=TRUE}
 herbarium_files <- get_bucket_df(
@@ -189,13 +192,17 @@ herbarium_files <- get_bucket_df(
   as_tibble()
 ```
 
-Now let's take a peek:
+Now that we've downloaded a list of the bucket contents, let's have a look and see what we've got:
 
 ```{r inspect-herbarium-files}
 herbarium_files
 ```
 
+Wonderful! The very first object in the bucket happens to be a file called `ReadMe.txt`. Perhaps I should download this marvelous object and perhaps even read it?
+
 ### Downloading files
+
+Okay then. We are now at the step where we want to download a specific object from the bucket, and save it locally as a file. To do this we use the `save_object()` function. As before, we specify the `bucket` and the `region`, but we'll also need to specify which `object` should be downloaded, and the `file` path to which it should be saved. Here's how that works for the Read Me file:
 
 ```{r download-readme, cache=TRUE}
 save_object(
@@ -206,11 +213,13 @@ save_object(
 )
 ```
 
-As you might hope, the README does in fact tell you something about how it's organised. In particular, it informs me that there's a single file storing all the metadata, encoded as a zipped csv file: 
+Once again this works and so off I go, reading the Read Me in search of further clues. 
+
+As you might hope, the Read Me file does in fact tell us something about how the National Herbarium dataset is organised. In particular, one line in the Read Me informs me that there's a file storing all the metadata, encoded as a zipped csv file: 
 
 > A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at: https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip
 
-This sounds like a good place to start. Let's see if I can download the metadata file `dwca-nsw_avh-v1.0.zip`:
+This sounds like a good place to start doesn't it. Once again, I'll use `save_object()` and try to download the metadata file `dwca-nsw_avh-v1.0.zip`:
 
 ```{r download-metadata, cache=TRUE}
 save_object(
@@ -234,7 +243,7 @@ There's quite a lot of interesting information stored in the 74 columns of the `
 
 ### Wrangling the data
 
-We can do some simple data wrangling:
+Now that I have some data, I can do a little poking around to see what's in it. Exploring a new data set is always fun, but this isn't really a post about data wrangling, so I'll keep this brief. A quick look suggests that (unsurprisingly) there are a lot of records corresponding to samples collected in Australia, and a disproportionate number of those come from New South Wales:
 
 ```{r data-wrangling}
 herbarium %>% 
@@ -242,7 +251,7 @@ herbarium %>%
   count(stateProvince)
 ```
 
-Not surprisingly there's a predominance of NSW. Since I live in Newtown (a neighbourhood in Sydney) I'm going to find the subset of images in the National Herbarium data whose locality matches the string `"Newtown"`:
+That's nice, but doesn't immediately suggest a fun example for me to continue this post. On a whim, I decide to name search my neighbourhood. I live in Newtown (in Sydney), so I'm going to find the subset of images in the National Herbarium data whose locality matches the string `"Newtown"`:
 
 ```{r}
 newtowners <- herbarium %>% 
@@ -251,6 +260,8 @@ newtowners <- herbarium %>%
     locality %>% str_detect("Newtown")
   )
 ```
+
+Yeah, no. This is misleading.
 
 From a data science point of view I'm being extremely sloppy here. If my intention had been to find only plants from my neighbourhood, I would also be wise to filter by recorded longitude and latitude where available, and I would certainly want to exclude cases listed as coming from another Australian state. But that's not really my goal. I just wanted a query that would return around 20-30 results, so this is fine for my purposes. 
 
@@ -261,7 +272,12 @@ newtowners %>%
   pull(catalogNumber)
 ```
 
-I wonder if I can write code to extract these images?
+The Read Me file had something useful to say about these numbers. Specifically, the catalog numbers are used as the basis of the file naming convention for images stored in the bucket:
+
+> Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI 
+https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2
+
+Hm. I wonder if I can write code to extract these images?
 
 <br>
 
@@ -274,26 +290,30 @@ tiny_herb_url("NSW676197.jpg") %>%
 
 ### Scripting the download
 
-Okay, now I want to pull the images for these records. First, I'm going to construct the paths. I am *not* going to download the jp2 files because they're about 100MB each. That's why this is on S3, by the way. There are `r nrow(herbarium)` distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let's go with the jpgs shall we?
+Okay, now I want to pull the images for these records. First, I'm going to construct the paths. I am *not* going to download the jp2 files because they're about 100MB each. Multiplying that number by the number of records gives... well, it gives a big enough number that I think I've worked out why the National Herbarium dataset is on S3 and not on a laptop in a damp basement somewhere! 
 
-> Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI 
-https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2
-
+In any case, for a lot of the records there's a jpg file that is considerably smaller in size, so I'm going to try to download those. Based on the barcodes I've got, these are the files I'm expecting to find: 
 
 ```{r}
-filepaths <- newtowners %>%
+objects <- newtowners %>%
   pull(catalogNumber) %>% 
   str_remove_all(" ") %>% 
   str_c("images/", ., ".jpg")
+
+objects
 ```
 
-Let's take a look at what we've got:
+This all seems pretty reasonable, but there's a nuance here that is worth pointing out. When you look at the output above, it's tempting to think that `"images"` must be a subfolder within the S3 bucket. That intuition isn't correct: each S3 bucket is a flat datastore. It doesn't contain any subfolders: the `"/"` is treated as part of the object name, nothing more. It can be convenient to name objects this way, though, because it makes it a little easier to organise them into subfolders later on if you want to move them onto a more traditional hierarchical file system. 
 
-```{r}
-filepaths
-```
+Anyway... 
 
-Define a function 
+Since I'm going to try downloading objects that may or may not actually exist (i.e., I'm not certain if all these records actually have jpg files), I'm going to start out by writing a helper function `save_herbarium_image()` that does three things:
+
+- First, it uses the `object_exists()` function to check if an object with that name exists in this bucket. The `object_exists()` function works similarly to the `bucket_exists()` function I used earlier: the only difference is that I also specify the object name. 
+- Second, if the object exists, it downloads the file and stores it locally, in the `"herbarium"` subfolder in the folder that contains this blog post. 
+- Third, it returns information to the user. If the object exists and was successfully downloaded, it returns a character string specifying the location of the saved file. If the object doesn't exist, it returns `NA`. 
+
+Here's the code:
 
 ```{r}
 save_herbarium_image <- function(file) {
@@ -316,29 +336,31 @@ save_herbarium_image <- function(file) {
 }
 ```
 
-Test it out?
+And here it is applied to the first file:
 
 ```{r}
-filepaths[1] %>% 
+objects[1] %>% 
   save_herbarium_image()
 ```
 
-Okay now let's `map_chr()` over all the files listed in `filepaths`, saving the relevant herbarium image in each case:
+That seemed to work well when applied to a single file, so I'll use the functional programming tools from **purrr** to vectorise the operation. More precisely, I'll use `map_chr()` to iterate over all of the `objects`, applying the `save_herbarium_image()` function to each one, and collecting the return values from all these function calls into a character vector:
 
 ```{r, cache=TRUE}
-filepaths %>% 
+objects %>% 
   map_chr(save_herbarium_image)
 ```
 
 Did it work? Well, kind of. Notice there are some missing values in the output. In those cases the object doesn't exist in this bucket, and when that happens the `save_herbarium_image()` function bails and doesn't try to download anything. But in most cases images it worked.
 
-### Behold the pretty pictures!
+### A minor irritant appears!
 
-Even the jpg files are fairly high resolution and I don't want this post to be too big, so I'll shrink them for this post. Here's my helper function:
+At this point, I'd like to start displaying the images. It's nice to have pretty pictures in a blog post, don't you think? Like, maybe what I could do is include some of those images in this post. One problem though is that the files stored in the National Herbarium dataset are high resolution images and as consequence even the jpg files are usually about 7MB each. That's a bit excessive, so I think what I'll do is write a little helper function that reads in each image, resizes it to something smaller, and then saves that smaller file. 
+
+If I want to do this within R, the **magick** package is my friend. It's extremely well suited to this kind of image manipulation task. This post isn't about the **magick** package, so I'm not going to explain this part of the code,^[I will, yet again, sigh in frustration that I have to include the     `on.exit(gc())` line. My limited understanding is as follows. The **magick** package provides wrappers to the C++ ImageMagick library, and none of the image manipulation is actually done in R. The objects that get "loaded" are just pointers, and exiting the `shrink_herbarium_image()` function doesn't necessarily cause R to release memory. So whenever I'm iterating over many images, R doesn't release old images from the magick resource cache unless I trigger the garbage collection with `gc()`. This feels inelegant but I haven't had time to find a better solution.] but suffice it to say that this helper function solves the problem:
 
 ```{r}
 shrink_herbarium_image <- function(file) {
-  on.exit(gc()) # prevents cache problem
+  on.exit(gc())
   img_from <- file.path("herbarium", "images", file)
   img_to <- file.path("herbarium", "tiny_images", file)
   image_read(img_from) %>% 
@@ -347,14 +369,16 @@ shrink_herbarium_image <- function(file) {
 }
 ```
 
-and here's me using `walk()` to shrink every image and the smol version in the `tiny_images` folder:
+Now that I have this function, I can iterate over every image stored in my local `images` folder, shrink it, and save the small version to the `tiny_images` folder:
 
 ```{r, cache=TRUE}
 list.files("herbarium/images") %>% 
   map_chr(shrink_herbarium_image)
 ```
 
-The output here is a character vector containing names for the created files. Here's the contents of the `tiny_images` folder, but shown as the actual images rather than file names because that's prettier:^[I'm using the **bs4cards** package to display the images in this layout]
+The output here is a character vector containing names for the created files. That's nice as a way of checking that everything worked, but I want pretty pictures! So here's the contents of the `tiny_images` folder, but shown as the actual images rather than file names:^[I'm using the **bs4cards** package to display the images in this layout. Oh, and if you click on any image you'll see a higher resolution version of that image.]
+
+<br>
 
 ```{r, echo=FALSE}
 tibble(
@@ -370,7 +394,11 @@ bs4cards::cards(
 )
 ```
 
-Okay! Progress!
+<br>
+
+Progress!
+
+<br>
 
 ## Signing up for an AWS account
 
@@ -421,14 +449,16 @@ AWS_DEFAULT_REGION=ap-southeast-2
 
 Your default region might be different from mine!
 
+<br>
 
 ```{r echo=FALSE}
 tiny_herb_url("NSW1055313.jpg") %>% 
   knitr::include_graphics()
 ```
 
-## Manipulating your S3 storage from R
+<br>
 
+## Manipulating your S3 storage from R
 
 ### Creating a new bucket
 
@@ -528,6 +558,8 @@ The code I've been using to display the images throughout the post looks like th
 tiny_herb_url("NSW121207.jpg") %>% 
   knitr::include_graphics()
 ```
+
+<br>
 
 
 ## Wrapping up

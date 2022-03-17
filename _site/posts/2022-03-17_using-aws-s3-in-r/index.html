@@ -2492,7 +2492,7 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#downloading-files">Downloading files</a></li>
 <li><a href="#wrangling-the-data">Wrangling the data</a></li>
 <li><a href="#scripting-the-download">Scripting the download</a></li>
-<li><a href="#behold-the-pretty-pictures">Behold the pretty pictures!</a></li>
+<li><a href="#a-minor-irritant-appears">A minor irritant appears!</a></li>
 </ul></li>
 <li><a href="#signing-up-for-an-aws-account">Signing up for an AWS account</a>
 <ul>
@@ -2547,8 +2547,10 @@ checklist:
 <p>Let’s get started. As with everything else in life, the place to start is asking yourself if you even care. I mean, if we don’t care what S3 is or what it does, why even bother? Just let your eyes glaze over as the nerd keeps talking and wonder if there’s anything good on TV…</p>
 <p>Still here? Cool.</p>
 <p>From the user perspective, Amazon’s “Simple Storage Service” isn’t particularly complicated. It’s just a remote storage system that you can dump files into, kind of like a programmable Dropbox. Each file (and its accompanying metadata) is stored as an <em>object</em>, and collections of objects are grouped together into a <em>bucket</em>. If you want to store files on S3, all you need to do is open an account, create a new bucket, and upload your files. It’s exactly that boring, and the only reason anyone cares (as far as I know) is that Amazon designed this to work at scale and it’s fairly easy to write scripts that allow you to control the whole thing programmatically. Which is actually a pretty handy service, now that I think about it!</p>
+<p><br></p>
 <h2 id="downloading-public-data-from-s3">Downloading public data from S3</h2>
-<p>While browsing through the registry of open data sets listed on the S3 website I came across the <a href="https://registry.opendata.aws/nsw-herbarium/">National Herbarium of NSW data set</a>. As described on the website:</p>
+<p>The first thing to understand about S3 is that there’s many different ways of using it. Very often, you’re not interested in storing your own data on S3. You might just want to download data that someone else has stored, and if that data has been made publicly accessible, then you don’t even need an Amazon Web Services (AWS) account at all. You can download to your hearts content. For a data scientist it’s a fun way to start, because you get to dive straight into playing with data insted of fiddling about with accounts and credentials and all those dull things.</p>
+<p>So let’s find a public data set to play with. While browsing through the registry of open data sets listed on the S3 website I came across the <a href="https://registry.opendata.aws/nsw-herbarium/">National Herbarium of NSW data set</a>. As described on the website:</p>
 <blockquote>
 <p>The National Herbarium of New South Wales is one of the most significant scientific, cultural and historical botanical resources in the Southern hemisphere. The 1.43 million preserved plant specimens have been captured as high-resolution images and the biodiversity metadata associated with each of the images captured in digital form. Botanical specimens date from year 1770 to today, and form voucher collections that document the distribution and diversity of the world’s flora through time, particularly that of NSW, Austalia and the Pacific. The data is used in biodiversity assessment, systematic botanical research, ecosystem conservation and policy development. The data is used by scientists, students and the public.</p>
 </blockquote>
@@ -2572,7 +2574,7 @@ AWS Region
 ap-southeast-2</code></pre>
 <p>Using this information, I can get started. I know <em>what</em> the data is (an S3 bucket), I know <em>where</em> the data is (in the <code>"ap-southeast-2"</code> region), and on top of that I know the <em>name</em> of the data (<code>"herbariumnsw-pds"</code>). This should be enough for me to find what I’m looking for!</p>
 <h3 id="finding-the-bucket">Finding the bucket</h3>
-<p>Okay, so is there a bucket? I’ll use the <code>bucket_exists()</code> function to verify that there is in fact a public data set located on AWS at <code>"s3://herbariumnsw-pds/"</code>, and of course there…</p>
+<p>Okay, so let’s see if we can find this bucket using R code. The <strong>aws.s3</strong> package contains a handy function called <code>bucket_exists()</code>, which returns <code>TRUE</code> when it finds an S3 bucket at the specified location (and using whatever credentials you currently have available), and <code>FALSE</code> when it does not. That seems relatively easy. We know the name of our bucket, specified more precisely as <code>"s3://herbariumnsw-pds/"</code>, and we can verify that it exists. And of course when we do this it turns out that there…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span><span class='st'>"s3://herbariumnsw-pds/"</span><span class='op'>)</span>
@@ -2582,7 +2584,7 @@ ap-southeast-2</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <pre><code>[1] FALSE</code></pre>
 </div>
-<p>…isn’t? What????</p>
+<p>…isn’t? Wait, what????</p>
 <p>I’ve made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon’s Sydney data center. In Amazon parlance, that’s the <code>"ap-southeast-2"</code> region, but unless you’ve done something to set a different default (more on that later), everything you do will probably default to the <code>"us-east-1"</code> region. To override this default, we can explicitly specify the <code>region</code> that <code>bucket_exists()</code> should look in. So now let’s try that again:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2598,7 +2600,7 @@ ap-southeast-2</code></pre>
 </div>
 <p>Much better!</p>
 <h3 id="okay-okay-i-lied">Okay, okay, I lied…</h3>
-<p>One more thing. If you’ve been following along at home and trying out these commands, you’ve probably noticed that the output you’re getting is a little more verbose than simply returning <code>TRUE</code> or <code>FALSE</code>. The actual output comes with a lot of additional metadata, stored as attributes. So what you’ll actually see is something like this:</p>
+<p>One more thing. If you’ve been following along at home and trying out these commands, you’ve probably noticed that the output you’re getting is a little more verbose than simply returning <code>TRUE</code> or <code>FALSE</code>. The actual output comes with a lot of additional metadata, stored as attributes. I didn’t really want to clutter the output by showing all that stuff, so the examples above secretly removed the attributes before printing the results. What you’ll <em>actually</em> see is something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span>
@@ -2625,7 +2627,7 @@ attr(,&quot;server&quot;)
 </div>
 <p>If you stare at this long enough this metadata all starts to make sense, especially after you’ve been playing around with S3 for a while. There’s a timestamp, there’s some information about which region the data came from, and so on. Nothing particularly special or interesting here, so let’s move on to something more fun.</p>
 <h3 id="listing-bucket-contents">Listing bucket contents</h3>
-<p>There are a lot of objects stored in this bucket, so I’ll just download the first 20,000 records:</p>
+<p>At this point in the journey we’ve located the bucket, but we have no idea what it contains. To get a list of the bucket contents, the <code>get_bucket_df()</code> function from <strong>aws.s3</strong> is our friend. The National Herbarium data set contains a lot of objects, so I’ll be “frugal” and restrict myself to merely downloading <code>max = 20000</code> records:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>herbarium_files</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_bucket.html'>get_bucket_df</a></span><span class='op'>(</span>
@@ -2637,7 +2639,7 @@ attr(,&quot;server&quot;)
 </code></pre>
 </div>
 </div>
-<p>Now let’s take a peek:</p>
+<p>Now that we’ve downloaded a list of the bucket contents, let’s have a look and see what we’ve got:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>herbarium_files</span>
@@ -2659,7 +2661,9 @@ attr(,&quot;server&quot;)
 # … with 19,990 more rows, and 2 more variables: StorageClass &lt;chr&gt;,
 #   Bucket &lt;chr&gt;</code></pre>
 </div>
+<p>Wonderful! The very first object in the bucket happens to be a file called <code>ReadMe.txt</code>. Perhaps I should download this marvelous object and perhaps even read it?</p>
 <h3 id="downloading-files">Downloading files</h3>
+<p>Okay then. We are now at the step where we want to download a specific object from the bucket, and save it locally as a file. To do this we use the <code>save_object()</code> function. As before, we specify the <code>bucket</code> and the <code>region</code>, but we’ll also need to specify which <code>object</code> should be downloaded, and the <code>file</code> path to which it should be saved. Here’s how that works for the Read Me file:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_object.html'>save_object</a></span><span class='op'>(</span>
@@ -2672,11 +2676,12 @@ attr(,&quot;server&quot;)
 </div>
 <pre><code>[1] &quot;herbarium/ReadMe.txt&quot;</code></pre>
 </div>
-<p>As you might hope, the README does in fact tell you something about how it’s organised. In particular, it informs me that there’s a single file storing all the metadata, encoded as a zipped csv file:</p>
+<p>Once again this works and so off I go, reading the Read Me in search of further clues.</p>
+<p>As you might hope, the Read Me file does in fact tell us something about how the National Herbarium dataset is organised. In particular, one line in the Read Me informs me that there’s a file storing all the metadata, encoded as a zipped csv file:</p>
 <blockquote>
 <p>A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at: <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip</a></p>
 </blockquote>
-<p>This sounds like a good place to start. Let’s see if I can download the metadata file <code>dwca-nsw_avh-v1.0.zip</code>:</p>
+<p>This sounds like a good place to start doesn’t it. Once again, I’ll use <code>save_object()</code> and try to download the metadata file <code>dwca-nsw_avh-v1.0.zip</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_object.html'>save_object</a></span><span class='op'>(</span>
@@ -2720,7 +2725,7 @@ attr(,&quot;server&quot;)
 </div>
 <p>There’s quite a lot of interesting information stored in the 74 columns of the <code>herbarium</code> data, but I won’t dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you’ll likely discover that there is a small proportion of the 725507 rows that cause problems for <code>read_tsv()</code>, likely because they contain additional tab characters that mess up the parsing slightly. In real life I’d want to look into this, but this is a blog post. Nothing here is real and nobody is watching right?</p>
 <h3 id="wrangling-the-data">Wrangling the data</h3>
-<p>We can do some simple data wrangling:</p>
+<p>Now that I have some data, I can do a little poking around to see what’s in it. Exploring a new data set is always fun, but this isn’t really a post about data wrangling, so I’ll keep this brief. A quick look suggests that (unsurprisingly) there are a lot of records corresponding to samples collected in Australia, and a disproportionate number of those come from New South Wales:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>herbarium</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2742,7 +2747,7 @@ attr(,&quot;server&quot;)
  9 Western Australia             80447
 10 &lt;NA&gt;                           4287</code></pre>
 </div>
-<p>Not surprisingly there’s a predominance of NSW. Since I live in Newtown (a neighbourhood in Sydney) I’m going to find the subset of images in the National Herbarium data whose locality matches the string <code>"Newtown"</code>:</p>
+<p>That’s nice, but doesn’t immediately suggest a fun example for me to continue this post. On a whim, I decide to name search my neighbourhood. I live in Newtown (in Sydney), so I’m going to find the subset of images in the National Herbarium data whose locality matches the string <code>"Newtown"</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>newtowners</span> <span class='op'>&lt;-</span> <span class='va'>herbarium</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2753,6 +2758,7 @@ attr(,&quot;server&quot;)
 </code></pre>
 </div>
 </div>
+<p>Yeah, no. This is misleading.</p>
 <p>From a data science point of view I’m being extremely sloppy here. If my intention had been to find only plants from my neighbourhood, I would also be wise to filter by recorded longitude and latitude where available, and I would certainly want to exclude cases listed as coming from another Australian state. But that’s not really my goal. I just wanted a query that would return around 20-30 results, so this is fine for my purposes.</p>
 <p>Now that we’ve got a subset of records, let’s pull out the catalog numbers:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2769,30 +2775,27 @@ attr(,&quot;server&quot;)
 [21] &quot;NSW 570557&quot;  &quot;NSW 702035&quot;  &quot;NSW 676197&quot;  &quot;NSW 776212&quot; 
 [25] &quot;NSW 777249&quot;  &quot;NSW 739455&quot;  &quot;NSW 751830&quot; </code></pre>
 </div>
-<p>I wonder if I can write code to extract these images?</p>
+<p>The Read Me file had something useful to say about these numbers. Specifically, the catalog numbers are used as the basis of the file naming convention for images stored in the bucket:</p>
+<blockquote>
+<p>Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2</a></p>
+</blockquote>
+<p>Hm. I wonder if I can write code to extract these images?</p>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW676197.jpg" /><!-- --></p>
 </div>
 <p><br></p>
 <h3 id="scripting-the-download">Scripting the download</h3>
-<p>Okay, now I want to pull the images for these records. First, I’m going to construct the paths. I am <em>not</em> going to download the jp2 files because they’re about 100MB each. That’s why this is on S3, by the way. There are 725507 distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let’s go with the jpgs shall we?</p>
-<blockquote>
-<p>Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2</a></p>
-</blockquote>
+<p>Okay, now I want to pull the images for these records. First, I’m going to construct the paths. I am <em>not</em> going to download the jp2 files because they’re about 100MB each. Multiplying that number by the number of records gives… well, it gives a big enough number that I think I’ve worked out why the National Herbarium dataset is on S3 and not on a laptop in a damp basement somewhere!</p>
+<p>In any case, for a lot of the records there’s a jpg file that is considerably smaller in size, so I’m going to try to download those. Based on the barcodes I’ve got, these are the files I’m expecting to find:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span> <span class='op'>&lt;-</span> <span class='va'>newtowners</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>objects</span> <span class='op'>&lt;-</span> <span class='va'>newtowners</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>catalogNumber</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span><span class='st'>" "</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_c.html'>str_c</a></span><span class='op'>(</span><span class='st'>"images/"</span>, <span class='va'>.</span>, <span class='st'>".jpg"</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
-<p>Let’s take a look at what we’ve got:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span>
+
+<span class='va'>objects</span>
 </code></pre>
 </div>
 <pre><code> [1] &quot;images/NSW395530.jpg&quot;  &quot;images/NSW461895.jpg&quot; 
@@ -2810,7 +2813,15 @@ attr(,&quot;server&quot;)
 [25] &quot;images/NSW777249.jpg&quot;  &quot;images/NSW739455.jpg&quot; 
 [27] &quot;images/NSW751830.jpg&quot; </code></pre>
 </div>
-<p>Define a function</p>
+<p>This all seems pretty reasonable, but there’s a nuance here that is worth pointing out. When you look at the output above, it’s tempting to think that <code>"images"</code> must be a subfolder within the S3 bucket. That intuition isn’t correct: each S3 bucket is a flat datastore. It doesn’t contain any subfolders: the <code>"/"</code> is treated as part of the object name, nothing more. It can be convenient to name objects this way, though, because it makes it a little easier to organise them into subfolders later on if you want to move them onto a more traditional hierarchical file system.</p>
+<p>Anyway…</p>
+<p>Since I’m going to try downloading objects that may or may not actually exist (i.e., I’m not certain if all these records actually have jpg files), I’m going to start out by writing a helper function <code>save_herbarium_image()</code> that does three things:</p>
+<ul>
+<li>First, it uses the <code>object_exists()</code> function to check if an object with that name exists in this bucket. The <code>object_exists()</code> function works similarly to the <code>bucket_exists()</code> function I used earlier: the only difference is that I also specify the object name.</li>
+<li>Second, if the object exists, it downloads the file and stores it locally, in the <code>"herbarium"</code> subfolder in the folder that contains this blog post.</li>
+<li>Third, it returns information to the user. If the object exists and was successfully downloaded, it returns a character string specifying the location of the saved file. If the object doesn’t exist, it returns <code>NA</code>.</li>
+</ul>
+<p>Here’s the code:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>save_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
@@ -2834,19 +2845,19 @@ attr(,&quot;server&quot;)
 </code></pre>
 </div>
 </div>
-<p>Test it out?</p>
+<p>And here it is applied to the first file:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>objects</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'>save_herbarium_image</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>[1] &quot;herbarium/images/NSW395530.jpg&quot;</code></pre>
 </div>
-<p>Okay now let’s <code>map_chr()</code> over all the files listed in <code>filepaths</code>, saving the relevant herbarium image in each case:</p>
+<p>That seemed to work well when applied to a single file, so I’ll use the functional programming tools from <strong>purrr</strong> to vectorise the operation. More precisely, I’ll use <code>map_chr()</code> to iterate over all of the <code>objects</code>, applying the <code>save_herbarium_image()</code> function to each one, and collecting the return values from all these function calls into a character vector:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>objects</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_chr</a></span><span class='op'>(</span><span class='va'>save_herbarium_image</span><span class='op'>)</span>
 </code></pre>
 </div>
@@ -2879,12 +2890,13 @@ attr(,&quot;server&quot;)
 [27] NA                               </code></pre>
 </div>
 <p>Did it work? Well, kind of. Notice there are some missing values in the output. In those cases the object doesn’t exist in this bucket, and when that happens the <code>save_herbarium_image()</code> function bails and doesn’t try to download anything. But in most cases images it worked.</p>
-<h3 id="behold-the-pretty-pictures">Behold the pretty pictures!</h3>
-<p>Even the jpg files are fairly high resolution and I don’t want this post to be too big, so I’ll shrink them for this post. Here’s my helper function:</p>
+<h3 id="a-minor-irritant-appears">A minor irritant appears!</h3>
+<p>At this point, I’d like to start displaying the images. It’s nice to have pretty pictures in a blog post, don’t you think? Like, maybe what I could do is include some of those images in this post. One problem though is that the files stored in the National Herbarium dataset are high resolution images and as consequence even the jpg files are usually about 7MB each. That’s a bit excessive, so I think what I’ll do is write a little helper function that reads in each image, resizes it to something smaller, and then saves that smaller file.</p>
+<p>If I want to do this within R, the <strong>magick</strong> package is my friend. It’s extremely well suited to this kind of image manipulation task. This post isn’t about the <strong>magick</strong> package, so I’m not going to explain this part of the code,<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> but suffice it to say that this helper function solves the problem:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shrink_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/on.exit.html'>on.exit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/gc.html'>gc</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># prevents cache problem</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/on.exit.html'>on.exit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/gc.html'>gc</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span>
   <span class='va'>img_from</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"images"</span>, <span class='va'>file</span><span class='op'>)</span>
   <span class='va'>img_to</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"tiny_images"</span>, <span class='va'>file</span><span class='op'>)</span>
   <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_read</a></span><span class='op'>(</span><span class='va'>img_from</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2894,7 +2906,7 @@ attr(,&quot;server&quot;)
 </code></pre>
 </div>
 </div>
-<p>and here’s me using <code>walk()</code> to shrink every image and the smol version in the <code>tiny_images</code> folder:</p>
+<p>Now that I have this function, I can iterate over every image stored in my local <code>images</code> folder, shrink it, and save the small version to the <code>tiny_images</code> folder:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2925,7 +2937,8 @@ attr(,&quot;server&quot;)
 [22] &quot;herbarium/tiny_images/NSW776212.jpg&quot; 
 [23] &quot;herbarium/tiny_images/NSW777249.jpg&quot; </code></pre>
 </div>
-<p>The output here is a character vector containing names for the created files. Here’s the contents of the <code>tiny_images</code> folder, but shown as the actual images rather than file names because that’s prettier:<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+<p>The output here is a character vector containing names for the created files. That’s nice as a way of checking that everything worked, but I want pretty pictures! So here’s the contents of the <code>tiny_images</code> folder, but shown as the actual images rather than file names:<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 <div>
 <div class="row p-0 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
@@ -3047,7 +3060,9 @@ attr(,&quot;server&quot;)
 </div>
 </div>
 </div>
-<p>Okay! Progress!</p>
+<p><br></p>
+<p>Progress!</p>
+<p><br></p>
 <h2 id="signing-up-for-an-aws-account">Signing up for an AWS account</h2>
 <h3 id="creating-the-account">Creating the account</h3>
 <p>Visit <a href="https://aws.amazon.com/s3/" class="uri">https://aws.amazon.com/s3/</a> and click on the “Create an AWS Account” button:</p>
@@ -3078,9 +3093,11 @@ attr(,&quot;server&quot;)
 AWS_SECRET_ACCESS_KEY=&lt;your secret key&gt;
 AWS_DEFAULT_REGION=ap-southeast-2</code></pre>
 <p>Your default region might be different from mine!</p>
+<p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW1055313.jpg" /><!-- --></p>
 </div>
+<p><br></p>
 <h2 id="manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</h2>
 <h3 id="creating-a-new-bucket">Creating a new bucket</h3>
 <div class="layout-chunk" data-layout="l-body">
@@ -3146,7 +3163,7 @@ attr(,&quot;server&quot;)
 </div>
 <pre><code>[1] TRUE</code></pre>
 </div>
-<p>Now everyone has read access to the bucket.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<p>Now everyone has read access to the bucket.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <h3 id="adding-objects-to-your-bucket">Adding objects to your bucket</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3179,16 +3196,16 @@ attr(,&quot;server&quot;)
 <pre><code># A tibble: 23 × 8
    Key            LastModified   ETag  Size  Owner_ID Owner_DisplayNa…
    &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
- 1 NSW1055313.jpg 2022-03-17T10… &quot;\&quot;c… 1494… b8b2319… djnavarro       
- 2 NSW121207.jpg  2022-03-17T10… &quot;\&quot;6… 1562… b8b2319… djnavarro       
- 3 NSW214616.jpg  2022-03-17T10… &quot;\&quot;f… 2041… b8b2319… djnavarro       
- 4 NSW29246.jpg   2022-03-17T10… &quot;\&quot;e… 1043… b8b2319… djnavarro       
- 5 NSW306564.jpg  2022-03-17T10… &quot;\&quot;d… 1819… b8b2319… djnavarro       
- 6 NSW307215.jpg  2022-03-17T10… &quot;\&quot;e… 1684… b8b2319… djnavarro       
- 7 NSW36860.jpg   2022-03-17T10… &quot;\&quot;f… 1962… b8b2319… djnavarro       
- 8 NSW389387.jpg  2022-03-17T10… &quot;\&quot;d… 1240… b8b2319… djnavarro       
- 9 NSW395530.jpg  2022-03-17T10… &quot;\&quot;3… 1435… b8b2319… djnavarro       
-10 NSW39618.jpg   2022-03-17T10… &quot;\&quot;a… 1028… b8b2319… djnavarro       
+ 1 NSW1055313.jpg 2022-03-17T12… &quot;\&quot;c… 1494… b8b2319… djnavarro       
+ 2 NSW121207.jpg  2022-03-17T12… &quot;\&quot;6… 1562… b8b2319… djnavarro       
+ 3 NSW214616.jpg  2022-03-17T12… &quot;\&quot;f… 2041… b8b2319… djnavarro       
+ 4 NSW29246.jpg   2022-03-17T12… &quot;\&quot;e… 1043… b8b2319… djnavarro       
+ 5 NSW306564.jpg  2022-03-17T12… &quot;\&quot;d… 1819… b8b2319… djnavarro       
+ 6 NSW307215.jpg  2022-03-17T12… &quot;\&quot;e… 1684… b8b2319… djnavarro       
+ 7 NSW36860.jpg   2022-03-17T12… &quot;\&quot;f… 1962… b8b2319… djnavarro       
+ 8 NSW389387.jpg  2022-03-17T12… &quot;\&quot;d… 1240… b8b2319… djnavarro       
+ 9 NSW395530.jpg  2022-03-17T12… &quot;\&quot;3… 1435… b8b2319… djnavarro       
+10 NSW39618.jpg   2022-03-17T12… &quot;\&quot;a… 1028… b8b2319… djnavarro       
 # … with 13 more rows, and 2 more variables: StorageClass &lt;chr&gt;,
 #   Bucket &lt;chr&gt;</code></pre>
 </div>
@@ -3224,6 +3241,7 @@ attr(,&quot;server&quot;)
 </div>
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg" /><!-- --></p>
 </div>
+<p><br></p>
 <h2 id="wrapping-up">Wrapping up</h2>
 <ul>
 <li>Copying objects between buckets</li>
@@ -3236,7 +3254,7 @@ attr(,&quot;server&quot;)
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-17 22:16:16 AEDT</p>
+<p>2022-03-17 23:32:12 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>
@@ -3249,8 +3267,9 @@ attr(,&quot;server&quot;)
 <hr />
 <ol>
 <li id="fn1" role="doc-endnote"><p>It’s deeply important to me that you read this knowing that I was singing <a href="https://www.youtube.com/watch?v=OiwDHHcHPh0"><em>Tragedy</em></a> by Steps at the time I wrote this, complete with dramatic hand gestures<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>I’m using the <strong>bs4cards</strong> package to display the images in this layout<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>You can specify different ACL settings for each object, if you want to. The <code>put_acl()</code> function also has an <code>object</code> argument that allows you to control the setting for a single object in a bucket.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>I will, yet again, sigh in frustration that I have to include the <code>on.exit(gc())</code> line. My limited understanding is as follows. The <strong>magick</strong> package provides wrappers to the C++ ImageMagick library, and none of the image manipulation is actually done in R. The objects that get “loaded” are just pointers, and exiting the <code>shrink_herbarium_image()</code> function doesn’t necessarily cause R to release memory. So whenever I’m iterating over many images, R doesn’t release old images from the magick resource cache unless I trigger the garbage collection with <code>gc()</code>. This feels inelegant but I haven’t had time to find a better solution.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>I’m using the <strong>bs4cards</strong> package to display the images in this layout. Oh, and if you click on any image you’ll see a higher resolution version of that image.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>You can specify different ACL settings for each object, if you want to. The <code>put_acl()</code> function also has an <code>object</code> argument that allows you to control the setting for a single object in a bucket.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->
