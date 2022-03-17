@@ -2199,7 +2199,7 @@ attr(,&quot;server&quot;)
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>put_tiny_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_object.html'>put_object</a></span><span class='op'>(</span>
-    file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images/"</span>, <span class='va'>file</span><span class='op'>)</span>,
+    file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"tiny_images"</span>, <span class='va'>file</span><span class='op'>)</span>,
     object <span class='op'>=</span> <span class='va'>file</span>, 
     bucket <span class='op'>=</span> <span class='st'>"s3://tiny-herbs/"</span>,
     acl <span class='op'>=</span> <span class='st'>"public-read"</span>
@@ -2293,7 +2293,7 @@ attr(,&quot;server&quot;)
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-18 08:30:35 AEDT</p>
+<p>2022-03-18 08:39:22 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>

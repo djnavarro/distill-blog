@@ -552,7 +552,7 @@ To put an object inside my new bucket, the function I need is `put_object()`. Wh
 ```{r}
 put_tiny_image <- function(file) {
   put_object(
-    file = paste0("herbarium/tiny_images/", file),
+    file = file.path("herbarium", "tiny_images", file),
     object = file, 
     bucket = "s3://tiny-herbs/",
     acl = "public-read"
