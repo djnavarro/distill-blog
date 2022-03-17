@@ -263,7 +263,7 @@ newtowners <- herbarium %>%
 
 Yeah, no. This is misleading.
 
-From a data science point of view I'm being extremely sloppy here. If my intention had been to find only plants from my neighbourhood, I would also be wise to filter by recorded longitude and latitude where available, and I would certainly want to exclude cases listed as coming from another Australian state. But that's not really my goal. I just wanted a query that would return around 20-30 results, so this is fine for my purposes. 
+From a data science point of view I'm being extremely sloppy here. If my intention had been to find only plants from my neighbourhood, I would also be wise to filter by recorded longitude and latitude where available, and I would certainly want to exclude cases listed as coming from another Australian state. "Newtown" is not an uncommon name, and -- to the surprise of nobody -- it turns out that there are several different locations called "Newtown" in different parts of Australia. Fortunately for me, I really don't care! All I wanted was a query that would return around 20-30 results, so this is fine for my purposes. 
 
 Now that we've got a subset of records, let's pull out the catalog numbers:
 
@@ -282,7 +282,7 @@ Hm. I wonder if I can write code to extract these images?
 <br>
 
 ```{r echo=FALSE}
-tiny_herb_url("NSW676197.jpg") %>% 
+tiny_herb_url("NSW307215.jpg") %>% 
   knitr::include_graphics()
 ```
 
@@ -486,7 +486,7 @@ AWS_DEFAULT_REGION=ap-southeast-2
 <br>
 
 ```{r echo=FALSE}
-tiny_herb_url("NSW1055313.jpg") %>% 
+tiny_herb_url("NSW650052.jpg") %>% 
   knitr::include_graphics()
 ```
 
