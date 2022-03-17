@@ -3110,13 +3110,16 @@ AWS_SECRET_ACCESS_KEY=&lt;your secret key&gt;</code></pre>
 <pre><code>AWS_ACCESS_KEY_ID=&lt;my access key id&gt;
 AWS_SECRET_ACCESS_KEY=&lt;my secret key&gt;
 AWS_DEFAULT_REGION=ap-southeast-2</code></pre>
+<p>After restarting R, these new settings will apply.</p>
 <p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW650052.jpg" /><!-- --></p>
 </div>
 <p><br></p>
 <h2 id="manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</h2>
+<p>Now that I have an AWS account and credentials, I can start using the <strong>aws.s3</strong> package for more than just downloading files. I can create my own buckets, put objects into those buckets, control the access settings for those objects, and a good deal more besides. So let’s give that a go, shall we?</p>
 <h3 id="creating-a-new-bucket">Creating a new bucket</h3>
+<p>The function to create a new bucket is called <code>put_bucket()</code> and now that my credentials are set up it’s almost comically easy to use. If I want to create a bucket called <code>"tiny-herbs"</code>, this is what I do:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_bucket.html'>put_bucket</a></span><span class='op'>(</span><span class='st'>"tiny-herbs"</span><span class='op'>)</span>
@@ -3124,13 +3127,9 @@ AWS_DEFAULT_REGION=ap-southeast-2</code></pre>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='cn'>TRUE</span>
-</code></pre>
-</div>
 <pre><code>[1] TRUE</code></pre>
 </div>
-<p>Okay, so does it exist?</p>
+<p>That seems too easy? I am skeptical. I’m convinced that something must have gone wrong, so my first impulse is to use <code>bucket_exists()</code> to verify that it worked. Okay, so… does this new bucket exist?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> 
@@ -3153,7 +3152,7 @@ attr(,&quot;server&quot;)
 [1] &quot;AmazonS3&quot;</code></pre>
 </div>
 <p>It does, and notice that both <code>put_bucket()</code> and <code>bucket_exists()</code> have respected my default region setting. When I called <code>put_bucket()</code>, the <strong>aws.s3</strong> package supplied the region from my default and so the bucket was created in Sydney (i.e., “ap-southeast-2”), and it did the same again when I used <code>bucket_exists()</code> to look for the buckets.</p>
-<p>So what’s in the bucket?</p>
+<p>So what’s in the bucket? Just like I did with the National Herbarium bucket, I can use the <code>get_bucket_df()</code> function to inspect the contents of my bucket:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_bucket.html'>get_bucket_df</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -3167,7 +3166,8 @@ attr(,&quot;server&quot;)
 #   Size &lt;chr&gt;, Owner_ID &lt;chr&gt;, Owner_DisplayName &lt;chr&gt;,
 #   StorageClass &lt;chr&gt;, Bucket &lt;chr&gt;</code></pre>
 </div>
-<p>Nothing! Well that makes sense.</p>
+<p>Hm. Well, yes. Of course it’s empty: I haven’t put any objects in it yet. Maybe I should do that? It does seem like a good idea!</p>
+<p>But first…</p>
 <h3 id="managing-access-control">Managing access control</h3>
 <p>One thing though… is this private or public? This is governed by the Access Control List (ACL) settings. By default, S3 buckets are set to private. You can read and write to them, but no-one else has any access at all. Let’s soften that slightly, and allow anyone to read from the “tiny-herbs” bucket. I could have done that from the beginning by setting <code>acl = "public-read"</code> when I called <code>put_bucket()</code>. However, because I “forgot” to do that earlier, I’ll change it now using <code>put_acl()</code></p>
 <div class="layout-chunk" data-layout="l-body">
@@ -3182,9 +3182,10 @@ attr(,&quot;server&quot;)
 </div>
 <p>Now everyone has read access to the bucket.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <h3 id="adding-objects-to-your-bucket">Adding objects to your bucket</h3>
+<p>To put an object inside my new bucket, the function I need is <code>put_object()</code>. When calling it, I need to specify the local path to the <code>file</code> that I want to upload, the name that the <code>object</code> will be assigned when it is added to the bucket, and of course the <code>bucket</code> itself. This time around, I’ll also explicitly set <code>acl = "public-read"</code> to ensure that – while only I have write access – everyone has read access and can download the object if they want to. Because I’m going to call this repeatedly, I’ll wrap all this in a helper function called <code>put_tiny_image()</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>post_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>put_tiny_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_object.html'>put_object</a></span><span class='op'>(</span>
     file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images/"</span>, <span class='va'>file</span><span class='op'>)</span>,
     object <span class='op'>=</span> <span class='va'>file</span>, 
@@ -3195,15 +3196,27 @@ attr(,&quot;server&quot;)
 </code></pre>
 </div>
 </div>
-<p>Let’s walk:</p>
+<p>To see this in action, let’s create a vector that lists the names of all the tiny images, and then apply the <code>put_tiny_image()</code> function to the first one:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>post_herbarium_image</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tiny_images</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images"</span><span class='op'>)</span>
+<span class='va'>tiny_images</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'>put_tiny_image</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
+<pre><code>[1] TRUE</code></pre>
 </div>
-<p>Now what do we have:</p>
+<p>Okay that seems to work, so once again I’ll use <strong>purrr</strong> to iterate over all the <code>tiny_images</code>, uploading them one by one into my newly-created bucket:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tiny_images</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_lgl</a></span><span class='op'>(</span><span class='va'>put_tiny_image</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code> [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+[14] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+</div>
+<p>That looks pretty good! I’m seeing nothing but <code>TRUE</code> values in the output so it looks like I’ve successfully uploaded all the tiny images. Now that I’ve done this, I can try calling <code>get_bucket_df()</code> again to inspect the current contents of the bucket:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_bucket.html'>get_bucket_df</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -3213,21 +3226,22 @@ attr(,&quot;server&quot;)
 <pre><code># A tibble: 23 × 8
    Key            LastModified   ETag  Size  Owner_ID Owner_DisplayNa…
    &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
- 1 NSW1055313.jpg 2022-03-17T12… &quot;\&quot;c… 1494… b8b2319… djnavarro       
- 2 NSW121207.jpg  2022-03-17T12… &quot;\&quot;6… 1562… b8b2319… djnavarro       
- 3 NSW214616.jpg  2022-03-17T12… &quot;\&quot;f… 2041… b8b2319… djnavarro       
- 4 NSW29246.jpg   2022-03-17T12… &quot;\&quot;e… 1043… b8b2319… djnavarro       
- 5 NSW306564.jpg  2022-03-17T12… &quot;\&quot;d… 1819… b8b2319… djnavarro       
- 6 NSW307215.jpg  2022-03-17T12… &quot;\&quot;e… 1684… b8b2319… djnavarro       
- 7 NSW36860.jpg   2022-03-17T12… &quot;\&quot;f… 1962… b8b2319… djnavarro       
- 8 NSW389387.jpg  2022-03-17T12… &quot;\&quot;d… 1240… b8b2319… djnavarro       
- 9 NSW395530.jpg  2022-03-17T12… &quot;\&quot;3… 1435… b8b2319… djnavarro       
-10 NSW39618.jpg   2022-03-17T12… &quot;\&quot;a… 1028… b8b2319… djnavarro       
+ 1 NSW1055313.jpg 2022-03-17T14… &quot;\&quot;c… 1494… b8b2319… djnavarro       
+ 2 NSW121207.jpg  2022-03-17T14… &quot;\&quot;6… 1562… b8b2319… djnavarro       
+ 3 NSW214616.jpg  2022-03-17T14… &quot;\&quot;f… 2041… b8b2319… djnavarro       
+ 4 NSW29246.jpg   2022-03-17T14… &quot;\&quot;e… 1043… b8b2319… djnavarro       
+ 5 NSW306564.jpg  2022-03-17T14… &quot;\&quot;d… 1819… b8b2319… djnavarro       
+ 6 NSW307215.jpg  2022-03-17T14… &quot;\&quot;e… 1684… b8b2319… djnavarro       
+ 7 NSW36860.jpg   2022-03-17T14… &quot;\&quot;f… 1962… b8b2319… djnavarro       
+ 8 NSW389387.jpg  2022-03-17T14… &quot;\&quot;d… 1240… b8b2319… djnavarro       
+ 9 NSW395530.jpg  2022-03-17T14… &quot;\&quot;3… 1435… b8b2319… djnavarro       
+10 NSW39618.jpg   2022-03-17T14… &quot;\&quot;a… 1028… b8b2319… djnavarro       
 # … with 13 more rows, and 2 more variables: StorageClass &lt;chr&gt;,
 #   Bucket &lt;chr&gt;</code></pre>
 </div>
+<p>Yay! It’s done!</p>
 <h3 id="urls-for-objects-in-public-buckets">URLs for objects in public buckets</h3>
-<p>The images I’ve been displaying throughout are all stored in the “tiny-herbs” bucket. I wrote a little helper function that</p>
+<p>One last thing. Because the <code>"tiny-herbs"</code> bucket is public, the objects it contains each have their own URL. To make my life a little easier, I wrote a helper function that constructs these URL:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tiny_herb_url</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, 
@@ -3241,7 +3255,7 @@ attr(,&quot;server&quot;)
 </code></pre>
 </div>
 </div>
-<p>Here’s what it does:</p>
+<p>For example, here’s one of the URLs associated with the <code>"tiny-herbs"</code> bucket:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span>
@@ -3249,7 +3263,7 @@ attr(,&quot;server&quot;)
 </div>
 <pre><code>[1] &quot;https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg&quot;</code></pre>
 </div>
-<p>The code I’ve been using to display the images throughout the post looks like this:</p>
+<p>The images I’ve been showing throughout this post aren’t the original ones from the National Herbarium data set. Rather, they’re the smaller files I stored in the <code>"tiny-herbs"</code> bucket, and the code I’ve been using to display the images throughout the post looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -3267,7 +3281,7 @@ attr(,&quot;server&quot;)
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-18 00:40:29 AEDT</p>
+<p>2022-03-18 01:18:09 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>
@@ -3275,7 +3289,7 @@ attr(,&quot;server&quot;)
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
