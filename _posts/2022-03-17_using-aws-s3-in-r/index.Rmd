@@ -1,5 +1,5 @@
 ---
-title: "Using with Amazon S3 with R"
+title: "Using Amazon S3 with R"
 description:
   Somehow I was convinced that using Amazon S3 would be a 
   supremely difficult thing to learn, kind of like learning
