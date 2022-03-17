@@ -3243,18 +3243,14 @@ attr(,&quot;server&quot;)
 </div>
 <p><br></p>
 <h2 id="wrapping-up">Wrapping up</h2>
-<ul>
-<li>Copying objects between buckets</li>
-<li>Deleting objects and buckets</li>
-<li>Control tagging metadata for the bucket</li>
-<li>Control cross-origin resource sharing configuration</li>
-<li>Configure an S3 bucket to work as a website</li>
-<li>… and more</li>
-</ul>
+<p>At the end of all this you might have all kinds of questions. Questions like, “Danielle, what’s wrong with you?” and “Danielle, is this even your job? Aren’t you supposed to be working on Apache Arrow?” While I could write an entire novel trying to answer the first one, I think I’ll skip over it and move straight onto the second on, because that’s more interesting and doesn’t require anyone to get a therapist.</p>
+<p>Although this isn’t a post about Apache Arrow – and so is not directly related to the work I do every day – of the reasons I found myself looking into S3 in the first place is that Arrow is a tool designed to let data scientists work with very large data sets, and S3 is a tool designed to make it easy to store very large data sets. These two things go well together, so much so that the <strong>arrow</strong> R package has its own support for S3 data storage, and many of the data sets that new <strong>arrow</strong> users encounter are stored on S3. From an educational perspective (sorry – I used to be an academic and I can’t help myself) it’s really difficult for people when they need to learn lots of things at the same time. Trying to learn how Arrow works is really hard when you’re still confused about S3. When I started learning Arrow I didn’t know anything about S3, and it was extremely frustrating to have to learn Arrow concepts with all this confusing S3 stuff floating around.</p>
+<p>Hence… this post. My main goal here was to talk about S3 as a topic in its own right, and how tools like <strong>aws.s3</strong> allow R users to write code that interacts with S3 data storage. But it’s very handy background knowledge to have if you’re planning to use <strong>arrow</strong> later on.</p>
+<p>On top of all that, the <strong>aws.s3</strong> package has a lot more functionality that I haven’t talked about here. You can use it to copy objects from one bucket to another, and delete objects and buckets that you control. You can use it to add tagging metadata, you can use it to configure your S3 bucket as a website (yes, even with all that painful cross-origin resource sharing configuration stuff), and a good deal more besides. It’s a really nice package and I’m glad I took the time to learn it!</p>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-17 23:32:12 AEDT</p>
+<p>2022-03-17 23:59:24 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>

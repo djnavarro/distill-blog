@@ -564,13 +564,14 @@ tiny_herb_url("NSW121207.jpg") %>%
 
 ## Wrapping up
 
+At the end of all this you might have all kinds of questions. Questions like, "Danielle, what's wrong with you?" and "Danielle, is this even your job? Aren't you supposed to be working on Apache Arrow?" While I could write an entire novel trying to answer the first one, I think I'll skip over it and move straight onto the second on, because that's more interesting and doesn't require anyone to get a therapist. 
 
-- Copying objects between buckets
-- Deleting objects and buckets
-- Control tagging metadata for the bucket
-- Control cross-origin resource sharing configuration 
-- Configure an S3 bucket to work as a website
-- ... and more
+Although this isn't a post about Apache Arrow -- and so is not directly related to the work I do every day -- of the reasons I found myself looking into S3 in the first place is that Arrow is a tool designed to let data scientists work with very large data sets, and S3 is a tool designed to make it easy to store very large data sets. These two things go well together, so much so that the **arrow** R package has its own support for S3 data storage, and many of the data sets that new **arrow** users encounter are stored on S3. From an educational perspective (sorry -- I used to be an academic and I can't help myself) it's really difficult for people when they need to learn lots of things at the same time. Trying to learn how Arrow works is really hard when you're still confused about S3. When I started learning Arrow I didn't know anything about S3, and it was extremely frustrating to have to learn Arrow concepts with all this confusing S3 stuff floating around. 
+
+Hence... this post. My main goal here was to talk about S3 as a topic in its own right, and how tools like **aws.s3** allow R users to write code that interacts with S3 data storage. But it's very handy background knowledge to have if you're planning to use **arrow** later on. 
+
+On top of all that, the **aws.s3** package has a lot more functionality that I haven't talked about here. You can use it to copy objects from one bucket to another, and delete objects and buckets that you control. You can use it to add tagging metadata, you can use it to configure your S3 bucket as a website (yes, even with all that painful cross-origin resource sharing configuration stuff), and a good deal more besides. It's a really nice package and I'm glad I took the time to learn it!
+
 
 <!--------------- appendices ----------------->
 
