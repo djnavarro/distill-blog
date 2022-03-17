@@ -512,7 +512,7 @@ TRUE
 
 That seems too easy? I am skeptical. I'm convinced that something must have gone wrong, so my first impulse is to use `bucket_exists()` to verify that it worked. Okay, so... does this new bucket exist?
 
-```{r check-new-bucket, cache=TRUE}
+```{r check-new-bucket}
 bucket_exists("s3://tiny-herbs/") 
 ```
 

@@ -3135,17 +3135,19 @@ AWS_DEFAULT_REGION=ap-southeast-2</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> 
 </code></pre>
 </div>
-<pre><code>[1] FALSE
+<pre><code>[1] TRUE
+attr(,&quot;x-amz-id-2&quot;)
+[1] &quot;8P9bDUPXKFU3ZbWzgO4SpVbPDGl2vMXDdIpeeYiiUboabjkAo6x9jrUeEB54/tBx5uIe7IxrGeg=&quot;
+attr(,&quot;x-amz-request-id&quot;)
+[1] &quot;SA5A604VPPHZWSA0&quot;
+attr(,&quot;date&quot;)
+[1] &quot;Thu, 17 Mar 2022 23:07:07 GMT&quot;
 attr(,&quot;x-amz-bucket-region&quot;)
 [1] &quot;ap-southeast-2&quot;
-attr(,&quot;x-amz-request-id&quot;)
-[1] &quot;X3R9C0ME49QCKVE6&quot;
-attr(,&quot;x-amz-id-2&quot;)
-[1] &quot;Pu07OxuyUPQAXVycQE+8cpseTk9V/xnJKNrRMVEVw8UkKp89EygocliFEeu1E9qsqFUGgd/9XDs=&quot;
+attr(,&quot;x-amz-access-point-alias&quot;)
+[1] &quot;false&quot;
 attr(,&quot;content-type&quot;)
 [1] &quot;application/xml&quot;
-attr(,&quot;date&quot;)
-[1] &quot;Thu, 17 Mar 2022 21:09:42 GMT&quot;
 attr(,&quot;server&quot;)
 [1] &quot;AmazonS3&quot;</code></pre>
 </div>
@@ -3224,7 +3226,7 @@ attr(,&quot;server&quot;)
 <pre><code># A tibble: 23 × 8
    Key            LastModified   ETag  Size  Owner_ID Owner_DisplayNa…
    &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
- 1 NSW1055313.jpg 2022-03-17T22… &quot;\&quot;c… 1494… b8b2319… djnavarro       
+ 1 NSW1055313.jpg 2022-03-17T23… &quot;\&quot;c… 1494… b8b2319… djnavarro       
  2 NSW121207.jpg  2022-03-17T21… &quot;\&quot;6… 1562… b8b2319… djnavarro       
  3 NSW214616.jpg  2022-03-17T21… &quot;\&quot;f… 2041… b8b2319… djnavarro       
  4 NSW29246.jpg   2022-03-17T21… &quot;\&quot;e… 1043… b8b2319… djnavarro       
@@ -3279,7 +3281,7 @@ attr(,&quot;server&quot;)
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-18 09:08:26 AEDT</p>
+<p>2022-03-18 10:07:08 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>
