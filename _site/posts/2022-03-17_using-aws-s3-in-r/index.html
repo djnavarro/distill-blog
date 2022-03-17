@@ -2492,7 +2492,15 @@ d-appendix d-footnote-list a.footnote-backlink {
 <li><a href="#behold-the-pretty-pictures">Behold the pretty pictures!</a></li>
 </ul></li>
 <li><a href="#signing-up-for-an-aws-account">Signing up for an AWS account</a></li>
-<li><a href="#manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</a></li>
+<li><a href="#manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</a>
+<ul>
+<li><a href="#storing-your-aws-credentials-in-r">Storing your AWS credentials in R</a></li>
+<li><a href="#creating-a-new-bucket">Creating a new bucket</a></li>
+<li><a href="#managing-access-control">Managing access control</a></li>
+<li><a href="#adding-objects-to-your-bucket">Adding objects to your bucket</a></li>
+<li><a href="#urls-for-objects-in-public-buckets">URLs for objects in public buckets</a></li>
+<li><a href="#other-functionality">Other functionality?</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -2820,10 +2828,168 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 </div>
 <h2 id="signing-up-for-an-aws-account">Signing up for an AWS account</h2>
 <h2 id="manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</h2>
+<h3 id="storing-your-aws-credentials-in-r">Storing your AWS credentials in R</h3>
+<p>Add these lines to .Renviron</p>
+<pre><code>AWS_ACCESS_KEY_ID=&lt;your access key id&gt;
+AWS_SECRET_ACCESS_KEY=&lt;your secret key&gt;
+AWS_DEFAULT_REGION=ap-southeast-2</code></pre>
+<p>Your default region might be different from mine!</p>
+<h3 id="creating-a-new-bucket">Creating a new bucket</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_bucket.html'>put_bucket</a></span><span class='op'>(</span><span class='st'>"tiny-herbs"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='cn'>TRUE</span>
+</code></pre>
+</div>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<p>Okay, so does it exist?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>[1] TRUE
+attr(,&quot;x-amz-id-2&quot;)
+[1] &quot;sNMU7X0Zgx5j16lDodqSHfW7ewQ0LxnOLq6mcD/1CVy63a5h2432pKatoeSSQC2JiMYgnp5Sndw=&quot;
+attr(,&quot;x-amz-request-id&quot;)
+[1] &quot;AA4GXH662QR4638Q&quot;
+attr(,&quot;date&quot;)
+[1] &quot;Thu, 17 Mar 2022 05:26:23 GMT&quot;
+attr(,&quot;x-amz-bucket-region&quot;)
+[1] &quot;ap-southeast-2&quot;
+attr(,&quot;x-amz-access-point-alias&quot;)
+[1] &quot;false&quot;
+attr(,&quot;content-type&quot;)
+[1] &quot;application/xml&quot;
+attr(,&quot;server&quot;)
+[1] &quot;AmazonS3&quot;</code></pre>
+</div>
+<p>It does, and notice that both <code>put_bucket()</code> and <code>bucket_exists()</code> have respected my default region setting. When I called <code>put_bucket()</code>, the <strong>aws.s3</strong> package supplied the region from my default and so the bucket was created in Sydney (i.e., “ap-southeast-2”), and it did the same again when I used <code>bucket_exists()</code> to look for the buckets.</p>
+<p>So what’s in the bucket?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_bucket.html'>get_bucket_df</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 0 × 8
+# … with 8 variables: Key &lt;chr&gt;, LastModified &lt;chr&gt;, ETag &lt;chr&gt;,
+#   Size &lt;chr&gt;, Owner_ID &lt;chr&gt;, Owner_DisplayName &lt;chr&gt;,
+#   StorageClass &lt;chr&gt;, Bucket &lt;chr&gt;</code></pre>
+</div>
+<p>Nothing! Well that makes sense.</p>
+<h3 id="managing-access-control">Managing access control</h3>
+<p>One thing though… is this private or public? This is governed by the Access Control List (ACL) settings. By default, S3 buckets are set to private. You can read and write to them, but no-one else has any access at all. Let’s soften that slightly, and allow anyone to read from the “tiny-herbs” bucket. I could have done that from the beginning by setting <code>acl = "public-read"</code> when I called <code>put_bucket()</code>. However, because I “forgot” to do that earlier, I’ll change it now using <code>put_acl()</code></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/acl.html'>put_acl</a></span><span class='op'>(</span>
+  bucket <span class='op'>=</span> <span class='st'>"s3://tiny-herbs/"</span>,
+  acl <span class='op'>=</span> <span class='st'>"public-read"</span>
+<span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<p>Now everyone has read access to the bucket.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<h3 id="adding-objects-to-your-bucket">Adding objects to your bucket</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>post_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"uploading"</span>, <span class='va'>file</span>, <span class='st'>"..."</span><span class='op'>)</span>
+  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_object.html'>put_object</a></span><span class='op'>(</span>
+    file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/images/"</span>, <span class='va'>file</span><span class='op'>)</span>,
+    object <span class='op'>=</span> <span class='va'>file</span>, 
+    bucket <span class='op'>=</span> <span class='st'>"s3://tiny-herbs/"</span>,
+    acl <span class='op'>=</span> <span class='st'>"public-read"</span>
+  <span class='op'>)</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='va'>out</span> <span class='op'>==</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"success!\n"</span><span class='op'>)</span>
+    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span><span class='op'>(</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='op'>}</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"failed\n"</span><span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span><span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>images</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span><span class='op'>)</span>
+<span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>images</span>, <span class='va'>post_herbarium_image</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>uploading NSW1055313.jpg ...success!
+uploading NSW121207.jpg ...success!
+uploading NSW29246.jpg ...success!
+uploading NSW570557.jpg ...success!
+uploading NSW676197.jpg ...success!
+uploading NSW687458.jpg ...success!</code></pre>
+</div>
+<p>Now what do we have:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_bucket.html'>get_bucket_df</a></span><span class='op'>(</span><span class='st'>"s3://tiny-herbs/"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 6 × 8
+  Key            LastModified    ETag  Size  Owner_ID Owner_DisplayNa…
+  &lt;chr&gt;          &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
+1 NSW1055313.jpg 2022-03-17T06:… &quot;\&quot;0… 1504… b8b2319… djnavarro       
+2 NSW121207.jpg  2022-03-17T06:… &quot;\&quot;5… 1562… b8b2319… djnavarro       
+3 NSW29246.jpg   2022-03-17T06:… &quot;\&quot;4… 1044… b8b2319… djnavarro       
+4 NSW570557.jpg  2022-03-17T06:… &quot;\&quot;c… 1196… b8b2319… djnavarro       
+5 NSW676197.jpg  2022-03-17T06:… &quot;\&quot;d… 1863… b8b2319… djnavarro       
+6 NSW687458.jpg  2022-03-17T06:… &quot;\&quot;6… 1410… b8b2319… djnavarro       
+# … with 2 more variables: StorageClass &lt;chr&gt;, Bucket &lt;chr&gt;</code></pre>
+</div>
+<h3 id="urls-for-objects-in-public-buckets">URLs for objects in public buckets</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tiny_herb_url</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='va'>bucket</span> <span class='op'>&lt;-</span> <span class='st'>"tiny-herbs"</span>
+  <span class='va'>region</span> <span class='op'>&lt;-</span> <span class='st'>"ap-southeast-2"</span>
+  <span class='va'>url</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span>
+    <span class='st'>"https://"</span>, <span class='va'>bucket</span>, <span class='st'>"."</span>, <span class='st'>"s3-"</span>, 
+    <span class='va'>region</span>, <span class='st'>".amazonaws.com/"</span>, <span class='va'>object</span>
+  <span class='op'>)</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
+<span class='op'>}</span>
+<span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg&quot;</code></pre>
+</div>
+<p>In fact…</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg" /><!-- --></p>
+</div>
+<h3 id="other-functionality">Other functionality?</h3>
+<ul>
+<li>Copying objects between buckets</li>
+<li>Deleting objects and buckets</li>
+<li>Control tagging metadata for the bucket</li>
+<li>Control cross-origin resource sharing configuration</li>
+<li>Configure an S3 bucket to work as a website</li>
+<li>… and more</li>
+</ul>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-17 15:23:30 AEDT</p>
+<p>2022-03-17 17:37:34 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>
@@ -2831,13 +2997,14 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
 <li id="fn1" role="doc-endnote"><p>Okay fine, I used “Amazon Mechanical Turk” a lot as part of my academic work, but that’s hardly a core data science skill.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2" role="doc-endnote"><p>Again, I cannot stress how much I do not know about AWS. I guess that’s the term for virtual machines. Whatever. This isn’t a post about EC2<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3" role="doc-endnote"><p>It’s deeply important to me that you read this knowing that I was singing <a href="https://www.youtube.com/watch?v=OiwDHHcHPh0"><em>Tragedy</em></a> by Steps at the time I wrote this, complete with dramatic hand gestures<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4" role="doc-endnote"><p>You can specify different ACL settings for each object, if you want to. The <code>put_acl()</code> function also has an <code>object</code> argument that allows you to control the setting for a single object in a bucket.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->

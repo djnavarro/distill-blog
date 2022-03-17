@@ -287,6 +287,126 @@ bs4cards::cards(
 ## Manipulating your S3 storage from R
 
 
+### Storing your AWS credentials in R
+
+Add these lines to .Renviron
+
+```
+AWS_ACCESS_KEY_ID=<your access key id>
+AWS_SECRET_ACCESS_KEY=<your secret key>
+AWS_DEFAULT_REGION=ap-southeast-2
+```
+
+Your default region might be different from mine!
+
+### Creating a new bucket
+
+
+```{r put-bucket, eval=FALSE}
+put_bucket("tiny-herbs")
+```
+```{r}
+TRUE
+```
+
+Okay, so does it exist?
+
+```{r check-new-bucket, cache=TRUE}
+bucket_exists("s3://tiny-herbs/") 
+```
+
+It does, and notice that both `put_bucket()` and `bucket_exists()` have respected my default region setting. When I called `put_bucket()`, the **aws.s3** package supplied the region from my default and so the bucket was created in Sydney (i.e., "ap-southeast-2"), and it did the same again when I used `bucket_exists()` to look for the buckets.
+
+So what's in the bucket?
+
+```{r, eval=FALSE}
+get_bucket_df("s3://tiny-herbs/") %>% 
+  as_tibble()
+```
+```{r, echo=FALSE}
+readRDS("empty_bucket.rds")
+```
+
+Nothing! Well that makes sense. 
+
+
+### Managing access control
+
+One thing though... is this private or public? This is governed by the Access Control List (ACL) settings. By default, S3 buckets are set to private. You can read and write to them, but no-one else has any access at all. Let's soften that slightly, and allow anyone to read from the "tiny-herbs" bucket. I could have done that from the beginning by setting `acl = "public-read"` when I called `put_bucket()`. However, because I "forgot" to do that earlier, I'll change it now using `put_acl()`
+
+```{r, cache=TRUE}
+put_acl(
+  bucket = "s3://tiny-herbs/",
+  acl = "public-read"
+)
+```
+
+Now everyone has read access to the bucket.^[You can specify different ACL settings for each object, if you want to. The `put_acl()` function also has an `object` argument that allows you to control the setting for a single object in a bucket.]
+
+### Adding objects to your bucket
+
+```{r}
+post_herbarium_image <- function(file) {
+  cat("uploading", file, "...")
+  out <- put_object(
+    file = paste0("herbarium/images/", file),
+    object = file, 
+    bucket = "s3://tiny-herbs/",
+    acl = "public-read"
+  )
+  if(out == TRUE) {
+    cat("success!\n")
+    return(invisible(TRUE))
+  }
+  cat("failed\n")
+  return(invisible(FALSE))
+}
+```
+
+```{r, cache=TRUE}
+images <- list.files("herbarium/images")
+walk(images, post_herbarium_image)
+```
+
+Now what do we have:
+
+```{r}
+get_bucket_df("s3://tiny-herbs/") %>% 
+  as_tibble()
+```
+
+### URLs for objects in public buckets
+
+```{r}
+tiny_herb_url <- function(object) {
+  bucket <- "tiny-herbs"
+  region <- "ap-southeast-2"
+  url <- paste0(
+    "https://", bucket, ".", "s3-", 
+    region, ".amazonaws.com/", object
+  )
+  return(url)
+}
+tiny_herb_url("NSW121207.jpg")
+```
+
+In fact...
+
+```{r}
+tiny_herb_url("NSW121207.jpg") %>% 
+  knitr::include_graphics()
+```
+
+
+### Other functionality?
+
+- Copying objects between buckets
+- Deleting objects and buckets
+- Control tagging metadata for the bucket
+- Control cross-origin resource sharing configuration 
+- Configure an S3 bucket to work as a website
+- ... and more
+
 <!--------------- appendices ----------------->
 
 ```{r, echo=FALSE}
