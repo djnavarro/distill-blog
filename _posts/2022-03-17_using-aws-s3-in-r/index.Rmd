@@ -1,17 +1,21 @@
 ---
-title: "Working with Amazon S3 within R - it's surprisingly easy" # <---- UPDATE ME
+title: "Using with Amazon S3 with R"
 description:
-  Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, 
-  consectetur, adipisci velit # <---- UPDATE ME
+  Somehow I was convinced that using Amazon S3 would be a 
+  supremely difficult thing to learn, kind of like learning
+  git and GitHub for the first time. Thankfully, it's not
+  like that at all. With the help of the aws.s3 package,
+  you can manage cloud data storage from R with surprisingly
+  little pain.
 author:
   - first_name: "Danielle"
     last_name: "Navarro"
     url: https://djnavarro.net
-    affiliation: UNSW Sydney
-    affiliation_url: https://unsw.edu.au
+    affiliation: Voltron Data
+    affiliation_url: https://voltrondata.com
     orcid_id: 0000-0001-7648-6578
 date: 2022-03-17
-preview: preview-image.jpg  # <---- UPDATE ME 
+preview: preview-image.jpg  
 creative_commons: CC BY
 citation_url: https://blog.djnavarro.net/using-aws-s3-in-r 
 repository_url: https://github.com/djnavarro/distill-blog/
@@ -46,6 +50,16 @@ renv::use(lockfile = here::here(
 )
 #refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 knitr::opts_chunk$set(echo = TRUE)
+
+tiny_herb_url <- function(object) {
+  bucket <- "tiny-herbs"
+  region <- "ap-southeast-2"
+  url <- paste0(
+    "https://", bucket, ".", "s3-", 
+    region, ".amazonaws.com/", object
+  )
+  return(url)
+}
 ```
 
 
@@ -69,7 +83,18 @@ library(magick)
 library(aws.s3)
 ```
 
+```{r echo=FALSE}
+tiny_herb_url("NSW687458.jpg") %>% 
+  knitr::include_graphics()
+```
+
 ## What is S3 and why do I care?
+
+
+```{r echo=FALSE}
+tiny_herb_url("NSW29246.jpg") %>% 
+  knitr::include_graphics()
+```
 
 ## Downloading public data from S3
 
@@ -219,6 +244,13 @@ newtowners$catalogNumber
 
 I wonder if I can write code to extract these images?
 
+
+```{r echo=FALSE}
+tiny_herb_url("NSW676197.jpg") %>% 
+  knitr::include_graphics()
+```
+
+
 ### Scripting the download
 
 Okay, now I want to pull the images for these records. First, I'm going to construct the paths. I am *not* going to download the jp2 files because they're about 100MB each. That's why this is on S3, by the way. There are `r nrow(herbarium)` distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let's go with the jpgs shall we?
@@ -257,23 +289,24 @@ walk(filepaths, save_herbarium_image)
 
 Even the jpg files are fairly high resolution and I don't want this post to be too big, so I'll shrink them for this post
 
-```{r, eval=FALSE}
+```{r}
 shrink_herbarium_image <- function(file) {
-  image_read(file) %>% 
+  img_from <- file.path("herbarium", "images", file)
+  img_to <- file.path("herbarium", "tiny_images", file)
+  image_read(img_from) %>% 
     image_resize(geometry_size_pixels(width = 1000)) %>% 
-    image_write(file)
-  
-  gc() # prevents cache resource expiry
+    image_write(img_to)
+  gc() # prevents cache problem
 }
 
-images <- list.files("herbarium/images", full.names = TRUE)
-walk(images, shrink_herbarium_image)
+list.files("herbarium/images") %>% 
+  walk(shrink_herbarium_image)
 ```
 
 Here they are:
 
 ```{r, echo=FALSE}
-tibble(images = list.files("herbarium/images", full.names = TRUE)) %>% 
+tibble(images = list.files("herbarium/tiny_images", full.names = TRUE)) %>% 
 bs4cards::cards(
   image = images, 
   width = 3,
@@ -349,7 +382,7 @@ Now everyone has read access to the bucket.^[You can specify different ACL setti
 post_herbarium_image <- function(file) {
   cat("uploading", file, "...")
   out <- put_object(
-    file = paste0("herbarium/images/", file),
+    file = paste0("herbarium/tiny_images/", file),
     object = file, 
     bucket = "s3://tiny-herbs/",
     acl = "public-read"
@@ -363,9 +396,9 @@ post_herbarium_image <- function(file) {
 }
 ```
 
-```{r, cache=TRUE}
-images <- list.files("herbarium/images")
-walk(images, post_herbarium_image)
+```{r}
+list.files("herbarium/tiny_images") %>% 
+  walk(post_herbarium_image)
 ```
 
 Now what do we have:

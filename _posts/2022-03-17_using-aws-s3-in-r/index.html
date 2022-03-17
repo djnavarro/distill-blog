@@ -87,9 +87,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>Working with Amazon S3 within R - it's surprisingly easy</title>
+  <title>Using with Amazon S3 with R</title>
 
-  <meta property="description" itemprop="description" content="Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"/>
+  <meta property="description" itemprop="description" content="Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it&#39;s not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain."/>
 
   <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 
@@ -99,34 +99,34 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <meta name="article:author" content="Danielle Navarro"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Working with Amazon S3 within R - it&#39;s surprisingly easy"/>
+  <meta property="og:title" content="Using with Amazon S3 with R"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"/>
+  <meta property="og:description" content="Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it&#39;s not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain."/>
   <meta property="og:locale" content="en_US"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Working with Amazon S3 within R - it&#39;s surprisingly easy"/>
-  <meta property="twitter:description" content="Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"/>
+  <meta property="twitter:title" content="Using with Amazon S3 with R"/>
+  <meta property="twitter:description" content="Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it&#39;s not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain."/>
 
   <!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
-  <meta name="citation_title" content="Working with Amazon S3 within R - it&#39;s surprisingly easy"/>
+  <meta name="citation_title" content="Using with Amazon S3 with R"/>
   <meta name="citation_fulltext_html_url" content="https://blog.djnavarro.net/using-aws-s3-in-r"/>
   <meta name="citation_fulltext_world_readable" content=""/>
   <meta name="citation_online_date" content="2022/03/17"/>
   <meta name="citation_publication_date" content="2022/03/17"/>
   <meta name="citation_author" content="Danielle Navarro"/>
-  <meta name="citation_author_institution" content="UNSW Sydney"/>
+  <meta name="citation_author_institution" content="Voltron Data"/>
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params"]}},"value":[{"type":"character","attributes":{},"value":["Working with Amazon S3 within R - it's surprisingly easy"]},{"type":"character","attributes":{},"value":["Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["UNSW Sydney"]},{"type":"character","attributes":{},"value":["https://unsw.edu.au"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["2022-03-17"]},{"type":"character","attributes":{},"value":["preview-image.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/using-aws-s3-in-r"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc","css"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["strapless.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["using-aws-s3-in-r"]},{"type":"character","attributes":{},"value":["2022-03-17"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","preview","creative_commons","citation_url","repository_url","output","params"]}},"value":[{"type":"character","attributes":{},"value":["Using with Amazon S3 with R"]},{"type":"character","attributes":{},"value":["Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it's not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain."]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["first_name","last_name","url","affiliation","affiliation_url","orcid_id"]}},"value":[{"type":"character","attributes":{},"value":["Danielle"]},{"type":"character","attributes":{},"value":["Navarro"]},{"type":"character","attributes":{},"value":["https://djnavarro.net"]},{"type":"character","attributes":{},"value":["Voltron Data"]},{"type":"character","attributes":{},"value":["https://voltrondata.com"]},{"type":"character","attributes":{},"value":["0000-0001-7648-6578"]}]}]},{"type":"character","attributes":{},"value":["2022-03-17"]},{"type":"character","attributes":{},"value":["preview-image.jpg"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/using-aws-s3-in-r"]},{"type":"character","attributes":{},"value":["https://github.com/djnavarro/distill-blog/"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc","css"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["strapless.css"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["slug","date","repo","site"]}},"value":[{"type":"character","attributes":{},"value":["using-aws-s3-in-r"]},{"type":"character","attributes":{},"value":["2022-03-17"]},{"type":"character","attributes":{},"value":["djnavarro/distill-blog"]},{"type":"character","attributes":{},"value":["https://blog.djnavarro.net/"]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["herbarium/dwca-nsw_avh-v1.0.zip","herbarium/dwca-nsw_avh-v1.0/eml.xml","herbarium/dwca-nsw_avh-v1.0/meta.xml","herbarium/dwca-nsw_avh-v1.0/occurrence.txt","herbarium/images/NSW1055313.jpg","herbarium/images/NSW121207.jpg","herbarium/images/NSW29246.jpg","herbarium/images/NSW570557.jpg","herbarium/images/NSW676197.jpg","herbarium/images/NSW687458.jpg","herbarium/ReadMe.txt","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","strapless.css"]}
+  {"type":"character","attributes":{},"value":["herbarium/dwca-nsw_avh-v1.0.zip","herbarium/dwca-nsw_avh-v1.0/eml.xml","herbarium/dwca-nsw_avh-v1.0/meta.xml","herbarium/dwca-nsw_avh-v1.0/occurrence.txt","herbarium/images/NSW1055313.jpg","herbarium/images/NSW121207.jpg","herbarium/images/NSW29246.jpg","herbarium/images/NSW570557.jpg","herbarium/images/NSW676197.jpg","herbarium/images/NSW687458.jpg","herbarium/ReadMe.txt","herbarium/tiny_images/NSW1055313.jpg","herbarium/tiny_images/NSW121207.jpg","herbarium/tiny_images/NSW29246.jpg","herbarium/tiny_images/NSW570557.jpg","herbarium/tiny_images/NSW676197.jpg","herbarium/tiny_images/NSW687458.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","preview-image.jpg","strapless.css"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1469,7 +1469,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Working with Amazon S3 within R - it's surprisingly easy","description":"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"UNSW Sydney","affiliationURL":"https://unsw.edu.au","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2022-03-17T00:00:00.000+11:00","citationText":"Navarro, 2022"}
+{"title":"Using with Amazon S3 with R","description":"Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it's not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain.","authors":[{"author":"Danielle Navarro","authorURL":"https://djnavarro.net","affiliation":"Voltron Data","affiliationURL":"https://voltrondata.com","orcidID":"0000-0001-7648-6578"}],"publishedDate":"2022-03-17T00:00:00.000+11:00","citationText":"Navarro, 2022"}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1479,10 +1479,10 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Working with Amazon S3 within R - it’s surprisingly easy</h1>
+<h1>Using with Amazon S3 with R</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit</p>
+<p>Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it’s not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain.</p>
 </div>
 
 <div class="d-byline">
@@ -1547,7 +1547,13 @@ checklist:
 </code></pre>
 </div>
 </div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW687458.jpg" /><!-- --></p>
+</div>
 <h2 id="what-is-s3-and-why-do-i-care">What is S3 and why do I care?</h2>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW29246.jpg" /><!-- --></p>
+</div>
 <h2 id="downloading-public-data-from-s3">Downloading public data from S3</h2>
 <p>While browsing through the registry of open data sets listed on the S3 website I came across the <a href="https://registry.opendata.aws/nsw-herbarium/">National Herbarium of NSW data set</a>. As described on the website:</p>
 <blockquote>
@@ -1575,7 +1581,7 @@ aws s3 ls --no-sign-request s3://herbariumnsw-pds/</code></pre>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>[1] FALSE</code></pre>
+<pre><code>[1] TRUE</code></pre>
 </div>
 <p>…isn’t? What????</p>
 <p>I’ve made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon’s Sydney data center: that’s the “ap-southeast-2” region. Let’s try that again:</p>
@@ -1599,11 +1605,11 @@ aws s3 ls --no-sign-request s3://herbariumnsw-pds/</code></pre>
 </div>
 <pre><code>[1] TRUE
 attr(,&quot;x-amz-id-2&quot;)
-[1] &quot;YPqSDTYHOJXPTKX9cUahx7EauXW5A5vasa3Sjrt79K2bVQN6Ytohs4nco9A5Rv1weWzdR+HpVlg=&quot;
+[1] &quot;F/KOjJ4BSYmY52iuXTGxNUAvgy3Z8iFsYl6zceCzKQNPj1xyYavhJrclnyp6xc/HOiTi0I5dD2U=&quot;
 attr(,&quot;x-amz-request-id&quot;)
-[1] &quot;XS4XFVZKFCP26Z3N&quot;
+[1] &quot;Q6Z58YYME9HVS561&quot;
 attr(,&quot;date&quot;)
-[1] &quot;Thu, 17 Mar 2022 02:26:12 GMT&quot;
+[1] &quot;Thu, 17 Mar 2022 07:39:04 GMT&quot;
 attr(,&quot;x-amz-bucket-region&quot;)
 [1] &quot;ap-southeast-2&quot;
 attr(,&quot;x-amz-access-point-alias&quot;)
@@ -1765,6 +1771,9 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 [5] &quot;NSW 121207&quot;  &quot;NSW 421494&quot;  &quot;NSW 570557&quot;  &quot;NSW 676197&quot; </code></pre>
 </div>
 <p>I wonder if I can write code to extract these images?</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW676197.jpg" /><!-- --></p>
+</div>
 <h3 id="scripting-the-download">Scripting the download</h3>
 <p>Okay, now I want to pull the images for these records. First, I’m going to construct the paths. I am <em>not</em> going to download the jp2 files because they’re about 100MB each. That’s why this is on S3, by the way. There are 725507 distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let’s go with the jpgs shall we?</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1805,15 +1814,16 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shrink_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_read</a></span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='va'>img_from</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"images"</span>, <span class='va'>file</span><span class='op'>)</span>
+  <span class='va'>img_to</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"tiny_images"</span>, <span class='va'>file</span><span class='op'>)</span>
+  <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_read</a></span><span class='op'>(</span><span class='va'>img_from</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
     <span class='fu'><a href='https://docs.ropensci.org/magick/reference/transform.html'>image_resize</a></span><span class='op'>(</span><span class='fu'><a href='https://docs.ropensci.org/magick/reference/geometry.html'>geometry_size_pixels</a></span><span class='op'>(</span>width <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-    <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_write</a></span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span>
-  
-  <span class='fu'><a href='https://rdrr.io/r/base/gc.html'>gc</a></span><span class='op'>(</span><span class='op'>)</span> <span class='co'># prevents cache resource expiry</span>
+    <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_write</a></span><span class='op'>(</span><span class='va'>img_to</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/gc.html'>gc</a></span><span class='op'>(</span><span class='op'>)</span> <span class='co'># prevents cache problem</span>
 <span class='op'>}</span>
 
-<span class='va'>images</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span>, full.names <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>images</span>, <span class='va'>shrink_herbarium_image</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>shrink_herbarium_image</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
@@ -1822,22 +1832,22 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 <div>
 <div class="row p-0 row-cols-1 row-cols-md-2 row-cols-lg-3" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
-<img src="herbarium/images/NSW1055313.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+<img src="herbarium/tiny_images/NSW1055313.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
-<img src="herbarium/images/NSW121207.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+<img src="herbarium/tiny_images/NSW121207.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
-<img src="herbarium/images/NSW29246.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+<img src="herbarium/tiny_images/NSW29246.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
-<img src="herbarium/images/NSW570557.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+<img src="herbarium/tiny_images/NSW570557.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
-<img src="herbarium/images/NSW676197.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+<img src="herbarium/tiny_images/NSW676197.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
-<img src="herbarium/images/NSW687458.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+<img src="herbarium/tiny_images/NSW687458.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
 </div>
 </div>
 </div>
@@ -1921,7 +1931,7 @@ attr(,&quot;server&quot;)
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>post_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"uploading"</span>, <span class='va'>file</span>, <span class='st'>"..."</span><span class='op'>)</span>
   <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_object.html'>put_object</a></span><span class='op'>(</span>
-    file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/images/"</span>, <span class='va'>file</span><span class='op'>)</span>,
+    file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images/"</span>, <span class='va'>file</span><span class='op'>)</span>,
     object <span class='op'>=</span> <span class='va'>file</span>, 
     bucket <span class='op'>=</span> <span class='st'>"s3://tiny-herbs/"</span>,
     acl <span class='op'>=</span> <span class='st'>"public-read"</span>
@@ -1938,8 +1948,8 @@ attr(,&quot;server&quot;)
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>images</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span><span class='op'>)</span>
-<span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>images</span>, <span class='va'>post_herbarium_image</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>post_herbarium_image</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>uploading NSW1055313.jpg ...success!
@@ -1959,12 +1969,12 @@ uploading NSW687458.jpg ...success!</code></pre>
 <pre><code># A tibble: 6 × 8
   Key            LastModified    ETag  Size  Owner_ID Owner_DisplayNa…
   &lt;chr&gt;          &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
-1 NSW1055313.jpg 2022-03-17T06:… &quot;\&quot;0… 1504… b8b2319… djnavarro       
-2 NSW121207.jpg  2022-03-17T06:… &quot;\&quot;5… 1562… b8b2319… djnavarro       
-3 NSW29246.jpg   2022-03-17T06:… &quot;\&quot;4… 1044… b8b2319… djnavarro       
-4 NSW570557.jpg  2022-03-17T06:… &quot;\&quot;c… 1196… b8b2319… djnavarro       
-5 NSW676197.jpg  2022-03-17T06:… &quot;\&quot;d… 1863… b8b2319… djnavarro       
-6 NSW687458.jpg  2022-03-17T06:… &quot;\&quot;6… 1410… b8b2319… djnavarro       
+1 NSW1055313.jpg 2022-03-17T08:… &quot;\&quot;c… 1494… b8b2319… djnavarro       
+2 NSW121207.jpg  2022-03-17T08:… &quot;\&quot;6… 1562… b8b2319… djnavarro       
+3 NSW29246.jpg   2022-03-17T08:… &quot;\&quot;e… 1043… b8b2319… djnavarro       
+4 NSW570557.jpg  2022-03-17T08:… &quot;\&quot;5… 1195… b8b2319… djnavarro       
+5 NSW676197.jpg  2022-03-17T08:… &quot;\&quot;2… 1863… b8b2319… djnavarro       
+6 NSW687458.jpg  2022-03-17T08:… &quot;\&quot;c… 1408… b8b2319… djnavarro       
 # … with 2 more variables: StorageClass &lt;chr&gt;, Bucket &lt;chr&gt;</code></pre>
 </div>
 <h3 id="urls-for-objects-in-public-buckets">URLs for objects in public buckets</h3>
@@ -2005,7 +2015,7 @@ uploading NSW687458.jpg ...success!</code></pre>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-17 17:37:34 AEDT</p>
+<p>2022-03-17 19:05:48 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>
@@ -2041,11 +2051,11 @@ uploading NSW687458.jpg ...success!</code></pre>
 <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/djnavarro/distill-blog/">https://github.com/djnavarro/distill-blog/</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
 <h3 id="citation">Citation</h3>
 <p>For attribution, please cite this work as</p>
-<pre class="citation-appendix short">Navarro (2022, March 17). Working with Amazon S3 within R - it's surprisingly easy. Retrieved from https://blog.djnavarro.net/using-aws-s3-in-r</pre>
+<pre class="citation-appendix short">Navarro (2022, March 17). Using with Amazon S3 with R. Retrieved from https://blog.djnavarro.net/using-aws-s3-in-r</pre>
 <p>BibTeX citation</p>
-<pre class="citation-appendix long">@misc{navarro2022working,
+<pre class="citation-appendix long">@misc{navarro2022using,
   author = {Navarro, Danielle},
-  title = {Working with Amazon S3 within R - it's surprisingly easy},
+  title = {Using with Amazon S3 with R},
   url = {https://blog.djnavarro.net/using-aws-s3-in-r},
   year = {2022}
 }</pre>
