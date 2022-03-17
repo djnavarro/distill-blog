@@ -51,25 +51,26 @@ renv::use(lockfile = here::here(
 #refinery::renv_load(paste(params$date, params$slug, sep = "_"))
 knitr::opts_chunk$set(echo = TRUE)
 
-tiny_herb_url <- function(object) {
-  bucket <- "tiny-herbs"
-  region <- "ap-southeast-2"
-  url <- paste0(
+tiny_herb_url <- function(object, 
+                          bucket = "tiny-herbs",
+                          region = "ap-southeast-2") {
+  paste0(
     "https://", bucket, ".", "s3-", 
-    region, ".amazonaws.com/", object
+    region, ".amazonaws.com", "/", object
   )
-  return(url)
 }
 ```
 
 
 <!--------------- post ----------------->
 
-I have a shameful confession to make, one that may shock and surprise you. Although I am an R user, data scientist, and developer of many years experience, I've never used Amazon Web Services. I've never spun up a virtual machine on "Amazon EC2" (whatever _that_ is), I don't know what "AWS Lambda" is, and all I know about "Amazon S3" is that fancy data science people use it to stored data.^[Okay fine, I used "Amazon Mechanical Turk" a lot as part of my academic work, but that's hardly a core data science skill.] Or something. Every time people start talking about it my eyes glaze over and my impostor syndrome flares up to tell me that I am an incompetent fraud. A *true* data scientist is born knowing how to spin up EC2 instances,^[Again, I cannot stress how much I do not know about AWS. I guess that's the term for virtual machines. Whatever. This isn't a post about EC2] and if baby doesn't post her drawings on S3 then she's already falling behind, etc etc. My anxiety becomes too much, so I go do something girly like nonparametric Bayes instead. 
+I have a shameful confession to make, one that may shock and surprise you. Although I am an R user, data scientist, and developer of many years experience, I've never used Amazon Web Services.
 
-My personal "tragedy"^[It's deeply important to me that you read this knowing that I was singing [*Tragedy*](https://www.youtube.com/watch?v=OiwDHHcHPh0) by Steps at the time I wrote this, complete with dramatic hand gestures] notwithstanding, I suspect my situation is not entirely uncommon. Back in my academic days, I knew very few people who used Amazon Web Services (a.k.a. AWS) for much of anything. It wasn't needed, so it wasn't knowledge that people acquired. Now that I'm working in an industry setting I'm finding that it's _so_ widely used that it's almost assumed knowledge. _Everyone_ knows this stuff, so there's not a lot said about why you might care, or how to get started using these tools if you decided that you do care. 
+It's hard to believe, I know, but I've never spun up a virtual machine on "Amazon EC2" (...whatever _that_ is), I don't know what "AWS Lambda" is, and the only thing I know about "Amazon S3" is that fancy data science people use it to store data. Or something along those lines. Honestly, I really haven't been paying attention. Every time people start talking about it my eyes glaze over and my impostor syndrome arrives to berate me. A *true* data scientist is born knowing how to spin up EC2 instances, and if baby doesn't post her drawings on S3 then she's already falling behind, etc etc. It's terribly stressful.
 
-Today I decided to do something about this, starting by teaching myself how to use Amazon's Simple Storage Service (a.k.a S3). With the help of the [**aws.s3** package](https://github.com/cloudyr/aws.s3) authored by Thomas Leeper and currently maintained by Simon Urbanek, it's surprisingly easy to do.
+My dark and terrible personal tragedy notwithstanding,^[It's deeply important to me that you read this knowing that I was singing [*Tragedy*](https://www.youtube.com/watch?v=OiwDHHcHPh0) by Steps at the time I wrote this, complete with dramatic hand gestures] I suspect my situation is not entirely uncommon. Back in my academic days, I knew very few people who used Amazon Web Services (a.k.a. AWS) for much of anything. It wasn't needed, so it wasn't knowledge that people acquired. Now that I'm working in an industry setting I'm finding that it's _so_ widely used that it's almost assumed knowledge. _Everyone_ knows this stuff, so there's not a lot said about why you might care, or how to get started using these tools if you decided that you do care. 
+
+Today I decided to do something about this, starting by teaching myself how to use Amazon's Simple Storage Service (a.k.a S3). With the help of the [**aws.s3**](https://github.com/cloudyr/aws.s3) package authored by Thomas Leeper and currently maintained by Simon Urbanek, it's surprisingly easy to do.
 
 In this post I'll walk you through the process.
 
@@ -88,13 +89,16 @@ tiny_herb_url("NSW687458.jpg") %>%
   knitr::include_graphics()
 ```
 
+<br>
+
 ## What is S3 and why do I care?
 
+Let's get started. As with everything else in life, the place to start is asking yourself if you even care. I mean, if we don't care what S3 is or what it does, why even bother? Just let your eyes glaze over as the nerd keeps talking and wonder if there's anything good on TV...
 
-```{r echo=FALSE}
-tiny_herb_url("NSW29246.jpg") %>% 
-  knitr::include_graphics()
-```
+Still here? Cool. 
+
+From the user perspective, Amazon's "Simple Storage Service" isn't particularly complicated. It's just a remote storage system that you can dump files into, kind of like a programmable Dropbox. Each file (and its accompanying metadata) is stored as an *object*, and collections of objects are grouped together into a *bucket*. If you want to store files on S3, all you need to do is open an account, create a new bucket, and upload your files. It's exactly that boring, and the only reason anyone cares (as far as I know) is that Amazon designed this to work at scale and it's fairly easy to write scripts that allow you to control the whole thing programmatically. Which is actually a pretty handy service, now that I think about it!
+
 
 ## Downloading public data from S3
 
@@ -102,58 +106,75 @@ While browsing through the registry of open data sets listed on the S3 website I
 
 > The National Herbarium of New South Wales is one of the most significant scientific, cultural and historical botanical resources in the Southern hemisphere. The 1.43 million preserved plant specimens have been captured as high-resolution images and the biodiversity metadata associated with each of the images captured in digital form. Botanical specimens date from year 1770 to today, and form voucher collections that document the distribution and diversity of the world's flora through time, particularly that of NSW, Austalia and the Pacific. The data is used in biodiversity assessment, systematic botanical research, ecosystem conservation and policy development. The data is used by scientists, students and the public.
 
-Okay I love this and I want to play with it. But how do I do that? The listing for the data set posts the following metadata:
+As an example, here's one of the images stored in the data set, of a plant specimen collected quite close to where I currently live, albeit quite a long time ago:
+
+<br>
+
+```{r echo=FALSE}
+tiny_herb_url("NSW29246.jpg") %>% 
+  knitr::include_graphics()
+```
+
+<br>
+
+So yeah, I love this data set already and I want to play with it. But how do I do that? I've never done anything with S3 before and it's all a bit new to me. Well, on the right hand side of the listing page for the National Herbarium data, there's a section that contains the following metadata:
 
 ```
-Resources on AWS
-
 Description
 Herbarium Collection Image files
+
 Resource type
 S3 Bucket
+
 Amazon Resource Name (ARN)
 arn:aws:s3:::herbariumnsw-pds
+
 AWS Region
 ap-southeast-2
-AWS CLI Access (No AWS account required)
-aws s3 ls --no-sign-request s3://herbariumnsw-pds/
 ```
+
+Using this information, I can get started. I know *what* the data is (an S3 bucket), I know *where* the data is (in the `"ap-southeast-2"` region), and on top of that I know the *name* of the data (`"herbariumnsw-pds"`). This should be enough for me to find what I'm looking for!
+
 
 ### Finding the bucket
 
-Okay, so is there a bucket? I'll use the `bucket_exists()` function to verify that there is in fact a public data set located on AWS at "s3://herbariumnsw-pds/", and of course there...
+Okay, so is there a bucket? I'll use the `bucket_exists()` function to verify that there is in fact a public data set located on AWS at `"s3://herbariumnsw-pds/"`, and of course there...
 
 ```{r, eval=FALSE}
 bucket_exists("s3://herbariumnsw-pds/")
 ```
 ```{r, echo=FALSE, cache=TRUE}
-x <- bucket_exists("s3://herbariumnsw-pds/")
-attributes(x) <- NULL
-x
+FALSE
 ```
 
 ...isn't? What???? 
 
-I've made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon's Sydney data center: that's the "ap-southeast-2" region. Let's try that again:
+I've made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon's Sydney data center. In Amazon parlance, that's the `"ap-southeast-2"` region, but unless you've done something to set a different default (more on that later), everything you do will probably default to the `"us-east-1"` region. To override this default, we can explicitly specify the `region` that `bucket_exists()` should look in. So now let's try that again:
 
 ```{r, eval=FALSE}
-bucket_exists("s3://herbariumnsw-pds/", region = "ap-southeast-2")
+bucket_exists(
+  bucket = "s3://herbariumnsw-pds/", 
+  region = "ap-southeast-2"
+)
 ```
 ```{r, echo=FALSE, cache=TRUE}
-x2 <- bucket_exists("s3://herbariumnsw-pds/", region = "ap-southeast-2")
-attributes(x2) <- NULL
-x2
+TRUE
 ```
 
 Much better!
 
-Oh and one more thing. I lied slightly in the output... if you go do this yourself, you'll find that the results are a little bit more verbose than simply printing `TRUE` or `FALSE`. The actual output comes with a lot of additional metadata that get stored as attributes. So what you'll actually see is something like this:
+### Okay, okay, I lied...
+
+One more thing. If you've been following along at home and trying out these commands, you've probably noticed that the output you're getting is a little more verbose than simply returning `TRUE` or `FALSE`. The actual output comes with a lot of additional metadata, stored as attributes. So what you'll actually see is something like this:
 
 ```{r, cache=TRUE}
 bucket_exists(
   bucket = "s3://herbariumnsw-pds/", 
-  region = "ap-southeast-2")
+  region = "ap-southeast-2"
+)
 ```
+
+If you stare at this long enough this metadata all starts to make sense, especially after you've been playing around with S3 for a while. There's a timestamp, there's some information about which region the data came from, and so on. Nothing particularly special or interesting here, so let's move on to something more fun.
 
 ### Listing bucket contents
 
@@ -171,7 +192,7 @@ herbarium_files <- get_bucket_df(
 Now let's take a peek:
 
 ```{r inspect-herbarium-files}
-glimpse(herbarium_files)
+herbarium_files
 ```
 
 ### Downloading files
@@ -185,15 +206,11 @@ save_object(
 )
 ```
 
-As you might hope, the README does in fact tell you something about how it's organised:
+As you might hope, the README does in fact tell you something about how it's organised. In particular, it informs me that there's a single file storing all the metadata, encoded as a zipped csv file: 
 
-> Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI 
-https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2
->
-A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at:
-https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip
+> A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at: https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip
 
-So the real place to start is with this metadata file, `dwca-nsw_avh-v1.0.zip`
+This sounds like a good place to start. Let's see if I can download the metadata file `dwca-nsw_avh-v1.0.zip`:
 
 ```{r download-metadata, cache=TRUE}
 save_object(
@@ -204,12 +221,16 @@ save_object(
 ) 
 ```
 
-So now we have the data. After extracting from the zip file, we end up with a 421MB text file called `occurrence.txt` that turns out to be a tab separated value file:
+Success! 
+
+I now have a copy of the 79MB zip file on my laptop, and after decompressing the file it turns out I have a 402MB file called `occurrence.txt` that contains the metadata. As it turns out, the metadata aren't stored in comma-separated value format, they're stored in tab-separated value format. Still, that's fine: the `read_tsv()` function from the **readr** package can handle it:
 
 ```{r read-data, cache=TRUE}
 herbarium <- read_tsv("herbarium/dwca-nsw_avh-v1.0/occurrence.txt")
 herbarium
 ```
+
+There's quite a lot of interesting information stored in the 74 columns of the `herbarium` data, but I won't dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you'll likely discover that there is a small proportion of the 725507 rows that cause problems for `read_tsv()`, likely because they contain additional tab characters that mess up the parsing slightly. In real life I'd want to look into this, but this is a blog post. Nothing here is real and nobody is watching right?
 
 ### Wrangling the data
 
@@ -221,103 +242,171 @@ herbarium %>%
   count(stateProvince)
 ```
 
-
-Okay, within NSW what are the unique regions
-
-```{r nsw-regions}
-herbarium %>% 
-  filter(country == "Australia", stateProvince == "New South Wales") %>% 
-  count(locality) %>% 
-  arrange(desc(n))
-```
+Not surprisingly there's a predominance of NSW. Since I live in Newtown (a neighbourhood in Sydney) I'm going to find the subset of images in the National Herbarium data whose locality matches the string `"Newtown"`:
 
 ```{r}
 newtowners <- herbarium %>% 
   filter(
     country == "Australia", 
-    stateProvince == "New South Wales", 
     locality %>% str_detect("Newtown")
   )
+```
 
-newtowners$catalogNumber
+From a data science point of view I'm being extremely sloppy here. If my intention had been to find only plants from my neighbourhood, I would also be wise to filter by recorded longitude and latitude where available, and I would certainly want to exclude cases listed as coming from another Australian state. But that's not really my goal. I just wanted a query that would return around 20-30 results, so this is fine for my purposes. 
+
+Now that we've got a subset of records, let's pull out the catalog numbers:
+
+```{r}
+newtowners %>% 
+  pull(catalogNumber)
 ```
 
 I wonder if I can write code to extract these images?
 
+<br>
 
 ```{r echo=FALSE}
 tiny_herb_url("NSW676197.jpg") %>% 
   knitr::include_graphics()
 ```
 
+<br>
 
 ### Scripting the download
 
 Okay, now I want to pull the images for these records. First, I'm going to construct the paths. I am *not* going to download the jp2 files because they're about 100MB each. That's why this is on S3, by the way. There are `r nrow(herbarium)` distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let's go with the jpgs shall we?
 
-```{r, cache=TRUE, warning=TRUE}
-filepaths <- newtowners$catalogNumber %>% 
+> Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI 
+https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2
+
+
+```{r}
+filepaths <- newtowners %>%
+  pull(catalogNumber) %>% 
   str_remove_all(" ") %>% 
   str_c("images/", ., ".jpg")
+```
 
+Let's take a look at what we've got:
+
+```{r}
+filepaths
+```
+
+Define a function 
+
+```{r}
 save_herbarium_image <- function(file) {
   
+  # if object doesn't exist in bucket, return NA
   ok <- object_exists(
     object = file,
     bucket = "s3://herbariumnsw-pds/", 
     region = "ap-southeast-2"
   )
+  if(!ok) return(NA_character_)
   
-  if(!ok) {
-    warning("object '", file, "' does not exist in this bucket", call. = FALSE)
-    return(invisible(NULL))
-  }
-  
+  # if object exists, save it and return file path
   save_object(
-    object = file,
-    bucket = "s3://herbariumnsw-pds/", 
-    region = "ap-southeast-2",
-    file = paste0("herbarium/", file)
+      object = file,
+      bucket = "s3://herbariumnsw-pds/", 
+      region = "ap-southeast-2",
+      file = paste0("herbarium/", file)
   )
 }
-
-walk(filepaths, save_herbarium_image)
 ```
 
+Test it out?
+
+```{r}
+filepaths[1] %>% 
+  save_herbarium_image()
+```
+
+Okay now let's `map_chr()` over all the files listed in `filepaths`, saving the relevant herbarium image in each case:
+
+```{r, cache=TRUE}
+filepaths %>% 
+  map_chr(save_herbarium_image)
+```
+
+Did it work? Well, kind of. Notice there are some missing values in the output. In those cases the object doesn't exist in this bucket, and when that happens the `save_herbarium_image()` function bails and doesn't try to download anything. But in most cases images it worked.
 
 ### Behold the pretty pictures!
 
-Even the jpg files are fairly high resolution and I don't want this post to be too big, so I'll shrink them for this post
+Even the jpg files are fairly high resolution and I don't want this post to be too big, so I'll shrink them for this post. Here's my helper function:
 
 ```{r}
 shrink_herbarium_image <- function(file) {
+  on.exit(gc()) # prevents cache problem
   img_from <- file.path("herbarium", "images", file)
   img_to <- file.path("herbarium", "tiny_images", file)
   image_read(img_from) %>% 
     image_resize(geometry_size_pixels(width = 1000)) %>% 
     image_write(img_to)
-  gc() # prevents cache problem
 }
-
-list.files("herbarium/images") %>% 
-  walk(shrink_herbarium_image)
 ```
 
-Here they are:
+and here's me using `walk()` to shrink every image and the smol version in the `tiny_images` folder:
+
+```{r, cache=TRUE}
+list.files("herbarium/images") %>% 
+  map_chr(shrink_herbarium_image)
+```
+
+The output here is a character vector containing names for the created files. Here's the contents of the `tiny_images` folder, but shown as the actual images rather than file names because that's prettier:^[I'm using the **bs4cards** package to display the images in this layout]
 
 ```{r, echo=FALSE}
-tibble(images = list.files("herbarium/tiny_images", full.names = TRUE)) %>% 
+tibble(
+  images = list.files("herbarium/tiny_images", full.names = TRUE),
+  links = list.files("herbarium/tiny_images") %>% tiny_herb_url()
+) %>% 
 bs4cards::cards(
   image = images, 
-  width = 3,
+  link = links,
+  width = 2,
   border_width = 0,
   border_radius = 0
 )
 ```
 
+Okay! Progress!
+
 ## Signing up for an AWS account
 
-## Manipulating your S3 storage from R
+### Creating the account
+
+Visit https://aws.amazon.com/s3/ and click on the "Create an AWS Account" button:
+
+```{r echo=FALSE}
+knitr::include_graphics("screenshots/aws_s3_signup.png")
+```
+
+This will lead you through a pretty standard sign up process. You'll have to give an email address for the "root user" (that's you), specify a password, and so on. The free tier allows you 5GB of storage for 12 months, which is fairly convenient for "playing around" purposes! 
+
+### Creating credentials
+
+You can create access credentials for the root user, but that's not the wisest thing to do. Instead, what you want to do is create an "IAM user" (where "IAM" stands for "Identity and Access Management") and then supply credentials for that user. https://us-east-1.console.aws.amazon.com/iamv2/home#/users
+
+```{r echo=FALSE}
+knitr::include_graphics("screenshots/s3_iam_add_user_1.png")
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("screenshots/s3_iam_add_user_2.png")
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("screenshots/s3_iam_add_user_3.png")
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("screenshots/s3_iam_add_user_4.png")
+```
+
+```{r echo=FALSE}
+knitr::include_graphics("screenshots/s3_iam_add_user_5.png")
+```
 
 
 ### Storing your AWS credentials in R
@@ -331,6 +420,15 @@ AWS_DEFAULT_REGION=ap-southeast-2
 ```
 
 Your default region might be different from mine!
+
+
+```{r echo=FALSE}
+tiny_herb_url("NSW1055313.jpg") %>% 
+  knitr::include_graphics()
+```
+
+## Manipulating your S3 storage from R
+
 
 ### Creating a new bucket
 
@@ -380,23 +478,18 @@ Now everyone has read access to the bucket.^[You can specify different ACL setti
 
 ```{r}
 post_herbarium_image <- function(file) {
-  cat("uploading", file, "...")
-  out <- put_object(
+  put_object(
     file = paste0("herbarium/tiny_images/", file),
     object = file, 
     bucket = "s3://tiny-herbs/",
     acl = "public-read"
   )
-  if(out == TRUE) {
-    cat("success!\n")
-    return(invisible(TRUE))
-  }
-  cat("failed\n")
-  return(invisible(FALSE))
 }
 ```
 
-```{r}
+Let's walk:
+
+```{r, cache=TRUE}
 list.files("herbarium/tiny_images") %>% 
   walk(post_herbarium_image)
 ```
@@ -410,20 +503,26 @@ get_bucket_df("s3://tiny-herbs/") %>%
 
 ### URLs for objects in public buckets
 
+The images I've been displaying throughout are all stored in the "tiny-herbs" bucket. I wrote a little helper function that 
+
 ```{r}
-tiny_herb_url <- function(object) {
-  bucket <- "tiny-herbs"
-  region <- "ap-southeast-2"
-  url <- paste0(
+tiny_herb_url <- function(object, 
+                          bucket = "tiny-herbs",
+                          region = "ap-southeast-2") {
+  paste0(
     "https://", bucket, ".", "s3-", 
-    region, ".amazonaws.com/", object
+    region, ".amazonaws.com", "/", object
   )
-  return(url)
 }
+```
+
+Here's what it does:
+
+```{r}
 tiny_herb_url("NSW121207.jpg")
 ```
 
-In fact...
+The code I've been using to display the images throughout the post looks like this:
 
 ```{r}
 tiny_herb_url("NSW121207.jpg") %>% 
@@ -431,7 +530,8 @@ tiny_herb_url("NSW121207.jpg") %>%
 ```
 
 
-### Other functionality?
+## Wrapping up
+
 
 - Copying objects between buckets
 - Deleting objects and buckets

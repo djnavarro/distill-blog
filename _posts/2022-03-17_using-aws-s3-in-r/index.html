@@ -126,7 +126,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["herbarium/dwca-nsw_avh-v1.0.zip","herbarium/dwca-nsw_avh-v1.0/eml.xml","herbarium/dwca-nsw_avh-v1.0/meta.xml","herbarium/dwca-nsw_avh-v1.0/occurrence.txt","herbarium/images/NSW1055313.jpg","herbarium/images/NSW121207.jpg","herbarium/images/NSW29246.jpg","herbarium/images/NSW570557.jpg","herbarium/images/NSW676197.jpg","herbarium/images/NSW687458.jpg","herbarium/ReadMe.txt","herbarium/tiny_images/NSW1055313.jpg","herbarium/tiny_images/NSW121207.jpg","herbarium/tiny_images/NSW29246.jpg","herbarium/tiny_images/NSW570557.jpg","herbarium/tiny_images/NSW676197.jpg","herbarium/tiny_images/NSW687458.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","preview-image.jpg","strapless.css"]}
+  {"type":"character","attributes":{},"value":["herbarium/dwca-nsw_avh-v1.0.zip","herbarium/dwca-nsw_avh-v1.0/eml.xml","herbarium/dwca-nsw_avh-v1.0/meta.xml","herbarium/dwca-nsw_avh-v1.0/occurrence.txt","herbarium/images/NSW1055313.jpg","herbarium/images/NSW121207.jpg","herbarium/images/NSW214616.jpg","herbarium/images/NSW29246.jpg","herbarium/images/NSW306564.jpg","herbarium/images/NSW307215.jpg","herbarium/images/NSW36860.jpg","herbarium/images/NSW389387.jpg","herbarium/images/NSW395530.jpg","herbarium/images/NSW39618.jpg","herbarium/images/NSW402973.jpg","herbarium/images/NSW403188.jpg","herbarium/images/NSW404127.jpg","herbarium/images/NSW446243.jpg","herbarium/images/NSW461895.jpg","herbarium/images/NSW570557.jpg","herbarium/images/NSW650052.jpg","herbarium/images/NSW676197.jpg","herbarium/images/NSW687458.jpg","herbarium/images/NSW702035.jpg","herbarium/images/NSW739455.jpg","herbarium/images/NSW776212.jpg","herbarium/images/NSW777249.jpg","herbarium/ReadMe.txt","herbarium/tiny_images/NSW1055313.jpg","herbarium/tiny_images/NSW121207.jpg","herbarium/tiny_images/NSW214616.jpg","herbarium/tiny_images/NSW29246.jpg","herbarium/tiny_images/NSW306564.jpg","herbarium/tiny_images/NSW307215.jpg","herbarium/tiny_images/NSW36860.jpg","herbarium/tiny_images/NSW389387.jpg","herbarium/tiny_images/NSW395530.jpg","herbarium/tiny_images/NSW39618.jpg","herbarium/tiny_images/NSW402973.jpg","herbarium/tiny_images/NSW403188.jpg","herbarium/tiny_images/NSW404127.jpg","herbarium/tiny_images/NSW446243.jpg","herbarium/tiny_images/NSW461895.jpg","herbarium/tiny_images/NSW570557.jpg","herbarium/tiny_images/NSW650052.jpg","herbarium/tiny_images/NSW676197.jpg","herbarium/tiny_images/NSW687458.jpg","herbarium/tiny_images/NSW702035.jpg","herbarium/tiny_images/NSW739455.jpg","herbarium/tiny_images/NSW776212.jpg","herbarium/tiny_images/NSW777249.jpg","index_files/anchor-4.2.2/anchor.min.js","index_files/bowser-1.9.3/bowser.min.js","index_files/distill-2.2.21/template.v2.js","index_files/header-attrs-2.11/header-attrs.js","index_files/jquery-3.6.0/jquery-3.6.0.js","index_files/jquery-3.6.0/jquery-3.6.0.min.js","index_files/jquery-3.6.0/jquery-3.6.0.min.map","index_files/popper-2.6.0/popper.min.js","index_files/tippy-6.2.7/tippy-bundle.umd.min.js","index_files/tippy-6.2.7/tippy-light-border.css","index_files/tippy-6.2.7/tippy.css","index_files/tippy-6.2.7/tippy.umd.min.js","index_files/webcomponents-2.0.0/webcomponents.js","preview-image.jpg","screenshots/aws_s3_signup.png","screenshots/s3_iam_add_user_1.png","screenshots/s3_iam_add_user_2.png","screenshots/s3_iam_add_user_3.png","screenshots/s3_iam_add_user_4.png","screenshots/s3_iam_add_user_5.png","strapless.css"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
   <!--/radix_placeholder_navigation_in_header-->
@@ -1501,22 +1501,27 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <li><a href="#downloading-public-data-from-s3">Downloading public data from S3</a>
 <ul>
 <li><a href="#finding-the-bucket">Finding the bucket</a></li>
+<li><a href="#okay-okay-i-lied">Okay, okay, I lied…</a></li>
 <li><a href="#listing-bucket-contents">Listing bucket contents</a></li>
 <li><a href="#downloading-files">Downloading files</a></li>
 <li><a href="#wrangling-the-data">Wrangling the data</a></li>
 <li><a href="#scripting-the-download">Scripting the download</a></li>
 <li><a href="#behold-the-pretty-pictures">Behold the pretty pictures!</a></li>
 </ul></li>
-<li><a href="#signing-up-for-an-aws-account">Signing up for an AWS account</a></li>
+<li><a href="#signing-up-for-an-aws-account">Signing up for an AWS account</a>
+<ul>
+<li><a href="#creating-the-account">Creating the account</a></li>
+<li><a href="#creating-credentials">Creating credentials</a></li>
+<li><a href="#storing-your-aws-credentials-in-r">Storing your AWS credentials in R</a></li>
+</ul></li>
 <li><a href="#manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</a>
 <ul>
-<li><a href="#storing-your-aws-credentials-in-r">Storing your AWS credentials in R</a></li>
 <li><a href="#creating-a-new-bucket">Creating a new bucket</a></li>
 <li><a href="#managing-access-control">Managing access control</a></li>
 <li><a href="#adding-objects-to-your-bucket">Adding objects to your bucket</a></li>
 <li><a href="#urls-for-objects-in-public-buckets">URLs for objects in public buckets</a></li>
-<li><a href="#other-functionality">Other functionality?</a></li>
 </ul></li>
+<li><a href="#wrapping-up">Wrapping up</a></li>
 </ul>
 </nav>
 </div>
@@ -1531,9 +1536,10 @@ checklist:
 ---->
 <!--------------- setup post ----------------->
 <!--------------- post ----------------->
-<p>I have a shameful confession to make, one that may shock and surprise you. Although I am an R user, data scientist, and developer of many years experience, I’ve never used Amazon Web Services. I’ve never spun up a virtual machine on “Amazon EC2” (whatever <em>that</em> is), I don’t know what “AWS Lambda” is, and all I know about “Amazon S3” is that fancy data science people use it to stored data.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> Or something. Every time people start talking about it my eyes glaze over and my impostor syndrome flares up to tell me that I am an incompetent fraud. A <em>true</em> data scientist is born knowing how to spin up EC2 instances,<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> and if baby doesn’t post her drawings on S3 then she’s already falling behind, etc etc. My anxiety becomes too much, so I go do something girly like nonparametric Bayes instead.</p>
-<p>My personal “tragedy”<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a> notwithstanding, I suspect my situation is not entirely uncommon. Back in my academic days, I knew very few people who used Amazon Web Services (a.k.a. AWS) for much of anything. It wasn’t needed, so it wasn’t knowledge that people acquired. Now that I’m working in an industry setting I’m finding that it’s <em>so</em> widely used that it’s almost assumed knowledge. <em>Everyone</em> knows this stuff, so there’s not a lot said about why you might care, or how to get started using these tools if you decided that you do care.</p>
-<p>Today I decided to do something about this, starting by teaching myself how to use Amazon’s Simple Storage Service (a.k.a S3). With the help of the <a href="https://github.com/cloudyr/aws.s3"><strong>aws.s3</strong> package</a> authored by Thomas Leeper and currently maintained by Simon Urbanek, it’s surprisingly easy to do.</p>
+<p>I have a shameful confession to make, one that may shock and surprise you. Although I am an R user, data scientist, and developer of many years experience, I’ve never used Amazon Web Services.</p>
+<p>It’s hard to believe, I know, but I’ve never spun up a virtual machine on “Amazon EC2” (…whatever <em>that</em> is), I don’t know what “AWS Lambda” is, and the only thing I know about “Amazon S3” is that fancy data science people use it to store data. Or something along those lines. Honestly, I really haven’t been paying attention. Every time people start talking about it my eyes glaze over and my impostor syndrome arrives to berate me. A <em>true</em> data scientist is born knowing how to spin up EC2 instances, and if baby doesn’t post her drawings on S3 then she’s already falling behind, etc etc. It’s terribly stressful.</p>
+<p>My dark and terrible personal tragedy notwithstanding,<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> I suspect my situation is not entirely uncommon. Back in my academic days, I knew very few people who used Amazon Web Services (a.k.a. AWS) for much of anything. It wasn’t needed, so it wasn’t knowledge that people acquired. Now that I’m working in an industry setting I’m finding that it’s <em>so</em> widely used that it’s almost assumed knowledge. <em>Everyone</em> knows this stuff, so there’s not a lot said about why you might care, or how to get started using these tools if you decided that you do care.</p>
+<p>Today I decided to do something about this, starting by teaching myself how to use Amazon’s Simple Storage Service (a.k.a S3). With the help of the <a href="https://github.com/cloudyr/aws.s3"><strong>aws.s3</strong></a> package authored by Thomas Leeper and currently maintained by Simon Urbanek, it’s surprisingly easy to do.</p>
 <p>In this post I’ll walk you through the process.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1550,30 +1556,37 @@ checklist:
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW687458.jpg" /><!-- --></p>
 </div>
+<p><br></p>
 <h2 id="what-is-s3-and-why-do-i-care">What is S3 and why do I care?</h2>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW29246.jpg" /><!-- --></p>
-</div>
+<p>Let’s get started. As with everything else in life, the place to start is asking yourself if you even care. I mean, if we don’t care what S3 is or what it does, why even bother? Just let your eyes glaze over as the nerd keeps talking and wonder if there’s anything good on TV…</p>
+<p>Still here? Cool.</p>
+<p>From the user perspective, Amazon’s “Simple Storage Service” isn’t particularly complicated. It’s just a remote storage system that you can dump files into, kind of like a programmable Dropbox. Each file (and its accompanying metadata) is stored as an <em>object</em>, and collections of objects are grouped together into a <em>bucket</em>. If you want to store files on S3, all you need to do is open an account, create a new bucket, and upload your files. It’s exactly that boring, and the only reason anyone cares (as far as I know) is that Amazon designed this to work at scale and it’s fairly easy to write scripts that allow you to control the whole thing programmatically. Which is actually a pretty handy service, now that I think about it!</p>
 <h2 id="downloading-public-data-from-s3">Downloading public data from S3</h2>
 <p>While browsing through the registry of open data sets listed on the S3 website I came across the <a href="https://registry.opendata.aws/nsw-herbarium/">National Herbarium of NSW data set</a>. As described on the website:</p>
 <blockquote>
 <p>The National Herbarium of New South Wales is one of the most significant scientific, cultural and historical botanical resources in the Southern hemisphere. The 1.43 million preserved plant specimens have been captured as high-resolution images and the biodiversity metadata associated with each of the images captured in digital form. Botanical specimens date from year 1770 to today, and form voucher collections that document the distribution and diversity of the world’s flora through time, particularly that of NSW, Austalia and the Pacific. The data is used in biodiversity assessment, systematic botanical research, ecosystem conservation and policy development. The data is used by scientists, students and the public.</p>
 </blockquote>
-<p>Okay I love this and I want to play with it. But how do I do that? The listing for the data set posts the following metadata:</p>
-<pre><code>Resources on AWS
-
-Description
+<p>As an example, here’s one of the images stored in the data set, of a plant specimen collected quite close to where I currently live, albeit quite a long time ago:</p>
+<p><br></p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW29246.jpg" /><!-- --></p>
+</div>
+<p><br></p>
+<p>So yeah, I love this data set already and I want to play with it. But how do I do that? I’ve never done anything with S3 before and it’s all a bit new to me. Well, on the right hand side of the listing page for the National Herbarium data, there’s a section that contains the following metadata:</p>
+<pre><code>Description
 Herbarium Collection Image files
+
 Resource type
 S3 Bucket
+
 Amazon Resource Name (ARN)
 arn:aws:s3:::herbariumnsw-pds
+
 AWS Region
-ap-southeast-2
-AWS CLI Access (No AWS account required)
-aws s3 ls --no-sign-request s3://herbariumnsw-pds/</code></pre>
+ap-southeast-2</code></pre>
+<p>Using this information, I can get started. I know <em>what</em> the data is (an S3 bucket), I know <em>where</em> the data is (in the <code>"ap-southeast-2"</code> region), and on top of that I know the <em>name</em> of the data (<code>"herbariumnsw-pds"</code>). This should be enough for me to find what I’m looking for!</p>
 <h3 id="finding-the-bucket">Finding the bucket</h3>
-<p>Okay, so is there a bucket? I’ll use the <code>bucket_exists()</code> function to verify that there is in fact a public data set located on AWS at “s3://herbariumnsw-pds/”, and of course there…</p>
+<p>Okay, so is there a bucket? I’ll use the <code>bucket_exists()</code> function to verify that there is in fact a public data set located on AWS at <code>"s3://herbariumnsw-pds/"</code>, and of course there…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span><span class='st'>"s3://herbariumnsw-pds/"</span><span class='op'>)</span>
@@ -1581,13 +1594,16 @@ aws s3 ls --no-sign-request s3://herbariumnsw-pds/</code></pre>
 </div>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>[1] TRUE</code></pre>
+<pre><code>[1] FALSE</code></pre>
 </div>
 <p>…isn’t? What????</p>
-<p>I’ve made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon’s Sydney data center: that’s the “ap-southeast-2” region. Let’s try that again:</p>
+<p>I’ve made a very common mistake here, and forgotten to specify the region. S3 is very picky about regions and you need to tell it explicitly which one to use. The National Herbarium is an Australian institution and the data are stored in Amazon’s Sydney data center. In Amazon parlance, that’s the <code>"ap-southeast-2"</code> region, but unless you’ve done something to set a different default (more on that later), everything you do will probably default to the <code>"us-east-1"</code> region. To override this default, we can explicitly specify the <code>region</code> that <code>bucket_exists()</code> should look in. So now let’s try that again:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span><span class='st'>"s3://herbariumnsw-pds/"</span>, region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span>
+  bucket <span class='op'>=</span> <span class='st'>"s3://herbariumnsw-pds/"</span>, 
+  region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span>
+<span class='op'>)</span>
 </code></pre>
 </div>
 </div>
@@ -1595,21 +1611,23 @@ aws s3 ls --no-sign-request s3://herbariumnsw-pds/</code></pre>
 <pre><code>[1] TRUE</code></pre>
 </div>
 <p>Much better!</p>
-<p>Oh and one more thing. I lied slightly in the output… if you go do this yourself, you’ll find that the results are a little bit more verbose than simply printing <code>TRUE</code> or <code>FALSE</code>. The actual output comes with a lot of additional metadata that get stored as attributes. So what you’ll actually see is something like this:</p>
+<h3 id="okay-okay-i-lied">Okay, okay, I lied…</h3>
+<p>One more thing. If you’ve been following along at home and trying out these commands, you’ve probably noticed that the output you’re getting is a little more verbose than simply returning <code>TRUE</code> or <code>FALSE</code>. The actual output comes with a lot of additional metadata, stored as attributes. So what you’ll actually see is something like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/bucket_exists.html'>bucket_exists</a></span><span class='op'>(</span>
   bucket <span class='op'>=</span> <span class='st'>"s3://herbariumnsw-pds/"</span>, 
-  region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span><span class='op'>)</span>
+  region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span>
+<span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>[1] TRUE
 attr(,&quot;x-amz-id-2&quot;)
-[1] &quot;F/KOjJ4BSYmY52iuXTGxNUAvgy3Z8iFsYl6zceCzKQNPj1xyYavhJrclnyp6xc/HOiTi0I5dD2U=&quot;
+[1] &quot;dU0X9DITD5m/YUrob0dhO9HWiisBx7PInD7QmIwmAwDAgeCo0mN6K5ycgIv/eAjYFVJ3OLc3/R0=&quot;
 attr(,&quot;x-amz-request-id&quot;)
-[1] &quot;Q6Z58YYME9HVS561&quot;
+[1] &quot;949CGM23A3ZA87JV&quot;
 attr(,&quot;date&quot;)
-[1] &quot;Thu, 17 Mar 2022 07:39:04 GMT&quot;
+[1] &quot;Thu, 17 Mar 2022 10:32:24 GMT&quot;
 attr(,&quot;x-amz-bucket-region&quot;)
 [1] &quot;ap-southeast-2&quot;
 attr(,&quot;x-amz-access-point-alias&quot;)
@@ -1619,6 +1637,7 @@ attr(,&quot;content-type&quot;)
 attr(,&quot;server&quot;)
 [1] &quot;AmazonS3&quot;</code></pre>
 </div>
+<p>If you stare at this long enough this metadata all starts to make sense, especially after you’ve been playing around with S3 for a while. There’s a timestamp, there’s some information about which region the data came from, and so on. Nothing particularly special or interesting here, so let’s move on to something more fun.</p>
 <h3 id="listing-bucket-contents">Listing bucket contents</h3>
 <p>There are a lot of objects stored in this bucket, so I’ll just download the first 20,000 records:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1635,19 +1654,24 @@ attr(,&quot;server&quot;)
 <p>Now let’s take a peek:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://dplyr.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>herbarium_files</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>herbarium_files</span>
 </code></pre>
 </div>
-<pre><code>Rows: 20,000
-Columns: 8
-$ Key               &lt;chr&gt; &quot;ReadMe.txt&quot;, &quot;dwca-nsw_avh-v1.0.zip&quot;, &quot;he…
-$ LastModified      &lt;chr&gt; &quot;2020-06-09T02:46:49.000Z&quot;, &quot;2019-10-02T23…
-$ ETag              &lt;chr&gt; &quot;\&quot;5959d0ceedf8c2fa0d80a985fdfa8b3b\&quot;&quot;, &quot;\…
-$ Size              &lt;chr&gt; &quot;2729&quot;, &quot;82315856&quot;, &quot;33&quot;, &quot;433&quot;, &quot;33&quot;, &quot;43…
-$ Owner_ID          &lt;chr&gt; &quot;97c09bf9171dbf23204e8b2c9adf7c557d99266ef…
-$ Owner_DisplayName &lt;chr&gt; &quot;herbarium.nsw&quot;, &quot;herbarium.nsw&quot;, NA, NA, …
-$ StorageClass      &lt;chr&gt; &quot;STANDARD&quot;, &quot;STANDARD&quot;, &quot;STANDARD&quot;, &quot;STAND…
-$ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw-pds&quot;, &quot;h…</code></pre>
+<pre><code># A tibble: 20,000 × 8
+   Key              LastModified ETag  Size  Owner_ID Owner_DisplayNa…
+   &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
+ 1 ReadMe.txt       2020-06-09T… &quot;\&quot;5… 2729  97c09bf… herbarium.nsw   
+ 2 dwca-nsw_avh-v1… 2019-10-02T… &quot;\&quot;2… 8231… 97c09bf… herbarium.nsw   
+ 3 herbariumnsw-pd… 2021-05-30T… &quot;\&quot;3… 33    &lt;NA&gt;     &lt;NA&gt;            
+ 4 herbariumnsw-pd… 2021-05-30T… &quot;\&quot;5… 433   &lt;NA&gt;     &lt;NA&gt;            
+ 5 herbariumnsw-pd… 2021-06-06T… &quot;\&quot;5… 33    &lt;NA&gt;     &lt;NA&gt;            
+ 6 herbariumnsw-pd… 2021-06-06T… &quot;\&quot;f… 433   &lt;NA&gt;     &lt;NA&gt;            
+ 7 herbariumnsw-pd… 2021-06-13T… &quot;\&quot;b… 33    &lt;NA&gt;     &lt;NA&gt;            
+ 8 herbariumnsw-pd… 2021-06-13T… &quot;\&quot;4… 433   &lt;NA&gt;     &lt;NA&gt;            
+ 9 herbariumnsw-pd… 2021-06-21T… &quot;\&quot;f… 33    &lt;NA&gt;     &lt;NA&gt;            
+10 herbariumnsw-pd… 2021-06-21T… &quot;\&quot;6… 433   &lt;NA&gt;     &lt;NA&gt;            
+# … with 19,990 more rows, and 2 more variables: StorageClass &lt;chr&gt;,
+#   Bucket &lt;chr&gt;</code></pre>
 </div>
 <h3 id="downloading-files">Downloading files</h3>
 <div class="layout-chunk" data-layout="l-body">
@@ -1662,12 +1686,11 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 </div>
 <pre><code>[1] &quot;herbarium/ReadMe.txt&quot;</code></pre>
 </div>
-<p>As you might hope, the README does in fact tell you something about how it’s organised:</p>
+<p>As you might hope, the README does in fact tell you something about how it’s organised. In particular, it informs me that there’s a single file storing all the metadata, encoded as a zipped csv file:</p>
 <blockquote>
-<p>Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2</a></p>
 <p>A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at: <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip</a></p>
 </blockquote>
-<p>So the real place to start is with this metadata file, <code>dwca-nsw_avh-v1.0.zip</code></p>
+<p>This sounds like a good place to start. Let’s see if I can download the metadata file <code>dwca-nsw_avh-v1.0.zip</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_object.html'>save_object</a></span><span class='op'>(</span>
@@ -1680,7 +1703,8 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 </div>
 <pre><code>[1] &quot;herbarium/dwca-nsw_avh-v1.0.zip&quot;</code></pre>
 </div>
-<p>So now we have the data. After extracting from the zip file, we end up with a 421MB text file called <code>occurrence.txt</code> that turns out to be a tab separated value file:</p>
+<p>Success!</p>
+<p>I now have a copy of the 79MB zip file on my laptop, and after decompressing the file it turns out I have a 402MB file called <code>occurrence.txt</code> that contains the metadata. As it turns out, the metadata aren’t stored in comma-separated value format, they’re stored in tab-separated value format. Still, that’s fine: the <code>read_tsv()</code> function from the <strong>readr</strong> package can handle it:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>herbarium</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_tsv</a></span><span class='op'>(</span><span class='st'>"herbarium/dwca-nsw_avh-v1.0/occurrence.txt"</span><span class='op'>)</span>
@@ -1708,6 +1732,7 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
 #   preparations &lt;chr&gt;, associatedSequences &lt;lgl&gt;,
 #   associatedTaxa &lt;lgl&gt;, previousIdentifications &lt;lgl&gt;, …</code></pre>
 </div>
+<p>There’s quite a lot of interesting information stored in the 74 columns of the <code>herbarium</code> data, but I won’t dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you’ll likely discover that there is a small proportion of the 725507 rows that cause problems for <code>read_tsv()</code>, likely because they contain additional tab characters that mess up the parsing slightly. In real life I’d want to look into this, but this is a blog post. Nothing here is real and nobody is watching right?</p>
 <h3 id="wrangling-the-data">Wrangling the data</h3>
 <p>We can do some simple data wrangling:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1731,135 +1756,346 @@ $ Bucket            &lt;chr&gt; &quot;herbariumnsw-pds&quot;, &quot;herbariumnsw
  9 Western Australia             80447
 10 &lt;NA&gt;                           4287</code></pre>
 </div>
-<p>Okay, within NSW what are the unique regions</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>herbarium</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>country</span> <span class='op'>==</span> <span class='st'>"Australia"</span>, <span class='va'>stateProvince</span> <span class='op'>==</span> <span class='st'>"New South Wales"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/count.html'>count</a></span><span class='op'>(</span><span class='va'>locality</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/arrange.html'>arrange</a></span><span class='op'>(</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/desc.html'>desc</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code># A tibble: 174,850 × 2
-   locality                         n
-   &lt;chr&gt;                        &lt;int&gt;
- 1 &lt;NA&gt;                          3486
- 2 Broken Hill.                   852
- 3 Lismore.                       812
- 4 Warialda.                      733
- 5 Port Macquarie.                693
- 6 Ballina.                       678
- 7 Wentworth Falls.               667
- 8 Blackheath.                    664
- 9 [No precise locality given].   630
-10 Nyngan.                        630
-# … with 174,840 more rows</code></pre>
-</div>
+<p>Not surprisingly there’s a predominance of NSW. Since I live in Newtown (a neighbourhood in Sydney) I’m going to find the subset of images in the National Herbarium data whose locality matches the string <code>"Newtown"</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>newtowners</span> <span class='op'>&lt;-</span> <span class='va'>herbarium</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/filter.html'>filter</a></span><span class='op'>(</span>
     <span class='va'>country</span> <span class='op'>==</span> <span class='st'>"Australia"</span>, 
-    <span class='va'>stateProvince</span> <span class='op'>==</span> <span class='st'>"New South Wales"</span>, 
     <span class='va'>locality</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_detect.html'>str_detect</a></span><span class='op'>(</span><span class='st'>"Newtown"</span><span class='op'>)</span>
   <span class='op'>)</span>
-
-<span class='va'>newtowners</span><span class='op'>$</span><span class='va'>catalogNumber</span>
 </code></pre>
 </div>
-<pre><code>[1] &quot;NSW 1055313&quot; &quot;NSW 1056305&quot; &quot;NSW 29246&quot;   &quot;NSW 687458&quot; 
-[5] &quot;NSW 121207&quot;  &quot;NSW 421494&quot;  &quot;NSW 570557&quot;  &quot;NSW 676197&quot; </code></pre>
+</div>
+<p>From a data science point of view I’m being extremely sloppy here. If my intention had been to find only plants from my neighbourhood, I would also be wise to filter by recorded longitude and latitude where available, and I would certainly want to exclude cases listed as coming from another Australian state. But that’s not really my goal. I just wanted a query that would return around 20-30 results, so this is fine for my purposes.</p>
+<p>Now that we’ve got a subset of records, let’s pull out the catalog numbers:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>newtowners</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>catalogNumber</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code> [1] &quot;NSW 395530&quot;  &quot;NSW 461895&quot;  &quot;NSW 650052&quot;  &quot;NSW 1055313&quot;
+ [5] &quot;NSW 1056305&quot; &quot;NSW 29246&quot;   &quot;NSW 36860&quot;   &quot;NSW 39618&quot;  
+ [9] &quot;NSW 687458&quot;  &quot;NSW 121207&quot;  &quot;NSW 214616&quot;  &quot;NSW 306564&quot; 
+[13] &quot;NSW 307215&quot;  &quot;NSW 389387&quot;  &quot;NSW 395529&quot;  &quot;NSW 402973&quot; 
+[17] &quot;NSW 403188&quot;  &quot;NSW 404127&quot;  &quot;NSW 421494&quot;  &quot;NSW 446243&quot; 
+[21] &quot;NSW 570557&quot;  &quot;NSW 702035&quot;  &quot;NSW 676197&quot;  &quot;NSW 776212&quot; 
+[25] &quot;NSW 777249&quot;  &quot;NSW 739455&quot;  &quot;NSW 751830&quot; </code></pre>
 </div>
 <p>I wonder if I can write code to extract these images?</p>
+<p><br></p>
 <div class="layout-chunk" data-layout="l-body">
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW676197.jpg" /><!-- --></p>
 </div>
+<p><br></p>
 <h3 id="scripting-the-download">Scripting the download</h3>
 <p>Okay, now I want to pull the images for these records. First, I’m going to construct the paths. I am <em>not</em> going to download the jp2 files because they’re about 100MB each. That’s why this is on S3, by the way. There are 725507 distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let’s go with the jpgs shall we?</p>
+<blockquote>
+<p>Image data are organized by NSW specimen barcode number. For example, the file for Dodonaea lobulata recorded on 1968-09-07 = NSW 041500 can be accessed via the URI <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/images/NSW041500.jp2</a></p>
+</blockquote>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span> <span class='op'>&lt;-</span> <span class='va'>newtowners</span><span class='op'>$</span><span class='va'>catalogNumber</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span> <span class='op'>&lt;-</span> <span class='va'>newtowners</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/pull.html'>pull</a></span><span class='op'>(</span><span class='va'>catalogNumber</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_remove.html'>str_remove_all</a></span><span class='op'>(</span><span class='st'>" "</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://stringr.tidyverse.org/reference/str_c.html'>str_c</a></span><span class='op'>(</span><span class='st'>"images/"</span>, <span class='va'>.</span>, <span class='st'>".jpg"</span><span class='op'>)</span>
-
-<span class='va'>save_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
+</code></pre>
+</div>
+</div>
+<p>Let’s take a look at what we’ve got:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span>
+</code></pre>
+</div>
+<pre><code> [1] &quot;images/NSW395530.jpg&quot;  &quot;images/NSW461895.jpg&quot; 
+ [3] &quot;images/NSW650052.jpg&quot;  &quot;images/NSW1055313.jpg&quot;
+ [5] &quot;images/NSW1056305.jpg&quot; &quot;images/NSW29246.jpg&quot;  
+ [7] &quot;images/NSW36860.jpg&quot;   &quot;images/NSW39618.jpg&quot;  
+ [9] &quot;images/NSW687458.jpg&quot;  &quot;images/NSW121207.jpg&quot; 
+[11] &quot;images/NSW214616.jpg&quot;  &quot;images/NSW306564.jpg&quot; 
+[13] &quot;images/NSW307215.jpg&quot;  &quot;images/NSW389387.jpg&quot; 
+[15] &quot;images/NSW395529.jpg&quot;  &quot;images/NSW402973.jpg&quot; 
+[17] &quot;images/NSW403188.jpg&quot;  &quot;images/NSW404127.jpg&quot; 
+[19] &quot;images/NSW421494.jpg&quot;  &quot;images/NSW446243.jpg&quot; 
+[21] &quot;images/NSW570557.jpg&quot;  &quot;images/NSW702035.jpg&quot; 
+[23] &quot;images/NSW676197.jpg&quot;  &quot;images/NSW776212.jpg&quot; 
+[25] &quot;images/NSW777249.jpg&quot;  &quot;images/NSW739455.jpg&quot; 
+[27] &quot;images/NSW751830.jpg&quot; </code></pre>
+</div>
+<p>Define a function</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>save_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
   
+  <span class='co'># if object doesn't exist in bucket, return NA</span>
   <span class='va'>ok</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/head_object.html'>object_exists</a></span><span class='op'>(</span>
     object <span class='op'>=</span> <span class='va'>file</span>,
     bucket <span class='op'>=</span> <span class='st'>"s3://herbariumnsw-pds/"</span>, 
     region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span>
   <span class='op'>)</span>
+  <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='va'>ok</span><span class='op'>)</span> <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='cn'>NA_character_</span><span class='op'>)</span>
   
-  <span class='kw'>if</span><span class='op'>(</span><span class='op'>!</span><span class='va'>ok</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='kw'><a href='https://rdrr.io/r/base/warning.html'>warning</a></span><span class='op'>(</span><span class='st'>"object '"</span>, <span class='va'>file</span>, <span class='st'>"' does not exist in this bucket"</span>, call. <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span><span class='op'>(</span><span class='cn'>NULL</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='op'>}</span>
-  
+  <span class='co'># if object exists, save it and return file path</span>
   <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_object.html'>save_object</a></span><span class='op'>(</span>
-    object <span class='op'>=</span> <span class='va'>file</span>,
-    bucket <span class='op'>=</span> <span class='st'>"s3://herbariumnsw-pds/"</span>, 
-    region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span>,
-    file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/"</span>, <span class='va'>file</span><span class='op'>)</span>
+      object <span class='op'>=</span> <span class='va'>file</span>,
+      bucket <span class='op'>=</span> <span class='st'>"s3://herbariumnsw-pds/"</span>, 
+      region <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span>,
+      file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/"</span>, <span class='va'>file</span><span class='op'>)</span>
   <span class='op'>)</span>
 <span class='op'>}</span>
-
-<span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>filepaths</span>, <span class='va'>save_herbarium_image</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>Warning: object &#39;images/NSW1056305.jpg&#39; does not exist in this bucket</code></pre>
-<pre><code>Warning: object &#39;images/NSW421494.jpg&#39; does not exist in this bucket</code></pre>
 </div>
+<p>Test it out?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'>save_herbarium_image</span><span class='op'>(</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>[1] &quot;herbarium/images/NSW395530.jpg&quot;</code></pre>
+</div>
+<p>Okay now let’s <code>map_chr()</code> over all the files listed in <code>filepaths</code>, saving the relevant herbarium image in each case:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>filepaths</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_chr</a></span><span class='op'>(</span><span class='va'>save_herbarium_image</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code> [1] &quot;herbarium/images/NSW395530.jpg&quot; 
+ [2] &quot;herbarium/images/NSW461895.jpg&quot; 
+ [3] &quot;herbarium/images/NSW650052.jpg&quot; 
+ [4] &quot;herbarium/images/NSW1055313.jpg&quot;
+ [5] NA                               
+ [6] &quot;herbarium/images/NSW29246.jpg&quot;  
+ [7] &quot;herbarium/images/NSW36860.jpg&quot;  
+ [8] &quot;herbarium/images/NSW39618.jpg&quot;  
+ [9] &quot;herbarium/images/NSW687458.jpg&quot; 
+[10] &quot;herbarium/images/NSW121207.jpg&quot; 
+[11] &quot;herbarium/images/NSW214616.jpg&quot; 
+[12] &quot;herbarium/images/NSW306564.jpg&quot; 
+[13] &quot;herbarium/images/NSW307215.jpg&quot; 
+[14] &quot;herbarium/images/NSW389387.jpg&quot; 
+[15] NA                               
+[16] &quot;herbarium/images/NSW402973.jpg&quot; 
+[17] &quot;herbarium/images/NSW403188.jpg&quot; 
+[18] &quot;herbarium/images/NSW404127.jpg&quot; 
+[19] NA                               
+[20] &quot;herbarium/images/NSW446243.jpg&quot; 
+[21] &quot;herbarium/images/NSW570557.jpg&quot; 
+[22] &quot;herbarium/images/NSW702035.jpg&quot; 
+[23] &quot;herbarium/images/NSW676197.jpg&quot; 
+[24] &quot;herbarium/images/NSW776212.jpg&quot; 
+[25] &quot;herbarium/images/NSW777249.jpg&quot; 
+[26] &quot;herbarium/images/NSW739455.jpg&quot; 
+[27] NA                               </code></pre>
+</div>
+<p>Did it work? Well, kind of. Notice there are some missing values in the output. In those cases the object doesn’t exist in this bucket, and when that happens the <code>save_herbarium_image()</code> function bails and doesn’t try to download anything. But in most cases images it worked.</p>
 <h3 id="behold-the-pretty-pictures">Behold the pretty pictures!</h3>
-<p>Even the jpg files are fairly high resolution and I don’t want this post to be too big, so I’ll shrink them for this post</p>
+<p>Even the jpg files are fairly high resolution and I don’t want this post to be too big, so I’ll shrink them for this post. Here’s my helper function:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>shrink_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/on.exit.html'>on.exit</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/gc.html'>gc</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># prevents cache problem</span>
   <span class='va'>img_from</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"images"</span>, <span class='va'>file</span><span class='op'>)</span>
   <span class='va'>img_to</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/file.path.html'>file.path</a></span><span class='op'>(</span><span class='st'>"herbarium"</span>, <span class='st'>"tiny_images"</span>, <span class='va'>file</span><span class='op'>)</span>
   <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_read</a></span><span class='op'>(</span><span class='va'>img_from</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
     <span class='fu'><a href='https://docs.ropensci.org/magick/reference/transform.html'>image_resize</a></span><span class='op'>(</span><span class='fu'><a href='https://docs.ropensci.org/magick/reference/geometry.html'>geometry_size_pixels</a></span><span class='op'>(</span>width <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
     <span class='fu'><a href='https://docs.ropensci.org/magick/reference/editing.html'>image_write</a></span><span class='op'>(</span><span class='va'>img_to</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/gc.html'>gc</a></span><span class='op'>(</span><span class='op'>)</span> <span class='co'># prevents cache problem</span>
 <span class='op'>}</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
-  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>shrink_herbarium_image</span><span class='op'>)</span>
 </code></pre>
 </div>
 </div>
-<p>Here they are:</p>
+<p>and here’s me using <code>walk()</code> to shrink every image and the smol version in the <code>tiny_images</code> folder:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
+  <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map_chr</a></span><span class='op'>(</span><span class='va'>shrink_herbarium_image</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code> [1] &quot;herbarium/tiny_images/NSW1055313.jpg&quot;
+ [2] &quot;herbarium/tiny_images/NSW121207.jpg&quot; 
+ [3] &quot;herbarium/tiny_images/NSW214616.jpg&quot; 
+ [4] &quot;herbarium/tiny_images/NSW29246.jpg&quot;  
+ [5] &quot;herbarium/tiny_images/NSW306564.jpg&quot; 
+ [6] &quot;herbarium/tiny_images/NSW307215.jpg&quot; 
+ [7] &quot;herbarium/tiny_images/NSW36860.jpg&quot;  
+ [8] &quot;herbarium/tiny_images/NSW389387.jpg&quot; 
+ [9] &quot;herbarium/tiny_images/NSW395530.jpg&quot; 
+[10] &quot;herbarium/tiny_images/NSW39618.jpg&quot;  
+[11] &quot;herbarium/tiny_images/NSW402973.jpg&quot; 
+[12] &quot;herbarium/tiny_images/NSW403188.jpg&quot; 
+[13] &quot;herbarium/tiny_images/NSW404127.jpg&quot; 
+[14] &quot;herbarium/tiny_images/NSW446243.jpg&quot; 
+[15] &quot;herbarium/tiny_images/NSW461895.jpg&quot; 
+[16] &quot;herbarium/tiny_images/NSW570557.jpg&quot; 
+[17] &quot;herbarium/tiny_images/NSW650052.jpg&quot; 
+[18] &quot;herbarium/tiny_images/NSW676197.jpg&quot; 
+[19] &quot;herbarium/tiny_images/NSW687458.jpg&quot; 
+[20] &quot;herbarium/tiny_images/NSW702035.jpg&quot; 
+[21] &quot;herbarium/tiny_images/NSW739455.jpg&quot; 
+[22] &quot;herbarium/tiny_images/NSW776212.jpg&quot; 
+[23] &quot;herbarium/tiny_images/NSW777249.jpg&quot; </code></pre>
+</div>
+<p>The output here is a character vector containing names for the created files. Here’s the contents of the <code>tiny_images</code> folder, but shown as the actual images rather than file names because that’s prettier:<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
 <div class="layout-chunk" data-layout="l-body">
 <div>
-<div class="row p-0 row-cols-1 row-cols-md-2 row-cols-lg-3" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
+<div class="row p-0 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4" style="margin-left: -.2rem; margin-right: -.2rem; margin-top: 1rem; margin-bottom: 1rem; ">
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW1055313.jpg" style="color: inherit;">
 <img src="herbarium/tiny_images/NSW1055313.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg" style="color: inherit;">
 <img src="herbarium/tiny_images/NSW121207.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW214616.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW214616.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW29246.jpg" style="color: inherit;">
 <img src="herbarium/tiny_images/NSW29246.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW306564.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW306564.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW307215.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW307215.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW36860.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW36860.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW389387.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW389387.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW395530.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW395530.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW39618.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW39618.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW402973.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW402973.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW403188.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW403188.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW404127.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW404127.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW446243.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW446243.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW461895.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW461895.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW570557.jpg" style="color: inherit;">
 <img src="herbarium/tiny_images/NSW570557.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW650052.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW650052.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW676197.jpg" style="color: inherit;">
 <img src="herbarium/tiny_images/NSW676197.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
 </div>
 <div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW687458.jpg" style="color: inherit;">
 <img src="herbarium/tiny_images/NSW687458.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW702035.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW702035.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW739455.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW739455.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW776212.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW776212.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
+</div>
+<div class="card bg-transparent m-0 border-0 collapse.show bs4cards-blahblahblah " style="padding: .2rem ; border-width: 0; border-radius: 0 0 0 0 ;">
+<a href="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW777249.jpg" style="color: inherit;">
+<img src="herbarium/tiny_images/NSW777249.jpg" class="card-img" style="border-style:solid; border-color:inherits; border-width:0; border-radius: 0 0 0 0 ;"/>
+</a>
 </div>
 </div>
 </div>
 </div>
+<p>Okay! Progress!</p>
 <h2 id="signing-up-for-an-aws-account">Signing up for an AWS account</h2>
-<h2 id="manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</h2>
+<h3 id="creating-the-account">Creating the account</h3>
+<p>Visit <a href="https://aws.amazon.com/s3/" class="uri">https://aws.amazon.com/s3/</a> and click on the “Create an AWS Account” button:</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="screenshots/aws_s3_signup.png" width="1221" /></p>
+</div>
+<p>This will lead you through a pretty standard sign up process. You’ll have to give an email address for the “root user” (that’s you), specify a password, and so on. The free tier allows you 5GB of storage for 12 months, which is fairly convenient for “playing around” purposes!</p>
+<h3 id="creating-credentials">Creating credentials</h3>
+<p>You can create access credentials for the root user, but that’s not the wisest thing to do. Instead, what you want to do is create an “IAM user” (where “IAM” stands for “Identity and Access Management”) and then supply credentials for that user. <a href="https://us-east-1.console.aws.amazon.com/iamv2/home#/users" class="uri">https://us-east-1.console.aws.amazon.com/iamv2/home#/users</a></p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="screenshots/s3_iam_add_user_1.png" width="1451" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="screenshots/s3_iam_add_user_2.png" width="1115" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="screenshots/s3_iam_add_user_3.png" width="1055" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="screenshots/s3_iam_add_user_4.png" width="1087" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="screenshots/s3_iam_add_user_5.png" width="1054" /></p>
+</div>
 <h3 id="storing-your-aws-credentials-in-r">Storing your AWS credentials in R</h3>
 <p>Add these lines to .Renviron</p>
 <pre><code>AWS_ACCESS_KEY_ID=&lt;your access key id&gt;
 AWS_SECRET_ACCESS_KEY=&lt;your secret key&gt;
 AWS_DEFAULT_REGION=ap-southeast-2</code></pre>
 <p>Your default region might be different from mine!</p>
+<div class="layout-chunk" data-layout="l-body">
+<p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW1055313.jpg" /><!-- --></p>
+</div>
+<h2 id="manipulating-your-s3-storage-from-r">Manipulating your S3 storage from R</h2>
 <h3 id="creating-a-new-bucket">Creating a new bucket</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -1924,40 +2160,28 @@ attr(,&quot;server&quot;)
 </div>
 <pre><code>[1] TRUE</code></pre>
 </div>
-<p>Now everyone has read access to the bucket.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p>Now everyone has read access to the bucket.<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
 <h3 id="adding-objects-to-your-bucket">Adding objects to your bucket</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>post_herbarium_image</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"uploading"</span>, <span class='va'>file</span>, <span class='st'>"..."</span><span class='op'>)</span>
-  <span class='va'>out</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_object.html'>put_object</a></span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/put_object.html'>put_object</a></span><span class='op'>(</span>
     file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images/"</span>, <span class='va'>file</span><span class='op'>)</span>,
     object <span class='op'>=</span> <span class='va'>file</span>, 
     bucket <span class='op'>=</span> <span class='st'>"s3://tiny-herbs/"</span>,
     acl <span class='op'>=</span> <span class='st'>"public-read"</span>
   <span class='op'>)</span>
-  <span class='kw'>if</span><span class='op'>(</span><span class='va'>out</span> <span class='op'>==</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"success!\n"</span><span class='op'>)</span>
-    <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span><span class='op'>(</span><span class='cn'>TRUE</span><span class='op'>)</span><span class='op'>)</span>
-  <span class='op'>}</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='st'>"failed\n"</span><span class='op'>)</span>
-  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/invisible.html'>invisible</a></span><span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span><span class='op'>)</span>
 <span class='op'>}</span>
 </code></pre>
 </div>
 </div>
+<p>Let’s walk:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>list.files</a></span><span class='op'>(</span><span class='st'>"herbarium/tiny_images"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
   <span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>walk</a></span><span class='op'>(</span><span class='va'>post_herbarium_image</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>uploading NSW1055313.jpg ...success!
-uploading NSW121207.jpg ...success!
-uploading NSW29246.jpg ...success!
-uploading NSW570557.jpg ...success!
-uploading NSW676197.jpg ...success!
-uploading NSW687458.jpg ...success!</code></pre>
 </div>
 <p>Now what do we have:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1966,35 +2190,46 @@ uploading NSW687458.jpg ...success!</code></pre>
   <span class='fu'><a href='https://tibble.tidyverse.org/reference/as_tibble.html'>as_tibble</a></span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code># A tibble: 6 × 8
-  Key            LastModified    ETag  Size  Owner_ID Owner_DisplayNa…
-  &lt;chr&gt;          &lt;chr&gt;           &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
-1 NSW1055313.jpg 2022-03-17T08:… &quot;\&quot;c… 1494… b8b2319… djnavarro       
-2 NSW121207.jpg  2022-03-17T08:… &quot;\&quot;6… 1562… b8b2319… djnavarro       
-3 NSW29246.jpg   2022-03-17T08:… &quot;\&quot;e… 1043… b8b2319… djnavarro       
-4 NSW570557.jpg  2022-03-17T08:… &quot;\&quot;5… 1195… b8b2319… djnavarro       
-5 NSW676197.jpg  2022-03-17T08:… &quot;\&quot;2… 1863… b8b2319… djnavarro       
-6 NSW687458.jpg  2022-03-17T08:… &quot;\&quot;c… 1408… b8b2319… djnavarro       
-# … with 2 more variables: StorageClass &lt;chr&gt;, Bucket &lt;chr&gt;</code></pre>
+<pre><code># A tibble: 23 × 8
+   Key            LastModified   ETag  Size  Owner_ID Owner_DisplayNa…
+   &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;           
+ 1 NSW1055313.jpg 2022-03-17T10… &quot;\&quot;c… 1494… b8b2319… djnavarro       
+ 2 NSW121207.jpg  2022-03-17T10… &quot;\&quot;6… 1562… b8b2319… djnavarro       
+ 3 NSW214616.jpg  2022-03-17T10… &quot;\&quot;f… 2041… b8b2319… djnavarro       
+ 4 NSW29246.jpg   2022-03-17T10… &quot;\&quot;e… 1043… b8b2319… djnavarro       
+ 5 NSW306564.jpg  2022-03-17T10… &quot;\&quot;d… 1819… b8b2319… djnavarro       
+ 6 NSW307215.jpg  2022-03-17T10… &quot;\&quot;e… 1684… b8b2319… djnavarro       
+ 7 NSW36860.jpg   2022-03-17T10… &quot;\&quot;f… 1962… b8b2319… djnavarro       
+ 8 NSW389387.jpg  2022-03-17T10… &quot;\&quot;d… 1240… b8b2319… djnavarro       
+ 9 NSW395530.jpg  2022-03-17T10… &quot;\&quot;3… 1435… b8b2319… djnavarro       
+10 NSW39618.jpg   2022-03-17T10… &quot;\&quot;a… 1028… b8b2319… djnavarro       
+# … with 13 more rows, and 2 more variables: StorageClass &lt;chr&gt;,
+#   Bucket &lt;chr&gt;</code></pre>
 </div>
 <h3 id="urls-for-objects-in-public-buckets">URLs for objects in public buckets</h3>
+<p>The images I’ve been displaying throughout are all stored in the “tiny-herbs” bucket. I wrote a little helper function that</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tiny_herb_url</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>bucket</span> <span class='op'>&lt;-</span> <span class='st'>"tiny-herbs"</span>
-  <span class='va'>region</span> <span class='op'>&lt;-</span> <span class='st'>"ap-southeast-2"</span>
-  <span class='va'>url</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>tiny_herb_url</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>object</span>, 
+                          <span class='va'>bucket</span> <span class='op'>=</span> <span class='st'>"tiny-herbs"</span>,
+                          <span class='va'>region</span> <span class='op'>=</span> <span class='st'>"ap-southeast-2"</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span><span class='op'>(</span>
     <span class='st'>"https://"</span>, <span class='va'>bucket</span>, <span class='st'>"."</span>, <span class='st'>"s3-"</span>, 
-    <span class='va'>region</span>, <span class='st'>".amazonaws.com/"</span>, <span class='va'>object</span>
+    <span class='va'>region</span>, <span class='st'>".amazonaws.com"</span>, <span class='st'>"/"</span>, <span class='va'>object</span>
   <span class='op'>)</span>
-  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='va'>url</span><span class='op'>)</span>
 <span class='op'>}</span>
-<span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Here’s what it does:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>[1] &quot;https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg&quot;</code></pre>
 </div>
-<p>In fact…</p>
+<p>The code I’ve been using to display the images throughout the post looks like this:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>tiny_herb_url</span><span class='op'>(</span><span class='st'>"NSW121207.jpg"</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span> 
@@ -2003,7 +2238,7 @@ uploading NSW687458.jpg ...success!</code></pre>
 </div>
 <p><img src="https://tiny-herbs.s3-ap-southeast-2.amazonaws.com/NSW121207.jpg" /><!-- --></p>
 </div>
-<h3 id="other-functionality">Other functionality?</h3>
+<h2 id="wrapping-up">Wrapping up</h2>
 <ul>
 <li>Copying objects between buckets</li>
 <li>Deleting objects and buckets</li>
@@ -2015,7 +2250,7 @@ uploading NSW687458.jpg ...success!</code></pre>
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-17 19:05:48 AEDT</p>
+<p>2022-03-17 22:16:16 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>
@@ -2027,10 +2262,9 @@ uploading NSW687458.jpg ...success!</code></pre>
 <section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>Okay fine, I used “Amazon Mechanical Turk” a lot as part of my academic work, but that’s hardly a core data science skill.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>Again, I cannot stress how much I do not know about AWS. I guess that’s the term for virtual machines. Whatever. This isn’t a post about EC2<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>It’s deeply important to me that you read this knowing that I was singing <a href="https://www.youtube.com/watch?v=OiwDHHcHPh0"><em>Tragedy</em></a> by Steps at the time I wrote this, complete with dramatic hand gestures<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>You can specify different ACL settings for each object, if you want to. The <code>put_acl()</code> function also has an <code>object</code> argument that allows you to control the setting for a single object in a bucket.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1" role="doc-endnote"><p>It’s deeply important to me that you read this knowing that I was singing <a href="https://www.youtube.com/watch?v=OiwDHHcHPh0"><em>Tragedy</em></a> by Steps at the time I wrote this, complete with dramatic hand gestures<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>I’m using the <strong>bs4cards</strong> package to display the images in this layout<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3" role="doc-endnote"><p>You can specify different ACL settings for each object, if you want to. The <code>put_acl()</code> function also has an <code>object</code> argument that allows you to control the setting for a single object in a bucket.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 <!--radix_placeholder_article_footer-->
