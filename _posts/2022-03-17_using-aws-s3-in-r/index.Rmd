@@ -400,54 +400,88 @@ Progress!
 
 <br>
 
-## Signing up for an AWS account
+## Accounts and credentials
+
+At this point it is starting to dawn on me that it would be kind of neat to create my own S3 bucket and store the tiny images there. I could make the tiny images public and then display them in this post. The National Herbarium data is released under a Creative Commons By-Attribution licence, so I'm allowed to use the images that way as long as I properly acknowledge the source... which I think is fairly well covered in this post already!
+
+The task I'm going to set for myself later in this post is to do exactly that, and use tools from the **aws.s3** package to do everything in R. However, I can't do any of that unless I have an AWS account of my very own. The time has come for me to do that.
 
 ### Creating the account
 
-Visit https://aws.amazon.com/s3/ and click on the "Create an AWS Account" button:
+Signing up for the account turns out to be pretty easy. All I had to do was visit https://aws.amazon.com/s3/ and click on the "Create an AWS Account" button shown in the image below:
+
+<br>
 
 ```{r echo=FALSE}
 knitr::include_graphics("screenshots/aws_s3_signup.png")
 ```
 
-This will lead you through a pretty standard sign up process. You'll have to give an email address for the "root user" (that's you), specify a password, and so on. The free tier allows you 5GB of storage for 12 months, which is fairly convenient for "playing around" purposes! 
+<br>
+
+This then led me through a pretty standard sign up process. I had to provide an email address for the "root user" (i.e., me!), specify a password, and so on. I didn't sign up for anything that cost money. The free tier allows you 5GB of storage for 12 months, which is fairly convenient for "playing around" purposes, and that's all I'm intending to do here.  
 
 ### Creating credentials
 
-You can create access credentials for the root user, but that's not the wisest thing to do. Instead, what you want to do is create an "IAM user" (where "IAM" stands for "Identity and Access Management") and then supply credentials for that user. https://us-east-1.console.aws.amazon.com/iamv2/home#/users
+The next step is to create an access key, so that R can interact with S3 using my credentials. At this point a little care is needed. It is possible to create access credentials for the root user, but that's not a good idea. The root user has access to every AWS service, not just S3, and it's a bad idea to give R access to any credentials that have those permissions. What I'll do here is create an  an "IAM user" -- where "IAM" stands for "Identity and Access Management" -- that *only* has access to my S3 storage, and the credentials I supply to R will be associated with that user. Here's how I did that. First, I went over to the IAM console here: 
+
+https://us-east-1.console.aws.amazon.com/iamv2/home#/users
+
+On this screen there's an "add users" button that I dutifully click...
 
 ```{r echo=FALSE}
 knitr::include_graphics("screenshots/s3_iam_add_user_1.png")
 ```
 
+<br>
+
+From here it's mostly a matter of following prompts. The screenshot below shows me part way through the creation process. The IAM user has its own username, and it will be allowed programmatic access using an access key:
+
 ```{r echo=FALSE}
 knitr::include_graphics("screenshots/s3_iam_add_user_2.png")
 ```
+
+<br>
+
+When I get to the next screen it asks me to set the permissions associated with this user. I click on "attach existing policies directly", and then type "S3" into the search box. It comes up with a list of permission policies associated with S3 and I select the one I want:
 
 ```{r echo=FALSE}
 knitr::include_graphics("screenshots/s3_iam_add_user_3.png")
 ```
 
+<br>
+
+The third screen is boring. It asks for tags. I don't give it any. I move onto the fourth screen, which turns out to be a review screen:
+
 ```{r echo=FALSE}
 knitr::include_graphics("screenshots/s3_iam_add_user_4.png")
 ```
+
+<br>
+
+Having decided I am happy with these settings, I click on the "next" button that isn't actually shown in these screenshots (it's at the bottom of the page) and it takes me to a final screen that gives me the access key ID and the secret access key:
 
 ```{r echo=FALSE}
 knitr::include_graphics("screenshots/s3_iam_add_user_5.png")
 ```
 
+These are the two pieces of information I need to let R access to my S3 storage.
 
 ### Storing your AWS credentials in R
 
-Add these lines to .Renviron
+There are several ways of storing these credentials in R. The easiest is to add the credentials to your `.Renviron` file, which you can conveniently open with the `edit_r_environ()` function from the **usethis** package. To get access to the account, the following lines need to be added to your `.Renviron` file:
 
 ```
 AWS_ACCESS_KEY_ID=<your access key id>
 AWS_SECRET_ACCESS_KEY=<your secret key>
-AWS_DEFAULT_REGION=ap-southeast-2
 ```
 
-Your default region might be different from mine!
+However, if you're going to be using the same AWS region all the time (e.g., you're in Sydney so you tend to use `"ap-southeast-2"` rather than `"us-east-1"`), you might as well add a third line that sets your default region. That way, you won't need to bother manually specifying the `region` argument every time you want to interact with S3: the **aws.s3** package will use your default. So for me, the relevant lines ended up looking like this:
+
+```
+AWS_ACCESS_KEY_ID=<my access key id>
+AWS_SECRET_ACCESS_KEY=<my secret key>
+AWS_DEFAULT_REGION=ap-southeast-2
+```
 
 <br>
 
