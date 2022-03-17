@@ -6,7 +6,16 @@
     <atom:link href="https://blog.djnavarro.net/index.xml" rel="self" type="application/rss+xml"/>
     <description/>
     <generator>Distill</generator>
-    <lastBuildDate>Fri, 04 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 17 Mar 2022 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Using with Amazon S3 with R</title>
+      <dc:creator>Danielle Navarro</dc:creator>
+      <link>https://blog.djnavarro.net/posts/2022-03-17_using-aws-s3-in-r</link>
+      <description>Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it's not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain.</description>
+      <guid>https://blog.djnavarro.net/posts/2022-03-17_using-aws-s3-in-r</guid>
+      <pubDate>Thu, 17 Mar 2022 00:00:00 +0000</pubDate>
+      <media:content url="https://blog.djnavarro.net/posts/2022-03-17_using-aws-s3-in-r/preview-image.jpg" medium="image" type="image/jpeg"/>
+    </item>
     <item>
       <title>Data types in Arrow and R</title>
       <dc:creator>Danielle Navarro</dc:creator>
