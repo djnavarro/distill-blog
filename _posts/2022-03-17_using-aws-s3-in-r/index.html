@@ -1695,7 +1695,7 @@ attr(,&quot;server&quot;)
 <blockquote>
 <p>A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at: <a href="https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip" class="uri">https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip</a></p>
 </blockquote>
-<p>This sounds like a good place to start doesn’t it. Once again, I’ll use <code>save_object()</code> and try to download the metadata file <code>dwca-nsw_avh-v1.0.zip</code>:</p>
+<p>This sounds like a good place to start, doesn’t it? Once again, I’ll use <code>save_object()</code> and try to download the metadata file <code>dwca-nsw_avh-v1.0.zip</code>:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/aws.s3/man/get_object.html'>save_object</a></span><span class='op'>(</span>
@@ -1737,7 +1737,7 @@ attr(,&quot;server&quot;)
 #   preparations &lt;chr&gt;, associatedSequences &lt;lgl&gt;,
 #   associatedTaxa &lt;lgl&gt;, previousIdentifications &lt;lgl&gt;, …</code></pre>
 </div>
-<p>There’s quite a lot of interesting information stored in the 74 columns of the <code>herbarium</code> data, but I won’t dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you’ll likely discover that there is a small proportion of the 725507 rows that cause problems for <code>read_tsv()</code>, likely because they contain additional tab characters that mess up the parsing slightly. In real life I’d want to look into this, but this is a blog post. Nothing here is real and nobody is watching right?</p>
+<p>There’s quite a lot of interesting information stored in the 74 columns of the <code>herbarium</code> data, but I won’t dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you’ll likely discover that there is a small proportion of the 725507 rows that cause problems for <code>read_tsv()</code>, likely because they contain additional tab characters that mess up the parsing slightly. In real life I’d want to look into this, but this is a blog post. Nothing here is real and nobody is watching, right?</p>
 <h3 id="wrangling-the-data">Wrangling the data</h3>
 <p>Now that I have some data, I can do a little poking around to see what’s in it. Exploring a new data set is always fun, but this isn’t really a post about data wrangling, so I’ll keep this brief. A quick look suggests that (unsurprisingly) there are a lot of records corresponding to samples collected in Australia, and a disproportionate number of those come from New South Wales:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2293,7 +2293,7 @@ attr(,&quot;server&quot;)
 <!--------------- appendices ----------------->
 <div class="layout-chunk" data-layout="l-body">
 <h2 class="appendix" id="last-updated">Last updated</h2>
-<p>2022-03-18 08:13:50 AEDT</p>
+<p>2022-03-18 08:30:35 AEDT</p>
 <h2 class="appendix" id="details">Details</h2>
 <p><a href="https://github.com/djnavarro/distill-blog/tree/master/_posts/2022-03-17_using-aws-s3-in-r/index.Rmd">source code</a>, <a href="https://github.com/djnavarro/distill-blog/tree/master/_renv/_posts/2022-03-17_using-aws-s3-in-r/renv.lock">R environment</a></p>
 </div>

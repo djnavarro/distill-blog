@@ -219,7 +219,7 @@ As you might hope, the Read Me file does in fact tell us something about how the
 
 > A zipped csv containing the biocollections metadata for the images is available as a DarwinCore Archive at: https://herbariumnsw-pds.s3-ap-southeast-2.amazonaws.com/dwca-nsw_avh-v1.0.zip
 
-This sounds like a good place to start doesn't it. Once again, I'll use `save_object()` and try to download the metadata file `dwca-nsw_avh-v1.0.zip`:
+This sounds like a good place to start, doesn't it? Once again, I'll use `save_object()` and try to download the metadata file `dwca-nsw_avh-v1.0.zip`:
 
 ```{r download-metadata, cache=TRUE}
 save_object(
@@ -239,7 +239,7 @@ herbarium <- read_tsv("herbarium/dwca-nsw_avh-v1.0/occurrence.txt")
 herbarium
 ```
 
-There's quite a lot of interesting information stored in the 74 columns of the `herbarium` data, but I won't dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you'll likely discover that there is a small proportion of the 725507 rows that cause problems for `read_tsv()`, likely because they contain additional tab characters that mess up the parsing slightly. In real life I'd want to look into this, but this is a blog post. Nothing here is real and nobody is watching right?
+There's quite a lot of interesting information stored in the 74 columns of the `herbarium` data, but I won't dive very deep into it in this post. I will mention, however, that if you find yourself following along at home you'll likely discover that there is a small proportion of the 725507 rows that cause problems for `read_tsv()`, likely because they contain additional tab characters that mess up the parsing slightly. In real life I'd want to look into this, but this is a blog post. Nothing here is real and nobody is watching, right?
 
 ### Wrangling the data
 
