@@ -19,6 +19,7 @@ output:
   distill::distill_article:
     self_contained: false
     toc: true
+    css: "strapless.css"
 params:
   slug: using-aws-s3-in-r
   date: 2022-03-17
@@ -29,10 +30,10 @@ params:
 <!----
 
 checklist:
-  - check the "update me" messages in YAML above
-  - initialise the _renv folder with refinery::renv_new("name of post folder")
-  - populate the lockfile with refinery::renv_snapshot("name of post folder")
-  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+- check the "update me" messages in YAML above
+- initialise the _renv folder with refinery::renv_new("name of post folder")
+- populate the lockfile with refinery::renv_snapshot("name of post folder")
+- update the _renv folder from snapshot with refinery::restore("name of post folder")
 
 ---->
 
@@ -60,7 +61,11 @@ In this post I'll walk you through the process.
 
 ```{r}
 library(dplyr)
+library(readr)
+library(purrr)
+library(stringr)
 library(tibble)
+library(magick)
 library(aws.s3)
 ```
 
@@ -77,16 +82,16 @@ Okay I love this and I want to play with it. But how do I do that? The listing f
 ```
 Resources on AWS
 
-    Description
-        Herbarium Collection Image files
-    Resource type
-        S3 Bucket
-    Amazon Resource Name (ARN)
-        arn:aws:s3:::herbariumnsw-pds
-    AWS Region
-        ap-southeast-2
-    AWS CLI Access (No AWS account required)
-        aws s3 ls --no-sign-request s3://herbariumnsw-pds/
+Description
+Herbarium Collection Image files
+Resource type
+S3 Bucket
+Amazon Resource Name (ARN)
+arn:aws:s3:::herbariumnsw-pds
+AWS Region
+ap-southeast-2
+AWS CLI Access (No AWS account required)
+aws s3 ls --no-sign-request s3://herbariumnsw-pds/
 ```
 
 ### Finding the bucket
@@ -174,6 +179,108 @@ save_object(
 ) 
 ```
 
+So now we have the data. After extracting from the zip file, we end up with a 421MB text file called `occurrence.txt` that turns out to be a tab separated value file:
+
+```{r read-data, cache=TRUE}
+herbarium <- read_tsv("herbarium/dwca-nsw_avh-v1.0/occurrence.txt")
+herbarium
+```
+
+### Wrangling the data
+
+We can do some simple data wrangling:
+
+```{r data-wrangling}
+herbarium %>% 
+  filter(country == "Australia") %>% 
+  count(stateProvince)
+```
+
+
+Okay, within NSW what are the unique regions
+
+```{r nsw-regions}
+herbarium %>% 
+  filter(country == "Australia", stateProvince == "New South Wales") %>% 
+  count(locality) %>% 
+  arrange(desc(n))
+```
+
+```{r}
+newtowners <- herbarium %>% 
+  filter(
+    country == "Australia", 
+    stateProvince == "New South Wales", 
+    locality %>% str_detect("Newtown")
+  )
+
+newtowners$catalogNumber
+```
+
+I wonder if I can write code to extract these images?
+
+### Scripting the download
+
+Okay, now I want to pull the images for these records. First, I'm going to construct the paths. I am *not* going to download the jp2 files because they're about 100MB each. That's why this is on S3, by the way. There are `r nrow(herbarium)` distinct records, and each digitised record has a high resolution jp2 file as well as a regular lossy-encoded jpg. Let's go with the jpgs shall we?
+
+```{r, cache=TRUE, warning=TRUE}
+filepaths <- newtowners$catalogNumber %>% 
+  str_remove_all(" ") %>% 
+  str_c("images/", ., ".jpg")
+
+save_herbarium_image <- function(file) {
+  
+  ok <- object_exists(
+    object = file,
+    bucket = "s3://herbariumnsw-pds/", 
+    region = "ap-southeast-2"
+  )
+  
+  if(!ok) {
+    warning("object '", file, "' does not exist in this bucket", call. = FALSE)
+    return(invisible(NULL))
+  }
+  
+  save_object(
+    object = file,
+    bucket = "s3://herbariumnsw-pds/", 
+    region = "ap-southeast-2",
+    file = paste0("herbarium/", file)
+  )
+}
+
+walk(filepaths, save_herbarium_image)
+```
+
+
+### Behold the pretty pictures!
+
+Even the jpg files are fairly high resolution and I don't want this post to be too big, so I'll shrink them for this post
+
+```{r, eval=FALSE}
+shrink_herbarium_image <- function(file) {
+  image_read(file) %>% 
+    image_resize(geometry_size_pixels(width = 1000)) %>% 
+    image_write(file)
+  
+  gc() # prevents cache resource expiry
+}
+
+images <- list.files("herbarium/images", full.names = TRUE)
+walk(images, shrink_herbarium_image)
+```
+
+Here they are:
+
+```{r, echo=FALSE}
+tibble(images = list.files("herbarium/images", full.names = TRUE)) %>% 
+bs4cards::cards(
+  image = images, 
+  width = 3,
+  border_width = 0,
+  border_radius = 0
+)
+```
 
 ## Signing up for an AWS account
 
