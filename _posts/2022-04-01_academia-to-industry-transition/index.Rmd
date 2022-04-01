@@ -66,9 +66,17 @@ With that in mind, this post is my attempt to provide a little love, support, an
 knitr::include_graphics("img/annie-spratt-vF2AC6pjIBY-unsplash.jpg")
 ```
 
-## Do the reading, but like... not too much?
+## Do the reading, but like... just one book?
 
+If you're reading my blog post specifically, there's a pretty good chance that you're thinking about a career in the tech sector, and probably in data science specifically. This makes a lot of sense for you. You already have most of the core skills required to be a data scientist. You can code, you can analyse data, you can communicate well. You can manage projects, you can work in teams and individually, you've probably had experience managing and supervising junior scientists and analysts. 
 
+What you _don't_ have is industry experience. You aren't quite sure what that world is going to be like and exactly how to recast the skills you have in language that folks over in industry land will understand. What you need is a book that helps you understand the lay of the land, and I am _absolutely not going to write that book_. What I am going to do instead, is mention that [Emily Robinson](https://twitter.com/robinson_es) and [Jacqueline Nolis](https://twitter.com/skyetetra) already did. Their book is called [*Build a Career in Data Science*](https://www.manning.com/books/build-a-career-in-data-science) and it's very good. It's the book I used to help me out, and instead of repeating their advice I will simply recommend it to you.
+
+If you really want to I guess you could read more, but the whole concept of "doing _all_ the reading" is one of those things you can let go of. Even if you find a different book, just read one book okay? You're even allowed to skim. Be honest: that's what you were doing already, just like everyone else in academia.
+
+The only note of caution I would add, if you're an established academic looking to make the jump, is that academic folks like us aren't the primary audience for the book. It's a more general book and doesn't talk much (or at all) about the peculiarities associated with the academia-to-industry transition. You'll need to do a little bit of translation to make it applicable to you. That's okay though, because you're very good at this kind of mental athletics: academia has trained you for it! Still, when chatting with Emily and Jacqueline in order to say thanks for their book, I did mention that I wished someone had written a translated version of the book for academics looking to get out. 
+
+No, I'm not going to write *that* book either. As a consolation prize you get this blog post.
 
 ## Abandon "prestige", ye that enter here
 
