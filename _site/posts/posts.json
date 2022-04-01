@@ -1,5 +1,22 @@
 [
   {
+    "path": "posts/2022-04-01_academia-to-industry-transition/",
+    "title": "Transitioning from academia to industry",
+    "description": "Some thoughts on a strange transformation that a few of us go through, from the perspective of someone who did it slightly later than most",
+    "author": [
+      {
+        "name": "Danielle Navarro",
+        "url": "https://djnavarro.net"
+      }
+    ],
+    "date": "2022-04-01",
+    "categories": [],
+    "contents": "\n\n\n\nAt vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.\n\n\n\nFigure 1: Image by Annie Spratt. Available by CC0 licence on unsplash.\n\n\n\n\n\nLast updated\n2022-04-01 13:29:22 AEDT\nDetails\nsource code, R environment\n\n\n\n\n\n\n\n\n",
+    "preview": "posts/2022-04-01_academia-to-industry-transition/img/annie-spratt-vF2AC6pjIBY-unsplash.jpg",
+    "last_modified": "2022-04-01T13:29:23+11:00",
+    "input_file": {}
+  },
+  {
     "path": "posts/2022-03-17_using-aws-s3-in-r/",
     "title": "Using Amazon S3 with R",
     "description": "Somehow I was convinced that using Amazon S3 would be a supremely difficult thing to learn, kind of like learning git and GitHub for the first time. Thankfully, it's not like that at all. With the help of the aws.s3 package, you can manage cloud data storage from R with surprisingly little pain.",

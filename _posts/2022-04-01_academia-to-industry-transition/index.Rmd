@@ -1,0 +1,91 @@
+---
+title: "Transitioning from academia to industry" # <---- UPDATE ME
+description:
+  Some thoughts on a strange transformation that a few of us go through, from the perspective of someone who did it slightly later than most # <---- UPDATE ME
+author:
+  - first_name: "Danielle"
+    last_name: "Navarro"
+    url: https://djnavarro.net
+    affiliation: Voltron Data
+    affiliation_url: https://voltrondata.com
+    orcid_id: 0000-0001-7648-6578
+date: 2022-04-01
+preview: img/preview-image.jpg  # <---- UPDATE ME 
+creative_commons: CC BY
+citation_url: https://blog.djnavarro.net/academia-to-industry-transition 
+repository_url: https://github.com/djnavarro/distill-blog/
+output:
+  distill::distill_article:
+    self_contained: false
+params:
+  slug: academia-to-industry-transition
+  date: 2022-04-01
+  repo: djnavarro/distill-blog
+  site: https://blog.djnavarro.net/
+---
+
+<!----
+
+checklist:
+  - check the "update me" messages in YAML above
+  - initialise the _renv folder with refinery::renv_new("name of post folder")
+  - populate the lockfile with refinery::renv_snapshot("name of post folder")
+  - update the _renv folder from snapshot with refinery::restore("name of post folder")
+
+---->
+
+
+<!--------------- setup post ----------------->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# let's skip full refinery process...
+#refinery::renv_load(paste(params$date, params$slug, sep = "_"))
+
+# instead... here's the snapshot command:
+postname <- paste(params$date, params$slug, sep = "_")
+refinery::renv_snapshot(postname)
+
+# and here's the renv::use
+renv::use(lockfile = here::here("_renv", "_posts", postname, "renv.lock"))
+```
+
+
+<!--------------- post ----------------->
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+
+ 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Annie Spratt. Available by CC0 licence on [unsplash](https://unsplash.com/photos/vF2AC6pjIBY)."
+knitr::include_graphics("img/annie-spratt-vF2AC6pjIBY-unsplash.jpg")
+```
+
+
+
+
+<!--------------- appendices ----------------->
+
+```{r, echo=FALSE}
+refinery::insert_appendix(
+  repo_spec = params$repo, 
+  name = paste(params$date, params$slug, sep = "_")
+)
+```
+
+
+<!--------------- miscellanea ----------------->
+
+```{r redirect, echo=FALSE}
+refinery::insert_netlify_redirect(
+  slug = params$slug, 
+  date = params$date
+)
+```
+
+
+
+
