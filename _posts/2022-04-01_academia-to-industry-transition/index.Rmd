@@ -90,9 +90,66 @@ It's a frighteningly novel concept for an institutionalised academic, but one yo
 
 You can let that all go now. It will hurt to let it go, because -- so much more than your junior colleagues who got out when they were young -- you have become invested in it and the hooks are laid much deeper in your psyche. But you can, and it's surprisingly liberating when it happens.
 
-## Your resume is an advertisement for you
+## Your résumé is an advertisement for you
 
-> It's a flyer, not a monograph
+From the moment we enter the system, there is a piece of advice we're given: keep track of everything. Every talk, every paper, every book, every prize, every award, every compliment from student. All these things must be stored, collated, reused, organised, and *used*. They are the evidence we use for our promotion applications, our grant applications, our various pleas and supplications to the dark gods of the ivory tower. And so it is that every academic CV becomes a monstrosity, a log file listing every activity from which value can be extracted. It is time to let that all go. Breathe, darling. 
+
+### Your résumé is an advertisement...
+
+The vast, vast majority of your CV is not necessary any longer, because the fundamental purpose of the résumé has changed. It is not a testament to your worth. It is not a log of your achievements. It is not in any meaningful sense *documentation*, and it is certainly not a store of value. It is an advertisement that you place with a company, to catch their attention:
+
+> Your résumé is a flyer. It is not a monograph
+
+If you are at all like me this is a very hard concept to get used to. Frantic, I would ask myself how I could possibly reduce all my self-worth and my value to the company to a mere page? It simply cannot be done! 
+
+Of course it can't. That's *not* the task at hand. Your CV bears no relationship to your value as a person, and its *only* function is to convince the right company to give you an interview. (Note that I say "the right company"... gonna come back to that!)
+
+Yes fine, Danielle, I hear you say. But how do I do this? It's a big conceptual shift and I don't even know where to start the process. Worry not, beloved reader, for just this once (never again, I promise!) I have practical guidance for you. 
+
+No really. 
+
+I do.
+
+Very practical. 
+
+Stop laughing. 
+
+...I hate you. 
+
+Okay, now that we've got that out of our system, let's get started. In an act of personal catharsis I destroyed most of the evidence that I was ever a fully institutionalised academic, so I no longer own any of my old "proper" academic CVs, but you don't have to look too hard to discover evidence that I used to have one:
+
+- Behold the [list of my publications and despair!](https://djnavarro.net/papers) 
+- Tremble before [my h-index and my citation count!](https://scholar.google.com.au/citations?user=QPH_lRIAAAAJ&hl=en)^[Yeah, I'm currently dating an obnoxiously competent computational biologist, and her citation count *for last year* is perilously close to doubling my citation count for my entire career. I've given up on any illusion that my citations are even slightly impressive. I am very much the Kardashian of this relationship. That is *so* not the point!]
+- Embrace the visual horror of my [ORCID profile!](https://orcid.org/0000-0001-7648-6578)
+
+Once upon a time I had a document that included all these things, tracked all the journal impact factors associated with every publication, listed every grant, every research contract, every... oh, you know. You have one of these too. It's probably 50 pages long or something.
+
+Your first task is to strip that back to **two pages**. You don't have to reformat it at all. It's still an academic CV. What I'm asking you to do in this first step is to find a way of condensing the things you actually care about in academia into a manageable format. You don't have to think like an industry person at all yet. Just imagine a crazy world in which academics didn't have to write monographs just to get permission to use the bloody bathroom, and choose two pages worth of content that you love. To make it a little easier...
+
+- This is how I butchered my career and turned it into a [scandalously brief two page résumé](resume/danielle-navarro-academic-resume.pdf)
+- This is the [R markdown file it's based on](resume/danielle-navarro-academic-resume.Rmd)
+- This is the [.tex file that you'll need](resume/svm-latex-cv.tex) if you want to use the same template^[There is a delightful appropriateness to the fact that, yes, the academic template is still using LaTeX directly (god I want to make a latex joke) rather than letting pandoc do the work and hiding the horrors from you]
+
+The point of this exercise is mostly about prioritisation: you have things you are proud of, things you *know* are major accomplishments, and things that you feel obligated to list because you "have to". Except... you don't have to anymore. The point of this first step is letting go. Plus, you can keep this version as a nice summary of your academic accomplishments *that someone will actually read*. Because no-one is going to read that 50-page horror babe. They won't. You didn't even read it yourself, did you? Yeah, didn't think so.
+
+Okay, done? Awesome. You're doing amazing.
+
+A little controversially, I'm gonna suggest that step 2 should be to write some prose. An industry résumé absolutely does *not* contain prose, but the purpose of this step is to try to help you cope with the shift that will have to happen in step 3. What we're going to do in step 2 is pick and choose some content from the "step 1 résumé" and rewrite it as a verbal argument for why you personally deserve to have an industry job (if it helps, try to find a specific job on linkedin or whatever that you actually want, and write for that job). Again, this is a shit way to write industry CV, but you've written grant applications before right? Lots of grant applications. You're depressingly good at writing those. We're going to repurpose that skill set. 
+
+Here's what I came up with when I did this...
+
+- This is the [verbose résumé itself](resume/danielle-navarro-verbose-resume.pdf)
+- This is the [R markdown file it's based on](resume/danielle-navarro-verbose-resume.Rmd)
+
+Now, anyone who has a good grasp of how industry works knows perfectly well this is no good. But it serves a purpose. Notice the difference in how I'm writing in this second version? I'm no longer dispassionately listing things, I'm making a sales pitch. You're used to thinking like this already because this is how grants work, and this version of the CV reads like a very small grant application. 
+
+Still not an industry CV though. Folks in industry don't want to read. That's not because they don't like reading, but because industry is sooooooooo much bigger than academia. When they advertise a job they get even more CVs than we ever did in academia, and the poor person whose job it is to handle this on the other end really does like it if you make their life easier. Don't make them read if you don't have to!
+
+At long last we get to step 3...
+
+### ...and it you should advertise YOU
+
+
 
 ## It's speed dating, not a courtship
 
