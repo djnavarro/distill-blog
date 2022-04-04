@@ -127,7 +127,7 @@ When you get to this point, one thing I'd strongly recommend -- not that I am ev
 So, who do you want to be in your new job? Maybe you don't want to be the same person you've been all your academic life. Maybe you want to be someone new. If so, it's totally fine to emphasise skills and accomplishments that relate to *that person*. You're allowed to reinvent yourself a little bit in your résumé. It's part of the healing process! 
 
 
-## The tech sector job market: more like Grindr than Bridgerton
+## The tech sector job market: less like Bridgerton, more like Grindr
 
 Going on the job market was incredibly stressful, unfamiliar, and took longer for me to be successful than you'd think if all you've seen of my process is what was visible on public twitter (by the time I was openly on the job market I'd already had a number of unsuccessful attempts), so I'll talk a bit about that too.
 
@@ -145,7 +145,7 @@ What I do know is that I started the "initial conversation" with 11 different co
 
 Eventually I ended up with offers from two different companies, I negotiated briefly,^[Any decent guide to a job search will talk to you about how to negotiate and what ought to be negotiated in your kind of job search. But this is not a decent guide and I am really not the person you should rely upon for advice.] and then chose to accept an offer.
 
-## Welcome! We have tiny cakes and job mobility
+## Learning to love job mobility
 
 Folks inside academia have asked me about what life is like on the other side, and it's hard to know how to answer. I know what *my* position is like, but that doesn't say a lot about what life is like for anyone else in industry. It's a big world out there and there's a lot more variability in industry jobs than there are in academic jobs. Some are wonderful and others are terrible. Luckily for me I landed well and I genuinely love my current job, but not everyone does. In that respect, academia and industry are similar.
 
@@ -153,10 +153,13 @@ However, one thing that everyone who has made the jump notices immediately is th
 
 Once you've been in the sector for a while and are no longer carrying the albatross of "I'm just an academic and falsely believe I have no skills" around your neck, you discover that moving jobs is a thing people do all the time. Sometimes they do it for more money, sometimes they do it to get away from a bad situation (it happens everywhere), but often they move jobs just because they want to do something different. And that's okay.
 
+## Welcome! We have tiny cakes!
 
+Yes yes, Danielle, that's nice and I take your point about variability and job mobility but what's your job actually like? Are you happy? What do you do all day in industry? Do you have a boss who runs around telling you what to do all the time? Is it like *Office Space*? You look so much like Jennifer Aniston, do you have to wear 37 pieces of flair? 
 
-## 
+Like a lot of people with professional roles, my actual job is pretty varied on the day to day bases. Some days I write code contributing to Apache Arrow. Other days I write blog posts about it. Now that I'm wrapping my head around how Arrow works I'm at the point that I can start giving talks and workshops. I sometimes create resources that make it easier for folks inside and outside the company to use Arrow. I contribute where I can, I work with lovely people who help me learn the parts of the job that are foreign to me, and I even get to make use of my visual design skills from time to time. The company pays me fairly for my time, doesn't subject me to the humiliating rituals of the academy, and unlike academia nobody here thinks that transphobia is a fun intellectual conversation topic to inject into workplace discussions. 
 
+So yes, I'm happy here. 
 
 <!--------------- appendices ----------------->
 
