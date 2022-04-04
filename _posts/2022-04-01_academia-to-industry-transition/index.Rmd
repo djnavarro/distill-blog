@@ -96,23 +96,13 @@ You can let that all go now. It will hurt to let it go, because -- so much more 
 
 Let's return to practicalities. From the moment we enter the system, there is a piece of advice we're given in academia: keep track of everything. Every talk, every paper, every book, every prize, every award, every compliment from student. All these things must be stored, collated, reused, organised, and *used*. They are the evidence we use for our promotion applications, our grant applications, our various pleas and supplications to the dark gods of the ivory tower. And so it is that every academic CV becomes a monstrosity, a log file listing every activity from which value can be extracted. It is time to let that all go. Breathe, darling. 
 
-The vast, vast majority of your CV is not necessary any longer, because the fundamental purpose of the résumé has changed. It is not a testament to your worth. It is not a log of your achievements. It is not in any meaningful sense *documentation*, and it is certainly not a store of value. It is an advertisement that you place with a company, to catch their attention:
+The vast, vast majority of your CV is not necessary any longer, because the fundamental purpose of the résumé has changed. It is not a testament to your worth. It is not a log of your achievements. It is not in any meaningful sense *documentation*, and it is certainly not a store of value. It is an advertisement that you place with a company, to catch their attention: **your résumé is a flyer, not a monograph**.
 
-Your résumé is a flyer. It is not a monograph
+If you are at all like me this is a very hard concept to get used to. Frantic, I would ask myself how I could possibly reduce all my self-worth and my value to the company to a mere page? It simply cannot be done! ... and of course it can't. That's *not* the task at hand. Your CV bears no relationship to your value as a person, and its *only* function is to convince the right company to give you an interview. Here's how I did that.
 
-If you are at all like me this is a very hard concept to get used to. Frantic, I would ask myself how I could possibly reduce all my self-worth and my value to the company to a mere page? It simply cannot be done! 
+### Step 1: Reduce the size
 
-Of course it can't. That's *not* the task at hand. Your CV bears no relationship to your value as a person, and its *only* function is to convince the right company to give you an interview. Notice that I say "the right company". That's important and I'm going to come back to that!
-
-Yes fine, Danielle, I hear you say. But how do I do this? It's a big conceptual shift and I don't even know where to start the process. Worry not, beloved reader, for just this once^[It won't happen again, I promise!] I have practical guidance for you. No really, I do. It's very practical, so you can stop laughing now. 
-
-Sigh.
-
-
-### Your résumé is an advertisement...
-
-Okay, now that we've got that out of our system, let's get started. In an act of personal catharsis I destroyed most of the evidence that I was ever a fully institutionalised academic, so I no longer own any of my old "proper" academic CVs, but you don't have to look too hard to discover evidence that I used to have one: Behold the [list of my publications and despair](https://djnavarro.net/papers), tremble before [my h-index](https://scholar.google.com.au/citations?user=QPH_lRIAAAAJ&hl=en)^[Yeah, I'm currently dating an obnoxiously competent computational biologist, and her citation count *for last year* is perilously close to doubling my citation count for my entire career. I've given up on any illusion that my citations are even slightly impressive. I am very much the Kardashian of this relationship. That is *so* not the point!], and embrace the visual horror of my [ORCID profile](https://orcid.org/0000-0001-7648-6578)! As you can probably guess, 
-once upon a time I had a document that included all these things, tracked all the journal impact factors associated with every publication, listed every grant, every research contract, every... oh, you know. You have one of these too. It's probably 50 pages long or something.
+Okay, now that we've got that out of our system, let's get started. In an act of personal catharsis I destroyed most of the evidence that I was ever a fully institutionalised academic, so I no longer own any of my old "proper" academic CVs, but you don't have to look too hard to discover evidence that I used to have one: Behold the [list of my publications and despair](https://djnavarro.net/papers), tremble before [my h-index](https://scholar.google.com.au/citations?user=QPH_lRIAAAAJ&hl=en)^[Yeah, I'm currently dating an obnoxiously competent computational biologist, and her citation count *for last year* is perilously close to doubling my citation count for my entire career. I've given up on any illusion that my citations are even slightly impressive. I am very much the Kardashian of this relationship. That is *so* not the point!], and embrace the visual horror of my [ORCID profile](https://orcid.org/0000-0001-7648-6578)! As you can probably guess, once upon a time I had a document that included all these things, tracked all the journal impact factors associated with every publication, listed every grant, every research contract, every... oh, you know. You have one of these too. It's probably 50 pages long or something.
 
 Your first task is to strip that back to **two pages**. You don't have to reformat it at all. It's still an academic CV. What I'm asking you to do in this first step is to find a way of condensing the things you actually care about in academia into a manageable format. You don't have to think like an industry person at all yet. Just imagine a crazy world in which academics didn't have to write monographs just to get permission to use the bloody bathroom, and choose two pages worth of content that you love. To make it a little easier, this is how I butchered my career and turned it into a [scandalously brief two page résumé](resume/danielle-navarro-academic-resume.pdf).^[To make it easier still, this is the [R markdown file it's based on](resume/danielle-navarro-academic-resume.Rmd), and this is the [.tex file that you'll need](resume/svm-latex-cv.tex) if you want to use the same template. And yes, there is a delightful appropriateness to the fact that, yes, the academic template is still using LaTeX directly rather than letting pandoc do the work and hiding the horrors from you]
 
@@ -120,23 +110,24 @@ The point of this initial exercise is prioritisation: you have things you are pr
 
 Okay, done? Awesome. You're doing amazing.
 
+### Step 2: Write a sales pitch
+
 A little controversially, I'm gonna suggest that step 2 should be to **write some prose**. An industry résumé absolutely does *not* contain prose, but the purpose of this step is to try to help you cope with the shift that will have to happen in step 3. What we're going to do in step 2 is pick and choose some content from the "step 1 résumé" and rewrite it as a verbal argument for why you personally deserve to have an industry job (if it helps, try to find a specific job on linkedin or whatever that you actually want, and write for that job). Again, this is a terrible way to write industry CV, but... you've written grant applications before right? Lots of grant applications. You're depressingly good at writing those. We're going to repurpose that skill set, and write a [verbose résumé](resume/danielle-navarro-verbose-resume.pdf) that looks like a mini grant application advertising you.^[Again, to make it a little easier if you want to adopt my approach, this is the [R markdown file it's based on](resume/danielle-navarro-verbose-resume.Rmd)]
 
 Now, anyone who has a good grasp of how industry works knows perfectly well this is no good. An industry résumé should be extremely light on text, it should focus on skills, and it should be structured in a way that makes machine parsing easy. When I wrote this back in November 2021 I was still thinking like an academic. It isn't a good résumé at all. So why am I mentioning it at all? 
 
 The reason is that most academics I know really struggle to make sales pitches, except in the specific contexts where we are "expected" to do so, and one of those contexts is writing grant applications. Writing my résumé in a way that felt familiar from the grant writing context helped me shed a lot of my anguish about the résumé, because "it's like writing a grant, and everyone knows that grant-writing is mostly an exercise in sales..." 
 
+### Step 3: Now you can write a résumé!
+
 Once I'd finally gotten to that point, and was comfortable viewing the whole job search process this way, it became a lot easier for me to accept that a résumé is not in any way a meaningful representation of my skills, my history, or my ability. It is simply an **advertisement that follows a predictable format**. So for step 3, I discarded all my pretty words and wrote an [industry-style résumé](resume/danielle-navarro-industry-resume.pdf).^[An industry résumé is really only supposed to be one page long, and you can see that I'm *still* clinging a little to my academic past by making mine two pages, but at least this verion really is an industry style format. This résumé is made using the pagedown package, and it strongly assumes you're only doing a one-page format. If you want to see how badly I had to hack into it in order to focre a two-page output, you can look at my [R markdown source](resume/danielle-navarro-industry-resume.Rmd) if you like. Be warned, it is grim!] As you can see, this is a quite different style of document. It's written almost entirely as dot point lists, it focuses as much on skills as on accomplishments, and there is a lot of white space. Generally, that's what you want.
 
+When you get to this point, one thing I'd strongly recommend -- not that I am ever to be relied upon for good advice -- is that you think not just about the jobs you can get but the kind of work you want to be doing and the person you want to be. I've forgotten where I heard this (it's definitely not an original thought of mine) but because the résumé is the first point of contact with the company in many cases, it's also an exercise in expectation management. You are implicitly telling a story in this résumé about a particular type of person, and if you get an interview then people will expect that person in the interview. If you get the job from that interview, then they'll expect the person from the interview to show up on the job. 
 
-### ...and it you should advertise you as you want to be
-
-One more tiny thing to mention about the résumé before I move on. I've forgotten where I heard this (it's definitely not an original thought of mine) but because the résumé is the first point of contact with the company in many cases, it's also an exercise in expectation management. You are implicitly telling a story in this résumé about a particular type of person, and if you get an interview then people will expect that person in the interview. If you get the job from that interview, then they'll expect the person from the interview to show up on the job. 
-
-So, who do you want to be in your new job? Maybe you don't want to be the same person you've been all your academic life. If so, it's totally fine to deemphasise skils and accomplishments that relate to *that person*, but aren't representative of who you want to be in your new role. You're allowed to reinvent yourself a little bit in your résumé. It's part of the healing process! 
+So, who do you want to be in your new job? Maybe you don't want to be the same person you've been all your academic life. Maybe you want to be someone new. If so, it's totally fine to emphasise skills and accomplishments that relate to *that person*. You're allowed to reinvent yourself a little bit in your résumé. It's part of the healing process! 
 
 
-## More like Grindr than Bridgerton
+## The tech sector job market: more like Grindr than Bridgerton
 
 Going on the job market was incredibly stressful, unfamiliar, and took longer for me to be successful than you'd think if all you've seen of my process is what was visible on public twitter (by the time I was openly on the job market I'd already had a number of unsuccessful attempts), so I'll talk a bit about that too.
 
@@ -152,12 +143,17 @@ I have no idea how many jobs I applied for any more than I know how many men I'v
 
 What I do know is that I started the "initial conversation" with 11 different companies during my job search. The initial conversation is itself an informal interview (usually with a recruiter) and it goes both ways. You may or may not go to the "real" interview stage after that: for me, I reached the interview stage with 5 of the 11 companies I'd started conversations with. The interview process was different at every company, but most of them weren't a single interview but rather a series of interviews with different people. Sometimes there were "skills tests" to take (seriously, this is a thing), other times there were not. It was quite different to what I expected from academia, and it took a few failed attempts before I worked out the basics of how to interview. 
 
-Eventually I ended up with offers from two different companies, I negotiated briefly,^[Any decent guide to a job search will talk to you about how to negotiate and what ought to be negotiated in your kind of job search. But this is not a decent guide and I am really not the person you should rely upon for advice.] and then chose to accept the offer from Voltron Data.
+Eventually I ended up with offers from two different companies, I negotiated briefly,^[Any decent guide to a job search will talk to you about how to negotiate and what ought to be negotiated in your kind of job search. But this is not a decent guide and I am really not the person you should rely upon for advice.] and then chose to accept an offer.
+
+## Welcome! We have tiny cakes and job mobility
+
+Folks inside academia have asked me about what life is like on the other side, and it's hard to know how to answer. I know what *my* position is like, but that doesn't say a lot about what life is like for anyone else in industry. It's a big world out there and there's a lot more variability in industry jobs than there are in academic jobs. Some are wonderful and others are terrible. Luckily for me I landed well and I genuinely love my current job, but not everyone does. In that respect, academia and industry are similar.
+
+However, one thing that everyone who has made the jump notices immediately is that mobility is so much higher in industry. This makes a huge difference to your quality of life. In academia, if you find yourself hired into a bad department you are in a lot of trouble: it's so hard to move between academic jobs that one toxic department can ruin an entire career. Industry is different: if you have a bad job you can make a plan to leave, and be happily working somewhere new within six months. 
+
+Once you've been in the sector for a while and are no longer carrying the albatross of "I'm just an academic and falsely believe I have no skills" around your neck, you discover that moving jobs is a thing people do all the time. Sometimes they do it for more money, sometimes they do it to get away from a bad situation (it happens everywhere), but often they move jobs just because they want to do something different. And that's okay.
 
 
-## Welcome! We have tiny cakes
-
-Arrival is hard. Who are devops and what are they even for? How does anything work at this mad time scale anyway? 
 
 ## 
 
