@@ -78,6 +78,15 @@ The only note of caution I would add, if you're an established academic looking 
 
 No, I'm not going to write *that* book either. As a consolation prize you get this blog post.
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Siora Photography. Available by CC0 licence on [unsplash](https://unsplash.com/photos/hgFY1mZY-Y0)."
+knitr::include_graphics("img/siora-photography-hgFY1mZY-Y0-unsplash.jpg")
+```
+
+
+
+
 ## Abandon "prestige", ye that enter here
 
 Pivoting now from the practical to the psychological, there's an elephant in the room we have to talk about up front.
@@ -92,6 +101,15 @@ It's a frighteningly novel concept for an institutionalised academic, but one yo
 
 You can let that all go now. It will hurt to let it go, because -- so much more than your junior colleagues who got out when they were young -- you have become invested in it and the hooks are laid much deeper in your psyche. But you can, and it's surprisingly liberating when it happens.
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Sigmund. Available by CC0 licence on [unsplash](https://unsplash.com/photos/Y41w7pyxE18)."
+knitr::include_graphics("img/sigmund-Y41w7pyxE18-unsplash.jpg")
+```
+
+
+
+
 ## Your résumé is an advertisement for you
 
 Let's return to practicalities. From the moment we enter the system, there is a piece of advice we're given in academia: keep track of everything. Every talk, every paper, every book, every prize, every award, every compliment from student. All these things must be stored, collated, reused, organised, and *used*. They are the evidence we use for our promotion applications, our grant applications, our various pleas and supplications to the dark gods of the ivory tower. And so it is that every academic CV becomes a monstrosity, a log file listing every activity from which value can be extracted. It is time to let that all go. Breathe, darling. 
@@ -102,7 +120,7 @@ If you are at all like me this is a very hard concept to get used to. Frantic, I
 
 ### Step 1: Reduce the size
 
-Okay, now that we've got that out of our system, let's get started. In an act of personal catharsis I destroyed most of the evidence that I was ever a fully institutionalised academic, so I no longer own any of my old "proper" academic CVs, but you don't have to look too hard to discover evidence that I used to have one: Behold the [list of my publications and despair](https://djnavarro.net/papers), tremble before [my h-index](https://scholar.google.com.au/citations?user=QPH_lRIAAAAJ&hl=en)^[Yeah, I'm currently dating an obnoxiously competent computational biologist, and her citation count *for last year* is perilously close to doubling my citation count for my entire career. I've given up on any illusion that my citations are even slightly impressive. I am very much the Kardashian of this relationship. That is *so* not the point!], and embrace the visual horror of my [ORCID profile](https://orcid.org/0000-0001-7648-6578)! As you can probably guess, once upon a time I had a document that included all these things, tracked all the journal impact factors associated with every publication, listed every grant, every research contract, every... oh, you know. You have one of these too. It's probably 50 pages long or something.
+Okay, now that we've got that out of our system, let's get started. In an act of personal catharsis I destroyed most of the evidence that I was ever a fully institutionalised academic, so I no longer own any of my old "proper" academic CVs, but you don't have to look too hard to discover evidence that I used to have one: Behold the [list of my publications and despair](https://djnavarro.net/papers), tremble before [my h-index](https://scholar.google.com.au/citations?user=QPH_lRIAAAAJ&hl=en)^[Yeah, I'm currently dating an obnoxiously competent computational biologist, and her citation count *for last year* is perilously close to doubling my citation count for my entire career. I've given up on any illusion that my citations are even slightly impressive. I am very much the [Kardashian](https://en.wikipedia.org/wiki/Kardashian_Index) of this relationship. But that is *so* not the point!], and embrace the visual horror of my [ORCID profile](https://orcid.org/0000-0001-7648-6578)! As you can probably guess, once upon a time I had a document that included all these things, tracked all the journal impact factors associated with every publication, listed every grant, every research contract, every... oh, you know. You have one of these too. It's probably 50 pages long or something.
 
 Your first task is to strip that back to **two pages**. You don't have to reformat it at all. It's still an academic CV. What I'm asking you to do in this first step is to find a way of condensing the things you actually care about in academia into a manageable format. You don't have to think like an industry person at all yet. Just imagine a crazy world in which academics didn't have to write monographs just to get permission to use the bloody bathroom, and choose two pages worth of content that you love. To make it a little easier, this is how I butchered my career and turned it into a [scandalously brief two page résumé](resume/danielle-navarro-academic-resume.pdf).^[To make it easier still, this is the [R markdown file it's based on](resume/danielle-navarro-academic-resume.Rmd), and this is the [.tex file that you'll need](resume/svm-latex-cv.tex) if you want to use the same template. And yes, there is a delightful appropriateness to the fact that, yes, the academic template is still using LaTeX directly rather than letting pandoc do the work and hiding the horrors from you]
 
@@ -127,6 +145,15 @@ When you get to this point, one thing I'd strongly recommend -- not that I am ev
 So, who do you want to be in your new job? Maybe you don't want to be the same person you've been all your academic life. Maybe you want to be someone new. If so, it's totally fine to emphasise skills and accomplishments that relate to *that person*. You're allowed to reinvent yourself a little bit in your résumé. It's part of the healing process! 
 
 
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Cristian Escobar. Available by CC0 licence on [unsplash](https://unsplash.com/photos/abkEAOjnY0s)."
+knitr::include_graphics("img/cristian-escobar-abkEAOjnY0s-unsplash.jpg")
+```
+
+
+
+
 ## The tech sector job market: less like Bridgerton, more like Grindr
 
 Going on the job market was incredibly stressful, unfamiliar, and took longer for me to be successful than you'd think if all you've seen of my process is what was visible on public twitter (by the time I was openly on the job market I'd already had a number of unsuccessful attempts), so I'll talk a bit about that too.
@@ -141,9 +168,19 @@ The process at most companies went like this: I submitted my résumé and I neve
 
 I have no idea how many jobs I applied for any more than I know how many men I've liked on a dating app. Companies, like men, are everywhere, and there is little to be gained by trying to keep track of all of them.
 
+<br>
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Lynn Vdbr. Available by CC0 licence on [unsplash](https://unsplash.com/photos/xeWTU66tJIo)."
+knitr::include_graphics("img/lynn-vdbr-xeWTU66tJIo-unsplash.jpg")
+```
+
+<br>
+
 What I do know is that I started the "initial conversation" with 11 different companies during my job search. The initial conversation is itself an informal interview (usually with a recruiter) and it goes both ways. You may or may not go to the "real" interview stage after that: for me, I reached the interview stage with 5 of the 11 companies I'd started conversations with. The interview process was different at every company, but most of them weren't a single interview but rather a series of interviews with different people. Sometimes there were "skills tests" to take (seriously, this is a thing), other times there were not. It was quite different to what I expected from academia, and it took a few failed attempts before I worked out the basics of how to interview. 
 
-Eventually I ended up with offers from two different companies, I negotiated briefly,^[Any decent guide to a job search will talk to you about how to negotiate and what ought to be negotiated in your kind of job search. But this is not a decent guide and I am really not the person you should rely upon for advice.] and then chose to accept an offer.
+Eventually I ended up with offers from two different companies, I negotiated briefly,^[Any decent guide to a job search will talk to you about how to negotiate and what ought to be negotiated in your kind of job search. But I am an indecent woman, this is not a reliable guide, and I am not the person you should rely upon for advice on this topic.] and then chose to accept an offer.
 
 ## Learning to love job mobility
 
@@ -157,9 +194,18 @@ Once you've been in the sector for a while and are no longer carrying the albatr
 
 Yes yes, Danielle, that's nice and I take your point about variability and job mobility but what's your job actually like? Are you happy? What do you do all day in industry? Do you have a boss who runs around telling you what to do all the time? Is it like *Office Space*? You look so much like Jennifer Aniston, do you have to wear 37 pieces of flair? 
 
-Like a lot of people with professional roles, my actual job is pretty varied on the day to day bases. Some days I write code contributing to Apache Arrow. Other days I write blog posts about it. Now that I'm wrapping my head around how Arrow works I'm at the point that I can start giving talks and workshops. I sometimes create resources that make it easier for folks inside and outside the company to use Arrow. I contribute where I can, I work with lovely people who help me learn the parts of the job that are foreign to me, and I even get to make use of my visual design skills from time to time. The company pays me fairly for my time, doesn't subject me to the humiliating rituals of the academy, and unlike academia nobody here thinks that transphobia is a fun intellectual conversation topic to inject into workplace discussions. 
+Like a lot of people with professional roles, my actual job is pretty varied on the day to day bases. Some days I write code contributing to Apache Arrow. Other days I write blog posts about it. Now that I'm wrapping my head around how Arrow works I'm at the point that I can start giving talks and workshops. I sometimes create resources that make it easier for folks inside and outside the company to use Arrow. I contribute where I can, I work with lovely people who help me learn the parts of the job that are foreign to me, and I even get to make use of my visual design skills from time to time. The company pays me fairly for my time, doesn't subject me to the humiliating rituals of the academy, and nobody here thinks that transphobia is a fun intellectual conversation topic to inject into workplace discussions. 
 
 So yes, I'm happy here. 
+
+```{r}
+#| echo = FALSE,
+#| fig.cap = "Image by Bryam Blanco. Available by CC0 licence on [unsplash](https://unsplash.com/photos/nXKWLn8y9qE)."
+knitr::include_graphics("img/bryam-blanco-nXKWLn8y9qE-unsplash.jpg")
+```
+
+
+
 
 <!--------------- appendices ----------------->
 
